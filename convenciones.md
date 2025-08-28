@@ -25,6 +25,7 @@ Boolean
 ### Nombres de cosas:
 Todo inglés
 
-
+### Comentarios:
+En español. La palabra español "Todo" la escribimos "Tod0" para que no la autodetecte como un TO-DO
 
 
