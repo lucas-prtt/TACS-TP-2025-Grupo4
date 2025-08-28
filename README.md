@@ -18,3 +18,7 @@
 ### Pag general
 [https://www.tacs-utn.com.ar/
 ](https://www.tacs-utn.com.ar/)
+
+### Jira
+
+[https://frba-team-hj2c1r3q.atlassian.net/jira/software/projects/MBA/boards/1](https://frba-team-hj2c1r3q.atlassian.net/jira/software/projects/MBA/boards/1)
