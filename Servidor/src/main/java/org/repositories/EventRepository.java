@@ -5,6 +5,7 @@ import org.dominio.events.Event;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class EventRepository {
     List<Event> events = new ArrayList<Event>();
@@ -34,10 +35,15 @@ public class EventRepository {
 
     // Recibe el titulo del evento a buscar como String y devuelve una lista inmutable de Eventos del mismo titulo
     public List<Event> findByTitle(String goalTitle) throws NoSuchElementException{
-        return events.stream().filter(event -> Objects.equals(event.getTitle(), goalTitle)).toList();
+        return findBy(event -> Objects.equals(event.getTitle(), goalTitle));
     }
-    // Recibe un String y busca todos los eventos que tengan en su titulo ese string, devolviendolos como lista inmutable de Event
+    // Recibe un String y busca todos los eventos que tengan en su título ese string, devolviéndolos como lista inmutable de Event
     public List<Event> findByTitleContains(String subString){
-        return events.stream().filter(event -> event.getTitle().contains(subString)).toList();
+        return findBy(event -> event.getTitle().contains(subString));
+    }
+
+    // Recibe un String y busca todos los eventos que tengan en su título ese string, devolviéndolos como lista inmutable de Event
+    public List<Event> findBy(Predicate<Event> condition){
+        return events.stream().filter(condition).toList();
     }
 }
