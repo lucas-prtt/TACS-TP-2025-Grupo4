@@ -29,7 +29,7 @@ public class Event {
     Queue<Account> waitList;
 
     // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price
-    public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags){
+    public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags) throws NullPointerException{
         //Obligatorios
         Objects.requireNonNull(title);
         Objects.requireNonNull(description);
