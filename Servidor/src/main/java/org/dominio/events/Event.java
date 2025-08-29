@@ -61,4 +61,5 @@ public class Event {
         this.waitList = new ArrayDeque<>();
         this.id = UUID.randomUUID();
     }
+    public static EventBuilder Builder(){return new EventBuilder();}
 }

@@ -1,20 +1,22 @@
 package org.repositories;
 
 import org.dominio.events.Event;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;
 
+
 public class EventRepository {
     List<Event> events = new ArrayList<Event>();
 
     // Recibe una uuid del evento a buscar
-    // Devuelve el evento guardado
-    // Si no hay un elemento guardado, lanza NoSuchElementException
-    public Event findById(UUID uuid) throws NoSuchElementException {
-        return events.stream().filter(event -> event.getId() == uuid).findFirst().get();
+    // Devuelve el evento guardado como un Optional
+    public Optional<Event> findById(UUID uuid) {
+        return events.stream().filter(event -> event.getId().equals(uuid)).findFirst();
     }
 
     // Recibe el evento a añadir
@@ -23,12 +25,12 @@ public class EventRepository {
     // Si el evento recibido es null, lanza NullPointerException
     public void save(Event newEvent) throws NullPointerException{
         if (newEvent == null) throw new NullPointerException("newEvent value is null");
-        Event existingEvent = findById(newEvent.getId());
-        if(existingEvent == null){
+        Optional <Event> existingEvent = findById(newEvent.getId());
+        if(existingEvent.isEmpty()){
             events.add(newEvent);
         }
         else {
-            events.remove(existingEvent);
+            events.remove(existingEvent.get());
             events.add(newEvent);
         }
     }
@@ -46,4 +48,6 @@ public class EventRepository {
     public List<Event> findBy(Predicate<Event> condition){
         return events.stream().filter(condition).toList();
     }
+
+    public List<Event> getAll(){return events;}
 }
