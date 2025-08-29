@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Collections;
 
-
 @SpringBootApplication
 public class Servidor {
     public static void main(String[] args) {
