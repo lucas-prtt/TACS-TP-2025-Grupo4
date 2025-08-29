@@ -55,4 +55,16 @@ public class EventRepositoryTest {
         events.forEach(ev -> eventRepository.save(ev));
         assert eventRepository.findByTitleContains("IA").getFirst().getLocation() == "UTN - FRBA - Sede Medrano";
     }
+    @Test
+    public void findByTitleContainsMultiple(){
+        List <Event> events = new ArrayList<>(createEvents());
+        events.forEach(ev -> eventRepository.save(ev));
+        assert eventRepository.findByTitleContains("de").size() == 8;
+    }
+    @Test
+    public void findByCustom(){
+        List <Event> events = new ArrayList<>(createEvents());
+        events.forEach(ev -> eventRepository.save(ev));
+        assert eventRepository.findBy(event -> event.getStartDateTime().isBefore(LocalDateTime.now().plusWeeks(1).plusHours(1))).size() == 8;
+    }
 }
