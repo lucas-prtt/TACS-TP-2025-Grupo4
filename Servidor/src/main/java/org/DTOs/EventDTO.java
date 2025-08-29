@@ -32,6 +32,9 @@ public class EventDTO {
     Category category;
     List<Tag> tags;
 
+
+    // Crea un EventDTO a partir de un Event
+    // Algunos elementos se comparten con el Event original, por lo que es necesario NO MODIFICAR los valores una vez creado
     public static EventDTO fromEvent(Event event){
         return new EventDTO(
                 event.getId(),
