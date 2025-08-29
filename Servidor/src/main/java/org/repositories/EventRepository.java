@@ -2,10 +2,9 @@ package org.repositories;
 
 import org.dominio.events.Event;
 
-import java.util.ArrayList;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
 
 public class EventRepository {
     List<Event> events = new ArrayList<Event>();
@@ -31,5 +30,14 @@ public class EventRepository {
             events.remove(existingEvent);
             events.add(newEvent);
         }
+    }
+
+    // Recibe el titulo del evento a buscar como String y devuelve una lista inmutable de Eventos del mismo titulo
+    public List<Event> findByTitle(String goalTitle) throws NoSuchElementException{
+        return events.stream().filter(event -> Objects.equals(event.getTitle(), goalTitle)).toList();
+    }
+    // Recibe un String y busca todos los eventos que tengan en su titulo ese string, devolviendolos como lista inmutable de Event
+    public List<Event> findByTitleContains(String subString){
+        return events.stream().filter(event -> event.getTitle().contains(subString)).toList();
     }
 }
