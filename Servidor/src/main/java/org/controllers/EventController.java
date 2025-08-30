@@ -15,7 +15,8 @@ import java.util.List;
 public class EventController {
 
     EventService eventService;
-    public EventController(EventService eventService){
+
+    public EventController(EventService eventService) {
         this.eventService = eventService;
     }
 
@@ -37,15 +38,14 @@ public class EventController {
     // Obtiene un evento a partir de un uuid en el path
     // Si no se encuentra devuelve 404 NOTFOUND. De lo contrario devuelve el errorDTO
     @GetMapping("/{id}")
-    public ResponseEntity<EventDTO> getEventById(@PathVariable String id){
+    public ResponseEntity<EventDTO> getEventById(@PathVariable String id) {
         try {
             EventDTO eventDTO = eventService.getEventDTOById(id);
             return ResponseEntity.ok(eventDTO);
-        }catch (EventNotFoundException e){
+        } catch (EventNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
-
 
 
     // Permite buscar dentro de la lista de eventos aplicando filtros
@@ -55,15 +55,14 @@ public class EventController {
     // todos estos filtros son opcionales. Puede hacerse una consulta sin filtros para obtener todos los eventos
     @GetMapping
     public ResponseEntity<List<EventDTO>> getEventsByParams(
-                                        @RequestParam(required = false) String title,
-                                        @RequestParam(required = false) String titleContains,
-                                        @RequestParam(required = false) LocalDateTime maxDate,
-                                        @RequestParam(required = false) LocalDateTime minDate)
-    {
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String titleContains,
+            @RequestParam(required = false) LocalDateTime maxDate,
+            @RequestParam(required = false) LocalDateTime minDate) {
         try {
             List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(title, titleContains, maxDate, minDate);
             return ResponseEntity.ok(eventsDTO);
-        }catch (BadRequestException e){
+        } catch (BadRequestException e) {
             return ResponseEntity.badRequest().build();
         }
     }

@@ -16,23 +16,25 @@ import java.util.UUID;
 public class EventService {
 
     EventRepository eventRepository;
-    public EventService(EventRepository eventRepository){
+
+    public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
     }
+
     // Crea un evento a partir de un EventDTO
     // Autogenera el uuid, ignorando uno si está dado en eventDTO
     // Tira NullPointerException si falta uno de los valores obligatorios para eventos
     // Devuelve el evento creado, una vez almacenado en el repositorio
-    public Event createEvent(EventDTO eventDTO) throws NullPointerException{
+    public Event createEvent(EventDTO eventDTO) throws NullPointerException {
         Event newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags());
         eventRepository.save(newEvent);
         return newEvent;
     }
 
     // Dado un UUID, devuelve el EventDTO con el mismo id, o lanza EventNotFoundException si no lo encuentra
-    public EventDTO getEventDTOById(String id) throws EventNotFoundException{
+    public EventDTO getEventDTOById(String id) throws EventNotFoundException {
         Optional<Event> event = eventRepository.findById(UUID.fromString(id));
-        if(event.isEmpty())
+        if (event.isEmpty())
             throw new EventNotFoundException("No se encontro el evento con id" + id);
         return EventDTO.fromEvent(event.get());
     }
@@ -49,6 +51,7 @@ public class EventService {
                                 event.getStartDateTime().isAfter(minDate))
         ).map(EventDTO::fromEvent).toList();
     }
+
     // Recibe String title y String titleContains
     // Solo uno puede ser distinto a null. Si ninguno es null, lanza BadRequestException
     // Si ambos son null devuelve la lista entera
@@ -66,16 +69,19 @@ public class EventService {
             return getAllEvents();
         }
     }
+
     // Devuelve todos los eventos con un título igual a title
-    public List<Event> getEventsByTitle(String title){
+    public List<Event> getEventsByTitle(String title) {
         return eventRepository.findByTitle(title);
     }
+
     // Devuelve todos los eventos que en su título contienen titleContains
-    public List<Event> getEventsByTitleContains(String titleContains){
+    public List<Event> getEventsByTitleContains(String titleContains) {
         return eventRepository.findByTitleContains(titleContains);
     }
+
     // Devuelve todos los eventos conocidos
-    public List<Event> getAllEvents(){
+    public List<Event> getAllEvents() {
         return eventRepository.getAll();
     }
 
