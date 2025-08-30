@@ -58,9 +58,11 @@ public class EventController {
             @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "titleContains", required = false) String titleContains,
             @RequestParam(name = "maxDate", required = false) LocalDateTime maxDate,
-            @RequestParam(name = "minDate", required = false) LocalDateTime minDate) {
+            @RequestParam(name = "minDate", required = false) LocalDateTime minDate,
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "tags", required = false) List<String> tags) {
         try {
-            List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(title, titleContains, maxDate, minDate);
+            List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(title, titleContains, maxDate, minDate, category, tags);
             return ResponseEntity.ok(eventsDTO);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().build();
