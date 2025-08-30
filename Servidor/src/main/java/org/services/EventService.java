@@ -88,7 +88,7 @@ public class EventService {
         return (
                 (maxDate == null || event.getStartDateTime().isBefore(maxDate)) &&
                 (minDate == null || event.getStartDateTime().isAfter(minDate)) &&
-                (category == null || Objects.equals(event.getCategory().getTitle(), category)) &&
+                (category == null  || (event.getCategory() != null && Objects.equals(event.getCategory().getTitle(), category))) &&
                 ((tags == null || tags.isEmpty()) ||
                     tags.stream().allMatch(comparedTagAsString -> event.getTags().stream().anyMatch(tag-> Objects.equals(tag.getNombre(), comparedTagAsString))))
                 ) &&
