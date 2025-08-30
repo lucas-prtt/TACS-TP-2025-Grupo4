@@ -1,15 +1,14 @@
 package org.controllers;
 
 import org.DTOs.EventDTO;
-import org.dominio.events.Event;
-import org.dominio.events.EventBuilder;
+import org.apache.coyote.BadRequestException;
+import org.exceptions.EventNotFoundException;
 import org.services.EventService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController()
 @RequestMapping("/events")
@@ -28,9 +27,46 @@ public class EventController {
         if (eventDTO.getId() != null)
             return ResponseEntity.badRequest().build();
         try {
-            return ResponseEntity.ok(EventDTO.fromEvent(eventService.crearEvento(eventDTO)));
+            return ResponseEntity.ok(EventDTO.fromEvent(eventService.createEvent(eventDTO)));
         } catch (NullPointerException e) {
             return ResponseEntity.badRequest().build();
         }
     }
+
+
+    // Obtiene un evento a partir de un uuid en el path
+    // Si no se encuentra devuelve 404 NOTFOUND. De lo contrario devuelve el errorDTO
+    @GetMapping("/{id}")
+    public ResponseEntity<EventDTO> getEventById(@PathVariable String id){
+        try {
+            EventDTO eventDTO = eventService.getEventDTOById(id);
+            return ResponseEntity.ok(eventDTO);
+        }catch (EventNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+
+    // Permite buscar dentro de la lista de eventos aplicando filtros
+    // Los filtros admitidos son:
+    // title o titleContains (uno solo de los dos. Un string que debe ser o contenerse en el título)
+    // maxDate y/o minDate (Las fechas dentro de las cuales puede comenzar el evento)
+    // todos estos filtros son opcionales. Puede hacerse una consulta sin filtros para obtener todos los eventos
+    @GetMapping
+    public ResponseEntity<List<EventDTO>> getEventsByParams(
+                                        @RequestParam(required = false) String title,
+                                        @RequestParam(required = false) String titleContains,
+                                        @RequestParam(required = false) LocalDateTime maxDate,
+                                        @RequestParam(required = false) LocalDateTime minDate)
+    {
+        try {
+            List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(title, titleContains, maxDate, minDate);
+            return ResponseEntity.ok(eventsDTO);
+        }catch (BadRequestException e){
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
 }
