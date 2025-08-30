@@ -7,6 +7,7 @@ import org.exceptions.EventNotFoundException;
 import org.repositories.EventRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -43,9 +44,9 @@ public class EventService {
     // Dada una serie de parámetros opcionales (pueden ser null), ejecuta una búsqueda entre los eventos y devuelve los que coinciden con los parámetros como DTO
     // Los parámetros title y titleContains no pueden ser ambos distintos de null
     // Si ningún parametro está presente, se devuelve una lista de todos los eventos conocidos
-    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags) throws BadRequestException {
+    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) throws BadRequestException {
         List<Event> events = getEventsByTitleOrContains(title, titleContains);
-        return events.stream().filter(event -> isValidEvent(event, maxDate, minDate, category, tags)).map(EventDTO::fromEvent).toList();
+        return events.stream().filter(event -> isValidEvent(event, maxDate, minDate, category, tags, maxPrice, minPrice)).map(EventDTO::fromEvent).toList();
     }
 
     // Recibe String title y String titleContains
@@ -82,14 +83,18 @@ public class EventService {
     }
     // Devuelve válido si el evento cumple las condiciones (Los tags deben incluirse todos en el hecho)
     // Admite parámetros nulos, pero el evento debe ser dado si o sí.
-    public Boolean isValidEvent(Event event, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags){
+    // MinPrice y MaxPrice se consideran válidos, incluso si el precio es igual a uno de estos dos.
+    public Boolean isValidEvent(Event event, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice){
         return (
                 (maxDate == null || event.getStartDateTime().isBefore(maxDate)) &&
                 (minDate == null || event.getStartDateTime().isAfter(minDate)) &&
                 (category == null || Objects.equals(event.getCategory().getTitle(), category)) &&
                 ((tags == null || tags.isEmpty()) ||
                     tags.stream().allMatch(comparedTagAsString -> event.getTags().stream().anyMatch(tag-> Objects.equals(tag.getNombre(), comparedTagAsString))))
-                );
+                ) &&
+                (maxPrice == null || event.getPrice().compareTo(maxPrice) <= 0) &&
+                (minPrice == null || event.getPrice().compareTo(minPrice) >= 0)
+                ;
     }
 
 }
