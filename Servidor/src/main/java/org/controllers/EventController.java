@@ -38,7 +38,7 @@ public class EventController {
     // Obtiene un evento a partir de un uuid en el path
     // Si no se encuentra devuelve 404 NOTFOUND. De lo contrario devuelve el errorDTO
     @GetMapping("/{id}")
-    public ResponseEntity<EventDTO> getEventById(@PathVariable String id) {
+    public ResponseEntity<EventDTO> getEventById(@PathVariable(name = "id") String id) {
         try {
             EventDTO eventDTO = eventService.getEventDTOById(id);
             return ResponseEntity.ok(eventDTO);
