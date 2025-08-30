@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;
 
-
+@Repository
 public class EventRepository {
     List<Event> events = new ArrayList<Event>();
 
