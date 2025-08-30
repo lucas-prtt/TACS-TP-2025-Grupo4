@@ -1,0 +1,12 @@
+http://localhost:8080/events
+-> Devuelve todos los eventos
+http://localhost:8080/events?title=Taller de Fotografía&maxDate=2539-03-20T12:22:44
+-> Devuelve solo el de taller de fotografía
+http://localhost:8080/events?title=Taller de Fotografía&maxDate=1939-03-20T12:22:44
+-> No devuelve ninguno, excepto que se haya modificado la fecha
+http://localhost:8080/events?titleContains=Pro
+-> Devuelve Curso de Programación en Java
+http://localhost:8080/events?titleContains=de
+-> Devuelve los 3 eventos
+http://localhost:8080/events/ {Completar con UUID}
+-> Devuelve el hecho con la UUID dada

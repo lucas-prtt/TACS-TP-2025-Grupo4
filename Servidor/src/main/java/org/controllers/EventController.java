@@ -55,10 +55,10 @@ public class EventController {
     // todos estos filtros son opcionales. Puede hacerse una consulta sin filtros para obtener todos los eventos
     @GetMapping
     public ResponseEntity<List<EventDTO>> getEventsByParams(
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) String titleContains,
-            @RequestParam(required = false) LocalDateTime maxDate,
-            @RequestParam(required = false) LocalDateTime minDate) {
+            @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "titleContains", required = false) String titleContains,
+            @RequestParam(name = "maxDate", required = false) LocalDateTime maxDate,
+            @RequestParam(name = "minDate", required = false) LocalDateTime minDate) {
         try {
             List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(title, titleContains, maxDate, minDate);
             return ResponseEntity.ok(eventsDTO);
