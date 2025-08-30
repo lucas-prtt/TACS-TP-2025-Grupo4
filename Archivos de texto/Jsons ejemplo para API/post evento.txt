@@ -1,0 +1,57 @@
+{
+  "title": "Concierto de Jazz",
+  "description": "Un evento de jazz en vivo con artistas locales.",
+  "startDateTime": "2025-09-10T20:00:00",
+  "durationMinutes": 120,
+  "location": "Teatro Nacional",
+  "maxParticipants": 150,
+  "minParticipants": 50,
+  "price": 20.50,
+  "category": {
+    "title": "Música"
+  },
+  "tags": [
+    {
+      "nombre": "Jazz"
+    },
+    {
+      "nombre": "Concierto"
+    }
+  ]
+}
+
+
+{
+  "title": "Taller de Fotografía",
+  "description": "Un taller práctico de fotografía para principiantes.",
+  "startDateTime": "2025-09-12T09:00:00",
+  "durationMinutes": 180,
+  "location": "Estudio Fotográfico XYZ",
+  "maxParticipants": 20,
+  "price": 50.00,
+  "category": {
+    "title": "Arte"
+  },
+  "tags": [
+    {
+      "nombre": "Fotografía"
+    },
+    {
+      "nombre": "Taller"
+    }
+  ]
+}
+
+
+{
+  "title": "Curso de Programación Java",
+  "description": "Un curso intensivo de Java para desarrolladores junior.",
+  "startDateTime": "2025-09-20T10:00:00",
+  "durationMinutes": 240,
+  "location": "Centro de Capacitación Tecnológica",
+  "maxParticipants": 25,
+  "price": 100.00
+}
+
+
+
