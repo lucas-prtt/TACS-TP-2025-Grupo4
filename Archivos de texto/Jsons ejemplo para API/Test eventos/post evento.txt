@@ -63,7 +63,7 @@
   "minParticipants": 0,
   "price": 0,
   "category": {
-    "title": "Musica"
+    "title": "Música"
   },
   "tags": [
     {

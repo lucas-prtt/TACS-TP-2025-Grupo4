@@ -16,6 +16,6 @@ http://localhost:8080/events?tags=Jazz&tags=Concierto
 -> Devuelve solamente el concierto de jazz
 http://localhost:8080/events?tags=Jazz
 -> Devuelve el concierto de jazz y la venta de instrumentos usados
-http://localhost:8080/events?category=Musica
+http://localhost:8080/events?category=Música
 -> Devuelve el concierto de jazz y la venta de instrumentos usados
 
