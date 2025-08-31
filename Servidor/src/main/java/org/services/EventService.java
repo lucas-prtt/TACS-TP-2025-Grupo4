@@ -3,6 +3,7 @@ package org.services;
 import org.DTOs.EventDTO;
 import org.apache.coyote.BadRequestException;
 import org.dominio.events.Event;
+import org.dominio.events.RegistrationState;
 import org.dominio.usuarios.Account;
 import org.exceptions.EventNotFoundException;
 import org.repositories.AccountRepository;
@@ -16,7 +17,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class EventService {
@@ -117,18 +117,28 @@ public class EventService {
         Account account = accountRepository.findById(String.valueOf(accountId))
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        //Verificar si ya está inscripto
+        if(event.getParticipants().stream().anyMatch(reg -> reg.getUser().getUuid().equals(accountId)))
+            return "ALREADY_REGISTERED";
+
+        //Verificar si ya está en waitlist
+        if(event.getWaitList().stream().anyMatch(acc -> acc.getUser().getUuid().equals(accountId)))
+            return "ALREADY_IN_WAITLIST";
+
         Registration registration = new Registration();
         registration.setEvent(event);
         registration.setUser(account);
 
         if (event.getParticipants().size() < event.getMaxParticipants()) {
+            registration.setState(RegistrationState.CONFIRMED);
             event.getParticipants().add(registration);
-            account.getRegistrations().add(registration); // Relación inversa
-            return "CONFIRMED";
+            account.getRegistrations().add(registration);
+            return RegistrationState.CONFIRMED.toString();
         } else {
-            event.getWaitList().add(account);
-            account.getWaitlists().add(event); // Relación inversa
-            return "WAITLIST";
+            registration.setState(RegistrationState.WAITLIST);
+            event.getWaitList().add(registration);
+            account.getWaitlists().add(registration);
+            return RegistrationState.WAITLIST.toString();
         }
     }
 

@@ -9,4 +9,5 @@ import lombok.Setter;
 public class Registration {
     Event event;
     Account user;
+    RegistrationState state;
 }
