@@ -2,6 +2,7 @@ package org.controllers;
 
 import org.DTOs.EventDTO;
 import org.apache.coyote.BadRequestException;
+import org.dominio.usuarios.Account;
 import org.exceptions.EventNotFoundException;
 import org.services.EventService;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @RestController()
 @RequestMapping("/events")
@@ -72,6 +74,21 @@ public class EventController {
             return ResponseEntity.ok(eventsDTO);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/{id}/register")
+    public ResponseEntity<String> registerUserToEvent(
+            @PathVariable("id") String eventId,
+            @RequestBody Account account
+    ) {
+        try {
+            String result = eventService.registerParticipantToEvent(UUID.fromString(eventId), account);
+            return ResponseEntity.ok(result);
+        } catch (EventNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
