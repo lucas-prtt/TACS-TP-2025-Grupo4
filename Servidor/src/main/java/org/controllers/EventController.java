@@ -1,6 +1,7 @@
 package org.controllers;
 
 import org.DTOs.EventDTO;
+import org.DTOs.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
 import org.dominio.usuarios.Account;
 import org.exceptions.EventNotFoundException;
@@ -77,13 +78,10 @@ public class EventController {
         }
     }
 
-    @PostMapping("/{id}/register")
-    public ResponseEntity<String> registerUserToEvent(
-            @PathVariable("id") String eventId,
-            @RequestBody Account account
-    ) {
+    @PostMapping("/registration")
+    public ResponseEntity<String> registerUserToEvent(@RequestBody RegistrationDTO registrationDTO) {
         try {
-            String result = eventService.registerParticipantToEvent(UUID.fromString(eventId), account);
+            String result = eventService.registerParticipantToEvent(registrationDTO.getEventId(), registrationDTO.getAccountId());
             return ResponseEntity.ok(result);
         } catch (EventNotFoundException e) {
             return ResponseEntity.notFound().build();

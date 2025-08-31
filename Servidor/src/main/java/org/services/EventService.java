@@ -5,6 +5,7 @@ import org.apache.coyote.BadRequestException;
 import org.dominio.events.Event;
 import org.dominio.usuarios.Account;
 import org.exceptions.EventNotFoundException;
+import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.springframework.stereotype.Service;
 import org.dominio.events.Registration;
@@ -21,9 +22,11 @@ import java.util.UUID;
 public class EventService {
 
     EventRepository eventRepository;
+    AccountRepository accountRepository;
 
-    public EventService(EventRepository eventRepository) {
+    public EventService(EventRepository eventRepository, AccountRepository accountRepository) {
         this.eventRepository = eventRepository;
+        this.accountRepository = accountRepository;
     }
 
     // Crea un evento a partir de un EventDTO
@@ -104,22 +107,27 @@ public class EventService {
      * Registra un usuario a un evento. Si hay cupo, lo agrega como participante.
      * Si no hay cupo, lo agrega a la waitlist.
      * @param eventId UUID del evento
-     * @param account Cuenta del usuario
+     * @param accountId UUID del usuario
      * @return "CONFIRMED" si quedó inscripto, "WAITLIST" si quedó en espera
      * @throws EventNotFoundException si el evento no existe
      */
-    public String registerParticipantToEvent(UUID eventId, Account account) {
+    public String registerParticipantToEvent(UUID eventId, UUID accountId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
+        Account account = accountRepository.findById(String.valueOf(accountId))
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         Registration registration = new Registration();
         registration.setEvent(event);
         registration.setUser(account);
 
         if (event.getParticipants().size() < event.getMaxParticipants()) {
             event.getParticipants().add(registration);
+            account.getRegistrations().add(registration); // Relación inversa
             return "CONFIRMED";
         } else {
             event.getWaitList().add(account);
+            account.getWaitlists().add(event); // Relación inversa
             return "WAITLIST";
         }
     }
