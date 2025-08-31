@@ -6,6 +6,10 @@ import org.dominio.events.EventBuilder;
 import org.repositories.EventRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 public class EventService {
 
@@ -21,6 +25,12 @@ public class EventService {
         Event newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags());
         eventRepository.save(newEvent);
         return newEvent;
+    }
+    public Event getEvent(UUID eventId) {
+        //devuelve el evento (con sus inscriptos y su waitlist)
+        Optional<Event> eventOptional = eventRepository.findById(eventId);
+        Event event = eventOptional.orElseThrow(() -> new NoSuchElementException("Evento no encontrado con ID: " + eventId));
+        return event;
     }
 
 }

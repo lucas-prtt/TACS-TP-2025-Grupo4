@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.dominio.Enums.EventState;
 import org.dominio.usuarios.Account;
+import org.services.EventService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,7 +29,7 @@ public class Event {
     List<Tag> tags;
     List<Registration> participants;
     Queue<Account> waitList;
-
+    EventState eventState;
     // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price
     public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags) throws NullPointerException{
         //Obligatorios
@@ -60,6 +62,37 @@ public class Event {
         this.participants = new ArrayList<>();
         this.waitList = new ArrayDeque<>();
         this.id = UUID.randomUUID();
+        this.eventState=EventState.ABIERTO;
     }
     public static EventBuilder Builder(){return new EventBuilder();}
+
+    public void closeRegistrations() {
+        this.eventState=EventState.CERRADO;
+    }
+
+    public boolean isRegistrationsOpen(){
+
+        if(eventState.equals(EventState.ABIERTO)){
+            return true;
+        }
+        return false;
+    }
+    public boolean hasAvailableSpots() {
+        return participants.size() < maxParticipants;
+    }
+    public String registerParticipant(){
+        //metodo para inscribir participante al evento verificando las condiciones:
+        //-hay cupo-si las inscripciones estan abiertas ,etc
+
+        if(isRegistrationsOpen() ){
+
+            if(hasAvailableSpots()){
+                //inscribir
+            }else {
+                //añadir a waitlist
+            }
+        }
+        return null;
+    }
+
 }

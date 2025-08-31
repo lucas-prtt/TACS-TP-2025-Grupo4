@@ -11,6 +11,11 @@ import java.util.UUID;
 @Setter
 public class Account {
     UUID uuid;
+
+    public Account(String username) {
+        this.username = username;
+    }
+
     String username;
     String salt; //Temporales, hasta que sepamos implementarlo
     String passwordHash;    // Idem
