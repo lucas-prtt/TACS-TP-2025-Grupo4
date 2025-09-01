@@ -66,7 +66,7 @@ public class Event {
         if (participants.size() < maxParticipants && !waitList.isEmpty()) {
             Registration next = waitList.poll();  // saca el primero
             next.setState(RegistrationState.CONFIRMED);
-            next.getUser().promoteFromWaitlistOfAccount(next);
+            next.getUser().promoteFromWaitlistOfAccount(next); // mantiene el estado del usuario
             participants.add(next);
         }
     }
