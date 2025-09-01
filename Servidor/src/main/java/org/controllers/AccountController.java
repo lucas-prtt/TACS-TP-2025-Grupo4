@@ -2,7 +2,8 @@ package org.controllers;
 
 import org.DTOs.AccountDTO;
 import org.DTOs.AccountRegistrationDTO;
-import org.DTOs.RegistrationDTO;
+import org.DTOs.EventDTO;
+import org.services.EventService;
 import org.dominio.usuarios.Account;
 import org.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,19 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private EventService eventService;
+
     @GetMapping("/{accountId}/registrations")
     public ResponseEntity<List<AccountRegistrationDTO>> getRegistrations(@PathVariable(name = "accountId") String accountId) {
         List<AccountRegistrationDTO> registrations = accountService.getRegistrations(UUID.fromString(accountId));
         return ResponseEntity.ok(registrations);
+    }
+
+    @GetMapping("/{accountId}/organized-events")
+    public ResponseEntity<List<EventDTO>> getOrganizedEvents(@PathVariable(name = "accountId") String accountId) {
+        List<EventDTO> events = eventService.getEventsByOrganizer(UUID.fromString(accountId));
+        return ResponseEntity.ok(events);
     }
 
     @PostMapping
