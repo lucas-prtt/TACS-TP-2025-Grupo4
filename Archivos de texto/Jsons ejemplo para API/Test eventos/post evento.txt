@@ -17,7 +17,8 @@
     {
       "nombre": "Concierto"
     }
-  ]
+  ],
+  "organizerId" : "76a83150-7dcc-421e-a7ab-c8787745c6ba"
 }
 
 
@@ -39,7 +40,8 @@
     {
       "nombre": "Taller"
     }
-  ]
+  ],
+  "organizerId" : "76a83150-7dcc-421e-a7ab-c8787745c6ba"
 }
 
 
@@ -50,7 +52,8 @@
   "durationMinutes": 240,
   "location": "Centro de Capacitación Tecnológica",
   "maxParticipants": 25,
-  "price": 100.00
+  "price": 100.00,
+  "organizerId": "76a83150-7dcc-421e-a7ab-c8787745c6ba"
 }
 
 {
@@ -75,7 +78,8 @@
     {
       "nombre": "Bienes usados"
     }
-  ]
+  ],
+  "organizerId" : "76a83150-7dcc-421e-a7ab-c8787745c6ba"
 }
 
 

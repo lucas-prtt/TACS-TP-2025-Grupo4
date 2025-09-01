@@ -31,10 +31,13 @@ public class EventServiceTest {
 
     @Test
     public void testRegisterParticipantToEvent_ConfirmedAndWaitlist() {
+        Account userOrganizer = new Account();
+        userOrganizer.setUuid(UUID.randomUUID());
+        userOrganizer.setUsername("userOrg");
+        accountRepository.save(userOrganizer);
+
         // Crear evento con cupo 1
-        Event event = new Event("Test Event", "desc",
-                LocalDateTime.now().plusDays(1), 60, "CABA",
-                1, null, BigDecimal.ZERO, null, null);
+        Event event = new Event("Test Event", "desc", LocalDateTime.now().plusDays(1), 60, "CABA", 1, null, BigDecimal.ZERO, null, null, userOrganizer);
         eventRepository.save(event);
 
         Account user1 = new Account();
