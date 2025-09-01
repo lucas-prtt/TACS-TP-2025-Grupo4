@@ -14,6 +14,6 @@ public class AccountRepository {
     }
 
     public void save(Account account) {
-        accounts.put(account.getUuid().toString(), account);
+        accounts.put(account.getId().toString(), account);
     }
 }

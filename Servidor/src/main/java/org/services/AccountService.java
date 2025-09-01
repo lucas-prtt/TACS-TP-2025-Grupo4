@@ -14,7 +14,7 @@ public class AccountService {
 
     public Account createAccount(AccountDTO accountDTO) {
         Account account = new Account();
-        account.setUuid(accountDTO.getUuid());
+        account.setId(accountDTO.getUuid());
         account.setUsername(accountDTO.getUsername());
         account.setSalt(accountDTO.getSalt());
         account.setPasswordHash(accountDTO.getPasswordHash());
