@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.services.AccountService;
 import org.services.EventService;
+import org.services.StatsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,23 +21,25 @@ public class EventServiceTest {
     private EventService eventService;
     private EventRepository eventRepository;
     private AccountRepository accountRepository;
+    private StatsService statsService;
 
     @Before
     public void setUp() {
         eventRepository = new EventRepository();
         accountRepository = new AccountRepository();
-        eventService = new EventService(eventRepository, accountRepository);
+        statsService = new StatsService(eventRepository);
+        eventService = new EventService(eventRepository, accountRepository, statsService);
     }
 
     @Test
     public void testRegisterParticipantToEvent_ConfirmedAndWaitlist() {
-        Account organizer = new Account();
-        organizer.setUuid(UUID.randomUUID());
-        organizer.setUsername("organizer");
-        accountRepository.save(organizer);
+        Account userOrganizer = new Account();
+        userOrganizer.setUuid(UUID.randomUUID());
+        userOrganizer.setUsername("userOrg");
+        accountRepository.save(userOrganizer);
 
         // Crear evento con cupo 1
-        Event event = new Event("Test Event", "desc", LocalDateTime.now().plusDays(1), 60, "CABA", 1, null, BigDecimal.ZERO, null, null, organizer);
+        Event event = new Event("Test Event", "desc", LocalDateTime.now().plusDays(1), 60, "CABA", 1, null, BigDecimal.ZERO, null, null, userOrganizer);
         eventRepository.save(event);
 
         Account user1 = new Account();

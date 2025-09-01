@@ -16,6 +16,7 @@ public class Event {
     UUID id;
     String title;
     String description;
+    Account organizer;
     LocalDateTime startDateTime;
     Integer durationMinutes;
     String location;
