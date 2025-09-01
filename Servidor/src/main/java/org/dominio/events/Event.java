@@ -2,9 +2,7 @@ package org.dominio.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dominio.usuarios.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,7 +24,7 @@ public class Event {
     Category category;
     List<Tag> tags;
     List<Registration> participants;
-    Queue<Account> waitList;
+    Queue<Registration> waitList;
 
     // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price
     public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags) throws NullPointerException{
