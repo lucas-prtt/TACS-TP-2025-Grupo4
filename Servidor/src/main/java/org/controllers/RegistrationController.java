@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("users/{userId}/registrations")
+@RequestMapping("users/{accountId}/registrations")
 public class RegistrationController {
 
   private final RegistrationService registrationService;
@@ -33,14 +33,14 @@ public class RegistrationController {
 
   // Obtener todas las inscripciones de un usuario
   @GetMapping
-  public ResponseEntity<List<RegistrationDTO>> getAllByUser(@PathVariable("userId")  UUID userId) {
-    return ResponseEntity.ok(registrationService.findByUserId(userId));
+  public ResponseEntity<List<RegistrationDTO>> getAllByUser(@PathVariable("accountId")  UUID accountId) {
+    return ResponseEntity.ok(registrationService.findByAccountId(accountId));
   }
 
   @GetMapping("/{registrationId}")
-  public ResponseEntity<?> getRegistrationByUserAndById(@PathVariable("userId") UUID userId,
+  public ResponseEntity<?> getRegistrationByUserAndById(@PathVariable("accountId") UUID accountId,
                                                         @PathVariable("registrationId") UUID registrationId) {
-    return registrationService.findByUserAndRegistrationId(userId, registrationId)
+    return registrationService.findByUserAndRegistrationId(accountId, registrationId)
         .<ResponseEntity<?>>map(ResponseEntity::ok)
         .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(Map.of("error", "La inscripción no existe o no pertenece al usuario")));
@@ -49,8 +49,8 @@ public class RegistrationController {
 
   // Cancelar inscripción
   @DeleteMapping("/{registrationId}")
-  public ResponseEntity<?> cancel(@PathVariable("userId") UUID userId, @PathVariable("registrationId") UUID registrationId) {
-    boolean ok = registrationService.cancelRegistration(registrationId, userId);
+  public ResponseEntity<?> cancel(@PathVariable("accountId") UUID accountId, @PathVariable("registrationId") UUID registrationId) {
+    boolean ok = registrationService.cancelRegistration(registrationId, accountId);
     if (!ok) {
       return ResponseEntity.status(403)
           .body(Map.of("error", "No tienes permiso o la inscripción no existe"));

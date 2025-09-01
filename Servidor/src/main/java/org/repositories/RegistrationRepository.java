@@ -1,6 +1,5 @@
 package org.repositories;
 
-import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.dominio.events.Event;
 import org.dominio.events.Registration;
 import org.springframework.stereotype.Repository;
 
@@ -34,10 +32,10 @@ public class RegistrationRepository {
     return new ArrayList<>(registrations.values());
   }
 
-  // Buscar por userId
-  public List<Registration> findByUserId(UUID userId) {
+  // Buscar por accountId
+  public List<Registration> findByAccountId(UUID accountId) {
     return registrations.values().stream()
-        .filter(r -> Objects.equals(r.getUser().getId(), userId))
+        .filter(r -> Objects.equals(r.getUser().getId(), accountId))
         .collect(Collectors.toList());
   }
 
@@ -54,9 +52,9 @@ public class RegistrationRepository {
   }
 
   // Verificar si ya existe inscripción
-  public boolean existsByUserAndEvent(UUID userId, UUID eventId) {
+  public boolean existsByUserAndEvent(UUID accountId, UUID eventId) {
     return registrations.values().stream()
-        .anyMatch(r -> Objects.equals(r.getUser().getId(), userId)
+        .anyMatch(r -> Objects.equals(r.getUser().getId(), accountId)
             && Objects.equals(r.getEvent().getId(), eventId));
   }
 }
