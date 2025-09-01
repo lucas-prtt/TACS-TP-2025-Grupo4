@@ -7,6 +7,7 @@ import org.repositories.AccountRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.services.EventService;
+import org.services.StatsService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,12 +19,14 @@ public class EventServiceTest {
     private EventService eventService;
     private EventRepository eventRepository;
     private AccountRepository accountRepository;
+    private StatsService statsService;
 
     @Before
     public void setUp() {
         eventRepository = new EventRepository();
         accountRepository = new AccountRepository();
-        eventService = new EventService(eventRepository, accountRepository);
+        statsService = new StatsService(eventRepository);
+        eventService = new EventService(eventRepository, accountRepository, statsService);
     }
 
     @Test
