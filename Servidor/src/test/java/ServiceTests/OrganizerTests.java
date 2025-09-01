@@ -1,4 +1,4 @@
-package serviceTests;
+package ServiceTests;
 import org.dominio.Enums.EventState;
 import org.dominio.events.Event;
 import org.dominio.events.Registration;
@@ -15,7 +15,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-public class organizerServiceTests {
+public class OrganizerTests {
     private EventService eventService;
     private OrganizerService organizerService;
     private Event mockEvent;

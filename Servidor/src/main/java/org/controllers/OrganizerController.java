@@ -12,25 +12,25 @@ import java.util.UUID;
 @RequestMapping("/organizer")
 public class OrganizerController {
 
-        private final OrganizerService organizerService;
+    private final OrganizerService organizerService;
 
-        public OrganizerController(OrganizerService organizerService) {
-            this.organizerService = organizerService;
-        }
+    public OrganizerController(OrganizerService organizerService) {
+        this.organizerService = organizerService;
+    }
 
-        @GetMapping("/event/{eventId}/participants")
-        public List<Account> getParticipants(@PathVariable UUID eventId) {
-            return organizerService.getRegistrationsFromEvent(eventId);
-        }
+    @GetMapping("/event/{eventId}/participants")
+    public List<Account> getParticipants(@PathVariable UUID eventId) {
+        return organizerService.getRegistrationsFromEvent(eventId);
+    }
 
-        @GetMapping("/event/{eventId}/waitlist")
-        public Queue<Account> getWaitlist(@PathVariable UUID eventId) {
-            return organizerService.getWaitlistFromEvent(eventId);
-        }
+    @GetMapping("/event/{eventId}/waitlist")
+    public Queue<Account> getWaitlist(@PathVariable UUID eventId) {
+        return organizerService.getWaitlistFromEvent(eventId);
+    }
 
-        @PostMapping("/event/{eventId}/close")
-        public void closeRegistrations(@PathVariable UUID eventId) {
-            organizerService.closeRegistrations(eventId);
-        }
+    @PostMapping("/event/{eventId}/close")
+    public void closeRegistrations(@PathVariable UUID eventId) {
+        organizerService.closeRegistrations(eventId);
+    }
 
 }

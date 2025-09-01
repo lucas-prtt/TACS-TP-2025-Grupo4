@@ -53,5 +53,29 @@
   "price": 100.00
 }
 
+{
+  "title": "Venta de instrumentos usados de Jazz",
+  "description": "Si buscas instrumentos de Jazz, aca vas a encontrar los mejores precios!",
+  "startDateTime": "2025-09-10T20:00:00",
+  "durationMinutes": 360,
+  "location": "La Matanza",
+  "maxParticipants": 200,
+  "minParticipants": 0,
+  "price": 0,
+  "category": {
+    "title": "Música"
+  },
+  "tags": [
+    {
+      "nombre": "Jazz"
+    },
+    {
+      "nombre": "Venta"
+    },
+    {
+      "nombre": "Bienes usados"
+    }
+  ]
+}
 
 

@@ -1,10 +1,8 @@
 package org.repositories;
 
 import org.dominio.events.Event;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;
@@ -36,7 +34,7 @@ public class EventRepository {
     }
 
     // Recibe el titulo del evento a buscar como String y devuelve una lista inmutable de Eventos del mismo titulo
-    public List<Event> findByTitle(String goalTitle) throws NoSuchElementException{
+    public List<Event> findByTitle(String goalTitle){
         return findBy(event -> Objects.equals(event.getTitle(), goalTitle));
     }
     // Recibe un String y busca todos los eventos que tengan en su título ese string, devolviéndolos como lista inmutable de Event
