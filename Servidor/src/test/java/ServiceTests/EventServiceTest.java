@@ -1,11 +1,13 @@
 package ServiceTests;
 
+import org.DTOs.AccountDTO;
 import org.dominio.events.Event;
 import org.dominio.usuarios.Account;
 import org.repositories.EventRepository;
 import org.repositories.AccountRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.services.AccountService;
 import org.services.EventService;
 
 import java.math.BigDecimal;
@@ -48,14 +50,12 @@ public class EventServiceTest {
         assertEquals(1, event.getParticipants().size());
         assertEquals(0, event.getWaitList().size());
         assertEquals(1, user1.getRegistrations().size());
-        assertEquals(0, user1.getWaitlists().size());
 
         // Segundo usuario debe quedar en waitlist
         String result2 = eventService.registerParticipantToEvent(event.getId(), user2.getUuid());
         assertEquals("WAITLIST", result2);
         assertEquals(1, event.getParticipants().size());
         assertEquals(1, event.getWaitList().size());
-        assertEquals(0, user2.getRegistrations().size());
-        assertEquals(1, user2.getWaitlists().size());
+        assertEquals(1, user2.getRegistrations().size());
     }
 }

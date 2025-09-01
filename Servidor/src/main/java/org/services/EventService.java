@@ -129,17 +129,18 @@ public class EventService {
         registration.setEvent(event);
         registration.setUser(account);
 
-        if (event.getParticipants().size() < event.getMaxParticipants()) {
+        if (event.getParticipants().size() < event.getMaxParticipants()){
             registration.setState(RegistrationState.CONFIRMED);
             event.getParticipants().add(registration);
-            account.getRegistrations().add(registration);
-            return RegistrationState.CONFIRMED.toString();
-        } else {
+        }
+        else{
             registration.setState(RegistrationState.WAITLIST);
             event.getWaitList().add(registration);
-            account.getWaitlists().add(registration);
-            return RegistrationState.WAITLIST.toString();
         }
+
+        account.getRegistrations().add(registration);
+
+        return registration.getState().toString();
     }
 
 }
