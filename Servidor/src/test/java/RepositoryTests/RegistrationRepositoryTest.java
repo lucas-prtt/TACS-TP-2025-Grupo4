@@ -65,7 +65,7 @@ class RegistrationRepositoryTest {
   void findByUserId_shouldReturnRegistrationsForUser() {
     repository.save(registration);
 
-    List<Registration> userRegistrations = repository.findByUserId(account.getId());
+    List<Registration> userRegistrations = repository.findByAccountId(account.getId());
 
     assertEquals(1, userRegistrations.size());
     assertEquals(registration, userRegistrations.getFirst());

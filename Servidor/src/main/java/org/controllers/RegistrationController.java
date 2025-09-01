@@ -4,25 +4,18 @@ package org.controllers;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.DTOs.EventDTO;
 import org.DTOs.RegistrationDTO;
-import org.dominio.events.Registration;
-import org.dominio.usuarios.Account;
-import org.exceptions.EventNotFoundException;
 import org.services.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("users/{userId}/registrations")
+@RequestMapping("accounts/{accountId}/registrations")
 public class RegistrationController {
 
   private final RegistrationService registrationService;
@@ -31,16 +24,16 @@ public class RegistrationController {
     this.registrationService = registrationService;
   }
 
-  // Obtener todas las inscripciones de un usuario
-  @GetMapping
-  public ResponseEntity<List<RegistrationDTO>> getAllByUser(@PathVariable("userId")  UUID userId) {
-    return ResponseEntity.ok(registrationService.findByUserId(userId));
-  }
+//  // Obtener todas las inscripciones de un usuario
+//  @GetMapping
+//  public ResponseEntity<List<RegistrationDTO>> getAllByUser(@PathVariable("accountId")  UUID accountId) {
+//    return ResponseEntity.ok(registrationService.findByUserId(accountId));
+//  }
 
   @GetMapping("/{registrationId}")
-  public ResponseEntity<?> getRegistrationByUserAndById(@PathVariable("userId") UUID userId,
+  public ResponseEntity<?> getRegistrationByUserAndById(@PathVariable("accountId") UUID accountId,
                                                         @PathVariable("registrationId") UUID registrationId) {
-    return registrationService.findByUserAndRegistrationId(userId, registrationId)
+    return registrationService.findByUserAndRegistrationId(accountId, registrationId)
         .<ResponseEntity<?>>map(ResponseEntity::ok)
         .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(Map.of("error", "La inscripción no existe o no pertenece al usuario")));
@@ -49,8 +42,8 @@ public class RegistrationController {
 
   // Cancelar inscripción
   @DeleteMapping("/{registrationId}")
-  public ResponseEntity<?> cancel(@PathVariable("userId") UUID userId, @PathVariable("registrationId") UUID registrationId) {
-    boolean ok = registrationService.cancelRegistration(registrationId, userId);
+  public ResponseEntity<?> cancel(@PathVariable("accountId") UUID accountId, @PathVariable("registrationId") UUID registrationId) {
+    boolean ok = registrationService.cancelRegistration(registrationId, accountId);
     if (!ok) {
       return ResponseEntity.status(403)
           .body(Map.of("error", "No tienes permiso o la inscripción no existe"));

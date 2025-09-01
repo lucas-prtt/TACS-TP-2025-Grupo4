@@ -29,14 +29,14 @@ public class RegistrationService {
   }
 
   // Crear una inscripción y devolver DTO
-  public Optional<RegistrationDTO> register(UUID userId, UUID eventId, RegistrationState state) {
+  public Optional<RegistrationDTO> register(UUID accountId, UUID eventId, RegistrationState state) {
     // Validar que no esté ya inscrito
-    if (registrationRepository.existsByUserAndEvent(userId, eventId)) {
+    if (registrationRepository.existsByUserAndEvent(accountId, eventId)) {
       return Optional.empty(); // Ya existe inscripción
     }
 
     Optional<Event> event = eventRepository.findById(eventId);
-    Optional<Account> account = accountRepository.findById(userId.toString());
+    Optional<Account> account = accountRepository.findById(accountId.toString());
 
     if (event.isEmpty() || account.isEmpty()) {
       return Optional.empty();
@@ -61,8 +61,8 @@ public class RegistrationService {
   }
 
   // Listar inscripciones de un usuario
-  public List<RegistrationDTO> findByUserId(UUID userId) {
-    return registrationRepository.findByUserId(userId).stream()
+  public List<RegistrationDTO> findByaccountId(UUID accountId) {
+    return registrationRepository.findByAccountId(accountId).stream()
         .map(this::toDto)
         .collect(Collectors.toList());
   }
@@ -75,20 +75,20 @@ public class RegistrationService {
   }
 
   // Buscar inscripcion de un usuario dado el id de inscripcion
-  public Optional<RegistrationDTO> findByUserAndRegistrationId(UUID userId, UUID registrationId) {
+  public Optional<RegistrationDTO> findByUserAndRegistrationId(UUID accountId, UUID registrationId) {
     return registrationRepository.findById(registrationId)
-        .filter(reg -> reg.getUser().getId().equals(userId))
+        .filter(reg -> reg.getUser().getId().equals(accountId))
         .map(this::toDto);
   }
 
   // Cancelar inscripción (usuario solo puede cancelar la suya)
-  public boolean cancelRegistration(UUID regId, UUID userId) {
+  public boolean cancelRegistration(UUID regId, UUID accountId) {
     Optional<Registration> regOpt = registrationRepository.findById(regId);
 
     if (regOpt.isEmpty()) return false;
 
     Registration reg = regOpt.get();
-    if (!reg.getUser().getId().equals(userId)) {
+    if (!reg.getUser().getId().equals(accountId)) {
       return false; // No tiene permiso
     }
 
