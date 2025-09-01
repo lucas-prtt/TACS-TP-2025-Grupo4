@@ -5,6 +5,7 @@ import org.apache.coyote.BadRequestException;
 import org.dominio.events.Event;
 import org.dominio.events.RegistrationState;
 import org.dominio.usuarios.Account;
+import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
@@ -34,7 +35,9 @@ public class EventService {
     // Tira NullPointerException si falta uno de los valores obligatorios para eventos
     // Devuelve el evento creado, una vez almacenado en el repositorio
     public Event createEvent(EventDTO eventDTO) throws NullPointerException {
-        Event newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags());
+        Optional<Account> author = accountRepository.findById(String.valueOf(eventDTO.getOrganizerId()));
+        if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+eventDTO.getOrganizerId());
+        Event newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags(), author.get());
         eventRepository.save(newEvent);
         return newEvent;
     }
