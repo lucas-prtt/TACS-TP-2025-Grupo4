@@ -8,6 +8,7 @@ import org.dominio.usuarios.Account;
 import org.exceptions.EventNotFoundException;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
+import org.repositories.RegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.dominio.events.Registration;
 import java.util.UUID;
@@ -23,10 +24,12 @@ public class EventService {
 
     EventRepository eventRepository;
     AccountRepository accountRepository;
+    RegistrationRepository registrationRepository;
 
-    public EventService(EventRepository eventRepository, AccountRepository accountRepository) {
+    public EventService(EventRepository eventRepository, AccountRepository accountRepository, RegistrationRepository registrationRepository) {
         this.eventRepository = eventRepository;
         this.accountRepository = accountRepository;
+        this.registrationRepository = registrationRepository;
     }
 
     // Crea un evento a partir de un EventDTO
@@ -128,6 +131,7 @@ public class EventService {
         Registration registration = new Registration();
         registration.setEvent(event);
         registration.setUser(account);
+        registrationRepository.save(registration);
 
         if (event.getParticipants().size() < event.getMaxParticipants()) {
             registration.setState(RegistrationState.CONFIRMED);

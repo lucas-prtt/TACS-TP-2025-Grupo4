@@ -82,18 +82,27 @@ public class RegistrationService {
   }
 
   // Cancelar inscripción (usuario solo puede cancelar la suya)
-  public boolean cancelRegistration(UUID regId, UUID userId) {
-    Optional<Registration> regOpt = registrationRepository.findById(regId);
+  public boolean cancelRegistration(UUID registrationId, UUID userId) {
+    Optional<Registration> optReg = registrationRepository.findById(registrationId);
 
-    if (regOpt.isEmpty()) return false;
+    if (optReg.isEmpty()) return false;
 
-    Registration reg = regOpt.get();
-    if (!reg.getUser().getId().equals(userId)) {
-      return false; // No tiene permiso
-    }
+    Registration reg = optReg.get();
 
-    return registrationRepository.deleteById(regId);
+    // Validar que sea del usuario
+    if (!reg.getUser().getId().equals(userId)) return false;
+
+    Event event = reg.getEvent();
+
+    // Eliminar de participantes
+    event.getParticipants().remove(reg);
+
+    // Promocionar a alguien de la waitlist si corresponde
+    event.promoteFromWaitlist();
+
+    return registrationRepository.deleteById(registrationId);
   }
+
 
   private RegistrationDTO toDto(Registration reg) {
     return new RegistrationDTO(

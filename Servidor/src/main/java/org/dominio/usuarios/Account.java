@@ -22,4 +22,9 @@ public class Account {
         this.id = UUID.randomUUID();
     }
 
+    public void promoteFromWaitlistOfAccount(Registration reg){
+        this.registrations.remove(reg);
+        this.waitlists.add(reg);
+    }
+
 }

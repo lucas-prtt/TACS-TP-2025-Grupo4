@@ -7,6 +7,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import org.dominio.usuarios.Account;
 
 @Getter
 @Setter
@@ -60,4 +61,14 @@ public class Event {
         this.id = UUID.randomUUID();
     }
     public static EventBuilder Builder(){return new EventBuilder();}
+
+    public void promoteFromWaitlist() {
+        if (participants.size() < maxParticipants && !waitList.isEmpty()) {
+            Registration next = waitList.poll();  // saca el primero
+            next.setState(RegistrationState.CONFIRMED);
+            next.getUser().promoteFromWaitlistOfAccount(next);
+            participants.add(next);
+        }
+    }
+
 }

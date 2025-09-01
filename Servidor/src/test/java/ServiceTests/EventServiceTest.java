@@ -6,6 +6,7 @@ import org.repositories.EventRepository;
 import org.repositories.AccountRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.repositories.RegistrationRepository;
 import org.services.EventService;
 
 import java.math.BigDecimal;
@@ -19,11 +20,12 @@ public class EventServiceTest {
     private EventRepository eventRepository;
     private AccountRepository accountRepository;
 
-    @Before
+  @Before
     public void setUp() {
         eventRepository = new EventRepository();
         accountRepository = new AccountRepository();
-        eventService = new EventService(eventRepository, accountRepository);
+        RegistrationRepository registrationRepository = new RegistrationRepository();
+        eventService = new EventService(eventRepository, accountRepository, registrationRepository);
     }
 
     @Test
