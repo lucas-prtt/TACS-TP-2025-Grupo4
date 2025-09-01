@@ -48,7 +48,10 @@ public class OrganizerTests {
 
         // Simular waitlist
         Account waitUser = new Account("wait@test.com");
-        mockEvent.getWaitList().add(waitUser);
+        Registration newRegister=new Registration();
+        newRegister.setEvent(mockEvent);
+        newRegister.setUser(waitUser);
+        mockEvent.getWaitList().add(newRegister);
     }
 
     @Test
@@ -68,10 +71,11 @@ public class OrganizerTests {
         UUID eventId = mockEvent.getId();
         when(eventService.getEvent(eventId)).thenReturn(mockEvent);
 
-        Queue<Account> result = organizerService.getWaitlistFromEvent(eventId);
+        Queue<Registration> result = organizerService.getWaitlistFromEvent(eventId);
 
         assertEquals(1, result.size());
-        assertEquals("wait@test.com", result.peek().getUsername());
+        assert result.peek() != null;
+        assertEquals("wait@test.com", result. peek().getUser().getUsername());
     }
 
     @Test
@@ -82,5 +86,24 @@ public class OrganizerTests {
         organizerService.closeRegistrations(eventId);
 
         assertEquals(EventState.CERRADO , mockEvent.getEventState());
+    }
+    @Test
+    void testRegisterParticipantAfterClosingRegistrations() {
+        UUID eventId = mockEvent.getId();
+        when(eventService.getEvent(eventId)).thenReturn(mockEvent);
+
+        // Cerrar inscripciones
+        organizerService.closeRegistrations(eventId);
+
+        // Intentar registrar un nuevo participante después de cerrar las inscripciones
+        Account newUser = new Account("newuser@test.com");
+        Registration newRegistration = new Registration(newUser);
+
+        // Intentar registrar el nuevo participante
+        String result = mockEvent.registerParticipant(newRegistration);
+
+        // Verificar que el resultado es "CERRADO" y que no se agregó al participante
+        assertEquals(EventState.CERRADO.toString(), result);
+        assertFalse(mockEvent.getParticipants().contains(newRegistration));  // Verificar que no fue agregado
     }
 }

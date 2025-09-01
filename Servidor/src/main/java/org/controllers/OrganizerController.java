@@ -1,5 +1,6 @@
 package org.controllers;
 
+import org.dominio.events.Registration;
 import org.dominio.usuarios.Account;
 import org.services.OrganizerService;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class OrganizerController {
     }
 
     @GetMapping("/event/{eventId}/waitlist")
-    public Queue<Account> getWaitlist(@PathVariable UUID eventId) {
+    public Queue<Registration> getWaitlist(@PathVariable UUID eventId) {
         return organizerService.getWaitlistFromEvent(eventId);
     }
 

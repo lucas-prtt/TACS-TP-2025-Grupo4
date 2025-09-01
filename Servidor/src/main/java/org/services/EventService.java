@@ -16,11 +16,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+
 
 @Service
 public class EventService {
@@ -127,19 +125,19 @@ public class EventService {
         Account account = accountRepository.findById(String.valueOf(accountId))
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        //Verificar si ya está inscripto
+        if(event.getParticipants().stream().anyMatch(reg -> reg.getUser().getUuid().equals(accountId)))
+            return "ALREADY_REGISTERED";
+
+        //Verificar si ya está en waitlist
+        if(event.getWaitList().stream().anyMatch(acc -> acc.getUser().getUuid().equals(accountId)))
+            return "ALREADY_IN_WAITLIST";
+
         Registration registration = new Registration();
         registration.setEvent(event);
         registration.setUser(account);
+        return event.registerParticipant(registration);
 
-        if (event.getParticipants().size() < event.getMaxParticipants()) {
-            event.getParticipants().add(registration);
-            account.getRegistrations().add(registration); // Relación inversa
-            return "CONFIRMED";
-        } else {
-            event.getWaitList().add(account);
-            account.getWaitlists().add(event); // Relación inversa
-            return "WAITLIST";
-        }
     }
 
 }

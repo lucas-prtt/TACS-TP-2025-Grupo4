@@ -16,4 +16,5 @@ public class Registration {
     public Registration(Account user1) {
         user=user1;
     }
+    RegistrationState state;
 }

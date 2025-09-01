@@ -25,7 +25,7 @@ public class OrganizerService {
         return event.getParticipants().stream().map(Registration::getUser).toList();
     }
 
-    public Queue<Account> getWaitlistFromEvent(UUID eventId) {
+    public Queue<Registration> getWaitlistFromEvent(UUID eventId) {
         Event event = eventService.getEvent(eventId);
         return event.getWaitList();
     }

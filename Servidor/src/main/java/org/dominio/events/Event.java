@@ -2,11 +2,9 @@ package org.dominio.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dominio.Enums.EventState;
-import org.dominio.usuarios.Account;
-import org.services.EventService;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -28,7 +26,7 @@ public class Event {
     Category category;
     List<Tag> tags;
     List<Registration> participants;
-    Queue<Account> waitList;
+    Queue<Registration> waitList;
     EventState eventState;
     // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price
     public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags) throws NullPointerException{
@@ -80,19 +78,28 @@ public class Event {
     public boolean hasAvailableSpots() {
         return participants.size() < maxParticipants;
     }
-    public String registerParticipant(){
+    public String registerParticipant(Registration registration){
         //metodo para inscribir participante al evento verificando las condiciones:
         //-hay cupo-si las inscripciones estan abiertas ,etc
 
         if(isRegistrationsOpen() ){
-
             if(hasAvailableSpots()){
                 //inscribir
+                registration.setState(RegistrationState.CONFIRMED);
+                participants.add(registration);
+                registration.getUser().getRegistrations().add(registration);
             }else {
                 //añadir a waitlist
+                registration.setState(RegistrationState.WAITLIST);
+                waitList.add(registration);
+                registration.getUser().getWaitlists().add(registration);
+
             }
+            return registration.state.toString();
+        } else {
+            return EventState.CERRADO.toString();
         }
-        return null;
+
     }
 
 }
