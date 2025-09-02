@@ -27,7 +27,7 @@ public class RegistrationController {
 //  // Obtener todas las inscripciones de un usuario
 //  @GetMapping
 //  public ResponseEntity<List<RegistrationDTO>> getAllByUser(@PathVariable("accountId")  UUID accountId) {
-//    return ResponseEntity.ok(registrationService.findByUserId(accountId));
+//    return ResponseEntity.ok(registrationService.findByAccountId(accountId));
 //  }
 
   @GetMapping("/{registrationId}")

@@ -23,7 +23,7 @@ public class EventServiceTest {
     private AccountRepository accountRepository;
     private StatsService statsService;
 
-    @Before
+  @Before
     public void setUp() {
         eventRepository = new EventRepository();
         accountRepository = new AccountRepository();

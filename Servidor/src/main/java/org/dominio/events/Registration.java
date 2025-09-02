@@ -19,10 +19,12 @@ public class Registration {
 
     public Registration(){
         this.id = UUID.randomUUID();
+        this.dateTime = LocalDateTime.now();
     }
 
     public Registration( Event event, Account user, RegistrationState state) {
         this.id = UUID.randomUUID();
+        this.dateTime = LocalDateTime.now();
         this.event = event;
         this.user = user;
         this.state = state;

@@ -61,7 +61,7 @@ public class RegistrationService {
   }
 
   // Listar inscripciones de un usuario
-  public List<RegistrationDTO> findByaccountId(UUID accountId) {
+  public List<RegistrationDTO> findByAccountId(UUID accountId) {
     return registrationRepository.findByAccountId(accountId).stream()
         .map(this::toDto)
         .collect(Collectors.toList());
@@ -82,18 +82,28 @@ public class RegistrationService {
   }
 
   // Cancelar inscripción (usuario solo puede cancelar la suya)
-  public boolean cancelRegistration(UUID regId, UUID accountId) {
-    Optional<Registration> regOpt = registrationRepository.findById(regId);
+  public boolean cancelRegistration(UUID registrationId, UUID accountId) {
+    Optional<Registration> optReg = registrationRepository.findById(registrationId);
 
-    if (regOpt.isEmpty()) return false;
+    if (optReg.isEmpty()) return false;
 
-    Registration reg = regOpt.get();
-    if (!reg.getUser().getId().equals(accountId)) {
-      return false; // No tiene permiso
-    }
 
-    return registrationRepository.deleteById(regId);
+    Registration reg = optReg.get();
+
+    // Validar que sea del usuario
+    if (!reg.getUser().getId().equals(accountId)) return false;
+
+    Event event = reg.getEvent();
+
+    // Eliminar de participantes
+    event.getParticipants().remove(reg);
+
+    // Promocionar a alguien de la waitlist si corresponde
+    event.promoteFromWaitlist();
+
+    return registrationRepository.deleteById(registrationId);
   }
+
 
   private RegistrationDTO toDto(Registration reg) {
     return new RegistrationDTO(
