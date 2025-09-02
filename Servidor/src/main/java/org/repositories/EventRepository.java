@@ -1,10 +1,8 @@
 package org.repositories;
 
 import org.dominio.events.Event;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.Predicate;

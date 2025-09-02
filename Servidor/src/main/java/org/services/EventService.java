@@ -4,7 +4,6 @@ import org.DTOs.AccountRegistrationDTO;
 import org.DTOs.EventDTO;
 import org.apache.coyote.BadRequestException;
 import org.dominio.events.Event;
-import org.dominio.events.RegistrationState;
 import org.dominio.usuarios.Account;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
@@ -21,6 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import java.util.NoSuchElementException;
+
 
 @Service
 public class EventService {
@@ -41,6 +43,12 @@ public class EventService {
         Event newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags(), author.get());
         eventRepository.save(newEvent);
         return newEvent;
+    }
+    public Event getEvent(UUID eventId) {
+        //devuelve el evento (con sus inscriptos y su waitlist)
+        Optional<Event> eventOptional = eventRepository.findById(eventId);
+        Event event = eventOptional.orElseThrow(() -> new NoSuchElementException("Evento no encontrado con ID: " + eventId));
+        return event;
     }
 
     public EventDTO getEventDTOById(String id) throws EventNotFoundException {
@@ -115,20 +123,10 @@ public class EventService {
         Registration registration = new Registration();
         registration.setEvent(event);
         registration.setUser(account);
+      
         registrationRepository.save(registration);
-
-        if (event.getParticipants().size() < event.getMaxParticipants()){
-            registration.setState(RegistrationState.CONFIRMED);
-            event.getParticipants().add(registration);
-        }
-        else{
-            registration.setState(RegistrationState.WAITLIST);
-            event.getWaitList().add(registration);
-        }
-
-        account.getRegistrations().add(registration);
-
-        return registration.getState().toString();
+      
+        return event.registerParticipant(registration);
     }
 
     public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
