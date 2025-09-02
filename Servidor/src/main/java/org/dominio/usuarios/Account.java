@@ -12,16 +12,17 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 public class Account {
-    UUID uuid;
-
     public Account(String username) {
         this.username = username;
     }
 
+    UUID id;
     String username;
     String salt; //Temporales, hasta que sepamos implementarlo
     String passwordHash;    // Idem
 
     private List<Registration> registrations = new ArrayList<>();
-    private List<Registration> waitlists = new ArrayList<>();
+    public Account(){
+        this.id = UUID.randomUUID();
+    }
 }

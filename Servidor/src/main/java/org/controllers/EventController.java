@@ -3,7 +3,6 @@ package org.controllers;
 import org.DTOs.EventDTO;
 import org.DTOs.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
-import org.dominio.usuarios.Account;
 import org.exceptions.EventNotFoundException;
 import org.services.EventService;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @RestController()
 @RequestMapping("/events")
