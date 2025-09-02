@@ -3,6 +3,7 @@ package org.dominio.events;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.dominio.usuarios.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ public class Event {
     UUID id;
     String title;
     String description;
+    Account organizer;
     LocalDateTime startDateTime;
     Integer durationMinutes;
     String location;
@@ -25,9 +27,10 @@ public class Event {
     List<Tag> tags;
     List<Registration> participants;
     Queue<Registration> waitList;
+    Account organizer;
 
     // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price
-    public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags) throws NullPointerException{
+    public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags, Account organizer) throws NullPointerException{
         //Obligatorios
         Objects.requireNonNull(title);
         Objects.requireNonNull(description);
@@ -36,6 +39,7 @@ public class Event {
         Objects.requireNonNull(location);
         Objects.requireNonNull(maxParticipants);
         Objects.requireNonNull(price);
+        Objects.requireNonNull(organizer);
         this.title = title;
         this.description = description;
         this.startDateTime = startDateTime;
@@ -43,6 +47,7 @@ public class Event {
         this.location = location;
         this.maxParticipants = maxParticipants;
         this.price = price;
+        this.organizer = organizer;
 
         //Opcionales
         this.category = category;

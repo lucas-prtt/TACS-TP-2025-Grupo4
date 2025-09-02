@@ -16,10 +16,7 @@ public class Account {
     String passwordHash;    // Idem
 
     private List<Registration> registrations = new ArrayList<>();
-    private List<Registration> waitlists = new ArrayList<>();
-
     public Account(){
         this.id = UUID.randomUUID();
     }
-
 }

@@ -2,6 +2,7 @@ package org.dominio.events;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.dominio.usuarios.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,11 +20,12 @@ public class EventBuilder {
     @Setter private BigDecimal price;
     @Setter private Category category;
     @Setter private List<Tag> tags;
+    @Setter private Account organizer;
 
     // Construye y devuelve un Event. Requiere antes settear al menos los siguientes campos:
     // String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price
     public Event build() throws NullPointerException{
-        return new Event(title, description, startDateTime, durationMinutes, location, maxParticipants, minParticipants, price, category, tags);
+        return new Event(title, description, startDateTime, durationMinutes, location, maxParticipants, minParticipants, price, category, tags, organizer);
     }
 
 
