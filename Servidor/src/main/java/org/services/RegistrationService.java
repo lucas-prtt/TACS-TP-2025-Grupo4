@@ -1,0 +1,110 @@
+package org.services;
+
+import static org.DTOs.registrations.RegistrationDTO.toRegistrationDTO;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import org.DTOs.registrations.RegistrationDTO;
+import org.model.events.Event;
+import org.model.events.Registration;
+import org.model.enums.RegistrationState;
+import org.model.accounts.Account;
+import org.repositories.AccountRepository;
+import org.repositories.EventRepository;
+import org.repositories.RegistrationRepository;
+import org.springframework.stereotype.Service;
+
+
+@Service
+public class RegistrationService {
+
+  private final RegistrationRepository registrationRepository;
+  private final EventRepository eventRepository;
+  private final AccountRepository accountRepository;
+
+  public RegistrationService(RegistrationRepository registrationRepository, EventRepository eventRepository, AccountRepository accountRepository) {
+    this.registrationRepository = registrationRepository;
+    this.eventRepository = eventRepository;
+    this.accountRepository = accountRepository;
+  }
+
+  // Crear una inscripción y devolver DTO
+  public Optional<RegistrationDTO> register(UUID accountId, UUID eventId, RegistrationState state) {
+    // Validar que no esté ya inscrito
+    if (registrationRepository.existsByUserAndEvent(accountId, eventId)) {
+      return Optional.empty(); // Ya existe inscripción
+    }
+
+    Optional<Event> event = eventRepository.findById(eventId);
+    Optional<Account> account = accountRepository.findById(accountId.toString());
+
+    if (event.isEmpty() || account.isEmpty()) {
+      return Optional.empty();
+    }
+
+    Registration reg = new Registration(event.get(), account.get(), state);
+    registrationRepository.save(reg);
+
+    return Optional.of(toRegistrationDTO(reg));
+  }
+
+  // Buscar inscripción por id
+  public Optional<RegistrationDTO> findById(UUID id) {
+    return registrationRepository.findById(id).map(RegistrationDTO::toRegistrationDTO);
+  }
+
+  // Listar todas las inscripciones
+  public List<RegistrationDTO> findAll() {
+    return registrationRepository.findAll().stream()
+        .map(RegistrationDTO::toRegistrationDTO)
+        .collect(Collectors.toList());
+  }
+
+  // Listar inscripciones de un usuario
+  public List<RegistrationDTO> findByAccountId(UUID accountId) {
+    return registrationRepository.findByAccountId(accountId).stream()
+        .map(RegistrationDTO::toRegistrationDTO)
+        .collect(Collectors.toList());
+  }
+
+  // Listar inscripciones de un evento
+  public List<RegistrationDTO> findByEventId(UUID eventId) {
+    return registrationRepository.findByEventId(eventId).stream()
+        .map(RegistrationDTO::toRegistrationDTO)
+        .collect(Collectors.toList());
+  }
+
+  // Buscar inscripcion de un usuario dado el id de inscripcion
+  public Optional<RegistrationDTO> findByUserAndRegistrationId(UUID accountId, UUID registrationId) {
+    return registrationRepository.findById(registrationId)
+        .filter(reg -> reg.getUser().getId().equals(accountId))
+        .map(RegistrationDTO::toRegistrationDTO);
+  }
+
+  // Cancelar inscripción (usuario solo puede cancelar la suya)
+  public boolean cancelRegistration(UUID registrationId, UUID accountId) {
+    Optional<Registration> optReg = registrationRepository.findById(registrationId);
+
+    if (optReg.isEmpty()) return false;
+
+
+    Registration reg = optReg.get();
+
+    // Validar que sea del usuario
+    if (!reg.getUser().getId().equals(accountId)) return false;
+
+    Event event = reg.getEvent();
+
+    // Eliminar de participantes
+    event.getParticipants().remove(reg);
+
+    // Promocionar a alguien de la waitlist si corresponde
+    event.promoteFromWaitlist();
+
+    return registrationRepository.cancelById(registrationId);
+  }
+
+
+}
