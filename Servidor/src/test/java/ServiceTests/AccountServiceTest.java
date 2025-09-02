@@ -1,6 +1,6 @@
 package ServiceTests;
 
-import org.DTOs.AccountDTO;
+import org.DTOs.accounts.AccountCreateDTO;
 import org.model.accounts.Account;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class AccountServiceTest {
 
     @Test
     public void testCreateAccount() {
-        AccountDTO dto = new AccountDTO();
+        AccountCreateDTO dto = new AccountCreateDTO();
         dto.setUsername("nuevoUsuario");
 
         Account account = accountService.createAccount(dto);
@@ -41,7 +41,7 @@ public class AccountServiceTest {
 
     @Test
     public void testGetRegistrations_Empty() {
-        AccountDTO dto = new AccountDTO();
+        AccountCreateDTO dto = new AccountCreateDTO();
         dto.setUsername("nuevoUsuario");
         Account account = accountService.createAccount(dto);
 

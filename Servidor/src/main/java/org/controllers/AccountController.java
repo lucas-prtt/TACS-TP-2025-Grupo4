@@ -1,7 +1,10 @@
 package org.controllers;
 
-import org.DTOs.AccountDTO;
+import static org.DTOs.accounts.AccountResponseDTO.toAccountResponseDTO;
+
+import org.DTOs.accounts.AccountCreateDTO;
 import org.DTOs.EventDTO;
+import org.DTOs.accounts.AccountResponseDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.services.EventService;
 import org.model.accounts.Account;
@@ -36,11 +39,11 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<Account> createAccount(@RequestBody AccountDTO accountDTO) {
-        if (accountDTO.getUuid() == null) {
-            accountDTO.setUuid(UUID.randomUUID());
+    public ResponseEntity<?> createAccount(@RequestBody AccountCreateDTO accountCreateDTO) {
+        if (accountService.existsByUsername(accountCreateDTO.getUsername())) {
+            return ResponseEntity.badRequest().body("Username already exists");
         }
-        Account account = accountService.createAccount(accountDTO);
-        return ResponseEntity.ok(account);
+        Account account = accountService.createAccount(accountCreateDTO);
+        return ResponseEntity.ok(toAccountResponseDTO(account));
     }
 }

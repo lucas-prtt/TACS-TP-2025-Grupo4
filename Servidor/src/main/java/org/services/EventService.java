@@ -108,25 +108,34 @@ public class EventService {
 
     public String registerParticipantToEvent(UUID eventId, UUID accountId) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
+            .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
         Account account = accountRepository.findById(String.valueOf(accountId))
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        //Verificar si ya está inscripto
-        if(event.getParticipants().stream().anyMatch(reg -> reg.getUser().getId().equals(accountId)))
+        // Verificar si el organizador intenta inscribirse a su propio evento
+        if (event.getOrganizer().getId().equals(accountId)) {
+            return "ORGANIZER_CANNOT_REGISTER";
+        }
+
+        //  Verificar si ya está inscripto
+        if (event.getParticipants().stream().anyMatch(reg -> reg.getUser().getId().equals(accountId))) {
             return "ALREADY_REGISTERED";
+        }
 
-        //Verificar si ya está en waitlist
-        if(event.getWaitList().stream().anyMatch(acc -> acc.getUser().getId().equals(accountId)))
+        //  Verificar si ya está en waitlist
+        if (event.getWaitList().stream().anyMatch(acc -> acc.getUser().getId().equals(accountId))) {
             return "ALREADY_IN_WAITLIST";
+        }
+
         Registration registration = new Registration();
         registration.setEvent(event);
         registration.setUser(account);
-      
+
         registrationRepository.save(registration);
-      
+
         return event.registerParticipant(registration);
     }
+
 
     public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
         // Obtiene todos los eventos y filtra los que tienen como organizador al usuario dado

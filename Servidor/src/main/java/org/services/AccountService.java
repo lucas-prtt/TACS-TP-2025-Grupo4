@@ -1,6 +1,6 @@
 package org.services;
 
-import org.DTOs.AccountDTO;
+import org.DTOs.accounts.AccountCreateDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.model.accounts.Account;
 import org.repositories.AccountRepository;
@@ -17,11 +17,13 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
 
-    public Account createAccount(AccountDTO accountDTO) {
+    public Boolean existsByUsername(String username){
+        return accountRepository.existsByUsername(username);
+    }
+
+    public Account createAccount(AccountCreateDTO accountCreateDTO) {
         Account account = new Account();
-        account.setUsername(accountDTO.getUsername());
-        account.setSalt(accountDTO.getSalt());
-        account.setPasswordHash(accountDTO.getPasswordHash());
+        account.setUsername(accountCreateDTO.getUsername());
 
         accountRepository.save(account);
         return account;

@@ -7,6 +7,7 @@ import org.apache.coyote.BadRequestException;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
 import org.services.EventService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,14 +82,23 @@ public class EventController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<String> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTODTO) {
+    public ResponseEntity<String> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTO) {
         try {
-            String result = eventService.registerParticipantToEvent(registrationCreateDTODTO.getEventId(), registrationCreateDTODTO.getAccountId());
-            return ResponseEntity.ok(result);
+            String result = eventService.registerParticipantToEvent(
+                registrationCreateDTO.getEventId(),
+                registrationCreateDTO.getAccountId()
+            );
+            // Manejo más claro de los distintos resultados
+          return switch (result) {
+            case "ORGANIZER_CANNOT_REGISTER" -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
+            case "ALREADY_REGISTERED", "ALREADY_IN_WAITLIST" -> ResponseEntity.status(HttpStatus.CONFLICT).body(result);
+            default -> ResponseEntity.ok(result);
+          };
         } catch (EventNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 }
