@@ -87,6 +87,7 @@ public class RegistrationService {
 
     if (optReg.isEmpty()) return false;
 
+
     Registration reg = optReg.get();
 
     // Validar que sea del usuario

@@ -8,6 +8,7 @@ import org.dominio.events.Category;
 import org.dominio.events.Event;
 import org.dominio.events.EventBuilder;
 import org.dominio.events.Tag;
+import org.dominio.usuarios.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class EventDTO {
     UUID id;
     String title;
     String description;
+    UUID organizerId;
     LocalDateTime startDateTime;
     Integer durationMinutes;
     String location;
@@ -31,6 +33,7 @@ public class EventDTO {
     BigDecimal price;
     Category category;
     List<Tag> tags;
+    UUID organizerId;
 
 
     // Crea un EventDTO a partir de un Event
@@ -40,6 +43,7 @@ public class EventDTO {
                 event.getId(),
                 event.getTitle(),
                 event.getDescription(),
+                event.getOrganizer().getUuid(),
                 event.getStartDateTime(),
                 event.getDurationMinutes(),
                 event.getLocation(),
@@ -47,7 +51,8 @@ public class EventDTO {
                 event.getMinParticipants(),
                 event.getPrice(),
                 event.getCategory(),
-                new ArrayList<>(event.getTags())
+                new ArrayList<>(event.getTags()),
+                event.getOrganizer().getUuid()
         );
     }
 }

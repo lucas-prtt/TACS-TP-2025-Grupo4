@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.dominio.events.RegistrationState;
 
 import java.util.UUID;
 import org.dominio.events.Registration;

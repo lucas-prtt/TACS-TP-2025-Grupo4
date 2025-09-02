@@ -4,25 +4,18 @@ package org.controllers;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.DTOs.EventDTO;
 import org.DTOs.RegistrationDTO;
-import org.dominio.events.Registration;
-import org.dominio.usuarios.Account;
-import org.exceptions.EventNotFoundException;
 import org.services.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("users/{accountId}/registrations")
+@RequestMapping("accounts/{accountId}/registrations")
 public class RegistrationController {
 
   private final RegistrationService registrationService;
