@@ -43,24 +43,22 @@ public class EventServiceTest {
         eventRepository.save(event);
 
         Account user1 = new Account();
-        user1.setUuid(UUID.randomUUID());
         user1.setUsername("user1");
         accountRepository.save(user1);
 
         Account user2 = new Account();
-        user2.setUuid(UUID.randomUUID());
         user2.setUsername("user2");
         accountRepository.save(user2);
 
         // Primer usuario debe quedar confirmado
-        String result1 = eventService.registerParticipantToEvent(event.getId(), user1.getUuid());
+        String result1 = eventService.registerParticipantToEvent(event.getId(), user1.getId());
         assertEquals("CONFIRMED", result1);
         assertEquals(1, event.getParticipants().size());
         assertEquals(0, event.getWaitList().size());
         assertEquals(1, user1.getRegistrations().size());
 
         // Segundo usuario debe quedar en waitlist
-        String result2 = eventService.registerParticipantToEvent(event.getId(), user2.getUuid());
+        String result2 = eventService.registerParticipantToEvent(event.getId(), user2.getId());
         assertEquals("WAITLIST", result2);
         assertEquals(1, event.getParticipants().size());
         assertEquals(1, event.getWaitList().size());

@@ -102,11 +102,11 @@ public class EventService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         //Verificar si ya está inscripto
-        if(event.getParticipants().stream().anyMatch(reg -> reg.getUser().getUuid().equals(accountId)))
+        if(event.getParticipants().stream().anyMatch(reg -> reg.getUser().getId().equals(accountId)))
             return "ALREADY_REGISTERED";
 
         //Verificar si ya está en waitlist
-        if(event.getWaitList().stream().anyMatch(acc -> acc.getUser().getUuid().equals(accountId)))
+        if(event.getWaitList().stream().anyMatch(acc -> acc.getUser().getId().equals(accountId)))
             return "ALREADY_IN_WAITLIST";
 
         Registration registration = new Registration();

@@ -18,9 +18,7 @@ public class AccountRepositoryTest {
     @Before
     public void setUp() {
         accountRepository = new AccountRepository();
-        uuid = UUID.randomUUID();
         account = new Account();
-        account.setUuid(uuid);
         account.setUsername("testuser");
     }
 
@@ -28,17 +26,17 @@ public class AccountRepositoryTest {
     public void testSave() {
         accountRepository.save(account);
         // No assertion needed, just ensure no exception is thrown and the account is stored
-        Optional<Account> found = accountRepository.findById(uuid.toString());
+        Optional<Account> found = accountRepository.findById(account.getId().toString());
         assertTrue(found.isPresent());
     }
 
     @Test
     public void testFindById_Found() {
         accountRepository.save(account);
-        Optional<Account> found = accountRepository.findById(uuid.toString());
+        Optional<Account> found = accountRepository.findById(account.getId().toString());
         assertTrue(found.isPresent());
         assertEquals("testuser", found.get().getUsername());
-        assertEquals(uuid, found.get().getUuid());
+        assertEquals(account.getId(), found.get().getId());
     }
 
     @Test
