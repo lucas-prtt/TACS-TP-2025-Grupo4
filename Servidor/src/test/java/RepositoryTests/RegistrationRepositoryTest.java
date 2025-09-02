@@ -21,20 +21,26 @@ class RegistrationRepositoryTest {
   private Event event;
   private Registration registration;
 
-  @BeforeEach
-  void setUp() {
-    repository = new RegistrationRepository();
+    @BeforeEach
+    void setUp() {
+        repository = new RegistrationRepository();
 
-    account = new Account();
-    account.setId(UUID.randomUUID());
-    account.setUsername("testuser");
+        account = new Account();
+        account.setUsername("testuser");
 
-    event = Event.Builder().setTitle("Fiesta de cumpleaños").setDescription("Juan perez cumple años").setLocation("CABA").setPrice(new BigDecimal(0)).setMaxParticipants(40).setStartDateTime(LocalDateTime.now().plusDays(1)).setDurationMinutes(180).build();
+        event = Event.Builder()
+                .setTitle("Fiesta de cumpleaños")
+                .setDescription("Juan perez cumple años")
+                .setLocation("CABA")
+                .setPrice(new BigDecimal(0))
+                .setMaxParticipants(40)
+                .setStartDateTime(LocalDateTime.now().plusDays(1))
+                .setDurationMinutes(180)
+                .setOrganizer(account)
+                .build();
 
-    registration = new Registration(event, account, RegistrationState.CONFIRMED);
-
-
-  }
+        registration = new Registration(event, account, RegistrationState.CONFIRMED);
+    }
 
   @Test
   void saveAndFindById_shouldPersistRegistration() {

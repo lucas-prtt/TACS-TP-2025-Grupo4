@@ -27,8 +27,9 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final AccountRepository accountRepository;
+    private final RegistrationRepository registrationRepository;
 
-    public EventService(EventRepository eventRepository, AccountRepository accountRepository, StatsService statsService) {
+    public EventService(EventRepository eventRepository, AccountRepository accountRepository, StatsService statsService, RegistrationRepository registrationRepository) {
         this.eventRepository = eventRepository;
         this.accountRepository = accountRepository;
         this.registrationRepository = registrationRepository;
@@ -133,7 +134,7 @@ public class EventService {
     public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
         // Obtiene todos los eventos y filtra los que tienen como organizador al usuario dado
         return eventRepository.getAll().stream()
-                .filter(event -> event.getOrganizer() != null && event.getOrganizer().getUuid().equals(organizerId))
+                .filter(event -> event.getOrganizer() != null && event.getOrganizer().getId().equals(organizerId))
                 .map(EventDTO::fromEvent)
                 .collect(Collectors.toList());
     }

@@ -32,26 +32,21 @@ public class AccountServiceTest {
     @Test
     public void testCreateAccount() {
         AccountDTO dto = new AccountDTO();
-        UUID uuid = UUID.randomUUID();
-        dto.setUuid(uuid);
         dto.setUsername("nuevoUsuario");
 
         Account account = accountService.createAccount(dto);
 
         assertNotNull(account);
-        assertEquals(uuid, account.getUuid());
         assertEquals("nuevoUsuario", account.getUsername());
-        assertTrue(accountRepository.findById(uuid.toString()).isPresent());
+        assertTrue(accountRepository.findById(account.getId().toString()).isPresent());
     }
 
     @Test
     public void testGetRegistrations_Empty() {
         AccountDTO dto = new AccountDTO();
-        UUID uuid = UUID.randomUUID();
-        dto.setUuid(uuid);
         dto.setUsername("nuevoUsuario");
-        accountService.createAccount(dto);
+        Account account = accountService.createAccount(dto);
 
-        assertTrue(accountService.getRegistrations(uuid).isEmpty());
+        assertTrue(accountService.getRegistrations(account.getId()).isEmpty());
     }
 }

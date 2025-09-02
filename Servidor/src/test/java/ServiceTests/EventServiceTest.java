@@ -7,6 +7,7 @@ import org.repositories.EventRepository;
 import org.repositories.AccountRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.repositories.RegistrationRepository;
 import org.services.AccountService;
 import org.services.EventService;
 import org.services.StatsService;
@@ -22,19 +23,21 @@ public class EventServiceTest {
     private EventRepository eventRepository;
     private AccountRepository accountRepository;
     private StatsService statsService;
+    private RegistrationRepository registrationRepository;
 
   @Before
     public void setUp() {
         eventRepository = new EventRepository();
         accountRepository = new AccountRepository();
+        registrationRepository = new RegistrationRepository();
         statsService = new StatsService(eventRepository);
-        eventService = new EventService(eventRepository, accountRepository, statsService);
+        eventService = new EventService(eventRepository, accountRepository, statsService, registrationRepository);
     }
 
     @Test
     public void testRegisterParticipantToEvent_ConfirmedAndWaitlist() {
         Account userOrganizer = new Account();
-        userOrganizer.setUuid(UUID.randomUUID());
+        userOrganizer.setId(UUID.randomUUID());
         userOrganizer.setUsername("userOrg");
         accountRepository.save(userOrganizer);
 

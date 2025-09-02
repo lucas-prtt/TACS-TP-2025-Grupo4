@@ -17,7 +17,6 @@ public class EventRepositoryTest {
     public List<Event> createEvents(){
         Account organizador = new Account();
         organizador.setUsername("organizador");
-        organizador.setUuid(UUID.randomUUID());
         Event evento1 = Event.Builder().setTitle("Fiesta de cumpleaños").setDescription("Juan perez cumple años").setLocation("CABA").setPrice(new BigDecimal(0)).setMaxParticipants(40).setStartDateTime(LocalDateTime.now().plusDays(1)).setDurationMinutes(180).setOrganizer(organizador).build();
         Event evento2 = Event.Builder().setTitle("Concierto de Jazz").setDescription("Noche de jazz en vivo").setLocation("Teatro Colón").setPrice(new BigDecimal("1500")).setMaxParticipants(200).setStartDateTime(LocalDateTime.now().plusDays(5)).setDurationMinutes(120).setOrganizer(organizador).build();
         Event evento3 = Event.Builder().setTitle("Taller de cerámica").setDescription("Clase práctica para principiantes").setLocation("Villa Crespo").setPrice(new BigDecimal("800")).setMaxParticipants(15).setStartDateTime(LocalDateTime.now().plusWeeks(1)).setDurationMinutes(90).setOrganizer(organizador).build();

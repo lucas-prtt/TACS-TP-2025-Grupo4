@@ -33,7 +33,6 @@ public class EventDTO {
     BigDecimal price;
     Category category;
     List<Tag> tags;
-    UUID organizerId;
 
 
     // Crea un EventDTO a partir de un Event
@@ -43,7 +42,7 @@ public class EventDTO {
                 event.getId(),
                 event.getTitle(),
                 event.getDescription(),
-                event.getOrganizer().getUuid(),
+                event.getOrganizer().getId(),
                 event.getStartDateTime(),
                 event.getDurationMinutes(),
                 event.getLocation(),
@@ -51,8 +50,7 @@ public class EventDTO {
                 event.getMinParticipants(),
                 event.getPrice(),
                 event.getCategory(),
-                new ArrayList<>(event.getTags()),
-                event.getOrganizer().getUuid()
+                new ArrayList<>(event.getTags())
         );
     }
 }
