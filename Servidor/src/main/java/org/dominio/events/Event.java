@@ -30,7 +30,7 @@ public class Event {
     List<Registration> participants;
     Queue<Registration> waitList;
     EventState eventState;
-    // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price
+    // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price, Account organizer
     public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags, Account organizer) throws NullPointerException{
         //Obligatorios
         Objects.requireNonNull(title);

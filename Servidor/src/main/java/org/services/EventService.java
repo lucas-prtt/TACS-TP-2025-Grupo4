@@ -37,7 +37,8 @@ public class EventService {
         this.registrationRepository = registrationRepository;
     }
 
-    public Event createEvent(EventDTO eventDTO) throws NullPointerException {
+    public Event createEvent(EventDTO eventDTO) throws NullPointerException, AccountNotFoundException {
+        Objects.requireNonNull(eventDTO.getOrganizerId());
         Optional<Account> author = accountRepository.findById(String.valueOf(eventDTO.getOrganizerId()));
         if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+eventDTO.getOrganizerId());
         Event newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags(), author.get());

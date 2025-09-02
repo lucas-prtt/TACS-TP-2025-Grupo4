@@ -3,6 +3,7 @@ package org.controllers;
 import org.DTOs.EventDTO;
 import org.DTOs.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
+import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
 import org.services.EventService;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +27,15 @@ public class EventController {
     // El evento debe tener todos sus campos obligatorios y no tener ID. De lo contrario, devuelve badRequest
     // Si la request puede ser procesada, devuelve el EventDTO con el campo ID completo con el que se autogeneró el evento
     @PostMapping
-    public ResponseEntity<EventDTO> postEvent(@RequestBody EventDTO eventDTO) {
+    public ResponseEntity<?> postEvent(@RequestBody EventDTO eventDTO) {
         if (eventDTO.getId() != null)
             return ResponseEntity.badRequest().build();
         try {
             return ResponseEntity.ok(EventDTO.fromEvent(eventService.createEvent(eventDTO)));
         } catch (NullPointerException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Al menos uno de los campos obligatorios del evento es nulo. Se requiere enviar: \n-String title\n-String description\n-LocalDateTime startDateTime\n-Integer durationMinutes\n-String location\n-Integer maxParticipants\n-BigDecimal price\n-UUID organizerId");
+        } catch (AccountNotFoundException e){
+            return ResponseEntity.badRequest().body("Ningún usuario con el id existe");
         }
     }
 
