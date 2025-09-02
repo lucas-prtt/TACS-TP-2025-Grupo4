@@ -1,5 +1,6 @@
 package org.services;
 
+import org.DTOs.AccountRegistrationDTO;
 import org.DTOs.EventDTO;
 import org.apache.coyote.BadRequestException;
 import org.dominio.events.Event;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -111,16 +113,25 @@ public class EventService {
         registration.setEvent(event);
         registration.setUser(account);
 
-        if (event.getParticipants().size() < event.getMaxParticipants()) {
+        if (event.getParticipants().size() < event.getMaxParticipants()){
             registration.setState(RegistrationState.CONFIRMED);
             event.getParticipants().add(registration);
-            account.getRegistrations().add(registration);
-            return RegistrationState.CONFIRMED.toString();
-        } else {
+        }
+        else{
             registration.setState(RegistrationState.WAITLIST);
             event.getWaitList().add(registration);
-            account.getWaitlists().add(registration);
-            return RegistrationState.WAITLIST.toString();
         }
+
+        account.getRegistrations().add(registration);
+
+        return registration.getState().toString();
+    }
+
+    public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
+        // Obtiene todos los eventos y filtra los que tienen como organizador al usuario dado
+        return eventRepository.getAll().stream()
+                .filter(event -> event.getOrganizer() != null && event.getOrganizer().getUuid().equals(organizerId))
+                .map(EventDTO::fromEvent)
+                .collect(Collectors.toList());
     }
 }

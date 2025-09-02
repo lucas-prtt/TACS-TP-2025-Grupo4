@@ -30,6 +30,7 @@ public class EventRepositoryTest {
         Event evento10 = Event.Builder().setTitle("Torneo de ajedrez").setDescription("Competencia abierta con premios").setLocation("Club Argentino de Ajedrez").setPrice(new BigDecimal("300")).setMaxParticipants(50).setStartDateTime(LocalDateTime.now().plusDays(6)).setDurationMinutes(240).setOrganizer(organizador).build();
         Event evento11 = Event.Builder().setTitle("Exposición de arte").setDescription("Galería de artistas locales").setLocation("San Telmo").setPrice(new BigDecimal("100")).setMaxParticipants(150).setStartDateTime(LocalDateTime.now().plusDays(8)).setDurationMinutes(180).setOrganizer(organizador).build();
         return List.of(evento1, evento2, evento3, evento4, evento5, evento6, evento7, evento8, evento9, evento10, evento11);
+
     }
 
     @Test

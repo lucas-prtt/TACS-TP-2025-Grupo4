@@ -27,6 +27,7 @@ public class Event {
     List<Tag> tags;
     List<Registration> participants;
     Queue<Registration> waitList;
+    Account organizer;
 
     // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price
     public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags, Account organizer) throws NullPointerException{
