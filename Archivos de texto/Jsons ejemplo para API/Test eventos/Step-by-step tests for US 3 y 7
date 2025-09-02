@@ -1,0 +1,137 @@
+US 7:
+
+a - Como usuario quiero ver mis eventos (como organizador).
+
+1- Crear usuario:
+
+POST a http://localhost:8080/accounts
+Body (JSON):
+{
+  "username": "Lucas"
+}
+
+Guardar el id de Lucas que devuelve la respuesta.
+
+
+2- Crear evento / s utilizando el usuario creado como organizador (usar el Id devuelto en "a" para organizerId):
+
+Evento 1:
+
+POST a http://localhost:8080/events
+Body (JSON):
+{
+  "title": "Concierto de Jazz",
+  "description": "Un evento de jazz en vivo.",
+  "startDateTime": "2025-09-10T20:00:00",
+  "durationMinutes": 120,
+  "location": "Teatro Nacional",
+  "maxParticipants": 2,
+  "price": 20.5,
+  "organizerId": "{Id de Lucas}"
+}
+
+Evento 2:
+
+POST a http://localhost:8080/events
+Body (JSON):
+{
+  "title": "Concierto de Rock",
+  "description": "Un evento de rock.",
+  "startDateTime": "2025-09-10T20:00:00",
+  "durationMinutes": 200,
+  "location": "Teatro Astros",
+  "maxParticipants": 1,
+  "price": 30.5,
+  "organizerId": "{Id de Lucas}"
+}
+
+
+3- Ver eventos organizados por el usuario creado:
+
+GET a URL: http://localhost:8080/accounts/{Id de Lucas}/organized-events
+
+
+b- Como usuario quiero ver mis inscripciones (como participante) con su estado.
+
+1- Crear el organizador
+POST a http://localhost:8080/accounts
+Body (JSON):
+{
+  "uuid": "76a83150-7dcc-421e-a7ab-c8787745c6ba",
+  "username": "Jorge"
+}
+
+Guardar el id de Jorge que devuelve la respuesta.
+
+
+2- Crear el evento con cupo 1
+POST a http://localhost:8080/events
+Body (JSON):
+{
+  "title": "Evento Test Waitlist",
+  "description": "Evento para probar waitlist",
+  "startDateTime": "2025-09-10T20:00:00",
+  "durationMinutes": 120,
+  "location": "Teatro Nacional",
+  "maxParticipants": 1,
+  "price": 20.50,
+  "organizerId": "{colocar Id de Jorge}"
+}
+
+Guardar el id del evento que devuelve la respuesta.
+
+
+3- Crear dos usuarios
+POST a http://localhost:8080/accounts
+
+Usuario 1:
+Body (JSON):
+{
+  "uuid": "11111111-1111-1111-1111-111111111111",
+  "username": "Alice"
+}
+
+Guardar el id de Alice que devuelve la respuesta.
+
+Usuario 2:
+Body (JSON):
+{
+  "uuid": "22222222-2222-2222-2222-222222222222",
+  "username": "Bob"
+}
+
+Guardar el id de Bob que devuelve la respuesta.
+
+
+4- Registrar usuario 1 al evento (la respuesta debería ser CONFIRMED)
+POST a http://localhost:8080/events/registration
+Body (JSON):
+{
+  "eventId": "{id del evento creado en el paso 2}",
+  "accountId": "{Id de Alice}"
+}
+
+
+5- Registrar usuario 2 al mismo evento (la respuesta debería ser WAITLIST)
+POST a http://localhost:8080/events/registration
+Body (JSON):
+{
+  "eventId": "{id del evento creado en el paso 2}",
+  "accountId": "{Id de Bob}"
+}
+
+6- Ver inscripciones de Alice
+GET a
+http://localhost:8080/accounts/{Id de Alice}/registrations
+
+La respuesta es un registro con estado CONFIRMED.
+
+
+7- Ver inscripciones de Alice
+GET a
+http://localhost:8080/accounts/{Id de Bob}/registrations
+
+La respuesta es un registro con estado WAITLIST.
+
+
+Con estos últimos pasos también se comprueba el funcionamiento de los requerimientos de la US 3 (Como participante quiero registrarme a un evento: si hay cupo quedo confirmado; si no hay, quedo en waitlist).
