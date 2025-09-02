@@ -26,6 +26,8 @@ public class DevController {
     @PostMapping("/load-sample")
     public String loadSampleData() {
 
+        Account organizer = new Account();
+
         // Crear un evento con los campos obligatorios
         Event event = new Event(
                 "Tech Meetup",
@@ -37,16 +39,14 @@ public class DevController {
                 null,                            // mínimo opcional
                 new BigDecimal("100.00"),        // precio
                 null,                            // categoría opcional
-                null                             // tags opcionales
+                null,                             // tags opcionales
+                organizer
         );
 
         // Crear algunos usuarios de prueba
         Account acc1 = new Account( "alice@example.com");
         Account acc2 = new Account( "bob@example.com");
         Account acc3 = new Account( "charlie@example.com");
-        acc1.setUuid(UUID.randomUUID());
-        acc2.setUuid(UUID.randomUUID());
-        acc3.setUuid(UUID.randomUUID());
 
         // Crear inscripciones y registrarlas en el evento
         Registration reg1 = new Registration( acc1);

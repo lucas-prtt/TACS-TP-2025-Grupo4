@@ -11,16 +11,12 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Registration {
-    Event event;
-    Account user;
 
     public Registration(Account user1) {
         user=user1;
     }
-    RegistrationState state;
     private UUID id;
     private Event event;
     private Account user;

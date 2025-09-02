@@ -25,6 +25,8 @@ public class OrganizerTests {
         eventService = Mockito.mock(EventService.class);
         organizerService = new OrganizerService(eventService);
 
+        Account organizer = new Account();
+
         // Crear un evento de prueba
         mockEvent = new Event(
                 "Test Event",
@@ -36,7 +38,8 @@ public class OrganizerTests {
                 null,
                 BigDecimal.TEN,
                 null,
-                new ArrayList<>()
+                new ArrayList<>(),
+                organizer
         );
 
         // Simular participantes

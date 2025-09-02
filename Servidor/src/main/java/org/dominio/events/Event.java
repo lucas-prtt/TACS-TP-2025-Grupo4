@@ -82,28 +82,28 @@ public class Event {
     public boolean hasAvailableSpots() {
         return participants.size() < maxParticipants;
     }
-    public String registerParticipant(Registration registration){
+    public String registerParticipant(Registration registration) {
         //metodo para inscribir participante al evento verificando las condiciones:
         //-hay cupo-si las inscripciones estan abiertas ,etc
 
-        if(isRegistrationsOpen() ){
-            if(hasAvailableSpots()){
+        if (isRegistrationsOpen()) {
+            if (hasAvailableSpots()) {
                 //inscribir
                 registration.setState(RegistrationState.CONFIRMED);
                 participants.add(registration);
                 registration.getUser().getRegistrations().add(registration);
-            }else {
+            } else {
                 //añadir a waitlist
                 registration.setState(RegistrationState.WAITLIST);
                 waitList.add(registration);
-                registration.getUser().getWaitlists().add(registration);
-
+                registration.getUser().getRegistrations().add(registration);
             }
-            return registration.state.toString();
+            return registration.getState().toString();
         } else {
             return EventState.CERRADO.toString();
         }
-      
+    }
+
     public void promoteFromWaitlist() {
         if (participants.size() < maxParticipants && !waitList.isEmpty()) {
             Registration next = waitList.poll();  // saca el primero

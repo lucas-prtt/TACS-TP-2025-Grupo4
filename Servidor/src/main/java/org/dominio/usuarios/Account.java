@@ -10,10 +10,10 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
 public class Account {
     public Account(String username) {
         this.username = username;
+        this.id = UUID.randomUUID();
     }
 
     UUID id;

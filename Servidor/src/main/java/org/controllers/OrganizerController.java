@@ -21,12 +21,12 @@ public class OrganizerController {
 
     @GetMapping("/event/{eventId}/participants")
     public List<RegistrationDTO> getParticipants(@PathVariable("eventId") UUID eventId) {
-        return organizerService.getRegistrationsFromEvent(eventId).stream().map(registration -> new RegistrationDTO(registration.getEvent().getId(),registration.getUser().getUuid())).toList();
+        return organizerService.getRegistrationsFromEvent(eventId).stream().map(registration -> new RegistrationDTO(registration.getId(),registration.getEvent().getId(), registration.getUser().getId(), registration.getState(), registration.getDateTime())).toList();
     }
 
     @GetMapping("/event/{eventId}/waitlist")
     public List<RegistrationDTO> getWaitlist(@PathVariable("eventId") UUID eventId) {
-        return organizerService.getWaitlistFromEvent(eventId).stream().map(registration -> new RegistrationDTO(registration.getEvent().getId(),registration.getUser().getUuid())).toList();
+        return organizerService.getWaitlistFromEvent(eventId).stream().map(registration -> new RegistrationDTO(registration.getId(),registration.getEvent().getId(), registration.getUser().getId(), registration.getState(), registration.getDateTime())).toList();
     }
 
     @PostMapping("/event/{eventId}/close")
