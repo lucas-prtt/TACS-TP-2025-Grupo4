@@ -1,9 +1,9 @@
 package org.controllers;
 
 import org.DTOs.EventDTO;
-import org.DTOs.RegistrationDTO;
+import org.DTOs.registrations.RegistrationDTO;
 import org.DTOs.StatsDTO;
-import org.dominio.events.Event;
+import org.model.events.Event;
 import org.services.EventService;
 import org.services.StatsService;
 import org.springframework.http.ResponseEntity;

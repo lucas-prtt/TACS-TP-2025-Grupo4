@@ -1,17 +1,16 @@
 package org.services;
 
-import org.DTOs.AccountRegistrationDTO;
 import org.DTOs.EventDTO;
 import org.apache.coyote.BadRequestException;
-import org.dominio.events.Event;
-import org.dominio.usuarios.Account;
+import org.model.events.Event;
+import org.model.accounts.Account;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
 import org.springframework.stereotype.Service;
-import org.dominio.events.Registration;
+import org.model.events.Registration;
 import java.util.UUID;
 
 import java.math.BigDecimal;
@@ -120,7 +119,6 @@ public class EventService {
         //Verificar si ya está en waitlist
         if(event.getWaitList().stream().anyMatch(acc -> acc.getUser().getId().equals(accountId)))
             return "ALREADY_IN_WAITLIST";
-
         Registration registration = new Registration();
         registration.setEvent(event);
         registration.setUser(account);

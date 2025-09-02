@@ -1,8 +1,8 @@
 package ServiceTests;
-import org.dominio.Enums.EventState;
-import org.dominio.events.Event;
-import org.dominio.events.Registration;
-import org.dominio.usuarios.Account;
+import org.model.enums.EventState;
+import org.model.events.Event;
+import org.model.events.Registration;
+import org.model.accounts.Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -88,7 +88,7 @@ public class OrganizerTests {
 
         organizerService.closeRegistrations(eventId);
 
-        assertEquals(EventState.CERRADO , mockEvent.getEventState());
+        assertEquals(EventState.EVENT_CLOSED , mockEvent.getEventState());
     }
     @Test
     void testRegisterParticipantAfterClosingRegistrations() {
@@ -106,7 +106,7 @@ public class OrganizerTests {
         String result = mockEvent.registerParticipant(newRegistration);
 
         // Verificar que el resultado es "CERRADO" y que no se agregó al participante
-        assertEquals(EventState.CERRADO.toString(), result);
+        assertEquals(EventState.EVENT_CLOSED.toString(), result);
         assertFalse(mockEvent.getParticipants().contains(newRegistration));  // Verificar que no fue agregado
     }
 }

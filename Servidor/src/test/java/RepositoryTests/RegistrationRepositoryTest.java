@@ -2,10 +2,10 @@ package RepositoryTests;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import org.dominio.events.Event;
-import org.dominio.events.Registration;
-import org.dominio.events.RegistrationState;
-import org.dominio.usuarios.Account;
+import org.model.events.Event;
+import org.model.events.Registration;
+import org.model.enums.RegistrationState;
+import org.model.accounts.Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -88,18 +88,21 @@ class RegistrationRepositoryTest {
   }
 
   @Test
-  void deleteById_shouldRemoveRegistration() {
+  void cancelById_shouldMarkRegistrationAsCancelled() {
     repository.save(registration);
 
-    boolean deleted = repository.deleteById(registration.getId());
+    boolean cancelled = repository.cancelById(registration.getId());
 
-    assertTrue(deleted);
-    assertFalse(repository.findById(registration.getId()).isPresent());
+    assertTrue(cancelled);
+    Optional<Registration> optReg = repository.findById(registration.getId());
+    assertTrue(optReg.isPresent());
+    assertEquals(RegistrationState.CANCELED, optReg.get().getCurrentState());
   }
+
 
   @Test
   void deleteById_notExisting_shouldReturnFalse() {
-    boolean deleted = repository.deleteById(UUID.randomUUID());
+    boolean deleted = repository.cancelById(UUID.randomUUID());
 
     assertFalse(deleted);
   }

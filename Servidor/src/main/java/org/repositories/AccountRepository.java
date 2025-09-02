@@ -1,6 +1,6 @@
 package org.repositories;
 
-import org.dominio.usuarios.Account;
+import org.model.accounts.Account;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;

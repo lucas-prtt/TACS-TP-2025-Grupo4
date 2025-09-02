@@ -1,7 +1,6 @@
-package org.dominio.usuarios;
+package org.model.accounts;
 
-import lombok.NoArgsConstructor;
-import org.dominio.events.Registration;
+import org.model.events.Registration;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,14 +1,12 @@
 package ServiceTests;
 
-import org.DTOs.AccountDTO;
-import org.dominio.events.Event;
-import org.dominio.usuarios.Account;
+import org.model.events.Event;
+import org.model.accounts.Account;
 import org.repositories.EventRepository;
 import org.repositories.AccountRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.repositories.RegistrationRepository;
-import org.services.AccountService;
 import org.services.EventService;
 import org.services.StatsService;
 
@@ -30,7 +28,7 @@ public class EventServiceTest {
         eventRepository = new EventRepository();
         accountRepository = new AccountRepository();
         registrationRepository = new RegistrationRepository();
-        statsService = new StatsService(eventRepository);
+        statsService = new StatsService(eventRepository,registrationRepository);
         eventService = new EventService(eventRepository, accountRepository, statsService, registrationRepository);
     }
 

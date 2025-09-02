@@ -1,15 +1,15 @@
-package org.dominio.events;
+package org.model.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.dominio.Enums.EventState;
-import org.dominio.usuarios.Account;
+import org.model.enums.EventState;
+import org.model.enums.RegistrationState;
+import org.model.accounts.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-import org.dominio.usuarios.Account;
 
 @Getter
 @Setter
@@ -64,24 +64,20 @@ public class Event {
         this.participants = new ArrayList<>();
         this.waitList = new ArrayDeque<>();
         this.id = UUID.randomUUID();
-        this.eventState=EventState.ABIERTO;
+        this.eventState=EventState.EVENT_OPEN;
     }
     public static EventBuilder Builder(){return new EventBuilder();}
 
     public void closeRegistrations() {
-        this.eventState=EventState.CERRADO;
+        this.eventState=EventState.EVENT_CLOSED;
     }
 
-    public boolean isRegistrationsOpen(){
+    public boolean isRegistrationsOpen(){return eventState.equals(EventState.EVENT_OPEN);}
 
-        if(eventState.equals(EventState.ABIERTO)){
-            return true;
-        }
-        return false;
-    }
     public boolean hasAvailableSpots() {
         return participants.size() < maxParticipants;
     }
+
     public String registerParticipant(Registration registration) {
         //metodo para inscribir participante al evento verificando las condiciones:
         //-hay cupo-si las inscripciones estan abiertas ,etc
@@ -98,9 +94,9 @@ public class Event {
                 waitList.add(registration);
                 registration.getUser().getRegistrations().add(registration);
             }
-            return registration.getState().toString();
+            return registration.getCurrentState().toString();
         } else {
-            return EventState.CERRADO.toString();
+            return EventState.EVENT_CLOSED.toString();
         }
     }
 

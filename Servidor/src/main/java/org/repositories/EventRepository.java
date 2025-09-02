@@ -1,6 +1,6 @@
 package org.repositories;
 
-import org.dominio.events.Event;
+import org.model.events.Event;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;

@@ -1,6 +1,6 @@
 package RepositoryTests;
-import org.dominio.events.Event;
-import org.dominio.usuarios.Account;
+import org.model.events.Event;
+import org.model.accounts.Account;
 import org.junit.Test;
 import org.repositories.EventRepository;
 
@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class EventRepositoryTest {
     EventRepository eventRepository = new EventRepository();

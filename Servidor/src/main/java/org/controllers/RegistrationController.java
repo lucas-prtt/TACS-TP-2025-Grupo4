@@ -4,7 +4,7 @@ package org.controllers;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.DTOs.RegistrationDTO;
+import org.DTOs.registrations.RegistrationDTO;
 import org.services.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +24,8 @@ public class RegistrationController {
     this.registrationService = registrationService;
   }
 
-//  // Obtener todas las inscripciones de un usuario
 //  @GetMapping
-//  public ResponseEntity<List<RegistrationDTO>> getAllByUser(@PathVariable("accountId")  UUID accountId) {
+//    public ResponseEntity<List<RegistrationDTO>> getAllByUser(@PathVariable("accountId")  UUID accountId) {
 //    return ResponseEntity.ok(registrationService.findByAccountId(accountId));
 //  }
 

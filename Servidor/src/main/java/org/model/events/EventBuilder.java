@@ -1,8 +1,8 @@
-package org.dominio.events;
+package org.model.events;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.dominio.usuarios.Account;
+import org.model.accounts.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

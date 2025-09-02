@@ -20,5 +20,30 @@
 ](https://www.tacs-utn.com.ar/)
 
 ### Jira
-
 [https://frba-team-hj2c1r3q.atlassian.net/jira/software/projects/MBA/boards/1](https://frba-team-hj2c1r3q.atlassian.net/jira/software/projects/MBA/boards/1)
+
+## Instrucciones para levantar el servidor
+
+### Desde la raiz del repositorio...
+
+- Abrir Docker Desktop si no está abierto
+
+
+- Compilar el código y crear un `.jar`:
+
+  ```bash
+  mvn clean package
+
+- Crear contenedor:
+  ```bash
+  docker build -t servidor ./Servidor
+
+- Ejecutar contenedor:
+  ```bash
+  docker run -p 8080:8080 servidor
+  ```
+
+Tras eso, el servidor estará escuchando peticiones en el puerto 8080.
+Se puede comprobar haciendo alguna de las peticiones en la carpeta de ejemplos
+
+

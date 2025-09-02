@@ -1,17 +1,15 @@
 package org.controllers;
 
-import org.dominio.events.Event;
-import org.dominio.events.Registration;
-import org.dominio.usuarios.Account;
+import org.model.events.Event;
+import org.model.events.Registration;
+import org.model.accounts.Account;
 import org.repositories.EventRepository;
-import org.services.EventService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/dev")

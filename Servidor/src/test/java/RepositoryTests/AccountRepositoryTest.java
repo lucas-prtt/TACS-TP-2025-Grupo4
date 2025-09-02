@@ -1,6 +1,6 @@
 package RepositoryTests;
 
-import org.dominio.usuarios.Account;
+import org.model.accounts.Account;
 import org.junit.Before;
 import org.junit.Test;
 import org.repositories.AccountRepository;

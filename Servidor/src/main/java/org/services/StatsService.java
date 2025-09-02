@@ -1,8 +1,9 @@
 package org.services;
 
 import org.DTOs.StatsDTO;
-import org.dominio.events.Event;
+import org.model.enums.RegistrationState;
 import org.repositories.EventRepository;
+import org.repositories.RegistrationRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,8 +11,11 @@ public class StatsService {
 
 
     private final EventRepository eventRepository;
-    public StatsService(EventRepository eventRepository){
+    private final RegistrationRepository registrationRepository;
+
+    public StatsService(EventRepository eventRepository, RegistrationRepository registrationRepository) {
         this.eventRepository = eventRepository;
+        this.registrationRepository = registrationRepository;
     }
 
     public long eventsAmount(){
@@ -21,17 +25,24 @@ public class StatsService {
         return  eventRepository.getAll().stream().flatMap(evento -> evento.getParticipants().stream()).toList().size();
     }
 
-    public long waitListAmount(){
-        return  eventRepository.getAll().stream().flatMap(evento -> evento.getWaitList().stream()).toList().size();
+    // Cantidad de inscripciones que alguna vez estuvieron en WAITLIST
+    public long waitListAmount() {
+        return registrationRepository.findAllThatWereInWaitlist().size();
+    }
+
+    // Cantidad de inscripciones que fueron promovidas desde WAITLIST a CONFIRMED
+    public long waitListPromoted() {
+        return registrationRepository.findAllPromotedFromWaitlist().size();
     }
 
     public StatsDTO getStats() {
         long eventsCount = eventsAmount();
         long registrationsCount = registrationsAmount();
-        long waitlistPromotions = waitListAmount();
+        long waitlistPromotions = waitListPromoted();
+        long waitlistTotalCount = waitListAmount();
 
-        double conversionRate = registrationsCount == 0 ? 0.0 :
-                (double) waitlistPromotions / registrationsCount;
+        double conversionRate = waitlistTotalCount == 0 ? 0.0 :
+                (double) waitlistPromotions / waitlistTotalCount;
 
         return new StatsDTO(
                 eventsCount,

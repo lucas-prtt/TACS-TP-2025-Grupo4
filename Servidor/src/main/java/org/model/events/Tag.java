@@ -1,4 +1,4 @@
-package org.dominio.events;
+package org.model.events;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

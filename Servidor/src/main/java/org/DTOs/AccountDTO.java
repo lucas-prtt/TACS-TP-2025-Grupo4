@@ -2,8 +2,8 @@ package org.DTOs;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.dominio.events.Event;
-import org.dominio.events.Registration;
+import org.model.events.Event;
+import org.model.events.Registration;
 
 import java.util.ArrayList;
 import java.util.List;

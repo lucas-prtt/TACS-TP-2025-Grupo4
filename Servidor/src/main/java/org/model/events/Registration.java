@@ -1,11 +1,12 @@
-package org.dominio.events;
+package org.model.events;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import org.dominio.usuarios.Account;
+import org.model.enums.RegistrationState;
+import org.model.accounts.Account;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,7 +21,8 @@ public class Registration {
     private UUID id;
     private Event event;
     private Account user;
-    private RegistrationState state;
+    private RegistrationState currentState;
+    private List<RegistrationStateChange> history = new ArrayList<>();
     private LocalDateTime dateTime;
 
     public Registration(){
@@ -33,6 +35,12 @@ public class Registration {
         this.dateTime = LocalDateTime.now();
         this.event = event;
         this.user = user;
-        this.state = state;
+        this.currentState = state;
+    }
+
+    public void setState(RegistrationState newState) {
+        RegistrationStateChange change = new RegistrationStateChange(this, this.currentState, newState, LocalDateTime.now());
+        history.add(change);
+        this.currentState = newState;
     }
 }

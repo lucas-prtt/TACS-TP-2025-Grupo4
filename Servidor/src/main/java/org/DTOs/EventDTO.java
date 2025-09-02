@@ -4,11 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dominio.events.Category;
-import org.dominio.events.Event;
-import org.dominio.events.EventBuilder;
-import org.dominio.events.Tag;
-import org.dominio.usuarios.Account;
+import org.model.enums.EventState;
+import org.model.events.Category;
+import org.model.events.Event;
+import org.model.events.Tag;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,6 +32,7 @@ public class EventDTO {
     BigDecimal price;
     Category category;
     List<Tag> tags;
+    EventState state;
 
 
     // Crea un EventDTO a partir de un Event
@@ -50,7 +50,8 @@ public class EventDTO {
                 event.getMinParticipants(),
                 event.getPrice(),
                 event.getCategory(),
-                new ArrayList<>(event.getTags())
+                new ArrayList<>(event.getTags()),
+                event.getEventState()
         );
     }
 }

@@ -1,9 +1,8 @@
 package org.services;
 
 
-import org.dominio.events.Event;
-import org.dominio.events.Registration;
-import org.dominio.usuarios.Account;
+import org.model.events.Event;
+import org.model.events.Registration;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

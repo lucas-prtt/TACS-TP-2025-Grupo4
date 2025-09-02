@@ -1,14 +1,16 @@
 package org.services;
 
+import static org.DTOs.registrations.RegistrationDTO.toRegistrationDTO;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.DTOs.RegistrationDTO;
-import org.dominio.events.Event;
-import org.dominio.events.Registration;
-import org.dominio.events.RegistrationState;
-import org.dominio.usuarios.Account;
+import org.DTOs.registrations.RegistrationDTO;
+import org.model.events.Event;
+import org.model.events.Registration;
+import org.model.enums.RegistrationState;
+import org.model.accounts.Account;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
@@ -45,32 +47,32 @@ public class RegistrationService {
     Registration reg = new Registration(event.get(), account.get(), state);
     registrationRepository.save(reg);
 
-    return Optional.of(toDto(reg));
+    return Optional.of(toRegistrationDTO(reg));
   }
 
   // Buscar inscripción por id
   public Optional<RegistrationDTO> findById(UUID id) {
-    return registrationRepository.findById(id).map(this::toDto);
+    return registrationRepository.findById(id).map(RegistrationDTO::toRegistrationDTO);
   }
 
   // Listar todas las inscripciones
   public List<RegistrationDTO> findAll() {
     return registrationRepository.findAll().stream()
-        .map(this::toDto)
+        .map(RegistrationDTO::toRegistrationDTO)
         .collect(Collectors.toList());
   }
 
   // Listar inscripciones de un usuario
   public List<RegistrationDTO> findByAccountId(UUID accountId) {
     return registrationRepository.findByAccountId(accountId).stream()
-        .map(this::toDto)
+        .map(RegistrationDTO::toRegistrationDTO)
         .collect(Collectors.toList());
   }
 
   // Listar inscripciones de un evento
   public List<RegistrationDTO> findByEventId(UUID eventId) {
     return registrationRepository.findByEventId(eventId).stream()
-        .map(this::toDto)
+        .map(RegistrationDTO::toRegistrationDTO)
         .collect(Collectors.toList());
   }
 
@@ -78,7 +80,7 @@ public class RegistrationService {
   public Optional<RegistrationDTO> findByUserAndRegistrationId(UUID accountId, UUID registrationId) {
     return registrationRepository.findById(registrationId)
         .filter(reg -> reg.getUser().getId().equals(accountId))
-        .map(this::toDto);
+        .map(RegistrationDTO::toRegistrationDTO);
   }
 
   // Cancelar inscripción (usuario solo puede cancelar la suya)
@@ -101,18 +103,8 @@ public class RegistrationService {
     // Promocionar a alguien de la waitlist si corresponde
     event.promoteFromWaitlist();
 
-    return registrationRepository.deleteById(registrationId);
+    return registrationRepository.cancelById(registrationId);
   }
 
-
-  private RegistrationDTO toDto(Registration reg) {
-    return new RegistrationDTO(
-        reg.getId(),
-        reg.getUser().getId(),
-        reg.getEvent().getId(),
-        reg.getState(),
-        reg.getDateTime()
-    );
-  }
 
 }

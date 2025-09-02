@@ -1,7 +1,8 @@
 package org.controllers;
 
 import org.DTOs.EventDTO;
-import org.DTOs.RegistrationDTO;
+import org.DTOs.registrations.RegistrationCreateDTO;
+import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
@@ -80,9 +81,9 @@ public class EventController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<String> registerUserToEvent(@RequestBody RegistrationDTO registrationDTO) {
+    public ResponseEntity<String> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTODTO) {
         try {
-            String result = eventService.registerParticipantToEvent(registrationDTO.getEventId(), registrationDTO.getAccountId());
+            String result = eventService.registerParticipantToEvent(registrationCreateDTODTO.getEventId(), registrationCreateDTODTO.getAccountId());
             return ResponseEntity.ok(result);
         } catch (EventNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -90,6 +91,4 @@ public class EventController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-
 }

@@ -1,13 +1,11 @@
 package ServiceTests;
 
 import org.DTOs.AccountDTO;
-import org.dominio.usuarios.Account;
+import org.model.accounts.Account;
 import org.junit.Before;
 import org.junit.Test;
 import org.repositories.AccountRepository;
 import org.services.AccountService;
-
-import java.util.UUID;
 
 import static org.junit.Assert.*;
 
