@@ -20,9 +20,9 @@ public class OrganizerService {
         this.eventService = eventService;
     }
 
-    public List<Account> getRegistrationsFromEvent(UUID eventId) {
+    public List<Registration> getRegistrationsFromEvent(UUID eventId) {
         Event event = eventService.getEvent(eventId);
-        return event.getParticipants().stream().map(Registration::getUser).toList();
+        return event.getParticipants();
     }
 
     public Queue<Registration> getWaitlistFromEvent(UUID eventId) {

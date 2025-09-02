@@ -59,11 +59,11 @@ public class OrganizerTests {
         UUID eventId = mockEvent.getId();
         when(eventService.getEvent(eventId)).thenReturn(mockEvent);
 
-        List<Account> result = organizerService.getRegistrationsFromEvent(eventId);
+        List<Registration> result = organizerService.getRegistrationsFromEvent(eventId);
 
         assertEquals(2, result.size());
-        assertEquals("user1@test.com", result.get(0).getUsername());
-        assertEquals("user2@test.com", result.get(1).getUsername());
+        assertEquals("user1@test.com", result.get(0).getUser().getUsername());
+        assertEquals("user2@test.com", result.get(1).getUser().getUsername());
     }
 
     @Test
