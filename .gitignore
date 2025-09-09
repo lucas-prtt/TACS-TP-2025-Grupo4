@@ -36,3 +36,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### API KEYS
+.env
+TelegramBot/.env
