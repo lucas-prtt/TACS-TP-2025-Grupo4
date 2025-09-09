@@ -28,22 +28,16 @@
 
 1. Abrir Docker Desktop si no está abierto.
 
-2. Compilar el código y crear un `.jar`:
+2. Crear contenedor:
 
 ```bash
-mvn clean package
+docker build -f Servidor/Dockerfile -t servidor .
 ```
 
-3. Crear contenedor:
+3. Ejecutar contenedor:
 
 ```bash
-docker build -t servidor ./Servidor
-```
-
-4. Ejecutar contenedor:
-
-```bash
-docker run -p 8080:8080 servidor
+docker run --name Servidor-TACS-Grupo4 -p 8080:8080 servidor
 ```
 
 Tras eso, el servidor estará escuchando peticiones en el puerto 8080.
