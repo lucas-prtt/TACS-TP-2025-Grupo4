@@ -13,6 +13,8 @@ public class TelegramUser {
     @Setter
     private String serverAccountId;
     @Setter
+    private String serverAccountUsername;
+    @Setter
     private MenuState menu;
 
     public TelegramUser(Long chatId){

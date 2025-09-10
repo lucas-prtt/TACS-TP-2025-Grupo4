@@ -11,8 +11,8 @@ public class SetUserMenu extends MenuState {
 
     @Override
     public String respondTo(String message) {
-        //TODO: Chequear que exista?
-        user.setServerAccountId(message);
+        //TODO: Chequear que exista, setear nombre, setear uuid
+        user.setServerAccountUsername(message);
         return user.setMainMenuAndRespond();
     }
 

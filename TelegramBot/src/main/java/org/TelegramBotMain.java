@@ -6,8 +6,10 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 public class TelegramBotMain {
     public static void main(String[] args) {
-
-        System.out.println("Cargando bot...");
+        System.out.println("Conexion al servidor de eventos:");
+        System.out.println("IP: " + ConfigManager.getInstance().get("server.ip"));
+        System.out.println("Port: " + ConfigManager.getInstance().get("server.port"));
+        System.out.println("\nCargando bot...");
 
         String NAME = System.getenv("EVENTOS_TELEGRAM_BOT_USERNAME");
         if (NAME == null) {
@@ -19,6 +21,8 @@ public class TelegramBotMain {
             System.err.println("La variable de entorno EVENTOS_TELEGRAM_BOT_TOKEN no está definida");
             return;
         }
+
+
 
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
