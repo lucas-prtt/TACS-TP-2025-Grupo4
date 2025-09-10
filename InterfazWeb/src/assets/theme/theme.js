@@ -11,6 +11,14 @@ export const main = createTheme({
         icon:{
             primary: "#000000",
             secondary: "#FFFFFF"
+        },
+        textfield: {
+            primary: "#F3F3F5",
+            hover: "#e9e5e56c",
+        },
+        text:{
+            primary: "#000000",
+            secondary: "#3A3A3A"
         }
         /*button:{
             

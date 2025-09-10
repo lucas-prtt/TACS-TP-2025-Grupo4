@@ -3,7 +3,6 @@ import { DashBoard } from "../usuario/dashboard/DashBoard"
 import { Eventos } from "../usuario/eventos/Eventos"
 import { Analiticas } from "../usuario/analiticas/Analiticas"
 import { Calendario } from "../usuario/calendario/Calendario"
-import { NavbarApp } from "../components/NavbarApp"
 import {Asistentes} from "../usuario/asistentes/Asistentes"
 import { CrearEventos } from "../usuario/crearEventos/CrearEventos"
 import { Configuracion } from "../usuario/configuracion/Configuracion"
@@ -13,7 +12,6 @@ export const UsuarioRouter = () => {
 
     return (
         <>
-        <NavbarApp/>
         <Routes>
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/eventos" element={<Eventos />} />
