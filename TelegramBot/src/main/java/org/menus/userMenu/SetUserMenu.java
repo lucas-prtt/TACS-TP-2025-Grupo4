@@ -1,8 +1,9 @@
-package org.users.states;
+package org.menus.userMenu;
 
 import org.users.TelegramUser;
+import org.menus.MenuState;
 
-public class SetUserMenu extends MenuState{
+public class SetUserMenu extends MenuState {
 
     public SetUserMenu(TelegramUser user) {
         super(user);

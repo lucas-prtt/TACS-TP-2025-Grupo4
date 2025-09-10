@@ -1,8 +1,9 @@
-package org.users.states;
+package org.menus;
 
 import org.users.TelegramUser;
-
-import java.awt.*;
+import org.menus.organizerMenu.OrganizerMenu;
+import org.menus.participantMenu.ParticipantMenu;
+import org.menus.userMenu.UserMenu;
 
 public class MainMenu extends MenuState {
 

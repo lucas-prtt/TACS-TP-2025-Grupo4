@@ -4,9 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.users.states.MainMenu;
-import org.users.states.MenuState;
+import org.menus.MainMenu;
+import org.menus.MenuState;
 
 @Getter
 public class TelegramUser {

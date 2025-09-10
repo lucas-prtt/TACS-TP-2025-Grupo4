@@ -1,6 +1,7 @@
-package org.users.states;
+package org.menus.userMenu;
 
 import org.users.TelegramUser;
+import org.menus.MenuState;
 
 public class UserMenu extends MenuState {
     @Override

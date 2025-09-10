@@ -1,8 +1,9 @@
-package org.users.states;
+package org.menus.participantMenu;
 
 import org.users.TelegramUser;
+import org.menus.MenuState;
 
-public class OrganizerMenu extends MenuState {
+public class ParticipantMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         return "";
@@ -13,7 +14,7 @@ public class OrganizerMenu extends MenuState {
         return "";
     }
 
-    public OrganizerMenu(TelegramUser user) {
+    public ParticipantMenu(TelegramUser user) {
         super(user);
     }
 }
