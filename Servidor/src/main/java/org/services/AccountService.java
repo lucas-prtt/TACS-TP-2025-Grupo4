@@ -2,6 +2,7 @@ package org.services;
 
 import org.DTOs.accounts.AccountCreateDTO;
 import org.DTOs.registrations.RegistrationDTO;
+import org.exceptions.AccountNotFoundException;
 import org.model.accounts.Account;
 import org.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,13 @@ public class AccountService {
         return account.getRegistrations().stream()
                 .map(RegistrationDTO::toRegistrationDTO)
                 .collect(Collectors.toList());
+    }
+    public Account getAccountById(UUID accountID){
+        return accountRepository.findById(String.valueOf(accountID))
+                .orElseThrow(() -> new AccountNotFoundException("Usuario no encontrado"));
+    }
+    public Account getAccountByUsername(String accountUsername){
+        return accountRepository.findByUsername(accountUsername)
+                .orElseThrow(() -> new AccountNotFoundException("Usuario no encontrado"));
     }
 }

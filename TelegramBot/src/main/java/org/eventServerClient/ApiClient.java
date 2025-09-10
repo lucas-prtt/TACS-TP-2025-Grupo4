@@ -1,7 +1,7 @@
 package org.eventServerClient;
 
 import org.ConfigManager;
-import org.eventServerClient.dtos.PostUsuarioDTO;
+import org.eventServerClient.dtos.AccountDTO;
 import org.springframework.web.client.RestTemplate;
 
 public class ApiClient {
@@ -12,9 +12,13 @@ public class ApiClient {
         return "http://"+ ConfigManager.getInstance().get("server.ip")+":"+ConfigManager.getInstance().get("server.port");
     }
 
-    public static PostUsuarioDTO postUsuario(String username){
+    public static AccountDTO postAccount(String username){
         String url = getBaseUri() + "/accounts";
-        return restTemplate.postForObject(url, new PostUsuarioDTO(username), PostUsuarioDTO.class);
+        return restTemplate.postForObject(url, new AccountDTO(username), AccountDTO.class);
+    }
+    public static AccountDTO getAccountByUsername(String username){
+        String url = getBaseUri() + "/accounts/usernames/"+username;
+        return restTemplate.getForObject(url, AccountDTO.class);
     }
 
 }

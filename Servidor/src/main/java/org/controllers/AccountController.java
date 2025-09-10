@@ -6,6 +6,7 @@ import org.DTOs.accounts.AccountCreateDTO;
 import org.DTOs.EventDTO;
 import org.DTOs.accounts.AccountResponseDTO;
 import org.DTOs.registrations.RegistrationDTO;
+import org.exceptions.AccountNotFoundException;
 import org.services.EventService;
 import org.model.accounts.Account;
 import org.services.AccountService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +27,25 @@ public class AccountController {
 
     @Autowired
     private EventService eventService;
+
+    @GetMapping("/{accountId}")
+    public ResponseEntity<AccountResponseDTO> getAccountById(@PathVariable(name = "accountId") String accountId) {
+        try {
+            Account acc = accountService.getAccountById(UUID.fromString(accountId));
+            return ResponseEntity.ok(new AccountResponseDTO(acc.getId(), acc.getUsername()));
+        }catch (AccountNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/usernames/{accountUsername}")
+    public ResponseEntity<AccountResponseDTO> getAccountByUsername(@PathVariable(name = "accountUsername") String accountUsername) {
+        try {
+            Account acc = accountService.getAccountByUsername(accountUsername);
+            return ResponseEntity.ok(new AccountResponseDTO(acc.getId(), acc.getUsername()));
+        }catch (AccountNotFoundException e){
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @GetMapping("/{accountId}/registrations")
     public ResponseEntity<List<RegistrationDTO>> getRegistrations(@PathVariable(name = "accountId") String accountId) {

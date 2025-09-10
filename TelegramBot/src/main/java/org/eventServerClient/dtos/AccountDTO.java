@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PostUsuarioDTO {
+public class AccountDTO {
     private String username;
     private String uuid;
-    public PostUsuarioDTO(String username){
+    public AccountDTO(String username){
         this.username = username;
     }
 }
