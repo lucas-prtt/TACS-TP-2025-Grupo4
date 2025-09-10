@@ -36,6 +36,7 @@ public class BotEventos extends TelegramLongPollingBot {
                 response = new SendMessage();
                 response.setChatId(chatId);
                 response.setText("Bienvenido! \n" + user.getMenu().getQuestion() );
+                System.out.println("New user!    id: " + chatId);
             }
             //De lo contrario, muestra respuesta al ultimo menu
             else {
