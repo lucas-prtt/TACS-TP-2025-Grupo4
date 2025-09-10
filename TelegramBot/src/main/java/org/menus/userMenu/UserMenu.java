@@ -10,7 +10,7 @@ public class UserMenu extends MenuState {
             case "/setUser":
                 return user.setMenuAndRespond(new SetUserMenu(user));
             case "/getUser":
-                return "Usuario actual: " + user.getServerAccountId() + "\n" + user.setMainMenuAndRespond();
+                return "Usuario actual: " + user.getServerAccountUsername() + "\nID: "+ user.getServerAccountId() + "\n\n" + user.setMainMenuAndRespond() ;
             case "/registerUser":
                 return user.setMenuAndRespond(new RegisterUserMenu(user));
             default:

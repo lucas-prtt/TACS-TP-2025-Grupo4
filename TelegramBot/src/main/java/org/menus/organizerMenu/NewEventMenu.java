@@ -3,6 +3,8 @@ package org.menus.organizerMenu;
 import org.menus.MenuState;
 import org.users.TelegramUser;
 
+import java.math.BigDecimal;
+
 public class NewEventMenu extends MenuState {
     public NewEventMenu(TelegramUser user) {
         super(user);
