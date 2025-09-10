@@ -1,5 +1,9 @@
 import {Box} from "@mui/material";
+import {useTheme} from "@mui/material/styles";
 export const DashBoard = () => {
+
+    const theme = useTheme();
+    
     return (
         <Box
          display="flex"
@@ -8,7 +12,7 @@ export const DashBoard = () => {
             justifyContent="flex-start"
             minHeight="100vh"
          sx={{ 
-                background: "#000000"
+                background: theme.palette.background.primary,
          }}
         >
         </Box>
