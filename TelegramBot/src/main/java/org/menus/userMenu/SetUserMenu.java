@@ -31,6 +31,6 @@ public class SetUserMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return "Ingrese el userId";
+        return "Ingrese el username";
     }
 }
