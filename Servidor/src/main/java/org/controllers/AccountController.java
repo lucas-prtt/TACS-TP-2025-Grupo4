@@ -27,14 +27,18 @@ public class AccountController {
     private EventService eventService;
 
     @GetMapping("/{accountId}/registrations")
-    public ResponseEntity<List<RegistrationDTO>> getRegistrations(@PathVariable(name = "accountId") String accountId) {
-        List<RegistrationDTO> registrations = accountService.getRegistrations(UUID.fromString(accountId));
+    public ResponseEntity<List<RegistrationDTO>> getRegistrations(@PathVariable(name = "accountId") String accountId,
+                                                                  @RequestParam(name = "page", required = false) Integer page,
+                                                                  @RequestParam(name = "limit", required = false) Integer limit) {
+        List<RegistrationDTO> registrations = accountService.getRegistrations(UUID.fromString(accountId), page, limit);
         return ResponseEntity.ok(registrations);
     }
 
     @GetMapping("/{accountId}/organized-events")
-    public ResponseEntity<List<EventDTO>> getOrganizedEvents(@PathVariable(name = "accountId") String accountId) {
-        List<EventDTO> events = eventService.getEventsByOrganizer(UUID.fromString(accountId));
+    public ResponseEntity<List<EventDTO>> getOrganizedEvents(@PathVariable(name = "accountId") String accountId,
+                                                             @RequestParam(name = "page", required = false) Integer page,
+                                                             @RequestParam(name = "limit", required = false) Integer limit) {
+        List<EventDTO> events = eventService.getEventsByOrganizer(UUID.fromString(accountId), page, limit);
         return ResponseEntity.ok(events);
     }
 

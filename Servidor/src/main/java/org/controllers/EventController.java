@@ -72,9 +72,11 @@ public class EventController {
             @RequestParam(name = "category", required = false) String category,
             @RequestParam(name = "tags", required = false) List<String> tags,
             @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
-            @RequestParam(name = "minPrice", required = false) BigDecimal minPrice){
+            @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "limit", required = false) Integer limit){
         try {
-            List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(title, titleContains, maxDate, minDate, category, tags, maxPrice, minPrice);
+            List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(title, titleContains, maxDate, minDate, category, tags, maxPrice, minPrice, page, limit);
             return ResponseEntity.ok(eventsDTO);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().build();

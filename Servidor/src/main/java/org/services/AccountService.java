@@ -6,6 +6,7 @@ import org.model.accounts.Account;
 import org.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.utils.PageSplitter;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,12 +30,16 @@ public class AccountService {
         return account;
     }
 
-    public List<RegistrationDTO> getRegistrations(UUID accountID) {
+    public List<RegistrationDTO> getRegistrations(UUID accountID, Integer page, Integer limit) {
         Account account = accountRepository.findById(String.valueOf(accountID))
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        return account.getRegistrations().stream()
+        List<RegistrationDTO> processedRegistrations = account.getRegistrations().stream()
                 .map(RegistrationDTO::toRegistrationDTO)
                 .collect(Collectors.toList());
+        return PageSplitter.getPageList(processedRegistrations, page, limit);
+    }
+    public List<RegistrationDTO> getRegistrations(UUID accountID) {
+        return getRegistrations(accountID, null, null);
     }
 }
