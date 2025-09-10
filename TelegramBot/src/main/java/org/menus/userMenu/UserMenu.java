@@ -7,11 +7,11 @@ public class UserMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         switch (message){
-            case "1":
+            case "/setUser":
                 return user.setMenuAndRespond(new SetUserMenu(user));
-            case "2":
+            case "/getUser":
                 return "Usuario actual: " + user.getServerAccountId() + "\n" + user.setMainMenuAndRespond();
-            case "3":
+            case "/registerUser":
                 return user.setMenuAndRespond(new RegisterUserMenu(user));
             default:
                 return "Error - opcion invalida\n" + user.getMenu().getQuestion();
@@ -21,9 +21,9 @@ public class UserMenu extends MenuState {
     @Override
     public String getQuestion() {
         return "Menu Usuario \n " +
-                "1. Establecer usuario\n " +
-                "2. Ver usuario actual\n " +
-                "3. Registrar usuario";
+                "/setUser: Establecer usuario\n " +
+                "/getUser: Ver usuario actual\n " +
+                "/registerUser: Registrar usuario";
     }
 
     public UserMenu(TelegramUser user) {

@@ -14,19 +14,19 @@ public class MainMenu extends MenuState {
     @Override
     public String getQuestion() {
         return "Menu principal: \n " +
-                "1. Menu de gestion de usuario\n " +
-                "2. Menu de gestion de eventos organizados\n " +
-                "3. Menu de gestion de eventos a los que participa\n";
+                "/userNenu: Menu de gestion de usuario\n " +
+                "/organizerMenu. Menu de gestion de eventos organizados\n " +
+                "/participantMenu. Menu de gestion de eventos a los que participa\n";
     }
 
     @Override
     public String respondTo(String message) {
         switch (message){
-            case "1":
+            case "/userNenu":
                 return user.setMenuAndRespond(new UserMenu(user));
-            case "2":
+            case "/organizerMenu":
                 return user.setMenuAndRespond(new OrganizerMenu(user));
-            case "3":
+            case "/participantMenu":
                 return user.setMenuAndRespond(new ParticipantMenu(user));
             default:
                 return "Error - opcion invalida\n" + user.getMenu().getQuestion();
