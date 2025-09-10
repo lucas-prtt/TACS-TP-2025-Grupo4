@@ -7,6 +7,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 public class TelegramUser {
     private final Long chatId;
@@ -16,6 +20,8 @@ public class TelegramUser {
     private String serverAccountUsername;
     @Setter
     private MenuState menu;
+    private final List<String> filtros = new ArrayList();
+
 
     public TelegramUser(Long chatId){
         this.chatId = chatId;
@@ -42,5 +48,13 @@ public class TelegramUser {
     public String setMainMenuAndRespond(){
         return setMenuAndRespond(new MainMenu(this));
     }
-
+    public void addFilter(String filter){
+        filtros.add(filter);
+    }
+    public void clearFilters(){
+        filtros.clear();
+    }
+    public String getAllFiltersAsQueryParams(){
+        return "?" + String.join("&", filtros);
+    }
 }
