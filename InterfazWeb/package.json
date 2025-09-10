@@ -1,0 +1,15 @@
+{
+  "name": "interfazweb",
+  "version": "1.0.0",
+  "description": "Interfaz web eventos",
+  "license": "ISC",
+  "author": "Grupo4",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "dependencies": {
+    "react": "^19.1.1"
+  }
+}
