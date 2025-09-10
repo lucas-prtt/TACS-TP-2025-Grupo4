@@ -20,5 +20,4 @@ public class ApiClient {
         String url = getBaseUri() + "/accounts/usernames/"+username;
         return restTemplate.getForObject(url, AccountDTO.class);
     }
-
 }

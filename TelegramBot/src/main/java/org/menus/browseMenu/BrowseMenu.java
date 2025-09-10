@@ -8,7 +8,7 @@ public class BrowseMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/browse":
-                return "NO IMPLEMENTADO"; //TODO
+                return user.setMenuAndRespond(new BrowseEventsMenu(user)); //TODO
             case "/filterByCategory":
                 return user.setMenuAndRespond(new FilterByMenu(user, "category"));
             case "/filterByTags":
@@ -29,7 +29,7 @@ public class BrowseMenu extends MenuState {
                 user.clearFilters();
                 return "Filtros eliminados\n\n"+ user.getMenu().getQuestion();
             case "/lookupUUID":
-                return "NO IMPLEMENTADO"; //TODO
+                return user.setMenuAndRespond(new LookUpEventByUUIDMenu(user)); //TODO
             default:
                 return "Error: Elija una opcion valida\n" + this.getQuestion();
         }
