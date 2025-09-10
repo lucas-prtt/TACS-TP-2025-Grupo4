@@ -11,7 +11,17 @@ public class OrganizerMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return "";
+        return """
+                Menu de organizador:
+                
+                /newEvent
+                    - Crear evento
+                /getCreatedEvents
+                    - Ver eventos creados
+                /manageEvent
+                    - Modificar evento en base a su UUID
+                
+                """;
     }
 
     public OrganizerMenu(TelegramUser user) {
