@@ -15,7 +15,7 @@ public class FilterByMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         user.addFilter(filterParameter + "="+ message);
-        return "";
+        return "Filtro configurado: " + filterParameter + "="+ message + "\n\n" + user.setMenuAndRespond(new BrowseMenu(user));
     }
 
     @Override

@@ -24,10 +24,10 @@ public class BrowseMenu extends MenuState {
             case "/filterByMaxPrice":
                 return user.setMenuAndRespond(new FilterByMenu(user, "maxPrice"));
             case "/showFilters":
-                return "Filtros: " + String.join("\n   ",user.getFiltros());
+                return "Filtros: \n" + String.join("\n   ",user.getFiltros()) + "\n\n" + user.getMenu().getQuestion();
             case "/clearFilters":
                 user.clearFilters();
-                return "Filtros eliminados";
+                return "Filtros eliminados\n\n"+ user.getMenu().getQuestion();
             case "/lookupUUID":
                 return "NO IMPLEMENTADO"; //TODO
             default:
@@ -37,20 +37,35 @@ public class BrowseMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return """
+        return
+                user.getFiltros().size() + " filtro" + (user.getFiltros().size() == 1 ? "" : "s") + " aplicados\n\n" +
+                """
                 Menu de busqueda:
-                /browse                  - Ver eventos con los filtros aplicados
-                /filterByCategory        - Crear filtro por categorías
-                /filterByTags            - Crear filtro por etiquetas
-                /filterByDate            - Filtrar por fecha
-                /filterByTitle           - Filtrar por título exacto
-                /filterByTitleContains   - Filtrar por palabra o frase en el título
-                /filterByMinPrice        - Filtrar por precio mínimo
-                /filterByMaxPrice        - Filtrar por precio máximo
-                /showFilters             - Ver filtros configurados
-                /clearFilters            - Eliminar todos los filtros
-                /lookupUUID              - Buscar evento con su id
-                /start                   - Volver al menú principal
+                
+                /browse
+                    - Ver eventos con los filtros aplicados
+                /filterByCategory
+                    - Crear filtro por categorías
+                /filterByTags
+                    - Crear filtro por etiquetas
+                /filterByDate
+                    - Crear filtro por fecha
+                /filterByTitle
+                    - Crear filtro por título exacto
+                /filterByTitleContains
+                    - Crear filtro por palabra o frase en el título
+                /filterByMinPrice
+                    - Crear filtro por precio mínimo
+                /filterByMaxPrice
+                    - Crear filtro por precio máximo
+                /showFilters
+                    - Ver filtros configurados
+                /clearFilters
+                    - Eliminar todos los filtros
+                /lookupUUID
+                    - Buscar evento con su id
+                /start
+                    - Volver al menú principal
                 """;
     }
 
