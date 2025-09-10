@@ -25,9 +25,23 @@ public class BotEventos extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             Long chatId = update.getMessage().getChatId();
-            TelegramUser sender = telegramUserRepository.getUser(chatId).orElseGet(() -> telegramUserRepository.addUser(chatId, new TelegramUser(chatId)));
+            SendMessage response;
 
-            SendMessage response = sender.respondTo(update.getMessage());
+
+            //Busca el usuario en el repo
+            Optional<TelegramUser> senderOpt = telegramUserRepository.getUser(chatId);
+            //Si es nuevo, dice bienvenido y muestra el menu principal
+            if(senderOpt.isEmpty()){
+                TelegramUser user = telegramUserRepository.addUser(chatId, new TelegramUser(chatId));
+                response = new SendMessage();
+                response.setChatId(chatId);
+                response.setText("Bienvenido! \n" + user.getMenu().getQuestion() );
+            }
+            //De lo contrario, muestra respuesta al ultimo menu
+            else {
+                response = senderOpt.get().respondTo(update.getMessage());
+            }
+
 
             if(response.getText() == null)
                 response.setText("Error: Null message");

@@ -12,18 +12,21 @@ public class MainMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return "Menu principal \n 1. Establecer usuario\n 2. Ver usuario actual\n 3. Registrar usuario";
+        return "Menu principal: \n " +
+                "1. Menu de gestion de usuario\n " +
+                "2. Menu de gestion de eventos organizados\n " +
+                "3. Menu de gestion de eventos a los que participa\n";
     }
 
     @Override
     public String respondTo(String message) {
         switch (message){
             case "1":
-                return user.setMenuAndRespond(new SetUserMenu(user));
+                return user.setMenuAndRespond(new UserMenu(user));
             case "2":
-                return "Usuario actual: " + user.getServerAccountId();
+                return user.setMenuAndRespond(new OrganizerMenu(user));
             case "3":
-                return user.setMenuAndRespond(new RegisterUserMenu(user));
+                return user.setMenuAndRespond(new ParticipantMenu(user));
             default:
                 return "Error - opcion invalida\n" + user.getMenu().getQuestion();
         }

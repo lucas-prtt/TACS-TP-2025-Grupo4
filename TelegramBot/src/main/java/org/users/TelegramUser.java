@@ -21,11 +21,12 @@ public class TelegramUser {
         menu = new MainMenu(this);
     }
 
+    // Responde al menu en el que se encuentra y actualiza al siguiente menu si corresponde
     public SendMessage respondTo(Message message) {
         String chatId = message.getChatId().toString();
         SendMessage response = new SendMessage();
         response.setChatId(chatId);
-        if(message.getText().equals("/start")){
+        if(message.getText().equals("/start")){ // start manda al menu inicial no importa donde estes
             response.setText(this.setMenuAndRespond(new MainMenu(this)));
         }else{
             response.setText(menu.respondTo(message.getText()));
