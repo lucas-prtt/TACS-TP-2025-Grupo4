@@ -6,17 +6,60 @@ import { useTheme } from '@mui/material/styles';
 
 export const Eventos = () => {
     const theme = useTheme();
-    // El ancho de la navbar debe coincidir con el width de NavbarApp (250px)
     return (
-        <Box minHeight="100vh" sx={{ display: 'flex', flexDirection: 'row' , bgcolor: theme.palette.background.primary}}>
-            {/* Espacio reservado para la navbar */}
-            <Box sx={{ width: '250px', flexShrink: 0 }}>
+        <Box minHeight="100vh" sx={{ display: 'flex', flexDirection: 'row', bgcolor: theme.palette.background.primary }}>
+            <Box
+                sx={{
+                    width: { xs: 0, md: '250px' },
+                    flexShrink: 0,
+                    display: { xs: 'none', md: 'block' }
+                }}
+            >
                 <NavbarApp />
             </Box>
-            <Box flex={1} p={3}>
-                <Grid container spacing={3} justifyContent="center" alignItems="stretch">
+            <Box
+                sx={{
+                    display: { xs: 'block', md: 'none' },
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    zIndex: 1300
+                }}
+            >
+                <NavbarApp />
+            </Box>
+            {/* Contenido principal */}
+            <Box
+                flex={1}
+                p={3}
+                sx={{
+                    width: '100%',
+                    pt: { xs: 4, md: 3 }, 
+                    pl: { xs: 5, md: 0 }, 
+                    display: 'flex',
+                    justifyContent: 'center',
+                }}
+            >
+                
+                <Grid
+                    container
+                    spacing={3}
+                    justifyContent="center"
+                    alignItems="stretch"
+                    sx={{ maxWidth: 1200 }}
+                >
                     {datosEventos.map((evento) => (
-                        <Grid item xs={12} sm={6} md={4} lg={4} key={evento.titulo} display="flex" justifyContent="center" alignItems="stretch">
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={4}
+                            lg={4}
+                            key={evento.titulo}
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="stretch"
+                        >
                             <CardEvento evento={evento} />
                         </Grid>
                     ))}
