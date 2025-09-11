@@ -12,10 +12,10 @@ export const datosEventos = [
     max_participantes: 300,
     min_participantes: 20,
     precio: 1500,
-    categorias: ["Tecnología", "Innovación"],
+    tags: ["Tecnología", "Innovación"], // antes categorias
     estado: "activo",
-    tag: "tech",
-  imagen: evento1,
+    categoria: "tech", // antes tag
+    imagen: evento1,
   },
   {
     titulo: "Feria Gastronómica Primavera",
@@ -27,10 +27,10 @@ export const datosEventos = [
     max_participantes: 200,
     min_participantes: 10,
     precio: 800,
-    categorias: ["Gastronomía", "Feria"],
+    tags: ["Gastronomía", "Feria"], // antes categorias
     estado: "activo",
-    tag: "food",
-  imagen: evento2,
+    categoria: "food", // antes tag
+    imagen: evento2,
   },
   {
     titulo: "Maratón Solidaria",
@@ -42,10 +42,10 @@ export const datosEventos = [
     max_participantes: 500,
     min_participantes: 50,
     precio: 1000,
-    categorias: ["Deporte", "Solidaridad"],
+    tags: ["Deporte", "Solidaridad"], // antes categorias
     estado: "activo",
-    tag: "run",
-  imagen: evento1,
+    categoria: "run", // antes tag
+    imagen: evento1,
   },
   {
     titulo: "Expo Arte Contemporáneo",
@@ -57,10 +57,10 @@ export const datosEventos = [
     max_participantes: 150,
     min_participantes: 5,
     precio: 1200,
-    categorias: ["Arte", "Exposición"],
+    tags: ["Arte", "Exposición"], // antes categorias
     estado: "activo",
-    tag: "art",
-  imagen: evento2,
+    categoria: "art", // antes tag
+    imagen: evento2,
   },
   {
     titulo: "Torneo de Ajedrez Abierto",
@@ -72,10 +72,10 @@ export const datosEventos = [
     max_participantes: 100,
     min_participantes: 10,
     precio: 500,
-    categorias: ["Juegos", "Ajedrez"],
+    tags: ["Juegos", "Ajedrez"], // antes categorias
     estado: "activo",
-    tag: "chess",
-  imagen: evento1,
+    categoria: "chess", // antes tag
+    imagen: evento1,
   },
   {
     titulo: "Festival de Música Urbana",
@@ -87,9 +87,9 @@ export const datosEventos = [
     max_participantes: 400,
     min_participantes: 30,
     precio: 2000,
-    categorias: ["Música", "Festival"],
+    tags: ["Música", "Festival"], // antes categorias
     estado: "activo",
-    tag: "music",
-  imagen: evento2,
+    categoria: "music", // antes tag
+    imagen: evento2,
   },
 ];

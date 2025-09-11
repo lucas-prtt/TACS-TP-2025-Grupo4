@@ -26,7 +26,6 @@ export const CrearEventos = () => {
             <Box sx={{ width: '250px', flexShrink: 0, display: { xs: 'none', md: 'block' } }}>
                 <NavbarApp />
             </Box>
-            {/* Navbar hamburguesa para mobile */}
             <Box
                 sx={{
                     display: { xs: 'block', md: 'none' },
@@ -41,7 +40,7 @@ export const CrearEventos = () => {
             {/* Responsive content wrapper */}
             <Box
                 flex={1}
-                p={{ xs: 2, md: 3 }}
+                p={3}
                 sx={{
                     width: '100%',
                     pt: { xs: 4, md: 3 },

@@ -27,10 +27,10 @@ export const CardEvento = ({ evento }) => {
     fechaFormateada = fecha;
   }
 
-  // Mostrar hasta 2 categorías y un chip "+1" si hay más
-  const categorias = evento.categorias || [];
+  // Mostrar hasta 2 etiquetas y un chip "+1" si hay más
+  const tags = evento.tags || [];
   const maxChips = 2;
-  const extraCats = categorias.length - maxChips;
+  const extraTags = tags.length - maxChips;
 
   return (
     <Card sx={{ width: 410, minHeight: 520, display: 'flex', flexDirection: 'column', borderRadius: 3, boxShadow: 2, p: 1 }}>
@@ -42,15 +42,13 @@ export const CardEvento = ({ evento }) => {
           alt={evento.titulo}
           sx={{ borderRadius: 2, objectFit: 'cover' }}
         />
-        {/* Chips de estado/categoría arriba a la izquierda y derecha */}
         <Box sx={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 1 }}>
-          {evento.categorias && evento.categorias[0] && (
-            <Chip label={evento.categorias[0].toLowerCase()} size="small" color="primary" sx={{ textTransform: 'capitalize', fontWeight: 500 }} />
-          )}
+          
+            <Chip label={evento.categoria} size="small" color="primary" sx={{fontWeight: 500 }} />
         </Box>
         <Box sx={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 1 }}>
           {evento.estado && (
-            <Chip label={evento.estado} size="small" color="default" sx={{ textTransform: 'capitalize', fontWeight: 500 }} />
+            <Chip label={evento.estado} size="small" color="primary" sx={{ fontWeight: 500 }} />
           )}
         </Box>
       </Box>
@@ -80,11 +78,11 @@ export const CardEvento = ({ evento }) => {
           </Typography>
         </Stack>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
-          {categorias.slice(0, maxChips).map((cat, i) => (
-            <Chip key={cat} label={cat.toLowerCase()} size="small" variant="outlined" />
+          {tags.slice(0, maxChips).map((tag, i) => (
+            <Chip key={tag} label={tag.toLowerCase()} size="small" variant="outlined" />
           ))}
-          {extraCats > 0 && (
-            <Chip label={`+${extraCats}`} size="small" variant="outlined" />
+          {extraTags > 0 && (
+            <Chip label={`+${extraTags}`} size="small" variant="outlined" />
           )}
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
