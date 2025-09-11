@@ -4,6 +4,7 @@ import org.DTOs.registrations.RegistrationDTO;
 import org.services.OrganizerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.utils.PageSplitter;
 
 import java.util.List;
 
@@ -21,13 +22,17 @@ public class OrganizerController {
     }
 
     @GetMapping("/{eventId}/participants")
-    public List<RegistrationDTO> getParticipants(@PathVariable("eventId") UUID eventId) {
-        return organizerService.getRegistrationsFromEvent(eventId).stream().map(registration -> new RegistrationDTO(registration.getId(),registration.getEvent().getId(), registration.getUser().getId(),registration.getEvent().getTitle(),registration.getEvent().getDescription(), registration.getCurrentState(), registration.getDateTime())).toList();
+    public List<RegistrationDTO> getParticipants(@PathVariable("eventId") UUID eventId,
+                                                 @RequestParam(name = "page", required = false) Integer page,
+                                                 @RequestParam(name = "limit", required = false) Integer limit) {
+        return organizerService.getRegistrationsFromEvent(eventId, page, limit).stream().map(registration -> new RegistrationDTO(registration.getId(),registration.getEvent().getId(), registration.getUser().getId(),registration.getEvent().getTitle(),registration.getEvent().getDescription(), registration.getCurrentState(), registration.getDateTime())).toList();
     }
 
     @GetMapping("/{eventId}/waitlist")
-    public List<RegistrationDTO> getWaitlist(@PathVariable("eventId") UUID eventId) {
-        return organizerService.getWaitlistFromEvent(eventId).stream().map(registration -> new RegistrationDTO(registration.getId(),registration.getEvent().getId(), registration.getUser().getId(),registration.getEvent().getTitle(),registration.getEvent().getDescription(), registration.getCurrentState(), registration.getDateTime())).toList();
+    public List<RegistrationDTO> getWaitlist(@PathVariable("eventId") UUID eventId,
+                                             @RequestParam(name = "page", required = false) Integer page,
+                                             @RequestParam(name = "limit", required = false) Integer limit) {
+        return PageSplitter.getPageList(organizerService.getWaitlistFromEvent(eventId).stream().map(registration -> new RegistrationDTO(registration.getId(),registration.getEvent().getId(), registration.getUser().getId(),registration.getEvent().getTitle(),registration.getEvent().getDescription(), registration.getCurrentState(), registration.getDateTime())).toList(), page, limit);
     }
 
     @PostMapping("/{eventId}/close")
