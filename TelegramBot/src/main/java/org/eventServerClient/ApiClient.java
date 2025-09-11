@@ -27,7 +27,7 @@ public class ApiClient {
         return restTemplate.getForObject(url, AccountDTO.class);
     }
     public static List<EventDTO> getEventsByFilters(String filters, Integer page, Integer limit){
-        String url = getBaseUri() + "/events" + filters;
+        String url = getBaseUri() + "/events" + filters + "&page=" + page + "&limit=" + limit;
         return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));
     }
 
