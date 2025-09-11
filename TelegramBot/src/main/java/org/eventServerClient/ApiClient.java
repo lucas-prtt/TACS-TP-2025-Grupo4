@@ -2,7 +2,13 @@ package org.eventServerClient;
 
 import org.ConfigManager;
 import org.eventServerClient.dtos.AccountDTO;
+import org.eventServerClient.dtos.event.EventDTO;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestTemplate;
+
+import java.lang.reflect.ParameterizedType;
+import java.util.List;
+import java.util.Objects;
 
 public class ApiClient {
 
@@ -20,4 +26,9 @@ public class ApiClient {
         String url = getBaseUri() + "/accounts/usernames/"+username;
         return restTemplate.getForObject(url, AccountDTO.class);
     }
+    public static List<EventDTO> getEventsByFilters(String filters, Integer page, Integer limit){
+        String url = getBaseUri() + "/events" + filters;
+        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));
+    }
+
 }

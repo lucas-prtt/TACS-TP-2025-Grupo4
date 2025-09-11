@@ -2,6 +2,7 @@ package org;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 
 public class ConfigManager {
@@ -30,5 +31,24 @@ public class ConfigManager {
 
     public String get(String key) {
         return properties.getProperty(key);
+    }
+    public Optional<String> getOptional(String key) {
+        try{
+            return Optional.of(get(key));
+        }
+        catch (Exception e){
+            return Optional.empty();
+        }
+    }
+    public Integer getInteger(String key){
+        return Integer.parseInt(get(key));
+    }
+    public Optional<Integer> getOptionalInteger(String key){
+        try{
+            return Optional.of(getInteger(key));
+        }
+        catch (Exception e){
+            return Optional.empty();
+        }
     }
 }
