@@ -11,6 +11,8 @@ import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.model.events.Registration;
+import org.utils.PageSplitter;
+
 import java.util.UUID;
 
 import java.math.BigDecimal;
@@ -58,15 +60,19 @@ public class EventService {
         return EventDTO.fromEvent(event.get());
     }
 
-    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) throws BadRequestException {
+    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice, Integer page, Integer limit) throws BadRequestException {
         List<Event> events = getEventsByTitleOrContains(title, titleContains);
-        return events.stream()
+        List<EventDTO> processedEvents = events.stream()
                 .filter(event -> isValidEvent(event, maxDate, minDate, category, tags, maxPrice, minPrice))
                 .map(EventDTO::fromEvent)
                 .toList();
+        return PageSplitter.getPageList(processedEvents, page, limit);
+    }
+    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) throws BadRequestException {
+        return getEventDTOsByQuery( title,  titleContains,  maxDate,  minDate,  category,  tags,  maxPrice,  minPrice);
     }
 
-    private List<Event> getEventsByTitleOrContains(String title, String titleContains) throws BadRequestException {
+        private List<Event> getEventsByTitleOrContains(String title, String titleContains) throws BadRequestException {
         if (title != null && titleContains != null) {
             throw new BadRequestException("No puede haber titleContains y title simultáneamente");
         }
@@ -137,11 +143,15 @@ public class EventService {
     }
 
 
-    public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
+    public List<EventDTO> getEventsByOrganizer(UUID organizerId, Integer page, Integer limit) {
         // Obtiene todos los eventos y filtra los que tienen como organizador al usuario dado
-        return eventRepository.getAll().stream()
+        List<EventDTO> processedEvents =  eventRepository.getAll().stream()
                 .filter(event -> event.getOrganizer() != null && event.getOrganizer().getId().equals(organizerId))
                 .map(EventDTO::fromEvent)
                 .collect(Collectors.toList());
+        return PageSplitter.getPageList(processedEvents, page, limit);
+    }
+    public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
+        return getEventsByOrganizer(organizerId, null, null);
     }
 }
