@@ -1,23 +1,28 @@
 package org.eventServerClient;
 
 import org.ConfigManager;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.eventServerClient.dtos.AccountDTO;
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.event.EventDTO;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.web.client.RestClientException;
+import org.eventServerClient.dtos.event.EventStateDTO;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 public class ApiClient {
 
-    private static final RestTemplate restTemplate = new RestTemplate();
-
+    private static final RestTemplate restTemplate;
+    static {
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        restTemplate = new RestTemplate(factory);
+    }
     public static String getBaseUri(){
         return "http://"+ ConfigManager.getInstance().get("server.ip")+":"+ConfigManager.getInstance().get("server.port");
     }
@@ -72,6 +77,15 @@ public class ApiClient {
     public static List<EventDTO> getEventsOrganizedBy(UUID organizerId, Integer page, Integer limit){
         String url = getBaseUri() + "/accounts/" + organizerId.toString() + "/organized-events" + "?page=" + page + "&limit=" + limit;
         return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));
+    }
+    public static EventDTO patchEvent(UUID idEvent, EventDTO eventDTOPatch){
+        String url = getBaseUri() + "/events/" + idEvent;
+        return restTemplate.patchForObject(url, eventDTOPatch, EventDTO.class);
+    }
+    public static EventDTO patchEventState(UUID idEvent, EventStateDTO newState){
+        EventDTO eventDTOPatch = new EventDTO();
+        eventDTOPatch.setState(newState);
+        return patchEvent(idEvent, eventDTOPatch);
     }
 
 
