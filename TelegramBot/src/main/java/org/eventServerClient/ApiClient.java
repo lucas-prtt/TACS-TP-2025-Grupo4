@@ -45,4 +45,25 @@ public class ApiClient {
         String url = getBaseUri() + "/events/" + uuid.toString();
         return restTemplate.getForObject(url, EventDTO.class);
     }
+    public static List<RegistrationDTO> getRegisteredRegistrations(UUID userUuid, Integer page, Integer limit){
+        String url = getBaseUri() + "/accounts/" + userUuid.toString()+"/registrations?registrationState=CONFIRMED" + "&page=" + page + "&limit=" + limit;
+        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+    }
+    public static List<RegistrationDTO> getWaitlistRegistrations(UUID userUuid, Integer page, Integer limit){
+        String url = getBaseUri() + "/accounts/" + userUuid.toString()+"/registrations?registrationState=WAITLIST"+ "&page=" + page + "&limit=" + limit;
+        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+    }
+    public static List<RegistrationDTO> getCanceledRegistrations(UUID userUuid, Integer page, Integer limit){
+        String url = getBaseUri() + "/accounts/" + userUuid.toString()+"/registrations?registrationState=CANCELED"+ "&page=" + page + "&limit=" + limit;
+        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+    }
+    public static List<RegistrationDTO> getAllRegistrations(UUID userUuid, Integer page, Integer limit){
+        String url = getBaseUri() + "/accounts/" + userUuid.toString()+"/registrations"+ "&page=" + page + "&limit=" + limit;
+        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+    }
+    public static void cancelRegistration(UUID userUuid, UUID registrationID){
+        String url = getBaseUri() + "/accounts/" + userUuid.toString()+"/registrations/" + registrationID.toString();
+        restTemplate.delete(url);
+    }
+
 }

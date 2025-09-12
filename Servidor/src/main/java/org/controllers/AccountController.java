@@ -7,6 +7,7 @@ import org.DTOs.EventDTO;
 import org.DTOs.accounts.AccountResponseDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.exceptions.AccountNotFoundException;
+import org.model.enums.RegistrationState;
 import org.services.EventService;
 import org.model.accounts.Account;
 import org.services.AccountService;
@@ -50,8 +51,9 @@ public class AccountController {
     @GetMapping("/{accountId}/registrations")
     public ResponseEntity<List<RegistrationDTO>> getRegistrations(@PathVariable(name = "accountId") String accountId,
                                                                   @RequestParam(name = "page", required = false) Integer page,
-                                                                  @RequestParam(name = "limit", required = false) Integer limit) {
-        List<RegistrationDTO> registrations = accountService.getRegistrations(UUID.fromString(accountId), page, limit);
+                                                                  @RequestParam(name = "limit", required = false) Integer limit,
+                                                                  @RequestParam(name = "registrationState", required = false) RegistrationState registrationState) {
+        List<RegistrationDTO> registrations = accountService.getRegistrations(UUID.fromString(accountId), page, limit, registrationState);
         return ResponseEntity.ok(registrations);
     }
 

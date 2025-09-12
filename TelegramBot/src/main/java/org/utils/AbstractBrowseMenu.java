@@ -70,7 +70,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
         return "Navegando resultados:\n\n" +
                 String.join("\n", items.stream()
                         .map(this::toShortString)
-                        .map(s -> "/" + ((page - 1) * limit + i.getAndIncrement()) + s)
+                        .map(s -> "/" + ((page - 1) * limit + i.getAndIncrement())  + " " + s)
                         .toList()) +
                 "\n\nPágina " + page + "\n\n" +
                 "/prev    -   /next\n" +

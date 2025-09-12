@@ -9,12 +9,14 @@ public class ParticipantMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         switch (message){
-            case "/registerToEvent":
-                return user.setMenuAndRespond(new RegisterToEventMenu(user)); //TODO
-            case "/getRegisteredEvents":
-                return user.setMenuAndRespond(new GetRegisteredEventsMenu(user)); //TODO
-            case "/deleteRegistration":
-                return user.setMenuAndRespond(new DeleteRegistrationMenu(user));  //TODO
+            case "/getSuccesfulRegistrations":
+                return user.setMenuAndRespond(new SelectSuccesfulRegistrationsMenu(user)); //TODO
+            case "/getWaitlistedRegistrations":
+                return user.setMenuAndRespond(new SelectWaitlistedRegistrationsMenu(user));  //TODO
+            case "/getCanceledRegistrations":
+                return user.setMenuAndRespond(new SelectCanceledRegistrationsMenu(user));  //TODO
+            case "/getAllRegistrations":
+                return user.setMenuAndRespond(new SelectAllRegistrationsMenu(user));  //TODO
             default:
                 return "Error - opcion invalida\n" + user.getMenu().getQuestion();
         }
@@ -25,12 +27,14 @@ public class ParticipantMenu extends MenuState {
         return """
                 Menu de participante:
                 
-                /registerToEvent
-                    - Registrarse o unirse a la waitlist para el evento dada la UUID del evento
-                /getRegisteredEvents
-                    - Ver eventos a los que esta registrado como participante o a la waitlist
-                /deleteRegistration
-                    - Eliminar registro a un evento dada la UUID de registro
+                /getSuccesfulRegistrations
+                    - Ver registros a eventos como participante
+                /getWaitlistedRegistrations
+                    - Ver registros a eventos en la waitlist
+                /getCanceledRegistrations
+                    - Ver registros cancelados
+                /getAllRegistrations
+                    - Ver todos los registros
                 /start
                     - Volver al menú principal
                 """;
