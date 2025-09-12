@@ -6,6 +6,7 @@ import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
+import org.model.enums.EventState;
 import org.services.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -100,6 +101,15 @@ public class EventController {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<EventDTO> patchEvent(@PathVariable(name = "id") String id, @RequestBody EventDTO event) {
+        try {
+            EventDTO eventDTO = eventService.patchEvent(id, event);
+            return ResponseEntity.ok(eventDTO);
+        } catch (EventNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
