@@ -15,7 +15,7 @@ public class RegisterUserMenu extends MenuState {
             user.setServerAccountUsername(usuarioCreado.getUsername());
             return "Cuenta creada y establecida como la actual\n" +
                     "  Usuario: "+ usuarioCreado.getUsername() +
-                    "\n  Uuid: " + usuarioCreado.getUuid()  + "\n"
+                    "\n  Uuid: " + usuarioCreado.getUuid()  + "\n\n"
                     + user.setMainMenuAndRespond();
         }catch (Exception e){
             System.out.println(e.getMessage());

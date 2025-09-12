@@ -14,7 +14,7 @@ public class UserMenu extends MenuState {
             case "/registerUser":
                 return user.setMenuAndRespond(new RegisterUserMenu(user));
             default:
-                return "Error - opcion invalida\n" + user.getMenu().getQuestion();
+                return "Error - opcion invalida\n\n" + user.getMenu().getQuestion();
         }
     }
 

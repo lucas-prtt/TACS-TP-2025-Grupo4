@@ -19,7 +19,7 @@ public class SetUserMenu extends MenuState {
             user.setServerAccountId(acc.getUuid());
             return "Cuenta establecida:\n" +
                     "  Usuario: "+ acc.getUsername() +
-                    "\n  Uuid: " + acc.getUuid()  + "\n"
+                    "\n  Uuid: " + acc.getUuid()  + "\n\n"
                     + user.setMainMenuAndRespond();
         }
         catch (Exception e){
