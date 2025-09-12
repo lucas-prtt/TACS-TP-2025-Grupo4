@@ -21,31 +21,25 @@ public class CheckEventMenu extends MenuState {
 
     @Override
     public String respondTo(String message) {
-        switch (message){
-            case "/register":
-                if(user.getServerAccountId() == null){
-                    return "Primero debe registarse" + user.setMenuAndRespond(new UserMenu(user));
-                }
+        if (message.equals("/register")) {
+            if (user.getServerAccountId() == null) {
+                return "Primero debe registarse" + user.setMenuAndRespond(new UserMenu(user));
+            }
 
-                try
-                {
-                    String response = ApiClient.postRegistration(evento.getId(), UUID.fromString(user.getServerAccountId()));
-                    if(response.equalsIgnoreCase("CONFIRMED")){
-                        return "Inscripcion confirmada a la lista de participantes\n\n" + user.setMainMenuAndRespond();
-                    }else if(response.equalsIgnoreCase("WAITLIST")){
-                        return "Inscripcion confirmada a la Waitlist\n\n" + user.setMainMenuAndRespond();
-                    }else {
-                        return "ERROR DESCONOCIDO\n\n" + user.setMainMenuAndRespond();
-                    }
+            try {
+                String response = ApiClient.postRegistration(evento.getId(), UUID.fromString(user.getServerAccountId()));
+                if (response.equalsIgnoreCase("CONFIRMED")) {
+                    return "Inscripcion confirmada a la lista de participantes\n\n" + user.setMainMenuAndRespond();
+                } else if (response.equalsIgnoreCase("WAITLIST")) {
+                    return "Inscripcion confirmada a la Waitlist\n\n" + user.setMainMenuAndRespond();
+                } else {
+                    return "ERROR DESCONOCIDO\n\n" + user.setMainMenuAndRespond();
                 }
-                catch (RestClientResponseException e){
-                    return e.getStatusCode().toString() +"\n" + e.getResponseBodyAsString()+ "\n\n" + user.setMainMenuAndRespond();
-                }
-            case "/back":
-                return user.setMenuAndRespond(new BrowseEventsMenu(user));
-            default:
-                return "Respuesta invalida \n\n" + getQuestion();
+            } catch (RestClientResponseException e) {
+                return e.getStatusCode().toString() + "\n" + e.getResponseBodyAsString() + "\n\n" + user.setMainMenuAndRespond();
+            }
         }
+        return "Respuesta invalida \n\n" + getQuestion();
     }
 
     @Override
@@ -53,7 +47,6 @@ public class CheckEventMenu extends MenuState {
         return evento.asDetailedString() +
                 "\n\n"+
                 "/register --> registrarse al evento\n"+
-                "/back     --> volver al menu anterior\n"+
                 "/start    --> volver al menu inicial";
     }
 }

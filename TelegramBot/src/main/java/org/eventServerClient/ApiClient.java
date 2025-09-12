@@ -41,5 +41,8 @@ public class ApiClient {
         reg.setEventId(eventID);
         return restTemplate.postForObject(url, reg, String.class);
     }
-
+    public static EventDTO getEvent(UUID uuid){
+        String url = getBaseUri() + "/events/" + uuid.toString();
+        return restTemplate.getForObject(url, EventDTO.class);
+    }
 }
