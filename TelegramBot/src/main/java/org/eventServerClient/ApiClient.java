@@ -65,5 +65,9 @@ public class ApiClient {
         String url = getBaseUri() + "/accounts/" + userUuid.toString()+"/registrations/" + registrationID.toString();
         restTemplate.delete(url);
     }
+    public static EventDTO postEvent(EventDTO eventDTO){
+        String url = getBaseUri() + "/events";
+        return restTemplate.postForObject(url, eventDTO, EventDTO.class);
+    };
 
 }
