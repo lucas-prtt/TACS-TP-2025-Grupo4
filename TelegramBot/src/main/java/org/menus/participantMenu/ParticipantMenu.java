@@ -1,7 +1,5 @@
 package org.menus.participantMenu;
 
-import org.menus.organizerMenu.ManageEventsMenu;
-import org.menus.organizerMenu.NewEventMenu;
 import org.users.TelegramUser;
 import org.menus.MenuState;
 

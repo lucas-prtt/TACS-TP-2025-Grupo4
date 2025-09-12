@@ -1,9 +1,5 @@
 package org.menus.organizerMenu;
 
-import org.eventServerClient.ApiClient;
-import org.menus.browseMenu.BrowseMenu;
-import org.menus.participantMenu.ParticipantMenu;
-import org.menus.userMenu.UserMenu;
 import org.users.TelegramUser;
 import org.menus.MenuState;
 
@@ -12,9 +8,9 @@ public class OrganizerMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/newEvent":
-                return user.setMenuAndRespond(new NewEventMenu(user)); //TODO
-            case "/manageEvent":
-                return user.setMenuAndRespond(new ManageEventsMenu(user));  //TODO
+                return user.setMenuAndRespond(new NewEventMenu(user));
+            case "/manageEvents":
+                return user.setMenuAndRespond(new ManageEventSelectionMenu(user));
             default:
                 return "Error - opcion invalida\n" + user.getMenu().getQuestion();
         }
@@ -28,7 +24,7 @@ public class OrganizerMenu extends MenuState {
                 
                 /newEvent
                     - Crear evento
-                /manageEvent
+                /manageEvents
                     - Modificar evento en base a su UUID
                 /start
                     - Volver al menú principal

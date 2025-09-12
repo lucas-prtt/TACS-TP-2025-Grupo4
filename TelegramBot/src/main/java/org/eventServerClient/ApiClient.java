@@ -58,7 +58,7 @@ public class ApiClient {
         return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
     }
     public static List<RegistrationDTO> getAllRegistrations(UUID userUuid, Integer page, Integer limit){
-        String url = getBaseUri() + "/accounts/" + userUuid.toString()+"/registrations"+ "&page=" + page + "&limit=" + limit;
+        String url = getBaseUri() + "/accounts/" + userUuid.toString()+"/registrations"+ "?page=" + page + "&limit=" + limit;
         return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
     }
     public static void cancelRegistration(UUID userUuid, UUID registrationID){
@@ -68,6 +68,11 @@ public class ApiClient {
     public static EventDTO postEvent(EventDTO eventDTO){
         String url = getBaseUri() + "/events";
         return restTemplate.postForObject(url, eventDTO, EventDTO.class);
-    };
+    }
+    public static List<EventDTO> getEventsOrganizedBy(UUID organizerId, Integer page, Integer limit){
+        String url = getBaseUri() + "/accounts/" + organizerId.toString() + "/organized-events" + "?page=" + page + "&limit=" + limit;
+        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));
+    }
+
 
 }
