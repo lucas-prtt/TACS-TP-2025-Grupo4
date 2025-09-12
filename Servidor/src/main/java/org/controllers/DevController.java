@@ -98,7 +98,7 @@ public class DevController {
         int qRegistrations = 0;
         int qAccounts = 0;
 
-        Random random = new Random(123456789);
+        Random random = new Random();
         List<EventDTO> eventos = new ArrayList<>();
         String[] USERNAMES = {
                 "juanperez", "maria.lopez", "carlagonzalez", "pedro_ramirez", "analu",
