@@ -2,6 +2,7 @@ package org.services;
 
 import org.DTOs.EventDTO;
 import org.apache.coyote.BadRequestException;
+import org.model.enums.EventState;
 import org.model.events.Event;
 import org.model.accounts.Account;
 import org.exceptions.AccountNotFoundException;
@@ -153,5 +154,14 @@ public class EventService {
     }
     public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
         return getEventsByOrganizer(organizerId, null, null);
+    }
+
+    public EventDTO patchEvent(String id, EventDTO eventPatch) {
+        Optional<Event> eventOptional = eventRepository.findById(UUID.fromString(id));
+        if(eventOptional.isEmpty())
+            throw new EventNotFoundException("No se encontro un evento con ese id");
+        eventOptional.get().patch(eventPatch);
+        eventRepository.save(eventOptional.get());
+        return EventDTO.fromEvent(eventOptional.get());
     }
 }
