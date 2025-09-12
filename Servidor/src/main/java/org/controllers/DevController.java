@@ -1,29 +1,53 @@
 package org.controllers;
 
+import org.DTOs.EventDTO;
+import org.DTOs.accounts.AccountCreateDTO;
+import org.DTOs.accounts.AccountResponseDTO;
+import org.DTOs.registrations.RegistrationCreateDTO;
+import org.model.events.Category;
 import org.model.events.Event;
 import org.model.events.Registration;
 import org.model.accounts.Account;
+import org.model.events.Tag;
 import org.repositories.EventRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.utils.RandomWordGenerator;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/dev")
 public class DevController {
 
     private final EventRepository eventRepository;
-
-    public DevController(EventRepository eventRepository) {
+    private final EventController eventController;
+    private final AccountController accountController;
+    private final RegistrationController registrationController;
+    public DevController(EventRepository eventRepository, EventController eventController, AccountController accountController, RegistrationController registrationController) {
         this.eventRepository = eventRepository;
+        this.eventController = eventController;
+        this.accountController = accountController;
+        this.registrationController = registrationController;
     }
+    Boolean loadSample = false;
+    Boolean loadBigSample = false;
+
 
     @PostMapping("/load-sample")
     public String loadSampleData() {
-
+        if(loadSample)
+            return "Sample already loaded";
+        loadSample = true;
         Account organizer = new Account();
 
         // Crear un evento con los campos obligatorios
@@ -63,4 +87,62 @@ public class DevController {
 
         return "Loaded test event with ID: " + event.getId();
     }
+
+    @PostMapping("/load-big-sample")
+    public String loadBigSampleData() {
+        if(loadBigSample)
+            return "Sample already loaded";
+        loadBigSample = true;
+
+        int qEvents = 0;
+        int qRegistrations = 0;
+        int qAccounts = 0;
+
+        Random random = new Random(123456789);
+        List<EventDTO> eventos = new ArrayList<>();
+        String[] USERNAMES = {
+                "juanperez", "maria.lopez", "carlagonzalez", "pedro_ramirez", "analu",
+                "roberto.sanchez", "laura_fernandez", "andresm", "valentina_rios", "lucia.mendez",
+                "diegotorres", "camila_garcia", "sergioh", "paola.cruz", "jose_martinez",
+                "martin.castillo", "sofiarodriguez", "felipe.navarro", "antonela", "ricardolopez",
+                "marianap", "cristian.vega", "ines_rojas", "tomasc", "daniela.ortiz",
+                "gustavo.molina", "carolina", "facundor", "alejandro_v", "emilias",
+                "manuel.ibarra", "julieta", "francisco.b", "rominag", "nicolas_silva",
+                "melina.paz", "luis.flores", "agustina", "sebastian_c", "jimenam"
+        };
+        List<AccountResponseDTO> users = new ArrayList<>();
+        for(String user : USERNAMES){
+            users.add((AccountResponseDTO) accountController.createAccount(new AccountCreateDTO(user)).getBody());
+            qAccounts++;
+        }
+
+        for(int i = random.nextInt(200); i<1000; i++){
+            EventDTO evento = new EventDTO();
+            evento.setTitle("Evento " + i + " " + RandomWordGenerator.randomWord() + " " + RandomWordGenerator.randomWord());
+            evento.setDescription("Descripcion: " + RandomWordGenerator.randomWord() + " "+ RandomWordGenerator.randomWord());
+            evento.setOrganizerId(users.get(random.nextInt(15)).getUuid());
+            evento.setStartDateTime(LocalDateTime.now().plusDays(random.nextInt(100)).plusHours(random.nextInt(24)).plusMinutes(random.nextInt(60)));
+            evento.setDurationMinutes(random.nextInt(200));
+            evento.setLocation("Un lugar, "+RandomWordGenerator.randomWord());
+            evento.setPrice(new BigDecimal(random.nextInt(70000)).divide(new BigDecimal(100), RoundingMode.UP ));
+            evento.setMaxParticipants(10 + random.nextInt(10));
+            evento.setMinParticipants(random.nextInt(5));
+            evento.setCategory(new Category(RandomWordGenerator.randomWord()));
+            evento.setTags(Stream.of(RandomWordGenerator.randomWord(), RandomWordGenerator.randomWord(), RandomWordGenerator.randomWord(), RandomWordGenerator.randomWord()).map(Tag::new).toList());
+            eventController.postEvent(evento);
+            eventos.add(evento);
+            qEvents++;
+        }
+
+        for (EventDTO evento : eventos){
+            for(int i = 0; i<30; i++){
+                try {
+                    eventController.registerUserToEvent(new RegistrationCreateDTO(evento.getId(), users.get(random.nextInt(30)).getUuid()));
+                    qRegistrations++;
+                }catch (Exception ignored){}
+            }
+        }
+        return "Sample loaded: " + qEvents + " events, " + qAccounts + " users, " + qRegistrations + " registrations";
+    }
+
 }
