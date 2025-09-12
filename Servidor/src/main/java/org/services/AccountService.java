@@ -2,7 +2,9 @@ package org.services;
 
 import org.DTOs.accounts.AccountCreateDTO;
 import org.DTOs.registrations.RegistrationDTO;
+import org.exceptions.AccountNotFoundException;
 import org.model.accounts.Account;
+import org.model.enums.RegistrationState;
 import org.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,17 +31,24 @@ public class AccountService {
         accountRepository.save(account);
         return account;
     }
-
-    public List<RegistrationDTO> getRegistrations(UUID accountID, Integer page, Integer limit) {
+    public List<RegistrationDTO> getRegistrations(UUID accountID, Integer page, Integer limit, RegistrationState registrationState) {
         Account account = accountRepository.findById(String.valueOf(accountID))
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         List<RegistrationDTO> processedRegistrations = account.getRegistrations().stream()
-                .map(RegistrationDTO::toRegistrationDTO)
+                .filter(r->r.getCurrentState()==registrationState).map(RegistrationDTO::toRegistrationDTO)
                 .collect(Collectors.toList());
         return PageSplitter.getPageList(processedRegistrations, page, limit);
     }
     public List<RegistrationDTO> getRegistrations(UUID accountID) {
-        return getRegistrations(accountID, null, null);
+        return getRegistrations(accountID, null, null, null);
+    }
+    public Account getAccountById(UUID accountID){
+        return accountRepository.findById(String.valueOf(accountID))
+                .orElseThrow(() -> new AccountNotFoundException("Usuario no encontrado"));
+    }
+    public Account getAccountByUsername(String accountUsername){
+        return accountRepository.findByUsername(accountUsername)
+                .orElseThrow(() -> new AccountNotFoundException("Usuario no encontrado"));
     }
 }
