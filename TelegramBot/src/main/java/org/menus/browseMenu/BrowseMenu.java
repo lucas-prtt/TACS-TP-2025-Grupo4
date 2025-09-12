@@ -8,7 +8,7 @@ public class BrowseMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/browse":
-                return user.setMenuAndRespond(new BrowseEventsMenu(user)); //TODO
+                return user.setMenuAndRespond(new BrowseEventsMenu(user));
             case "/filterByCategory":
                 return user.setMenuAndRespond(new FilterByMenu(user, "category"));
             case "/filterByTags":
@@ -29,7 +29,7 @@ public class BrowseMenu extends MenuState {
                 user.clearFilters();
                 return "Filtros eliminados\n\n"+ user.getMenu().getQuestion();
             case "/lookupUUID":
-                return user.setMenuAndRespond(new LookUpEventByUUIDMenu(user)); //TODO
+                return user.setMenuAndRespond(new LookUpEventByUUIDMenu(user));
             default:
                 return "Error: Elija una opcion valida\n" + this.getQuestion();
         }
@@ -42,8 +42,6 @@ public class BrowseMenu extends MenuState {
                 """
                 Menu de busqueda:
                 
-                /browse
-                    - Ver eventos con los filtros aplicados
                 /filterByCategory
                     - Crear filtro por categorías
                 /filterByTags
@@ -58,12 +56,17 @@ public class BrowseMenu extends MenuState {
                     - Crear filtro por precio mínimo
                 /filterByMaxPrice
                     - Crear filtro por precio máximo
+                
                 /showFilters
                     - Ver filtros configurados
                 /clearFilters
                     - Eliminar todos los filtros
+                
                 /lookupUUID
                     - Buscar evento con su id
+                /browse
+                    - Ver eventos con los filtros aplicados
+                
                 /start
                     - Volver al menú principal
                 """;

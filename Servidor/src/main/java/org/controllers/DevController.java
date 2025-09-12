@@ -10,6 +10,7 @@ import org.model.events.Registration;
 import org.model.accounts.Account;
 import org.model.events.Tag;
 import org.repositories.EventRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,10 +20,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 @RestController
@@ -97,6 +95,7 @@ public class DevController {
         int qEvents = 0;
         int qRegistrations = 0;
         int qAccounts = 0;
+        int qWaitlist = 0;
 
         Random random = new Random();
         List<EventDTO> eventos = new ArrayList<>();
@@ -125,24 +124,26 @@ public class DevController {
             evento.setDurationMinutes(random.nextInt(200));
             evento.setLocation("Un lugar, "+RandomWordGenerator.randomWord());
             evento.setPrice(new BigDecimal(random.nextInt(70000)).divide(new BigDecimal(100), RoundingMode.UP ));
-            evento.setMaxParticipants(10 + random.nextInt(10));
-            evento.setMinParticipants(random.nextInt(5));
+            evento.setMaxParticipants(10 + random.nextInt(17));
+            evento.setMinParticipants(random.nextInt(1));
             evento.setCategory(new Category(RandomWordGenerator.randomWord()));
             evento.setTags(Stream.of(RandomWordGenerator.randomWord(), RandomWordGenerator.randomWord(), RandomWordGenerator.randomWord(), RandomWordGenerator.randomWord()).map(Tag::new).toList());
-            eventController.postEvent(evento);
-            eventos.add(evento);
+            eventos.add((EventDTO) eventController.postEvent(evento).getBody());
             qEvents++;
         }
 
         for (EventDTO evento : eventos){
             for(int i = 0; i<30; i++){
                 try {
-                    eventController.registerUserToEvent(new RegistrationCreateDTO(evento.getId(), users.get(random.nextInt(30)).getUuid()));
+                    ResponseEntity<String> rta = eventController.registerUserToEvent(new RegistrationCreateDTO(evento.getId(), users.get(random.nextInt(30)).getUuid()));
                     qRegistrations++;
+                    if (Objects.equals(rta.getBody(), "WAITLIST")){
+                        qWaitlist++;
+                    }
                 }catch (Exception ignored){}
             }
         }
-        return "Sample loaded: " + qEvents + " events, " + qAccounts + " users, " + qRegistrations + " registrations";
+        return "Sample loaded: " + qEvents + " events, " + qAccounts + " users, " + qRegistrations + " registrations of which " + qWaitlist + " are in waitlist";
     }
 
 }
