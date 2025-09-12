@@ -10,13 +10,13 @@ public class ParticipantMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/getSuccesfulRegistrations":
-                return user.setMenuAndRespond(new SelectSuccesfulRegistrationsMenu(user)); //TODO
+                return user.setMenuAndRespond(new SelectSuccesfulRegistrationsMenu(user));
             case "/getWaitlistedRegistrations":
-                return user.setMenuAndRespond(new SelectWaitlistedRegistrationsMenu(user));  //TODO
+                return user.setMenuAndRespond(new SelectWaitlistedRegistrationsMenu(user));
             case "/getCanceledRegistrations":
-                return user.setMenuAndRespond(new SelectCanceledRegistrationsMenu(user));  //TODO
+                return user.setMenuAndRespond(new SelectCanceledRegistrationsMenu(user));
             case "/getAllRegistrations":
-                return user.setMenuAndRespond(new SelectAllRegistrationsMenu(user));  //TODO
+                return user.setMenuAndRespond(new SelectAllRegistrationsMenu(user));
             default:
                 return "Error - opcion invalida\n" + user.getMenu().getQuestion();
         }
