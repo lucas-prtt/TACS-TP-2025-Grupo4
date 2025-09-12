@@ -27,7 +27,7 @@ public class ManageEventSelectionMenu extends AbstractBrowseMenu<EventDTO>{
 
     @Override
     protected MenuState itemSelectedMenu(EventDTO item) {
-        return new ManageEventMenu(user, item);             //TODO
+        return new ManageEventMenu(user, item);
     }
 
     @Override
