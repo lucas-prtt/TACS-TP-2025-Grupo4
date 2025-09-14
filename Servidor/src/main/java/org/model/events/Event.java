@@ -3,7 +3,7 @@ package org.model.events;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.DTOs.EventDTO;
+import org.DTOs.events.EventDTO;
 import org.exceptions.EventRegistrationsClosedException;
 import org.model.enums.EventState;
 import org.model.enums.RegistrationState;

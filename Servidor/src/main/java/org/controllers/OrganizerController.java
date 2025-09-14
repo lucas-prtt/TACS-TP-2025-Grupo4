@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.utils.PageNormalizer;
 import org.utils.PageSplitter;
 
 import java.util.List;
@@ -33,10 +34,12 @@ public class OrganizerController {
                                              @RequestParam(name = "page", required = false) Integer page,
                                              @RequestParam(name = "limit", required = false) Integer limit) {
 
-        if(!checkAccountId(accountId)){
+        if (!checkAccountId(accountId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
+            page = PageNormalizer.normalizeRegistrationsPageNumber(page);
+            limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
             var registrations = organizerService.getRegistrationsFromEvent(accountId, eventId, page, limit)
                 .stream()
                 .map(registration -> new RegistrationDTO(
@@ -57,12 +60,6 @@ public class OrganizerController {
             return ResponseEntity.badRequest()
                 .body(Map.of("error", e.getMessage()));
         }
-    public List<RegistrationDTO> getParticipants(@PathVariable("eventId") UUID eventId,
-                                                 @RequestParam(name = "page", required = false) Integer page,
-                                                 @RequestParam(name = "limit", required = false) Integer limit) {
-        page = PageNormalizer.normalizeRegistrationsPageNumber(page);
-        limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-        return organizerService.getRegistrationsFromEvent(eventId, page, limit).stream().map(registration -> new RegistrationDTO(registration.getId(),registration.getEvent().getId(), registration.getUser().getId(),registration.getEvent().getTitle(),registration.getEvent().getDescription(), registration.getCurrentState(), registration.getDateTime())).toList();
     }
 
     @GetMapping("/{eventId}/waitlist")
@@ -70,10 +67,12 @@ public class OrganizerController {
                                          @PathVariable("eventId") UUID eventId,
                                          @RequestParam(name = "page", required = false) Integer page,
                                          @RequestParam(name = "limit", required = false) Integer limit) {
-        if(!checkAccountId(accountId)){
+        if (!checkAccountId(accountId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         try {
+            page = PageNormalizer.normalizeRegistrationsPageNumber(page);
+            limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
             var waitlist = organizerService.getWaitlistFromEvent(accountId, eventId).stream()
                 .map(registration -> new RegistrationDTO(
                     registration.getId(),
@@ -93,12 +92,6 @@ public class OrganizerController {
             return ResponseEntity.badRequest()
                 .body(Map.of("error", e.getMessage()));
         }
-    public List<RegistrationDTO> getWaitlist(@PathVariable("eventId") UUID eventId,
-                                             @RequestParam(name = "page", required = false) Integer page,
-                                             @RequestParam(name = "limit", required = false) Integer limit) {
-        page = PageNormalizer.normalizeRegistrationsPageNumber(page);
-        limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-        return PageSplitter.getPageList(organizerService.getWaitlistFromEvent(eventId).stream().map(registration -> new RegistrationDTO(registration.getId(),registration.getEvent().getId(), registration.getUser().getId(),registration.getEvent().getTitle(),registration.getEvent().getDescription(), registration.getCurrentState(), registration.getDateTime())).toList(), page, limit);
     }
 
     @PostMapping("/{eventId}/close")

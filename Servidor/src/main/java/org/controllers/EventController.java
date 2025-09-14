@@ -100,9 +100,8 @@ public class EventController {
      * Registra al usuario autenticado en un evento.
      * El accountId se obtiene del token, no del body.
      */
+
     @PostMapping("/registration")
-    public ResponseEntity<String> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTO) {
-    @PostMapping("/registrations")
     public ResponseEntity<?> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTO) {
         try {
             UUID accountId = getCurrentAccountId();

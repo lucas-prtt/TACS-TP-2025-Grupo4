@@ -3,9 +3,11 @@ package org.controllers;
 
 import static org.utils.SecurityUtils.checkAccountId;
 
+import org.DTOs.accounts.AccountResponseDTO;
 import org.DTOs.events.EventDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.exceptions.AccountNotFoundException;
+import org.model.accounts.Account;
 import org.model.enums.RegistrationState;
 import org.services.EventService;
 import org.services.AccountService;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.utils.PageNormalizer;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -49,22 +50,16 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}/registrations")
-    public ResponseEntity<List<RegistrationDTO>> getRegistrations(
-                                                            @PathVariable("accountId") UUID accountId,
-                                                            @RequestParam(name = "page", required = false) Integer page,
-                                                            @RequestParam(name = "limit", required = false) Integer limit){
-        if(!checkAccountId(accountId)){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        List<RegistrationDTO> registrations = accountService.getRegistrations(accountId, page, limit);
-    public ResponseEntity<List<RegistrationDTO>> getRegistrations(@PathVariable(name = "accountId") String accountId,
+    public ResponseEntity<List<RegistrationDTO>> getRegistrations(@PathVariable(name = "accountId") UUID accountId,
                                                                   @RequestParam(name = "page", required = false) Integer page,
                                                                   @RequestParam(name = "limit", required = false) Integer limit,
                                                                   @RequestParam(name = "registrationState", required = false) RegistrationState registrationState) {
+        if(!checkAccountId(accountId)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         page = PageNormalizer.normalizeRegistrationsPageNumber(page);
         limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-        List<RegistrationDTO> registrations = accountService.getRegistrations(UUID.fromString(accountId), page, limit, registrationState);
+        List<RegistrationDTO> registrations = accountService.getRegistrations(accountId, page, limit, registrationState);
         return ResponseEntity.ok(registrations);
     }
 
@@ -78,19 +73,10 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        List<EventDTO> events = eventService.getEventsByOrganizer(accountId, page, limit);
         page = PageNormalizer.normalizeRegistrationsPageNumber(page);
         limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-        List<EventDTO> events = eventService.getEventsByOrganizer(UUID.fromString(accountId), page, limit);
+        List<EventDTO> events = eventService.getEventsByOrganizer(accountId, page, limit);
         return ResponseEntity.ok(events);
     }
 
-//    @PostMapping
-//    public ResponseEntity<?> createAccount(@RequestBody AccountCreateDTO accountCreateDTO) {
-//        if (accountService.existsByUsername(accountCreateDTO.getUsername())) {
-//            return ResponseEntity.badRequest().body("Username already exists");
-//        }
-//        Account account = accountService.createAccount(accountCreateDTO);
-//        return ResponseEntity.ok(toAccountResponseDTO(account));
-//    }
 }

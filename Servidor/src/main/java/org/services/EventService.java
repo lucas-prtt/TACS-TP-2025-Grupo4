@@ -38,32 +38,18 @@ public class EventService {
         this.registrationRepository = registrationRepository;
     }
 
-    public Event createEvent(EventDTO eventDTO) throws AccountNotFoundException, BadRequestException{
-        Optional<Account> author;
+    public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException, BadRequestException {
         Event newEvent;
+        Optional<Account> author;
         try {
-            Objects.requireNonNull(eventDTO.getOrganizerId());
-            author = accountRepository.findById(String.valueOf(eventDTO.getOrganizerId()));
+            author = accountRepository.findById(String.valueOf(organizerId));
         }catch (Exception e){
             throw new BadRequestException();
         }
-        if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+eventDTO.getOrganizerId());
+        if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+ organizerId.toString());
         try {
-            newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags(), author.get());
-        }catch (Exception e){
-            throw new BadRequestException();
-        }
-    public Event createEvent(EventCreateDTO eventDTO, UUID organizerId)
-        throws NullPointerException, AccountNotFoundException {
-
-        // Buscar organizador en base al UUID obtenido del token
-        Optional<Account> organizer = accountRepository.findById(organizerId.toString());
-        if (organizer.isEmpty()) {
-            throw new AccountNotFoundException("No se encontró el autor con id " + organizerId);
-        }
-
         // Crear evento
-        Event newEvent = new Event(
+        newEvent = new Event(
             eventDTO.getTitle(),
             eventDTO.getDescription(),
             eventDTO.getStartDateTime(),
@@ -74,10 +60,12 @@ public class EventService {
             eventDTO.getPrice(),
             eventDTO.getCategory(),
             eventDTO.getTags(),
-            organizer.get()
+            author.get()
         );
-
         eventRepository.save(newEvent);
+        } catch (Exception e) {
+        throw new BadRequestException();
+        }
         return newEvent;
     }
 

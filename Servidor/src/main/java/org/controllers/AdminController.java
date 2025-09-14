@@ -1,9 +1,15 @@
 package org.controllers;
 
-import org.DTOs.EventDTO;
+import static org.utils.SecurityUtils.getCurrentAccountId;
+
+import java.util.UUID;
+import org.DTOs.events.EventCreateDTO;
+import org.DTOs.events.EventDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.DTOs.StatsDTO;
+import org.apache.coyote.BadRequestException;
 import org.model.events.Event;
+import org.model.events.Registration;
 import org.services.EventService;
 import org.services.StatsService;
 import org.springframework.http.ResponseEntity;
@@ -22,15 +28,15 @@ public class AdminController {
     }
 
     @PostMapping("/event")
-    public ResponseEntity<EventDTO> createEvent(@RequestBody EventCreateDTO eventCreateDTO) {
+    public ResponseEntity<EventDTO> createEvent(@RequestBody EventCreateDTO eventCreateDTO) throws BadRequestException {
         UUID id = getCurrentAccountId();
         Event event = eventService.createEvent(eventCreateDTO,id);
         return ResponseEntity.ok(EventDTO.fromEvent(event));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegistrationDTO registrationDTO) {
-        String status = eventService.registerParticipantToEvent(
+    public ResponseEntity<?> registerUser(@RequestBody RegistrationDTO registrationDTO) {
+        Registration status = eventService.registerParticipantToEvent(
                 registrationDTO.getEventId(),
                 registrationDTO.getAccountId()
         );

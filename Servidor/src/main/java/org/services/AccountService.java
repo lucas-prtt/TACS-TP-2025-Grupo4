@@ -4,7 +4,6 @@ import static org.utils.PasswordValidator.validatePassword;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import org.DTOs.accounts.AccountCreateDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.exceptions.AccountNotFoundException;
 import org.model.accounts.Account;
@@ -58,21 +57,14 @@ public class AccountService {
     }
 
 
-    //cambiar (NO LO QUITO POR LOS TESTS)
-    public Account createAccount(AccountCreateDTO accountCreateDTO) {
-        Account account = new Account();
-        account.setUsername(accountCreateDTO.getUsername());
-
-        accountRepository.save(account);
-        return account;
-    }
     public List<RegistrationDTO> getRegistrations(UUID accountID, Integer page, Integer limit, RegistrationState registrationState) {
         Account account = accountRepository.findById(String.valueOf(accountID))
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         List<RegistrationDTO> processedRegistrations = account.getRegistrations().stream()
-                .filter(r->r.getCurrentState()==registrationState).map(RegistrationDTO::toRegistrationDTO)
-                .collect(Collectors.toList());
+            .filter(r -> registrationState == null || r.getCurrentState() == registrationState)
+            .map(RegistrationDTO::toRegistrationDTO)
+            .collect(Collectors.toList());
         return PageSplitter.getPageList(processedRegistrations, page, limit);
     }
     public List<RegistrationDTO> getRegistrations(UUID accountID) {

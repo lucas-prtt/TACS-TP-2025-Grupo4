@@ -60,6 +60,5 @@ public class RegistrationController {
     return ResponseEntity.noContent().build();
   }
 
-
 }
 
