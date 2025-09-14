@@ -74,7 +74,7 @@ class RegistrationRepositoryTest {
     List<Registration> userRegistrations = repository.findByAccountId(account.getId());
 
     assertEquals(1, userRegistrations.size());
-    assertEquals(registration, userRegistrations.getFirst());
+    assertEquals(registration, userRegistrations.get(0));
   }
 
   @Test
@@ -84,16 +84,16 @@ class RegistrationRepositoryTest {
     List<Registration> eventRegistrations = repository.findByEventId(event.getId());
 
     assertEquals(1, eventRegistrations.size());
-    assertEquals(registration, eventRegistrations.getFirst());
+    assertEquals(registration, eventRegistrations.get(0));
   }
 
   @Test
   void cancelById_shouldMarkRegistrationAsCancelled() {
     repository.save(registration);
 
-    boolean cancelled = repository.cancelById(registration.getId());
-
-    assertTrue(cancelled);
+    Optional<Registration> cancelled = repository.cancelById(registration.getId());
+    assertTrue(cancelled.isPresent());
+    assertSame(RegistrationState.CANCELED, cancelled.get().getCurrentState());
     Optional<Registration> optReg = repository.findById(registration.getId());
     assertTrue(optReg.isPresent());
     assertEquals(RegistrationState.CANCELED, optReg.get().getCurrentState());
@@ -101,10 +101,9 @@ class RegistrationRepositoryTest {
 
 
   @Test
-  void deleteById_notExisting_shouldReturnFalse() {
-    boolean deleted = repository.cancelById(UUID.randomUUID());
-
-    assertFalse(deleted);
+  void deleteById_notExisting_shouldReturnEmpty() {
+    Optional<Registration> deleted = repository.cancelById(UUID.randomUUID());
+    assertFalse(deleted.isPresent());
   }
 
   @Test

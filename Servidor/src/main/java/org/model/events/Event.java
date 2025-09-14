@@ -3,6 +3,8 @@ package org.model.events;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.DTOs.events.EventDTO;
+import org.exceptions.EventRegistrationsClosedException;
 import org.model.enums.EventState;
 import org.model.enums.RegistrationState;
 import org.model.accounts.Account;
@@ -78,7 +80,7 @@ public class Event {
         return participants.size() < maxParticipants;
     }
 
-    public String registerParticipant(Registration registration) {
+    public Registration registerParticipant(Registration registration) {
         //metodo para inscribir participante al evento verificando las condiciones:
         //-hay cupo-si las inscripciones estan abiertas ,etc
 
@@ -94,9 +96,9 @@ public class Event {
                 waitList.add(registration);
                 registration.getUser().getRegistrations().add(registration);
             }
-            return registration.getCurrentState().toString();
+            return registration;
         } else {
-            return EventState.EVENT_CLOSED.toString();
+            throw new EventRegistrationsClosedException("El evento se encuentra en estado:" + eventState.toString());
         }
     }
 
@@ -106,6 +108,32 @@ public class Event {
             next.setState(RegistrationState.CONFIRMED);
             participants.add(next);
         }
+    }
+
+    public void patch(EventDTO dto){
+        if(dto.getPrice() != null)
+            this.price = dto.getPrice();
+        if(dto.getCategory() != null)
+            this.category = dto.getCategory();
+        if(dto.getLocation() != null)
+            this.location = dto.getLocation();
+        if(dto.getState() != null)
+            this.eventState = dto.getState();
+        if(dto.getTags() != null)
+            this.tags = dto.getTags();
+        if(dto.getTitle() != null)
+            this.title = dto.getTitle();
+        if(dto.getStartDateTime() != null)
+            this.startDateTime = dto.getStartDateTime();
+        if(dto.getDescription() != null)
+            this.description = dto.getDescription();
+        if(dto.getDurationMinutes() != null)
+            this.durationMinutes = dto.getDurationMinutes();/* // Estos ultimos pueden conllevar mas logica
+        if(dto.getMaxParticipants() != null)
+            this.maxParticipants = dto.getMaxParticipants();
+        if(dto.getMinParticipants() != null)
+            this.minParticipants = dto.getMinParticipants();*/
+
     }
 
 }

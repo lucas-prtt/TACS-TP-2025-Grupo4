@@ -1,16 +1,18 @@
 package org.services;
 
-import org.DTOs.EventDTO;
+import org.DTOs.events.EventCreateDTO;
+import org.DTOs.events.EventDTO;
 import org.apache.coyote.BadRequestException;
+import org.exceptions.*;
 import org.model.events.Event;
 import org.model.accounts.Account;
-import org.exceptions.AccountNotFoundException;
-import org.exceptions.EventNotFoundException;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.model.events.Registration;
+import org.utils.PageSplitter;
+
 import java.util.UUID;
 
 import java.math.BigDecimal;
@@ -28,22 +30,43 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final AccountRepository accountRepository;
-    private final RegistrationRepository registrationRepository;
 
-    public EventService(EventRepository eventRepository, AccountRepository accountRepository, StatsService statsService, RegistrationRepository registrationRepository) {
+    public EventService(EventRepository eventRepository, AccountRepository accountRepository, RegistrationRepository registrationRepository) {
         this.eventRepository = eventRepository;
         this.accountRepository = accountRepository;
-        this.registrationRepository = registrationRepository;
     }
 
-    public Event createEvent(EventDTO eventDTO) throws NullPointerException, AccountNotFoundException {
-        Objects.requireNonNull(eventDTO.getOrganizerId());
-        Optional<Account> author = accountRepository.findById(String.valueOf(eventDTO.getOrganizerId()));
-        if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+eventDTO.getOrganizerId());
-        Event newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags(), author.get());
+    public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException, BadRequestException {
+        Event newEvent;
+        Optional<Account> author;
+        try {
+            author = accountRepository.findById(String.valueOf(organizerId));
+        }catch (Exception e){
+            throw new BadRequestException();
+        }
+        if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+ organizerId.toString());
+        try {
+        // Crear evento
+        newEvent = new Event(
+            eventDTO.getTitle(),
+            eventDTO.getDescription(),
+            eventDTO.getStartDateTime(),
+            eventDTO.getDurationMinutes(),
+            eventDTO.getLocation(),
+            eventDTO.getMaxParticipants(),
+            eventDTO.getMinParticipants(),
+            eventDTO.getPrice(),
+            eventDTO.getCategory(),
+            eventDTO.getTags(),
+            author.get()
+        );
         eventRepository.save(newEvent);
+        } catch (Exception e) {
+        throw new BadRequestException();
+        }
         return newEvent;
     }
+
     public Event getEvent(UUID eventId) {
         //devuelve el evento (con sus inscriptos y su waitlist)
         Optional<Event> eventOptional = eventRepository.findById(eventId);
@@ -51,22 +74,26 @@ public class EventService {
         return event;
     }
 
-    public EventDTO getEventDTOById(String id) throws EventNotFoundException {
-        Optional<Event> event = eventRepository.findById(UUID.fromString(id));
+    public EventDTO getEventDTOById(UUID id) throws EventNotFoundException {
+        Optional<Event> event = eventRepository.findById(id);
         if (event.isEmpty())
             throw new EventNotFoundException("No se encontró el evento con id " + id);
         return EventDTO.fromEvent(event.get());
     }
 
-    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) throws BadRequestException {
+    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice, Integer page, Integer limit) throws BadRequestException {
         List<Event> events = getEventsByTitleOrContains(title, titleContains);
-        return events.stream()
+        List<EventDTO> processedEvents = events.stream()
                 .filter(event -> isValidEvent(event, maxDate, minDate, category, tags, maxPrice, minPrice))
                 .map(EventDTO::fromEvent)
                 .toList();
+        return PageSplitter.getPageList(processedEvents, page, limit);
+    }
+    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) throws BadRequestException {
+        return getEventDTOsByQuery( title,  titleContains,  maxDate,  minDate,  category,  tags,  maxPrice,  minPrice);
     }
 
-    private List<Event> getEventsByTitleOrContains(String title, String titleContains) throws BadRequestException {
+        private List<Event> getEventsByTitleOrContains(String title, String titleContains) throws BadRequestException {
         if (title != null && titleContains != null) {
             throw new BadRequestException("No puede haber titleContains y title simultáneamente");
         }
@@ -106,42 +133,26 @@ public class EventService {
         );
     }
 
-    public String registerParticipantToEvent(UUID eventId, UUID accountId) {
-        Event event = eventRepository.findById(eventId)
-            .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
-        Account account = accountRepository.findById(String.valueOf(accountId))
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        // Verificar si el organizador intenta inscribirse a su propio evento
-        if (event.getOrganizer().getId().equals(accountId)) {
-            return "ORGANIZER_CANNOT_REGISTER";
-        }
-
-        //  Verificar si ya está inscripto
-        if (event.getParticipants().stream().anyMatch(reg -> reg.getUser().getId().equals(accountId))) {
-            return "ALREADY_REGISTERED";
-        }
-
-        //  Verificar si ya está en waitlist
-        if (event.getWaitList().stream().anyMatch(acc -> acc.getUser().getId().equals(accountId))) {
-            return "ALREADY_IN_WAITLIST";
-        }
-
-        Registration registration = new Registration();
-        registration.setEvent(event);
-        registration.setUser(account);
-
-        registrationRepository.save(registration);
-
-        return event.registerParticipant(registration);
-    }
 
 
-    public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
+    public List<EventDTO> getEventsByOrganizer(UUID organizerId, Integer page, Integer limit) {
         // Obtiene todos los eventos y filtra los que tienen como organizador al usuario dado
-        return eventRepository.getAll().stream()
+        List<EventDTO> processedEvents =  eventRepository.getAll().stream()
                 .filter(event -> event.getOrganizer() != null && event.getOrganizer().getId().equals(organizerId))
                 .map(EventDTO::fromEvent)
                 .collect(Collectors.toList());
+        return PageSplitter.getPageList(processedEvents, page, limit);
+    }
+    public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
+        return getEventsByOrganizer(organizerId, null, null);
+    }
+
+    public EventDTO patchEvent(String id, EventDTO eventPatch) {
+        Optional<Event> eventOptional = eventRepository.findById(UUID.fromString(id));
+        if(eventOptional.isEmpty())
+            throw new EventNotFoundException("No se encontro un evento con ese id");
+        eventOptional.get().patch(eventPatch);
+        eventRepository.save(eventOptional.get());
+        return EventDTO.fromEvent(eventOptional.get());
     }
 }

@@ -1,7 +1,6 @@
 package org.services;
 
 import org.DTOs.StatsDTO;
-import org.model.enums.RegistrationState;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
 import org.springframework.stereotype.Service;
