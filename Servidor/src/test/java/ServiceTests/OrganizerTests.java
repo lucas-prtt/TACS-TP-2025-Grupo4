@@ -1,5 +1,10 @@
 package ServiceTests;
 
+import org.exceptions.EventRegistrationsClosedException;
+import org.model.enums.EventState;
+import org.model.events.Event;
+import org.model.events.Registration;
+import org.model.accounts.Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -113,10 +118,15 @@ public class OrganizerTests {
     Account newUser = new Account("newuser@test.com", "pwd-new");
     Registration newRegistration = new Registration(newUser);
 
-    String result = mockEvent.registerParticipant(newRegistration);
+        // Intentar registrar el nuevo participante
+        assertThrows(EventRegistrationsClosedException.class, () -> {
+            mockEvent.registerParticipant(newRegistration);
+        });
 
-    // según tu implementación previa, se espera "EVENT_CLOSED" (o similar)
-    assertEquals(EventState.EVENT_CLOSED.toString(), result);
-    assertFalse(mockEvent.getParticipants().contains(newRegistration));
-  }
+
+
+        // Verificar que el resultado es "CERRADO" y que no se agregó al participante
+        assertEquals(EventState.EVENT_CLOSED, mockEvent.getEventState());
+        assertFalse(mockEvent.getParticipants().contains(newRegistration));  // Verificar que no fue agregado
+    }
 }

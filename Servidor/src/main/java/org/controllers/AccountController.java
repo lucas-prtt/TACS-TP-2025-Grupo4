@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.utils.PageNormalizer;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,6 +62,8 @@ public class AccountController {
                                                                   @RequestParam(name = "page", required = false) Integer page,
                                                                   @RequestParam(name = "limit", required = false) Integer limit,
                                                                   @RequestParam(name = "registrationState", required = false) RegistrationState registrationState) {
+        page = PageNormalizer.normalizeRegistrationsPageNumber(page);
+        limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
         List<RegistrationDTO> registrations = accountService.getRegistrations(UUID.fromString(accountId), page, limit, registrationState);
         return ResponseEntity.ok(registrations);
     }
@@ -76,6 +79,9 @@ public class AccountController {
         }
 
         List<EventDTO> events = eventService.getEventsByOrganizer(accountId, page, limit);
+        page = PageNormalizer.normalizeRegistrationsPageNumber(page);
+        limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
+        List<EventDTO> events = eventService.getEventsByOrganizer(UUID.fromString(accountId), page, limit);
         return ResponseEntity.ok(events);
     }
 

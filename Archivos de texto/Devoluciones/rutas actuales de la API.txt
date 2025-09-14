@@ -1,0 +1,29 @@
+Hay que repensar la api. Terimino quedandonos un lio porque cada uno hizo lo suyo.
+
+
+
+GET     /accounts/{accountId}
+GET     /accounts/usernames/{accountUsername}
+GET     /accounts/{accountId}/registrations
+GET     /accounts/{accountId}/organized-events
+POST    /accounts
+
+GET     /admin/stats
+
+POST    /dev/load-sample
+POST    /dev/load-big-sample
+
+POST    /events
+GET     /events/{id}
+GET     /events
+POST    /events/registrations
+PATCH   /events/{id}
+
+GET     accounts/{accountId}/organized-events/{eventId}/participants
+GET     accounts/{accountId}/organized-events/{eventId}/waitlist
+POST    accounts/{accountId}/organized-events/{eventId}/close
+
+GET     accounts/{accountId}/registrations/{registrationId}
+DELETE  accounts/{accountId}/registrations/{registrationId}
+
+
