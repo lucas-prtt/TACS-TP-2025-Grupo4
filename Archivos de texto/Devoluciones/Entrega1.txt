@@ -104,13 +104,13 @@ EN PROCESO
    "ALREADY_REGISTERED";
    "ALREADY_IN_WAITLIST";
 
-NO RESUELTO
+RESUELTO
 
---> Para la NullPointerException, debemos crear una excepcion nuestra, que atrape la NullPointer en capa service (o repository) y
-    que lanze la nuestra propia
---> Hay que crear objetos de respuesta para los registros:
+--> Para la NullPointerException, hicimos que se atrape la NullPointerException en capa service (o repository) y
+    que lanze una BadRequestException
+--> Para devolucion de strings, pasamos a dar un objeto de respuesta para los registros:
     --> Registro exitoso: Devolver el registro
-    --> Registro fallido: No hay que hacer un switch para ver que pasa. Hay que poner excepciones personalizadas para cada caso de error y atraparlas en el controller
+    --> Registro fallido: Tiramos excepciones personalizadas para cada caso de error y las atrapamos en el controller, tras lo cual tiramos un codigo de error HTTP
 
 9) Qué pasa si alguien que está en una lista de espera se quiere bajar del evento?
 
