@@ -104,7 +104,7 @@ EN PROCESO
    "ALREADY_REGISTERED";
    "ALREADY_IN_WAITLIST";
 
-RESUELTO
+SOLUCIONADO
 
 --> Para la NullPointerException, hicimos que se atrape la NullPointerException en capa service (o repository) y
     que lanze una BadRequestException
@@ -114,13 +114,13 @@ RESUELTO
 
 9) Qué pasa si alguien que está en una lista de espera se quiere bajar del evento?
 
-RESUELTO
+SOLUCIONADO
 
 --> Se chequa el estado del registro y en funcion de eso se promueve de la waitlist o solo se cancela
 
 10) (En cancelRegistration) Si un user está intentando acceder a algo que no debería, retorno booleano? mmm eso esta raro.
 
-RESUELTO ¿?
+SOLUCIONADO ¿?
 
 --> En   @DeleteMapping("/{registrationId}")
     registrationService.cancelRegistration(registrationId, accountId); devuelve un booleano
@@ -130,7 +130,7 @@ RESUELTO ¿?
 11) Concurrencia
     Qué pasa si empiezo a tener concurrencia en el proceso de (cancelación + promoción de waitlist)? La operación es atómica como está hecho ahora?
 
-RESUELTO ¿?
+SOLUCIONADO ¿?
 
 --> Utilizamos un ConcurrentHashmap para gestionar distintos mutex segun el evento, el cual evita que haya problemas al trabajar con las listas
 --> Habria que utilizarlo tambien para postear los registros, pero como esta en otro controller no podemos hasta no reorganizar la API
