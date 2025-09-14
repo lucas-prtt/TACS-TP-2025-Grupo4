@@ -9,6 +9,8 @@ import org.services.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.utils.PageNormalizer;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -73,6 +75,8 @@ public class EventController {
             @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "limit", required = false) Integer limit){
+        page = PageNormalizer.normalizeEventsPageNumber(page);
+        limit = PageNormalizer.normalizeEventsPageLimit(limit);
         try {
             List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(title, titleContains, maxDate, minDate, category, tags, maxPrice, minPrice, page, limit);
             return ResponseEntity.ok(eventsDTO);

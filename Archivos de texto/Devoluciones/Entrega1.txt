@@ -57,12 +57,10 @@ el login al frontend
 4) Qué pasa si este GET me devuelve un millón de eventos?
    GET /events?titleContains=Jazz&minPrice=1000&maxPrice=2000
 
-SOLUCIONADO ¿?
+SOLUCIONADO
 
---> Le pusimos paginacion con ?page=xyz&limit=xyz, pero no pusimos nigun limite al tamaño
-de página y los parametros son opcionales. Hay que considerar establecer un maximo
-en el "limit" y que siempre este paginado, en caso de que alguien comience a consumir la api
-sin páginas
+--> Le pusimos paginacion con ?page=xyz&limit=xyz, con un limite impuesto al tamaño de la pagina y valores por defecto si no son introducidos.
+Los maximos, minimos y valores por defecto son configurables desde un .config
 
 
 5) Endpoints a revisar - REST: Que otra forma se les ocurre de diseñarlo? Cumplen con las convenciones REST?
