@@ -39,4 +39,5 @@ build/
 
 ### API KEYS
 .env
+### Queda de antes
 TelegramBot/.env

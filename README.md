@@ -22,23 +22,53 @@
 ### Jira
 [https://frba-team-hj2c1r3q.atlassian.net/jira/software/projects/MBA/boards/1](https://frba-team-hj2c1r3q.atlassian.net/jira/software/projects/MBA/boards/1)
 
-## Instrucciones para levantar el servidor
+## Instrucciones para levantar el sistema
+(Desde la raiz del repositorio)
 
-### Desde la raíz del repositorio:
+### Con Docker Automático
+1. Abrir Docker Desktop si no esta abierto
+2. Ejecutar el script setup.sh
+    ```bash
+    ./setup.sh [modulos]
+    ```
+    Si se deja vacío se ejecutan todos los modulos. Los modulos posibles son:
+     - servidor
+     - telegrambot
+    
 
+3. Introducir las variables de entorno:
+   - EVENTOS_TELEGRAM_BOT_TOKEN
+   - EVENTOS_TELEGRAM_BOT_USERNAME
+
+### Con Docker Manual:
 1. Abrir Docker Desktop si no está abierto.
 
-2. Crear contenedor:
+2. Crear un archivo .env con las variables de entorno:
+    - EVENTOS_TELEGRAM_BOT_TOKEN
+    - EVENTOS_TELEGRAM_BOT_USERNAME
+3. Ejecutar red de contenedores:
 
 ```bash
-docker build -f Servidor/Dockerfile -t servidor .
+docker-compose up
 ```
-
-3. Ejecutar contenedor:
-
+### Sin Docker:
+1. Crear las variables de entorno en el sistema:
+   - EVENTOS_TELEGRAM_BOT_TOKEN
+   - EVENTOS_TELEGRAM_BOT_USERNAME
+2. Compilar el proyecto
 ```bash
-docker run --name Servidor-TACS-Grupo4 -p 8080:8080 servidor
+mvn clean package
 ```
+3. Ejecutar servidor
+```bash
+java -jar Servidor/target/Servidor-1.0.jar
+```
+4. Ejecutar bot de telegram
+```bash
+java -jar TelegramBot/target/TelegramBot-1.0.jar
+```
+--- 
+
 
 Tras eso, el servidor estará escuchando peticiones en el puerto 8080.
 Se puede comprobar haciendo alguna de las peticiones de ejemplo que se muestran abajo.
