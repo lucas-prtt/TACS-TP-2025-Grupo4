@@ -9,8 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import org.DTOs.registrations.RegistrationDTO;
-import org.exceptions.RegistrationNotFoundException;
-import org.exceptions.WrongUserException;
+import org.exceptions.*;
 import org.model.events.Event;
 import org.model.events.Registration;
 import org.model.enums.RegistrationState;
@@ -137,5 +136,48 @@ public class RegistrationService {
     }
     registrationRepository.save(reg);
     return reg;
+  }
+
+
+  public Registration registerParticipantToEvent(UUID eventId, UUID accountId) throws EventNotFoundException, UserNotFoundException, OrganizerRegisterException, AlreadyRegisteredException, EventRegistrationsClosedException{
+    Event event = eventRepository.findById(eventId)
+            .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
+    Account account = accountRepository.findById(String.valueOf(accountId))
+            .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+
+    ReentrantLock lock = locksParticipants.computeIfAbsent(eventId, id -> new ReentrantLock());
+    lock.lock();
+    // Verificar si el organizador intenta inscribirse a su propio evento
+    if (event.getOrganizer().getId().equals(accountId)) {
+      throw new OrganizerRegisterException("No se puede escribir a su propio evento");
+    }
+
+    //  Verificar si ya está inscripto
+    if (event.getParticipants().stream().anyMatch(reg -> reg.getUser().getId().equals(accountId))) {
+      throw new AlreadyParticipantException("Ya esta inscripto");
+    }
+
+    //  Verificar si ya está en waitlist
+    if (event.getWaitList().stream().anyMatch(acc -> acc.getUser().getId().equals(accountId))) {
+      throw new AlreadyInWaitlistException("Ya esta en la waitlist");
+    }
+    Registration registration = new Registration();
+    registration.setEvent(event);
+    registration.setUser(account);
+
+
+    try {
+      event.registerParticipant(registration);
+      registrationRepository.save(registration);
+    }
+    finally {
+        lock.unlock();
+        if (!lock.hasQueuedThreads()) {
+          locksParticipants.remove(eventId, lock);
+        }
+      }
+
+    return registration;
   }
 }

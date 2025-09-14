@@ -21,6 +21,7 @@ import org.exceptions.EventNotFoundException;
 import org.model.events.Event;
 import org.services.EventService;
 import org.services.OrganizerService;
+import org.services.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,9 +37,11 @@ public class EventController {
 
     private final EventService eventService;
     private final OrganizerService organizerService;
-    public EventController(EventService eventService, OrganizerService organizerService) {
+    private final RegistrationService registrationService;
+    public EventController(EventService eventService, OrganizerService organizerService, RegistrationService registrationService) {
         this.eventService = eventService;
         this.organizerService = organizerService;
+        this.registrationService = registrationService;
     }
 
     /**
@@ -62,7 +65,7 @@ public class EventController {
     public ResponseEntity<List<EventDTO>> getOrganizedEvents() {
         UUID id = getCurrentAccountId();
         List<EventDTO> events = new ArrayList<>();
-        eventService.getEventsByOrganizer(id);
+        events = eventService.getEventsByOrganizer(id);
         return ResponseEntity.ok(events);
     }
 
@@ -121,7 +124,7 @@ public class EventController {
     public ResponseEntity<?> registerUserToEvent(@PathVariable(name = "id") UUID eventId) {
         try {
             UUID accountId = getCurrentAccountId();
-            Registration registrationResult = eventService.registerParticipantToEvent(
+            Registration registrationResult = registrationService.registerParticipantToEvent(
                 eventId,
                 accountId
             );
