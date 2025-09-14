@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class JwtUtil {
 
-  private static final String SECRET_KEY = "EstaEsUnaClaveSecretaMuyMuyLargaParaJWT1234567890!!!"; // DEBE IR EN UNA VARIABLE DE ENTORNO
+  private static final String SECRET_KEY = System.getenv("EVENTOS_SERVER_SECRET_KEY");
   private static final Key KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
   private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hora
 

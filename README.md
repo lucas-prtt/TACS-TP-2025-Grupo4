@@ -39,6 +39,7 @@
 3. Introducir las variables de entorno:
    - EVENTOS_TELEGRAM_BOT_TOKEN
    - EVENTOS_TELEGRAM_BOT_USERNAME
+   - EVENTOS_SERVER_SECRET_KEY
 
 ### Con Docker Manual:
 1. Abrir Docker Desktop si no está abierto.
@@ -46,6 +47,7 @@
 2. Crear un archivo .env con las variables de entorno:
     - EVENTOS_TELEGRAM_BOT_TOKEN
     - EVENTOS_TELEGRAM_BOT_USERNAME
+    - EVENTOS_SERVER_SECRET_KEY
 3. Ejecutar red de contenedores:
 
 ```bash
@@ -55,6 +57,7 @@ docker-compose up
 1. Crear las variables de entorno en el sistema:
    - EVENTOS_TELEGRAM_BOT_TOKEN
    - EVENTOS_TELEGRAM_BOT_USERNAME
+   - EVENTOS_SERVER_SECRET_KEY
 2. Compilar el proyecto
 ```bash
 mvn clean package

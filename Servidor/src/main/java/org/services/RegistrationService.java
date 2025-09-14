@@ -126,4 +126,16 @@ public class RegistrationService {
   }
 
 
+  public Registration patchRegistration(UUID registrationId, UUID accountId, RegistrationDTO registrationDTO) {
+    Optional<Registration> optReg = registrationRepository.findById(registrationId);
+    if (optReg.isEmpty()){
+      throw new RegistrationNotFoundException("No se encontro el registro");
+    }
+    Registration reg = optReg.get();
+    if(registrationDTO.getState() != null && registrationDTO.getState() == RegistrationState.CANCELED){
+      this.cancelRegistration(reg.getId(), accountId);
+    }
+    registrationRepository.save(reg);
+    return reg;
+  }
 }

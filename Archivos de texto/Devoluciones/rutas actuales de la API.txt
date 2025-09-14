@@ -17,7 +17,7 @@ POST    /dev/load-big-sample
 
 EVENTCONTROLLER
 GET     /events
-GET     /organized-events
+GET     /events/organized-events
 POST    /events
 GET     /events/{id}
 POST    /events/{id}/registrations

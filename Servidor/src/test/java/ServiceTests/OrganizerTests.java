@@ -2,6 +2,7 @@ package ServiceTests;
 
 import org.exceptions.EventRegistrationsClosedException;
 import org.model.enums.EventState;
+import org.model.enums.RegistrationState;
 import org.model.events.Event;
 import org.model.events.Registration;
 import org.model.accounts.Account;
@@ -83,7 +84,7 @@ public class OrganizerTests {
   void testGetRegistrationsFromEvent() {
     // Llamar con accountId = organizer.getId() y eventId = mockEvent.getId()
     List<Registration> result = organizerService.getRegistrationsFromEvent(
-        organizer.getId(), mockEvent.getId(), null, null
+            mockEvent.getId(), RegistrationState.CONFIRMED, null, null
     );
 
     assertEquals(2, result.size());

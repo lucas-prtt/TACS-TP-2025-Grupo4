@@ -43,18 +43,18 @@ public class AuthController {
     }
   }
 
-  // Registro de admin
-  @PostMapping("/register-admin")
-  public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequestDTO request) {
-    try {
-      Account account = accountService.register(request.getUsername(), request.getPassword(), true);
-      return ResponseEntity.ok(toAccountResponseDTO(account));
-    } catch (RuntimeException e) {
-      return ResponseEntity
-          .badRequest()
-          .body(Map.of("error", e.getMessage()));
-    }
-  }
+//  // Registro de admin
+//  @PostMapping("/register-admin")
+//  public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequestDTO request) {
+//    try {
+//      Account account = accountService.register(request.getUsername(), request.getPassword(), true);
+//      return ResponseEntity.ok(toAccountResponseDTO(account));
+//    } catch (RuntimeException e) {
+//      return ResponseEntity
+//          .badRequest()
+//          .body(Map.of("error", e.getMessage()));
+//    }
+//  }
 
   // Login
   @PostMapping("/login")
