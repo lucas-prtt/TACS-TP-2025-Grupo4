@@ -28,11 +28,6 @@ public class RegistrationController {
     this.registrationService = registrationService;
   }
 
-//  @GetMapping
-//    public ResponseEntity<List<RegistrationDTO>> getAllByUser(@PathVariable("accountId")  UUID accountId) {
-//    return ResponseEntity.ok(registrationService.findByAccountId(accountId));
-//  }
-
   @GetMapping("/{registrationId}")
   public ResponseEntity<?> getRegistrationByUserAndById(@PathVariable("accountId") UUID accountId,
                                                         @PathVariable("registrationId") UUID registrationId) {
