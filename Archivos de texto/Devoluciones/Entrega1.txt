@@ -121,11 +121,12 @@ NO RESUELTO
 
 10) (En cancelRegistration) Si un user está intentando acceder a algo que no debería, retorno booleano? mmm eso esta raro.
 
-NO RESUELTO
+RESUELTO ¿?
 
 --> En   @DeleteMapping("/{registrationId}")
     registrationService.cancelRegistration(registrationId, accountId); devuelve un booleano
-    Hay que hacer que siempre devuelva void y tire exception si falla, la cual se atrape en el controller
+    Devuelve el registro cancelado y tire exception si falla, la cual se atrapa en el controller
+    Habria que hacer que sea un patchMapping ya que se cambia de estado y no se elimina el recurso?
 
 11) Concurrencia
     Qué pasa si empiezo a tener concurrencia en el proceso de (cancelación + promoción de waitlist)? La operación es atómica como está hecho ahora?

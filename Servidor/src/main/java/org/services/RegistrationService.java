@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.DTOs.registrations.RegistrationDTO;
+import org.exceptions.RegistrationNotFoundException;
+import org.exceptions.WrongUserException;
 import org.model.events.Event;
 import org.model.events.Registration;
 import org.model.enums.RegistrationState;
@@ -84,16 +86,15 @@ public class RegistrationService {
   }
 
   // Cancelar inscripción (usuario solo puede cancelar la suya)
-  public boolean cancelRegistration(UUID registrationId, UUID accountId) {
+  public Registration cancelRegistration(UUID registrationId, UUID accountId) {
     Optional<Registration> optReg = registrationRepository.findById(registrationId);
 
-    if (optReg.isEmpty()) return false;
-
+    if (optReg.isEmpty()) throw new RegistrationNotFoundException("No se encontro un registro con esa ID");
 
     Registration reg = optReg.get();
 
     // Validar que sea del usuario
-    if (!reg.getUser().getId().equals(accountId)) return false;
+    if (!reg.getUser().getId().equals(accountId)) throw new WrongUserException("El registro no pertenece al usuario dado");
 
     Event event = reg.getEvent();
 
@@ -103,7 +104,7 @@ public class RegistrationService {
     // Promocionar a alguien de la waitlist si corresponde
     event.promoteFromWaitlist();
 
-    return registrationRepository.cancelById(registrationId);
+    return registrationRepository.cancelById(registrationId).orElseThrow(() -> new RegistrationNotFoundException("No se encontro un registro con esa ID"));
   }
 
 
