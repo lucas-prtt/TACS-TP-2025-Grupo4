@@ -2,11 +2,9 @@ package org.services;
 
 import org.DTOs.EventDTO;
 import org.apache.coyote.BadRequestException;
-import org.model.enums.EventState;
+import org.exceptions.*;
 import org.model.events.Event;
 import org.model.accounts.Account;
-import org.exceptions.AccountNotFoundException;
-import org.exceptions.EventNotFoundException;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
@@ -39,11 +37,21 @@ public class EventService {
         this.registrationRepository = registrationRepository;
     }
 
-    public Event createEvent(EventDTO eventDTO) throws NullPointerException, AccountNotFoundException {
-        Objects.requireNonNull(eventDTO.getOrganizerId());
-        Optional<Account> author = accountRepository.findById(String.valueOf(eventDTO.getOrganizerId()));
+    public Event createEvent(EventDTO eventDTO) throws AccountNotFoundException, BadRequestException{
+        Optional<Account> author;
+        Event newEvent;
+        try {
+            Objects.requireNonNull(eventDTO.getOrganizerId());
+            author = accountRepository.findById(String.valueOf(eventDTO.getOrganizerId()));
+        }catch (Exception e){
+            throw new BadRequestException();
+        }
         if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+eventDTO.getOrganizerId());
-        Event newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags(), author.get());
+        try {
+            newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags(), author.get());
+        }catch (Exception e){
+            throw new BadRequestException();
+        }
         eventRepository.save(newEvent);
         return newEvent;
     }
@@ -113,34 +121,34 @@ public class EventService {
         );
     }
 
-    public String registerParticipantToEvent(UUID eventId, UUID accountId) {
+    public Registration registerParticipantToEvent(UUID eventId, UUID accountId) throws EventNotFoundException, UserNotFoundException, OrganizerRegisterException, AlreadyRegisteredException, EventRegistrationsClosedException{
         Event event = eventRepository.findById(eventId)
             .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
         Account account = accountRepository.findById(String.valueOf(accountId))
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
 
         // Verificar si el organizador intenta inscribirse a su propio evento
         if (event.getOrganizer().getId().equals(accountId)) {
-            return "ORGANIZER_CANNOT_REGISTER";
+            throw new OrganizerRegisterException("No se puede escribir a su propio evento");
         }
 
         //  Verificar si ya está inscripto
         if (event.getParticipants().stream().anyMatch(reg -> reg.getUser().getId().equals(accountId))) {
-            return "ALREADY_REGISTERED";
+            throw new AlreadyParticipantException("Ya esta inscripto");
         }
 
         //  Verificar si ya está en waitlist
         if (event.getWaitList().stream().anyMatch(acc -> acc.getUser().getId().equals(accountId))) {
-            return "ALREADY_IN_WAITLIST";
+            throw new AlreadyInWaitlistException("Ya esta en la waitlist");
         }
 
         Registration registration = new Registration();
         registration.setEvent(event);
         registration.setUser(account);
 
+        event.registerParticipant(registration);
         registrationRepository.save(registration);
-
-        return event.registerParticipant(registration);
+        return registration;
     }
 
 

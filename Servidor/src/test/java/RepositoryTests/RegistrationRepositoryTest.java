@@ -91,9 +91,9 @@ class RegistrationRepositoryTest {
   void cancelById_shouldMarkRegistrationAsCancelled() {
     repository.save(registration);
 
-    boolean cancelled = repository.cancelById(registration.getId());
-
-    assertTrue(cancelled);
+    Optional<Registration> cancelled = repository.cancelById(registration.getId());
+    assertTrue(cancelled.isPresent());
+    assertSame(RegistrationState.CANCELED, cancelled.get().getCurrentState());
     Optional<Registration> optReg = repository.findById(registration.getId());
     assertTrue(optReg.isPresent());
     assertEquals(RegistrationState.CANCELED, optReg.get().getCurrentState());
@@ -101,10 +101,9 @@ class RegistrationRepositoryTest {
 
 
   @Test
-  void deleteById_notExisting_shouldReturnFalse() {
-    boolean deleted = repository.cancelById(UUID.randomUUID());
-
-    assertFalse(deleted);
+  void deleteById_notExisting_shouldReturnEmpty() {
+    Optional<Registration> deleted = repository.cancelById(UUID.randomUUID());
+    assertFalse(deleted.isPresent());
   }
 
   @Test

@@ -2,13 +2,16 @@ package org.controllers;
 
 import org.DTOs.EventDTO;
 import org.DTOs.registrations.RegistrationCreateDTO;
+import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
-import org.exceptions.AccountNotFoundException;
-import org.exceptions.EventNotFoundException;
+import org.exceptions.*;
+import org.model.events.Registration;
 import org.services.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.utils.PageNormalizer;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,7 +35,7 @@ public class EventController {
             return ResponseEntity.badRequest().build();
         try {
             return ResponseEntity.ok(EventDTO.fromEvent(eventService.createEvent(eventDTO)));
-        } catch (NullPointerException e) {
+        } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body("Al menos uno de los campos obligatorios del evento es nulo. Se requiere enviar: \n-String title\n-String description\n-LocalDateTime startDateTime\n-Integer durationMinutes\n-String location\n-Integer maxParticipants\n-BigDecimal price\n-UUID organizerId");
         } catch (AccountNotFoundException e){
             return ResponseEntity.badRequest().body("Ningún usuario con el id existe");
@@ -73,6 +76,8 @@ public class EventController {
             @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "limit", required = false) Integer limit){
+        page = PageNormalizer.normalizeEventsPageNumber(page);
+        limit = PageNormalizer.normalizeEventsPageLimit(limit);
         try {
             List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(title, titleContains, maxDate, minDate, category, tags, maxPrice, minPrice, page, limit);
             return ResponseEntity.ok(eventsDTO);
@@ -81,22 +86,21 @@ public class EventController {
         }
     }
 
-    @PostMapping("/registration")
-    public ResponseEntity<String> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTO) {
+    @PostMapping("/registrations")
+    public ResponseEntity<?> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTO) {
         try {
-            String result = eventService.registerParticipantToEvent(
+            Registration registrationResult= eventService.registerParticipantToEvent(
                 registrationCreateDTO.getEventId(),
                 registrationCreateDTO.getAccountId()
             );
-            // Manejo más claro de los distintos resultados
-          return switch (result) {
-            case "ORGANIZER_CANNOT_REGISTER" -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
-            case "ALREADY_REGISTERED", "ALREADY_IN_WAITLIST" -> ResponseEntity.status(HttpStatus.CONFLICT).body(result);
-            default -> ResponseEntity.ok(result);
-          };
+            return ResponseEntity.ok(RegistrationDTO.toRegistrationDTO(registrationResult));
         } catch (EventNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
+        } catch (OrganizerRegisterException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (AlreadyRegisteredException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (EventRegistrationsClosedException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

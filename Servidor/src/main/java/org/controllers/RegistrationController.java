@@ -1,13 +1,17 @@
 package org.controllers;
 
 
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
-import org.DTOs.registrations.RegistrationDTO;
+
+import org.exceptions.RegistrationNotFoundException;
+import org.exceptions.WrongUserException;
+import org.model.events.Registration;
 import org.services.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,11 +28,6 @@ public class RegistrationController {
     this.registrationService = registrationService;
   }
 
-//  @GetMapping
-//    public ResponseEntity<List<RegistrationDTO>> getAllByUser(@PathVariable("accountId")  UUID accountId) {
-//    return ResponseEntity.ok(registrationService.findByAccountId(accountId));
-//  }
-
   @GetMapping("/{registrationId}")
   public ResponseEntity<?> getRegistrationByUserAndById(@PathVariable("accountId") UUID accountId,
                                                         @PathVariable("registrationId") UUID registrationId) {
@@ -42,13 +41,14 @@ public class RegistrationController {
   // Cancelar inscripción
   @DeleteMapping("/{registrationId}")
   public ResponseEntity<?> cancel(@PathVariable("accountId") UUID accountId, @PathVariable("registrationId") UUID registrationId) {
-    boolean ok = registrationService.cancelRegistration(registrationId, accountId);
-    if (!ok) {
-      return ResponseEntity.status(403)
-          .body(Map.of("error", "No tienes permiso o la inscripción no existe"));
+    try {
+      Registration registration = registrationService.cancelRegistration(registrationId, accountId);
+    }catch (WrongUserException e){
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ErrorResponse.create(e, HttpStatus.FORBIDDEN, e.getMessage()));
+    }catch (RegistrationNotFoundException e){
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.create(e, HttpStatus.NOT_FOUND, e.getMessage()));
     }
-
-    return ResponseEntity.ok(Map.of("canceled", true));
+    return ResponseEntity.noContent().build();
   }
 
 
