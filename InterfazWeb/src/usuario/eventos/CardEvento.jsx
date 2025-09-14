@@ -5,7 +5,6 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
@@ -16,9 +15,15 @@ import PlaceIcon from '@mui/icons-material/Place';
 import PeopleIcon from '@mui/icons-material/People';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { ButtonCustom } from '../../components/Button';
+import { useNavigate } from "react-router-dom";
 
-export const CardEvento = ({ evento }) => {
+export const CardEvento = ({ evento, onVerEvento }) => {
+  const navigate = useNavigate();
   // Formatear fecha y hora
+  const isOrganizador = false;
+  const isAdmin = true;
+  const isUser = false;
   let fecha = evento.fechaInicio;
   let fechaFormateada = '';
   try {
@@ -43,8 +48,7 @@ export const CardEvento = ({ evento }) => {
           sx={{ borderRadius: 2, objectFit: 'cover' }}
         />
         <Box sx={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 1 }}>
-          
-            <Chip label={evento.categoria} size="small" color="primary" sx={{fontWeight: 500 }} />
+          <Chip label={evento.categoria} size="small" color="primary" sx={{ fontWeight: 500 }} />
         </Box>
         <Box sx={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 1 }}>
           {evento.estado && (
@@ -52,7 +56,7 @@ export const CardEvento = ({ evento }) => {
           )}
         </Box>
       </Box>
-  <CardContent sx={{ pb: 1, flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', pb: 0 }}>
         <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 600 }}>
           {evento.titulo}
         </Typography>
@@ -91,16 +95,65 @@ export const CardEvento = ({ evento }) => {
             ${evento.precio}
           </Typography>
         </Box>
-        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-          <Button variant="outlined" size="small" startIcon={<VisibilityIcon />}>
-            Ver
-          </Button>
-          <Button variant="outlined" size="small" startIcon={<EditIcon />}>
-            Editar
-          </Button>
-          <IconButton color="error" size="small">
-            <DeleteIcon />
-          </IconButton>
+        {/* Este Box empuja los botones hacia abajo */}
+        <Box sx={{ flexGrow: 1 }} />
+        <Stack direction="row" spacing={1} sx={{ pb: 2, pt: 0, mb: 0 }}>
+          {(isAdmin || isOrganizador) && (
+            <>
+              <ButtonCustom
+                variant="outlined"
+                color="#181828"
+                bgColor="#fff"
+                hoverBgColor="#f3f3f3"
+                hoverColor="#181828"
+                startIcon={<VisibilityIcon />}
+                onClick={onVerEvento}
+                sx={{ border: '1px solid #181828' }}
+              >
+                Ver
+              </ButtonCustom>
+              <ButtonCustom
+                variant="outlined"
+                color="#181828"
+                bgColor="#fff"
+                hoverBgColor="#f3f3f3"
+                hoverColor="#181828"
+                startIcon={<EditIcon />}
+                onClick={() => navigate(`/editar-evento/${evento.id}`)} // <-- Navega a editar evento
+                sx={{ border: '1px solid #181828' }}
+              >
+                Editar
+              </ButtonCustom>
+              <IconButton color="error" size="small" onClick={() => {/* lógica eliminar */}}>
+                <DeleteIcon />
+              </IconButton>
+            </>
+          )}
+          {isUser && (
+            <>
+              <ButtonCustom
+                bgColor="#181828"
+                color="#fff"
+                hoverBgColor="#23234a"
+                hoverColor="#fff"
+                onClick={() => {/* lógica inscribirse */}}
+              >
+                Inscribirse
+              </ButtonCustom>
+              <ButtonCustom
+                variant="outlined"
+                color="#181828"
+                bgColor="#fff"
+                hoverBgColor="#f3f3f3"
+                hoverColor="#181828"
+                startIcon={<VisibilityIcon />}
+                onClick={() => {onVerEvento}}
+                sx={{ border: '1px solid #181828' }}
+              >
+                Ver
+              </ButtonCustom>
+            </>
+          )}
         </Stack>
       </CardContent>
     </Card>

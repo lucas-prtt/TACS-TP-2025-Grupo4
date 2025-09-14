@@ -78,24 +78,33 @@ export const Calendario = () => {
         <Box
           sx={{
             width: '100%',
-            maxWidth: 1100, // Limita el ancho máximo del contenido
-            margin: '0 auto', // Centra horizontalmente
+            maxWidth: 1100,
+            margin: '0 auto',
             display: "flex",
+            flexDirection: { xs: "column", md: "row" },
             gap: 2,
-            justifyContent: "center", // Centra los hijos
+            alignItems: { xs: "center", md: "flex-start" },
+            justifyContent: "center"
           }}
         >
           {/* Calendario */}
-          <Box sx={{
-            flex: 2,
-            bgcolor: "#fff",
-            borderRadius: 3,
-            p: 3,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
-            border: "1px solid #e0e0e0",
-            minWidth: 400,
-            maxWidth: 600,
-          }}>
+          <Box
+            id="calendario-box"
+            sx={{
+              flex: 2,
+              bgcolor: "#fff",
+              borderRadius: 3,
+              p: 3,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+              border: "1px solid #e0e0e0",
+              minWidth: { xs: "85vw", sm: 320, md: 400 }, // achica en mobile
+              maxWidth: { xs: "95vw", md: 600 },
+              width: { xs: "100%", md: "auto" },
+              mb: { xs: 2, md: 0 },
+              minHeight: { xs: "unset", md: 600 },
+              height: { md: "auto" }
+            }}
+          >
             {/* Header */}
             <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
               <Typography variant="h6" fontWeight={600} sx={{ flex: 1 }}>
@@ -162,19 +171,26 @@ export const Calendario = () => {
             </Box>
           </Box>
           {/* Panel de eventos del día */}
-          <Box sx={{
-            flex: 1,
-            bgcolor: "#fff",
-            borderRadius: 3,
-            p: 3,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
-            border: "1px solid #e0e0e0",
-            minWidth: 280,
-            maxWidth: 350,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-          }}>
+          <Box
+            id="eventos-box"
+            sx={{
+              flex: 1,
+              bgcolor: "#fff",
+              borderRadius: 3,
+              p: 3,
+              boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+              border: "1px solid #e0e0e0",
+              minWidth: { xs: "85vw", sm: 220, md: 280 }, // achica en mobile igual que calendario
+              maxWidth: { xs: "95vw", md: 350 },
+              width: { xs: "100%", md: "auto" },
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              mx: { xs: 0, md: 0 },
+              minHeight: { xs: "unset", md: 600 }, // Igual altura mínima que el calendario
+              height: { md: "auto" }
+            }}
+          >
             <Typography variant="h6" fontWeight={600} mb={2} align="center">
               Eventos del {format(fechaSeleccionada, "d 'de' MMMM", { locale: es })}
             </Typography>

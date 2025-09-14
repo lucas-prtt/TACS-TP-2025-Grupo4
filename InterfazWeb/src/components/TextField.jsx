@@ -38,10 +38,10 @@ export const TextFieldCustom = ({
             InputProps={{ disableUnderline: true }}
             sx={{
                 backgroundColor: theme.palette.textfield.primary,
-                borderRadius: '25px',
+                borderRadius: '10px',
                 boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
                 '& .MuiFilledInput-root': {
-                    borderRadius: '25px',
+                    borderRadius: '10px',
                     backgroundColor: theme.palette.textfield.primary,
                     height: multiline ? 'auto' : '48px',
                     '&:hover': {

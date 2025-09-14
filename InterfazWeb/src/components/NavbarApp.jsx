@@ -13,7 +13,66 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 250;
-const NavbarContent = ({ navigate, theme, onClick, showMenuButton}) => (
+
+// Definí los roles así:
+const isOrganizador = false;
+const isAdmin = false;
+const isUser = true;
+
+// Definí los ítems del menú y los roles que pueden verlos
+const NAV_ITEMS = [
+  {
+    key: "dashboard",
+    label: "Dashboard",
+    icon: <HomeIcon />,
+    path: "/dashboard",
+    show: isUser || isOrganizador || isAdmin
+  },
+  {
+    key: "calendario",
+    label: "Calendario",
+    icon: <CalendarTodayIcon />,
+    path: "/calendario",
+    show: isUser || isOrganizador || isAdmin
+  },
+  {
+    key: "eventos",
+    label: "Eventos",
+    icon: <ListAltIcon />,
+    path: "/eventos",
+    show: isUser || isOrganizador || isAdmin
+  },
+  {
+    key: "crearEventos",
+    label: "Crear Evento",
+    icon: <AddIcon />,
+    path: "/crearEventos",
+    show: isOrganizador || isAdmin
+  },
+  {
+    key: "analiticas",
+    label: "Analíticas",
+    icon: <BarChartIcon />,
+    path: "/analiticas",
+    show: isAdmin
+  },
+  {
+    key: "asistentes",
+    label: "Asistentes",
+    icon: <PeopleIcon />,
+    path: "/asistentes",
+    show: isOrganizador || isAdmin
+  },
+  {
+    key: "configuracion",
+    label: "Configuración",
+    icon: <SettingsIcon />,
+    path: "/configuracion",
+    show: isAdmin
+  }
+];
+
+const NavbarContent = ({ navigate, theme, onClick, showMenuButton }) => (
   <Box
     sx={{
       width: drawerWidth,
@@ -50,48 +109,14 @@ const NavbarContent = ({ navigate, theme, onClick, showMenuButton}) => (
     </Box>
     <Divider sx={{ mb: 2 }} />
     <List>
-      <ListItem button onClick={() => { navigate('/dashboard'); onClick && onClick(); }}>
-        <ListItemIcon>
-          <HomeIcon sx={{ color: theme.palette.icon.primary }} />
-        </ListItemIcon>
-        <ListItemText primary="Dashboard" />
-      </ListItem>
-      <ListItem button onClick={() => { navigate('/calendario'); onClick && onClick(); }}>
-        <ListItemIcon>
-          <CalendarTodayIcon sx={{ color: theme.palette.icon.primary }} />
-        </ListItemIcon>
-        <ListItemText primary="Calendario" />
-      </ListItem>
-      <ListItem button onClick={() => { navigate('/eventos'); onClick && onClick(); }}>
-        <ListItemIcon>
-          <ListAltIcon sx={{ color: theme.palette.icon.primary }} />
-        </ListItemIcon>
-        <ListItemText primary="Eventos" />
-      </ListItem>
-      <ListItem button onClick={() => { navigate('/crearEventos'); onClick && onClick(); }}>
-        <ListItemIcon>
-          <AddIcon sx={{ color: theme.palette.icon.primary }} />
-        </ListItemIcon>
-        <ListItemText primary="Crear Evento" />
-      </ListItem>
-      <ListItem button onClick={() => { navigate('/analiticas'); onClick && onClick(); }}>
-        <ListItemIcon>
-          <BarChartIcon sx={{ color: theme.palette.icon.primary }} />
-        </ListItemIcon>
-        <ListItemText primary="Analíticas" />
-      </ListItem>
-      <ListItem button onClick={() => { navigate('/asistentes'); onClick && onClick(); }}>
-        <ListItemIcon>
-          <PeopleIcon sx={{ color: theme.palette.icon.primary }} />
-        </ListItemIcon>
-        <ListItemText primary="Asistentes" />
-      </ListItem>
-      <ListItem button onClick={() => { navigate('/configuracion'); onClick && onClick(); }}>
-        <ListItemIcon>
-          <SettingsIcon sx={{ color: theme.palette.icon.primary }} />
-        </ListItemIcon>
-        <ListItemText primary="Configuración" />
-      </ListItem>
+      {NAV_ITEMS.filter(item => item.show).map(item => (
+        <ListItem button key={item.key} onClick={() => { navigate(item.path); onClick && onClick(); }}>
+          <ListItemIcon>
+            {React.cloneElement(item.icon, { sx: { color: theme.palette.icon.primary } })}
+          </ListItemIcon>
+          <ListItemText primary={item.label} />
+        </ListItem>
+      ))}
     </List>
   </Box>
 );

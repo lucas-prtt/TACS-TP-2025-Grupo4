@@ -7,6 +7,10 @@ import {Asistentes} from "../usuario/asistentes/Asistentes"
 import { CrearEventos } from "../usuario/crearEventos/CrearEventos"
 import { Configuracion } from "../usuario/configuracion/Configuracion"
 import { Navigate } from "react-router-dom"
+import { VerEvento } from "../usuario/verEvento/VerEvento"
+import { EditarEvento } from "../usuario/editarEvento/editarEvento";
+import { useParams } from "react-router-dom"
+import { datosEventos } from "../usuario/eventos/datosEventos"
 
 export const UsuarioRouter = () => {
 
@@ -15,11 +19,13 @@ export const UsuarioRouter = () => {
         <Routes>
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/eventos" element={<Eventos />} />
+            <Route path="/evento/:id" element={<VerEventoWrapper />} />
             <Route path="/analiticas" element={<Analiticas />} />
             <Route path="/calendario" element={<Calendario />} />
             <Route path="/asistentes" element={<Asistentes />} />
             <Route path="/crearEventos" element={<CrearEventos />} />
             <Route path="/configuracion" element={<Configuracion />} />
+            <Route path="/editar-evento/:id" element={<EditarEventoWrapper />} />
             <Route path="/*" element={<Navigate to="/dashboard" />} />
          </Routes>
         </>
@@ -27,6 +33,23 @@ export const UsuarioRouter = () => {
 
 }
 
+// Wrapper para buscar el evento por id y pasarlo como prop a VerEvento
+const VerEventoWrapper = () => {
+    const { id } = useParams();
+    // Asegúrate de que cada evento en datosEventos tenga un campo id único y bien definido
+    const evento = datosEventos.find(ev => String(ev.id) === String(id));
+    // Si no se encuentra el evento, podrías redirigir o mostrar un mensaje
+    if (!evento) return <Navigate to="/eventos" />;
+    return <VerEvento evento={evento} />;
+};
+
+// Wrapper para buscar el evento por id y pasarlo como prop a EditarEvento
+const EditarEventoWrapper = () => {
+    const { id } = useParams();
+    const evento = datosEventos.find(ev => String(ev.id) === String(id));
+    if (!evento) return <Navigate to="/eventos" />;
+    return <EditarEvento evento={evento} />;
+};
 
 
-       
+

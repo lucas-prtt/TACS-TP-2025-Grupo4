@@ -37,7 +37,7 @@ export const ButtonTime = ({
               InputProps: {
                 disableUnderline: true,
                 sx: {
-                  borderRadius: '25px',
+                  borderRadius: '10px',
                   backgroundColor: theme.palette.buttonDate.primary,
                   boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
                   height: '48px',

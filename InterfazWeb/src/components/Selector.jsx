@@ -17,10 +17,10 @@ export const SelectorCustom = ({
   return (
     <FormControl fullWidth={fullWidth} variant="filled" sx={{
       backgroundColor: theme.palette.selector.primary,
-      borderRadius: '25px',
+      borderRadius: '10px',
       boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
       '& .MuiFilledInput-root': {
-        borderRadius: '25px',
+        borderRadius: '10px',
         backgroundColor: theme.palette.selector.primary,
         height: '48px',
         '&:hover': {

@@ -9,6 +9,8 @@ import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import { ButtonTime } from '../../components/ButtonTime';
 import { useState } from 'react';
+import SaveIcon from '@mui/icons-material/Save';
+import { ButtonCustom } from '../../components/Button';
 
 export const CrearEventos = () => {
     const theme = useTheme();
@@ -280,6 +282,29 @@ export const CrearEventos = () => {
                                 </Box>
                             </Box>
                         </Box>
+                    </Box>
+                    {/* Botón Crear Evento */}
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                        <ButtonCustom
+                            bgColor="#181828"
+                            color="#fff"
+                            hoverBgColor="#23234a"
+                            hoverColor="#fff"
+                            startIcon={<SaveIcon />}
+                            sx={{
+                                minWidth: 220,
+                                fontSize: 17,
+                                fontWeight: 700,
+                                borderRadius: 2,
+                                py: 1.5,
+                                px: 4,
+                                boxShadow: 'none',
+                                textTransform: 'none'
+                            }}
+                            onClick={() => {/* lógica de crear evento */}}
+                        >
+                            Crear Evento
+                        </ButtonCustom>
                     </Box>
                 </Box>
             </Box>

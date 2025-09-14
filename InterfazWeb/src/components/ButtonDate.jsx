@@ -47,7 +47,7 @@ export const ButtonDate =({
           fullWidth
           sx={{
             backgroundColor: theme.palette.buttonDate.primary,
-            borderRadius: '25px',
+            borderRadius: '10px',
             boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
             color: theme.palette.text.primary,
             height: '48px',
@@ -81,7 +81,7 @@ export const ButtonDate =({
           sx={{
             '& .MuiPaper-root': {
               backgroundColor: theme.palette.buttonDate.primary,
-              borderRadius: '25px',
+              borderRadius: '10px',
               boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
               border: 'none',
             },
@@ -102,7 +102,7 @@ export const ButtonDate =({
               layout: {
                 sx: {
                   backgroundColor: theme.palette.buttonDate.primary,
-                  borderRadius: '25px',
+                  borderRadius: '10px',
                 }
               },
               day: {

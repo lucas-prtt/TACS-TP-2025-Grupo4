@@ -1,13 +1,15 @@
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import { CardEvento } from "./CardEvento";
 import { datosEventos } from "./datosEventos";
 import { NavbarApp } from "../../components/NavbarApp";
 import { useTheme } from '@mui/material/styles';
 import { useState } from "react";
 import {Buscador} from "./Buscador"; // Asegúrate que el nombre del archivo sea correcto
+import { useNavigate } from "react-router-dom";
 
 export const Eventos = () => {
     const theme = useTheme();
+    const navigate = useNavigate();
 
     // Estados para el buscador
     const [searchValue, setSearchValue] = useState("");
@@ -25,7 +27,9 @@ export const Eventos = () => {
         const coincideEstado = !estadoSeleccionado || evento.estado.toLowerCase() === estadoSeleccionado.toLowerCase();
         return coincideBusqueda && coincideCategoria && coincideEstado;
     });
-
+    const isOrganizador = false;
+    const isAdmin = false;
+    const isUser = true;
     return (
         <Box minHeight="100vh" sx={{ display: 'flex', flexDirection: 'row', bgcolor: theme.palette.background.primary }}>
             <Box
@@ -60,7 +64,14 @@ export const Eventos = () => {
                     justifyContent: 'center',
                 }}
             >
-                <Box sx={{ width: '100%', maxWidth: 1200 }}>
+                <Box sx={{ width: '100%', maxWidth: 1000 }}>
+                    {/* Título y subtítulo */}
+                    <Typography variant="h4" fontWeight={700} sx={{ mb: 0.5 }}>
+                        Lista de Eventos
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 3 }}>
+                        Gestiona todos tus eventos desde un solo lugar
+                    </Typography>
                     {/* Buscador arriba de las cards */}
                     <Buscador
                         categorias={categorias}
@@ -73,6 +84,10 @@ export const Eventos = () => {
                         onSearchChange={e => setSearchValue(e.target.value)}
                         onFiltroAvanzado={() => { /* lógica de filtros avanzados */ }}
                     />
+                    {/* Mostrar cantidad de eventos */}
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        Mostrando {eventosFiltrados.length} de {datosEventos.length} eventos
+                    </Typography>
                     <Grid
                         container
                         spacing={3}
@@ -92,7 +107,10 @@ export const Eventos = () => {
                                 justifyContent="center"
                                 alignItems="stretch"
                             >
-                                <CardEvento evento={evento} />
+                                <CardEvento
+                                    evento={evento}
+                                    onVerEvento={() => navigate(`/evento/${evento.id}`)}
+                                />
                             </Grid>
                         ))}
                     </Grid>

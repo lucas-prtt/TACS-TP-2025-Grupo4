@@ -1,9 +1,10 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { TextFieldCustom } from "../../components/TextField";
 import { SelectorCustom } from "../../components/Selector";
+import { ButtonCustom } from "../../components/Button";
 
 export const Buscador = ({
   categorias = [],
@@ -32,13 +33,21 @@ export const Buscador = ({
         border: '1px solid #eee'
       }}
     >
-      <Box sx={{ flex: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box
+        sx={{
+          flex: 2,
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' },
+          gap: { xs: 2, sm: 1 },
+          width: '100%',
+        }}
+      >
         <Box sx={{ flex: 1, minWidth: 180 }}>
           <TextFieldCustom
             placeholder="Buscar eventos..."
             value={searchValue}
             onChange={onSearchChange}
-            
           />
         </Box>
         <SelectorCustom
@@ -47,8 +56,9 @@ export const Buscador = ({
           value={categoriaSeleccionada}
           onChange={onCategoriaChange}
           sx={{
-            minWidth: 200,
-            maxWidth: 240,
+            minWidth: { xs: '100%', sm: 200 },
+            maxWidth: { xs: '100%', sm: 240 },
+            width: { xs: '100%', sm: 'auto' },
           }}
         />
         <SelectorCustom
@@ -57,29 +67,25 @@ export const Buscador = ({
           value={estadoSeleccionado}
           onChange={onEstadoChange}
           sx={{
-            minWidth: 200,
-            maxWidth: 240,
+            minWidth: { xs: '100%', sm: 200 },
+            maxWidth: { xs: '100%', sm: 240 },
+            width: { xs: '100%', sm: 'auto' },
           }}
         />
-        <Button
-          variant="contained"
-          sx={{
-            background: '#181828',
-            color: '#fff',
-            borderRadius: 2,
-            px: 3,
-            py: 1.2,
-            fontWeight: 600,
-            fontSize: 15,
-            textTransform: 'none',
-            boxShadow: 'none',
-            '&:hover': { background: '#23234a' }
-          }}
+        <ButtonCustom
+          bgColor="#181828"
+          color="#fff"
+          hoverBgColor="#23234a"
+          hoverColor="#fff"
           startIcon={<FilterListIcon />}
           onClick={onFiltroAvanzado}
+          sx={{
+            width: { xs: '100%', sm: 'auto' },
+            mt: { xs: 1, sm: 0 }
+          }}
         >
           Filtros avanzados
-        </Button>
+        </ButtonCustom>
       </Box>
     </Box>
   );
