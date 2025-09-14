@@ -286,10 +286,10 @@ export const CrearEventos = () => {
                     {/* Botón Crear Evento */}
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                         <ButtonCustom
-                            bgColor="#181828"
-                            color="#fff"
-                            hoverBgColor="#23234a"
-                            hoverColor="#fff"
+                            bgColor={theme.palette.primary.main}
+                            color={theme.palette.primary.contrastText}
+                            hoverBgColor={theme.palette.primary.dark}
+                            hoverColor={theme.palette.primary.contrastText}
                             startIcon={<SaveIcon />}
                             sx={{
                                 minWidth: 220,

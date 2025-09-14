@@ -10,14 +10,16 @@ export const ButtonDate =({
   value, 
   onChange, 
   sx = {},
-  placeholder = "Seleccionar fecha"
+  placeholder = "Seleccionar fecha",
+  disabled = false,
+  error = false
 }) =>{
   const theme = useTheme();
   const [anchor, setAnchor] = useState(null);
   const buttonRef = useRef(null);
 
   const handleClick = (event) => {
-    setAnchor(event.currentTarget);
+    if (!disabled) setAnchor(event.currentTarget);
   };
 
   const handleClose = () => {
@@ -38,6 +40,18 @@ export const ButtonDate =({
     handleClose();
   };
 
+  // Colores según estado
+  let borderColor = "#E5E7EB";
+  let bgColor = "#fff";
+  let textColor = "#1E293B";
+  if (disabled) {
+    borderColor = "#E5E7EB";
+    bgColor = "#F9FAFB";
+    textColor = "#9CA3AF";
+  } else if (error) {
+    borderColor = "#DC2626";
+  }
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
       <Box sx={{ width: '100%', display: 'flex', ...sx }}>
@@ -45,11 +59,12 @@ export const ButtonDate =({
           ref={buttonRef}
           onClick={handleClick}
           fullWidth
+          disabled={disabled}
           sx={{
-            backgroundColor: theme.palette.buttonDate.primary,
+            backgroundColor: bgColor,
             borderRadius: '10px',
-            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
-            color: theme.palette.text.primary,
+            border: `2px solid ${borderColor}`,
+            color: textColor,
             height: '48px',
             textTransform: 'none',
             fontWeight: 500,
@@ -58,9 +73,16 @@ export const ButtonDate =({
             alignItems: 'center',
             display: 'flex',
             px: 2,
+            transition: 'all 0.2s',
             '&:hover': {
-              backgroundColor: theme.palette.buttonDate.hover,
-              color: theme.palette.text.primary,
+              backgroundColor: disabled ? "#F9FAFB" : "#F3F4F6",
+              borderColor: disabled ? "#E5E7EB" : "#C4B5FD",
+              color: textColor,
+            },
+            '&.Mui-focusVisible, &:focus': {
+              backgroundColor: "#fff",
+              borderColor: "#8B5CF6",
+              boxShadow: "0 0 0 2px #8B5CF633"
             }
           }}
         >
@@ -80,13 +102,13 @@ export const ButtonDate =({
           }}
           sx={{
             '& .MuiPaper-root': {
-              backgroundColor: theme.palette.buttonDate.primary,
+              backgroundColor: "#fff",
               borderRadius: '10px',
               boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
-              border: 'none',
+              border: '2px solid #E5E7EB',
             },
             '& .MuiDayCalendar-weekDayLabel': {
-              color: `${theme.palette.text.primary} !important`,
+              color: "#1E293B !important",
               opacity: '1 !important',
               fontWeight: '500 !important',
             }
@@ -101,16 +123,16 @@ export const ButtonDate =({
             slotProps={{
               layout: {
                 sx: {
-                  backgroundColor: theme.palette.buttonDate.primary,
+                  backgroundColor: "#fff",
                   borderRadius: '10px',
                 }
               },
               day: {
                 sx: {
-                  color: theme.palette.text.primary,
+                  color: "#1E293B",
                   '&.Mui-selected': {
-                    backgroundColor: "#0a60b1ff" + " !important",
-                    color: "#ffffff !important"
+                    backgroundColor: "#8B5CF6 !important",
+                    color: "#fff !important"
                   }
                 }
               }

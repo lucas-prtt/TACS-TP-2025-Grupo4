@@ -15,9 +15,9 @@ import { useNavigate } from 'react-router-dom';
 const drawerWidth = 250;
 
 // Definí los roles así:
-const isOrganizador = false;
+const isOrganizador = true;
 const isAdmin = false;
-const isUser = true;
+const isUser = false;
 
 // Definí los ítems del menú y los roles que pueden verlos
 const NAV_ITEMS = [
@@ -77,16 +77,16 @@ const NavbarContent = ({ navigate, theme, onClick, showMenuButton }) => (
     sx={{
       width: drawerWidth,
       height: '100vh',
-      bgcolor: theme.palette.background.primary,
+      bgcolor: theme.palette.primary.main,
       borderRight: '1px solid',
       borderColor: 'divider',
       display: 'flex',
       flexDirection: 'column',
       p: 2,
+      color: theme.palette.primary.contrastText
     }}
   >
     <Box sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-      {/* Botón hamburguesa SOLO en mobile, alineado a la izquierda */}
       {showMenuButton && (
         <IconButton
           color="inherit"
@@ -99,22 +99,41 @@ const NavbarContent = ({ navigate, theme, onClick, showMenuButton }) => (
         </IconButton>
       )}
       <Box>
-        <Typography variant="h5" fontWeight={700} sx={{ lineHeight: 1 }}>
+        <Typography variant="h5" fontWeight={700} sx={{ lineHeight: 1, color: theme.palette.primary.contrastText }}>
           EventManager
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{ color: theme.palette.primary.contrastText }}>
           Gestión de eventos
         </Typography>
       </Box>
     </Box>
-    <Divider sx={{ mb: 2 }} />
+    <Divider sx={{ mb: 2, borderColor: theme.palette.primary.contrastText, opacity: 0.2 }} />
     <List>
       {NAV_ITEMS.filter(item => item.show).map(item => (
-        <ListItem button key={item.key} onClick={() => { navigate(item.path); onClick && onClick(); }}>
+        <ListItem
+          button
+          key={item.key}
+          onClick={() => { navigate(item.path); onClick && onClick(); }}
+          sx={{
+            borderRadius: "10px",
+            transition: "background 0.2s",
+            '&:hover': {
+              bgcolor: theme.palette.primary.dark,
+            }
+          }}
+        >
           <ListItemIcon>
-            {React.cloneElement(item.icon, { sx: { color: theme.palette.icon.primary } })}
+            {React.cloneElement(item.icon, { sx: { color: theme.palette.primary.contrastText } })}
           </ListItemIcon>
-          <ListItemText primary={item.label} />
+          <ListItemText
+            primary={item.label}
+            primaryTypographyProps={{
+              sx: {
+                color: theme.palette.primary.contrastText,
+                fontWeight: 700 // <-- Texto en bold
+              }
+            }}
+          />
         </ListItem>
       ))}
     </List>

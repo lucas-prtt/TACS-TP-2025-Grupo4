@@ -17,8 +17,10 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ButtonCustom } from '../../components/Button';
 import { useNavigate } from "react-router-dom";
+import { useTheme } from '@mui/material/styles';
 
 export const CardEvento = ({ evento, onVerEvento }) => {
+  const theme = useTheme();
   const navigate = useNavigate();
   // Formatear fecha y hora
   const isOrganizador = false;
@@ -37,8 +39,60 @@ export const CardEvento = ({ evento, onVerEvento }) => {
   const maxChips = 2;
   const extraTags = tags.length - maxChips;
 
+  // Estilos para los botones según tu paleta
+  const sxVer = {
+    border: '2px solid #8B5CF6',
+    color: '#8B5CF6',
+    backgroundColor: '#fff',
+    fontWeight: 700,
+    borderRadius: '10px',
+    px: 2,
+    '&:hover': {
+      backgroundColor: '#F3F4F6',
+      color: '#7C3AED',
+      borderColor: '#7C3AED'
+    }
+  };
+
+  const sxEditar = {
+    border: '2px solid #F59E0B',
+    color: '#F59E0B',
+    backgroundColor: '#fff',
+    fontWeight: 700,
+    borderRadius: '10px',
+    px: 2,
+    '&:hover': {
+      backgroundColor: '#FEF3C7',
+      color: '#D97706',
+      borderColor: '#D97706'
+    }
+  };
+
+  const sxEliminar = {
+    border: '2px solid #DC2626',
+    color: '#DC2626',
+    backgroundColor: '#fff',
+    borderRadius: '10px',
+    '&:hover': {
+      backgroundColor: '#FEE2E2',
+      color: '#B91C1C',
+      borderColor: '#B91C1C'
+    }
+  };
+
   return (
-    <Card sx={{ width: 410, minHeight: 520, display: 'flex', flexDirection: 'column', borderRadius: 3, boxShadow: 2, p: 1 }}>
+    <Card
+      sx={{
+        width: 410,
+        minHeight: 520,
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: 3,
+        boxShadow: 2,
+        p: 1,
+        bgcolor: theme.palette.background.paper // <-- color de fondo de la card
+      }}
+    >
       <Box sx={{ position: 'relative' }}>
         <CardMedia
           component="img"
@@ -48,7 +102,15 @@ export const CardEvento = ({ evento, onVerEvento }) => {
           sx={{ borderRadius: 2, objectFit: 'cover' }}
         />
         <Box sx={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 1 }}>
-          <Chip label={evento.categoria} size="small" color="primary" sx={{ fontWeight: 500 }} />
+          <Chip
+            label={evento.categoria}
+            size="small"
+            sx={{
+              fontWeight: 500,
+              bgcolor: theme.palette.secondary.main, // Fondo secundario
+              color: theme.palette.secondary.contrastText
+            }}
+          />
         </Box>
         <Box sx={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 1 }}>
           {evento.estado && (
@@ -102,29 +164,25 @@ export const CardEvento = ({ evento, onVerEvento }) => {
             <>
               <ButtonCustom
                 variant="outlined"
-                color="#181828"
-                bgColor="#fff"
-                hoverBgColor="#f3f3f3"
-                hoverColor="#181828"
                 startIcon={<VisibilityIcon />}
                 onClick={onVerEvento}
-                sx={{ border: '1px solid #181828' }}
+                sx={sxVer}
               >
                 Ver
               </ButtonCustom>
               <ButtonCustom
                 variant="outlined"
-                color="#181828"
-                bgColor="#fff"
-                hoverBgColor="#f3f3f3"
-                hoverColor="#181828"
                 startIcon={<EditIcon />}
-                onClick={() => navigate(`/editar-evento/${evento.id}`)} // <-- Navega a editar evento
-                sx={{ border: '1px solid #181828' }}
+                onClick={() => navigate(`/editar-evento/${evento.id}`)}
+                sx={sxEditar}
               >
                 Editar
               </ButtonCustom>
-              <IconButton color="error" size="small" onClick={() => {/* lógica eliminar */}}>
+              <IconButton
+                size="small"
+                onClick={() => {/* lógica eliminar */}}
+                sx={sxEliminar}
+              >
                 <DeleteIcon />
               </IconButton>
             </>
@@ -142,13 +200,9 @@ export const CardEvento = ({ evento, onVerEvento }) => {
               </ButtonCustom>
               <ButtonCustom
                 variant="outlined"
-                color="#181828"
-                bgColor="#fff"
-                hoverBgColor="#f3f3f3"
-                hoverColor="#181828"
                 startIcon={<VisibilityIcon />}
-                onClick={() => {onVerEvento}}
-                sx={{ border: '1px solid #181828' }}
+                onClick={onVerEvento}
+                sx={sxVer}
               >
                 Ver
               </ButtonCustom>

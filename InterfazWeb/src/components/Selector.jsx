@@ -1,5 +1,5 @@
 import React from 'react';
-import { MenuItem, Select, FormControl } from '@mui/material';
+import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 export const SelectorCustom = ({
@@ -15,48 +15,43 @@ export const SelectorCustom = ({
   const theme = useTheme();
 
   return (
-    <FormControl fullWidth={fullWidth} variant="filled" sx={{
-      backgroundColor: theme.palette.selector.primary,
-      borderRadius: '10px',
-      boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
-      '& .MuiFilledInput-root': {
+    <FormControl fullWidth={fullWidth} variant="outlined" sx={{
+      '& .MuiOutlinedInput-root': {
         borderRadius: '10px',
-        backgroundColor: theme.palette.selector.primary,
+        backgroundColor: theme.palette.background.default,
         height: '48px',
         '&:hover': {
-          backgroundColor: theme.palette.selector.hover,
-          color: theme.palette.text.primary,
+          backgroundColor: theme.palette.primary.dark,
+          color: theme.palette.primary.contrastText,
         },
         '&.Mui-focused': {
-          backgroundColor: theme.palette.selector.hover,
+          backgroundColor: theme.palette.primary.main, // Fondo primario en focus
+          color: theme.palette.primary.contrastText,   // Letra contraste en focus
+          '& .MuiSelect-select': {
+            color: theme.palette.primary.contrastText, // Letra contraste en focus
+          }
         }
       },
-      '& .MuiFilledInput-input': {
-        color: theme.palette.text.primary,
+      '& .MuiSelect-select': {
         padding: '14px 20px',
         textAlign: 'center',
+        color: value === "" ? theme.palette.text.secondary : theme.palette.text.primary,
+        fontWeight: value === "" ? 400 : 500,
+        opacity: value === "" ? 0.8 : 1,
+        transition: 'color 0.2s',
+        '&:hover': {
+          color: theme.palette.primary.contrastText,
+          opacity: 1,
+        }
       }
     }}>
+      {label && <InputLabel>{label}</InputLabel>}
       <Select
         value={value}
         onChange={onChange}
         name={name}
-        variant="filled"
-        disableUnderline
+        label={label}
         displayEmpty
-        inputProps={{
-          sx: {
-            textAlign: 'center',
-            color: value === "" ? "#bdbdbd" : theme.palette.text.primary,
-            fontWeight: value === "" ? 400 : 500,
-            opacity: value === "" ? 0.8 : 1,
-            transition: 'color 0.2s',
-            '&:hover': {
-              color: theme.palette.text.primary,
-              opacity: 1,
-            }
-          }
-        }}
         {...props}
       >
         <MenuItem value="">

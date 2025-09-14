@@ -11,6 +11,8 @@ export const ButtonTime = ({
   onChange,
   placeholder = "Seleccionar hora",
   sx = {},
+  disabled = false,
+  error = false,
   ...props
 }) => {
   const theme = useTheme();
@@ -21,6 +23,18 @@ export const ButtonTime = ({
     pickerValue = temp.isValid() ? temp : null;
   }
 
+  // Colores según estado
+  let borderColor = "#E5E7EB";
+  let bgColor = "#fff";
+  let textColor = "#1E293B";
+  if (disabled) {
+    borderColor = "#E5E7EB";
+    bgColor = "#F9FAFB";
+    textColor = "#9CA3AF";
+  } else if (error) {
+    borderColor = "#DC2626";
+  }
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ width: '100%', display: 'flex', ...sx }}>
@@ -29,32 +43,47 @@ export const ButtonTime = ({
           onChange={onChange}
           ampm={false}
           minutesStep={1}
+          disabled={disabled}
           {...props}
           slotProps={{
             textField: {
               fullWidth: true,
-              variant: "filled",
+              variant: "outlined",
+              error: error,
               InputProps: {
-                disableUnderline: true,
                 sx: {
                   borderRadius: '10px',
-                  backgroundColor: theme.palette.buttonDate.primary,
-                  boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
+                  backgroundColor: bgColor,
+                  border: `2px solid ${borderColor}`,
                   height: '48px',
                   px: 1,
                   alignItems: 'center',
+                  color: textColor,
                   '& input': {
                     textAlign: 'center',
-                    color: theme.palette.text.primary,
+                    color: textColor,
                     fontWeight: 500,
                     fontSize: '1rem',
                     padding: 0,
                     background: 'transparent',
                     cursor: 'pointer',
+                    '&::placeholder': {
+                      color: "#9CA3AF",
+                      opacity: 1
+                    }
                   },
                   '&:hover': {
-                    backgroundColor: theme.palette.buttonDate.hover,
+                    backgroundColor: disabled ? "#F9FAFB" : "#F3F4F6",
+                    borderColor: disabled ? "#E5E7EB" : "#C4B5FD",
                   },
+                  '&.Mui-focused': {
+                    backgroundColor: "#fff",
+                    borderColor: "#8B5CF6",
+                    boxShadow: "0 0 0 2px #8B5CF633"
+                  },
+                  '&.Mui-error': {
+                    borderColor: "#DC2626"
+                  }
                 }
               },
               inputProps: {

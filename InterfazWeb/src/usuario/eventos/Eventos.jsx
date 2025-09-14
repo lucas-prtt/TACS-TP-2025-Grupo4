@@ -27,9 +27,9 @@ export const Eventos = () => {
         const coincideEstado = !estadoSeleccionado || evento.estado.toLowerCase() === estadoSeleccionado.toLowerCase();
         return coincideBusqueda && coincideCategoria && coincideEstado;
     });
-    const isOrganizador = false;
+    const isOrganizador = true;
     const isAdmin = false;
-    const isUser = true;
+    const isUser = false;
     return (
         <Box minHeight="100vh" sx={{ display: 'flex', flexDirection: 'row', bgcolor: theme.palette.background.primary }}>
             <Box

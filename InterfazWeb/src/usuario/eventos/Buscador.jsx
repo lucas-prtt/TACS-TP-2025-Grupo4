@@ -5,7 +5,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { TextFieldCustom } from "../../components/TextField";
 import { SelectorCustom } from "../../components/Selector";
 import { ButtonCustom } from "../../components/Button";
-
+import { useTheme } from '@mui/material/styles';
 export const Buscador = ({
   categorias = [],
   estados = [],
@@ -17,6 +17,9 @@ export const Buscador = ({
   onSearchChange,
   onFiltroAvanzado,
 }) => {
+   const theme = useTheme()
+  const inputHeight = 47; // altura estándar más grande
+
   return (
     <Box
       sx={{
@@ -48,6 +51,22 @@ export const Buscador = ({
             placeholder="Buscar eventos..."
             value={searchValue}
             onChange={onSearchChange}
+            sx={{
+              height: inputHeight,
+              '& .MuiOutlinedInput-root': {
+                height: inputHeight,
+                minHeight: inputHeight,
+                padding: 0,
+                alignItems: 'center'
+              },
+              '& .MuiOutlinedInput-input': {
+                height: inputHeight,
+                minHeight: inputHeight,
+                padding: '0 14px',
+                display: 'flex',
+                alignItems: 'center'
+              }
+            }}
           />
         </Box>
         <SelectorCustom
@@ -59,6 +78,20 @@ export const Buscador = ({
             minWidth: { xs: '100%', sm: 200 },
             maxWidth: { xs: '100%', sm: 240 },
             width: { xs: '100%', sm: 'auto' },
+            height: inputHeight,
+            '& .MuiOutlinedInput-root': {
+              height: inputHeight,
+              minHeight: inputHeight,
+              padding: 0,
+              alignItems: 'center'
+            },
+            '& .MuiSelect-select': {
+              height: inputHeight,
+              minHeight: inputHeight,
+              display: 'flex',
+              alignItems: 'center',
+              padding: '0 14px'
+            }
           }}
         />
         <SelectorCustom
@@ -70,18 +103,41 @@ export const Buscador = ({
             minWidth: { xs: '100%', sm: 200 },
             maxWidth: { xs: '100%', sm: 240 },
             width: { xs: '100%', sm: 'auto' },
+            height: inputHeight,
+            '& .MuiOutlinedInput-root': {
+              height: inputHeight,
+              minHeight: inputHeight,
+              padding: 0,
+              alignItems: 'center'
+            },
+            '& .MuiSelect-select': {
+              height: inputHeight,
+              minHeight: inputHeight,
+              display: 'flex',
+              alignItems: 'center',
+              padding: '0 14px'
+            }
           }}
         />
         <ButtonCustom
-          bgColor="#181828"
-          color="#fff"
-          hoverBgColor="#23234a"
-          hoverColor="#fff"
+          bgColor={theme.palette.secondary.main}
+          color={theme.palette.secondary.contrastText}
+          hoverBgColor={theme.palette.secondary.dark}
+          hoverColor={theme.palette.secondary.contrastText}
           startIcon={<FilterListIcon />}
           onClick={onFiltroAvanzado}
           sx={{
             width: { xs: '100%', sm: 'auto' },
-            mt: { xs: 1, sm: 0 }
+            mt: { xs: 1, sm: 0 },
+            height: inputHeight,
+            minWidth: 0,
+            fontWeight: 700,
+            fontSize: 16,
+            borderRadius: '10px',
+            px: 2,
+            py: 0,
+            display: 'flex',
+            alignItems: 'center'
           }}
         >
           Filtros avanzados
