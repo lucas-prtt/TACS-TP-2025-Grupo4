@@ -1,7 +1,0 @@
-Para iniciarlo hacer:
-1) Crear .env con valores para:
-    EVENTOS_TELEGRAM_BOT_TOKEN= {token del bot}
-    EVENTOS_TELEGRAM_BOT_USERNAME= {nombre del bot}
-
-2) En la raiz del proyecto ejecutar:
-    docker-compose up
