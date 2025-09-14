@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# 1. Pedir variables de entorno
+echo "Deje uno o ambos campos vacios para usar el .env existente"
+read -p "Ingresa el TOKEN del bot (EVENTOS_TELEGRAM_BOT_TOKEN): " BOT_TOKEN
+read -p "Ingresa el USERNAME del bot (EVENTOS_TELEGRAM_BOT_USERNAME): " BOT_USERNAME
+
+# 2. Crear archivo .env en la raíz del proyecto
+ENV_FILE=".env"
+if [ -n "$BOT_TOKEN" ] && [ -n "$BOT_USERNAME" ]; then
+  echo "Creando archivo $ENV_FILE en la raíz del proyecto..."
+
+cat > "$ENV_FILE" <<EOF
+EVENTOS_TELEGRAM_BOT_TOKEN=$BOT_TOKEN
+EVENTOS_TELEGRAM_BOT_USERNAME=$BOT_USERNAME
+EOF
+
+echo "Archivo $ENV_FILE creado correctamente."
+else
+  echo "No se creo archivo .env"
+fi
+
+
+# 3. Esperar a que se abra docker
+read "Asegúrese que docker este iniciado "
+
+
+# 4. Ejecutar docker-compose
+# Toma argumentos para solo iniciar ciertos servicios
+if [ "$#" -gt 0 ]; then
+  echo "Ejecutando docker-compose para servicios: $@"
+  docker-compose up --build "$@"
+else
+  echo "Ejecutando docker-compose para todos los servicios..."
+  docker-compose up --build
+fi
