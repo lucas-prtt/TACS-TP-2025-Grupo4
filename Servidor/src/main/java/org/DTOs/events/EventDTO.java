@@ -21,7 +21,7 @@ public class EventDTO {
     UUID id;
     String title;
     String description;
-    UUID organizerId;
+    String usernameOrganizer;
     LocalDateTime startDateTime;
     Integer durationMinutes;
     String location;
@@ -40,7 +40,7 @@ public class EventDTO {
                 event.getId(),
                 event.getTitle(),
                 event.getDescription(),
-                event.getOrganizer().getId(),
+                event.getOrganizer().getUsername(),
                 event.getStartDateTime(),
                 event.getDurationMinutes(),
                 event.getLocation(),

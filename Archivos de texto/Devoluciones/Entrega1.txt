@@ -15,12 +15,14 @@ Location: Alcanza location siendo un string?
     }
 ]
 
-NO RESUELTO
+IGNORADO
 
 --> Que la location sea un string provee mas flexibilidad a la hora de que el usuario
 introduzca la ubicacion pero tiene la desventaja que puede no ser facilmente ubicable
 si es un nombre generico. Seria util ponerle Latitud/Longitud u otro sistema de ubicación
 complementario que de la ubicación exacta.
+
+Decidimos que permanezca como STRING, pero que sea una url que indique la ubicacion exacta
 
 
 
@@ -38,7 +40,7 @@ Content-Type: application/json
 "organizerId": "fcf41137-d0ef-434d-a170-8bb815b67809"
 }
 
-NO RESUELTO
+RESUELTO
 
 --> Si sacamos el endpoint de post de eventos en /eventos y lo pasamos a /accounts/{id}/eventos
 dejaria de hacer falta. Aun así hay que dejar el get de /eventos para obtener eventos de cualquiera
@@ -51,8 +53,7 @@ Probablemente la segunda opcion sea la mejor, ya hablan de las url en otro punto
 
 EN PROCESO
 
---> Le estamos poniendo password en la branch de login. Una vez terminado hay que propagar
-el login al frontend
+--> Le pusimos password
 
 4) Qué pasa si este GET me devuelve un millón de eventos?
    GET /events?titleContains=Jazz&minPrice=1000&maxPrice=2000
@@ -69,33 +70,32 @@ GET /accounts/{accountId}/organized-events/{eventId}/participants
 GET /accounts/{accountId}/organized-events/{eventId}/waitlist
 POST /events/registration
 
-EN PROCESO
+RESUELTO
 
 POST /accounts/{accountId}/organized-events/{eventId}/close
 --> Quedo obsoleto con PATCH events/{eventId}
 
 GET /accounts/{accountId}/organized-events/{eventId}/participants
 GET /accounts/{accountId}/organized-events/{eventId}/waitlist
---> No estoy seguro aun del error, pero es posible que se trate de unificarlo en un ...{eventId}/registrations con queryParams?
-    También puede ser que se refiera a un /events/{id}/registrations, ya que el {accountId} no
-    es necesario para ver la lista de participantes
-
+--> Remplazamos por /organized-events/{eventId}/registrations?registrationType={CONFIRMED/WAITLIST/CANCELED}
+                    El accountId se obtiene de la capa de seguridad
 POST /events/registration
---> Se debe modificar para que sea post a events/{id}/registrations (o /registrations?)
+--> Modificamos para que sea post a events/{id}/registrations
 
 
 6) Me interesa saber qué user organiza el evento? Se plantearon esto cuando lo discutieron?
 
-NO RESUELTO
---> No lo discutimos. Dimos por hecho que era información util.
-    Puede ser mejor ocultarlo para mantener la privacidad del organizador, o mostrarlo para que haya mas transparencia
+RESUELTO
 
+Puede ser mejor ocultarlo para mantener la privacidad del organizador, o mostrarlo para que haya mas transparencia
+Tras discutirlo, llegamos a la conclusion de que es mejor mostrar la identidad del organizador para prevenir estafas
+Pese a eso, utilizamos el username en lugar del id, ya que es mas facilmente reconocible
 
 7) Según cómo plantearon la solución ustedes. Si se filtra el accountId del organizador, estaría en peligro la seguridad de mi API?
 
-EN PROCESO
+RESUELTO
 
---> Una vez implementemos el sistema de login con tokens, se debera enviar el token cada vez que se realice una peticion, por lo que no se pondra en peligro nuestra API si se filtra el accountId.
+--> Tras implementar el sistema de login con tokens, se debera enviar el token cada vez que se realice una peticion, por lo que no se pondra en peligro nuestra API si se filtra el accountId.
 
 8) Errores y validaciones
    Catchear un NullPointerException para validar mi request huele feo :( . Hay una mejor práctica para hacer esto.
@@ -120,20 +120,19 @@ SOLUCIONADO
 
 10) (En cancelRegistration) Si un user está intentando acceder a algo que no debería, retorno booleano? mmm eso esta raro.
 
-SOLUCIONADO ¿?
+SOLUCIONADO
 
 --> En   @DeleteMapping("/{registrationId}")
-    registrationService.cancelRegistration(registrationId, accountId); devuelve un booleano
+    registrationService.cancelRegistration(registrationId, accountId);
     Devuelve el registro cancelado y tire exception si falla, la cual se atrapa en el controller
-    Habria que hacer que sea un patchMapping ya que se cambia de estado y no se elimina el recurso?
 
 11) Concurrencia
     Qué pasa si empiezo a tener concurrencia en el proceso de (cancelación + promoción de waitlist)? La operación es atómica como está hecho ahora?
 
-SOLUCIONADO ¿?
+SOLUCIONADO
 
 --> Utilizamos un ConcurrentHashmap para gestionar distintos mutex segun el evento, el cual evita que haya problemas al trabajar con las listas
---> Habria que utilizarlo tambien para postear los registros, pero como esta en otro controller no podemos hasta no reorganizar la API
+--> Lo usamos tambien para postear los registros
 
 
 ///////////////////////////////////////////////
@@ -154,6 +153,5 @@ Con eso evitarían tener que introducir la contraseña en mensajes planos. Si es
 primero el bot, pueden arrancar con la contraseña en texto, y luego ver de resolver esto una
 vez que tengan el front donde estar loggeado.
 
-NO RESUELTO
+EN PROCESO
 
---> Esperando a que termine de desarrollarse el login
