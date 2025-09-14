@@ -20,7 +20,6 @@ public class EventServiceTest {
     private EventService eventService;
     private EventRepository eventRepository;
     private AccountRepository accountRepository;
-    private StatsService statsService;
     private RegistrationRepository registrationRepository;
 
   @Before
@@ -28,8 +27,7 @@ public class EventServiceTest {
         eventRepository = new EventRepository();
         accountRepository = new AccountRepository();
         registrationRepository = new RegistrationRepository();
-        statsService = new StatsService(eventRepository,registrationRepository);
-        eventService = new EventService(eventRepository, accountRepository, statsService, registrationRepository);
+        eventService = new EventService(eventRepository, accountRepository, registrationRepository);
     }
 
     @Test

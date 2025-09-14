@@ -6,7 +6,6 @@ import org.model.events.Registration;
 import org.springframework.stereotype.Service;
 import org.utils.PageSplitter;
 
-import javax.swing.plaf.InsetsUIResource;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
@@ -14,30 +13,33 @@ import java.util.UUID;
 @Service
 public class OrganizerService {
 
-
     private final EventService eventService;
 
     public OrganizerService(EventService eventService) {
         this.eventService = eventService;
     }
 
-    public List<Registration> getRegistrationsFromEvent(UUID eventId, Integer page, Integer limit) {
-        Event event = eventService.getEvent(eventId);
-        return PageSplitter.getPageList(event.getParticipants(), page, limit);
-    }
-    public List<Registration> getRegistrationsFromEvent(UUID eventId) {
-        return getRegistrationsFromEvent(eventId, null, null);
+    private void validateOrganizer(UUID accountId, Event event) {
+        if (!event.getOrganizer().getId().equals(accountId)) {
+            throw new SecurityException("No tienes permisos para gestionar este evento.");
+        }
     }
 
-    public Queue<Registration> getWaitlistFromEvent(UUID eventId) {
+    public List<Registration> getRegistrationsFromEvent(UUID accountId, UUID eventId, Integer page, Integer limit) {
         Event event = eventService.getEvent(eventId);
+        validateOrganizer(accountId, event);
+        return PageSplitter.getPageList(event.getParticipants(), page, limit);
+    }
+
+    public Queue<Registration> getWaitlistFromEvent(UUID accountId, UUID eventId) {
+        Event event = eventService.getEvent(eventId);
+        validateOrganizer(accountId, event);
         return event.getWaitList();
     }
 
-    public void closeRegistrations(UUID eventId) {
+    public void closeRegistrations(UUID accountId, UUID eventId) {
         Event event = eventService.getEvent(eventId);
+        validateOrganizer(accountId, event);
         event.closeRegistrations();
-
     }
-
 }

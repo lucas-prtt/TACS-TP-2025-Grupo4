@@ -1,17 +1,18 @@
 package org.DTOs;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class StatsDTO {
     private long eventsCount;
     private long registrationsCount;
     private long waitlistPromotions;
     private double waitlistConversionRate;
-
-    public StatsDTO(long eventsCount, long registrationsCount, long waitlistPromotions, double waitlistConversionRate) {
-        this.eventsCount = eventsCount;
-        this.registrationsCount = registrationsCount;
-        this.waitlistPromotions = waitlistPromotions;
-        this.waitlistConversionRate = waitlistConversionRate;
-    }
 
     public long getEventsCount() { return eventsCount; }
     public long getRegistrationsCount() { return registrationsCount; }

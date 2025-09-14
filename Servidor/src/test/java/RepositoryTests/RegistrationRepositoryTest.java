@@ -74,7 +74,7 @@ class RegistrationRepositoryTest {
     List<Registration> userRegistrations = repository.findByAccountId(account.getId());
 
     assertEquals(1, userRegistrations.size());
-    assertEquals(registration, userRegistrations.getFirst());
+    assertEquals(registration, userRegistrations.get(0));
   }
 
   @Test
@@ -84,7 +84,7 @@ class RegistrationRepositoryTest {
     List<Registration> eventRegistrations = repository.findByEventId(event.getId());
 
     assertEquals(1, eventRegistrations.size());
-    assertEquals(registration, eventRegistrations.getFirst());
+    assertEquals(registration, eventRegistrations.get(0));
   }
 
   @Test

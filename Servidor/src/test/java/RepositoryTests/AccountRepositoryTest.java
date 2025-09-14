@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AccountRepositoryTest {
     private AccountRepository accountRepository;

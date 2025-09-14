@@ -1,10 +1,16 @@
 package org.services;
 
+import static org.utils.PasswordValidator.validatePassword;
+
+import java.util.ArrayList;
+import java.util.Optional;
 import org.DTOs.accounts.AccountCreateDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.model.accounts.Account;
+import org.model.accounts.Role;
 import org.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.utils.PageSplitter;
 
@@ -17,11 +23,40 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public Boolean existsByUsername(String username){
-        return accountRepository.existsByUsername(username);
+    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+        this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    public Account register(String username, String password, boolean isAdmin) {
+        if (accountRepository.existsByUsername(username)) {
+            throw new RuntimeException("El usuario ya existe");
+        }
+
+        validatePassword(password);
+
+        String hashedPassword = passwordEncoder.encode(password);
+        Account account = new Account(username, hashedPassword);
+
+        if (isAdmin) {
+            account.getRoles().add(new Role("ROLE_ADMIN"));
+        }
+
+        accountRepository.save(account);
+
+        return account;
+    }
+
+    public Account login(String username, String password) {
+        return accountRepository.findByUsername(username)
+            .filter(acc -> passwordEncoder.matches(password, acc.getPassword()))
+            .orElseThrow(() -> new RuntimeException("Usuario o contraseña incorrectos"));
+    }
+
+
+    //cambiar (NO LO QUITO POR LOS TESTS)
     public Account createAccount(AccountCreateDTO accountCreateDTO) {
         Account account = new Account();
         account.setUsername(accountCreateDTO.getUsername());
