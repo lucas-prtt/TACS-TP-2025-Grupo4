@@ -1,10 +1,8 @@
 package org.services;
 
 import org.DTOs.EventDTO;
-import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
 import org.exceptions.*;
-import org.model.enums.EventState;
 import org.model.events.Event;
 import org.model.accounts.Account;
 import org.repositories.AccountRepository;
@@ -39,11 +37,21 @@ public class EventService {
         this.registrationRepository = registrationRepository;
     }
 
-    public Event createEvent(EventDTO eventDTO) throws NullPointerException, AccountNotFoundException {
-        Objects.requireNonNull(eventDTO.getOrganizerId());
-        Optional<Account> author = accountRepository.findById(String.valueOf(eventDTO.getOrganizerId()));
+    public Event createEvent(EventDTO eventDTO) throws AccountNotFoundException, BadRequestException{
+        Optional<Account> author;
+        Event newEvent;
+        try {
+            Objects.requireNonNull(eventDTO.getOrganizerId());
+            author = accountRepository.findById(String.valueOf(eventDTO.getOrganizerId()));
+        }catch (Exception e){
+            throw new BadRequestException();
+        }
         if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+eventDTO.getOrganizerId());
-        Event newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags(), author.get());
+        try {
+            newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags(), author.get());
+        }catch (Exception e){
+            throw new BadRequestException();
+        }
         eventRepository.save(newEvent);
         return newEvent;
     }
