@@ -1,10 +1,8 @@
 package org.controllers;
 
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.DTOs.registrations.RegistrationDTO;
 import org.services.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

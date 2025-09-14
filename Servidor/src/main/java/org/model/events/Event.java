@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.DTOs.EventDTO;
+import org.exceptions.EventRegistrationsClosedException;
 import org.model.enums.EventState;
 import org.model.enums.RegistrationState;
 import org.model.accounts.Account;
@@ -79,7 +80,7 @@ public class Event {
         return participants.size() < maxParticipants;
     }
 
-    public String registerParticipant(Registration registration) {
+    public Registration registerParticipant(Registration registration) {
         //metodo para inscribir participante al evento verificando las condiciones:
         //-hay cupo-si las inscripciones estan abiertas ,etc
 
@@ -95,9 +96,9 @@ public class Event {
                 waitList.add(registration);
                 registration.getUser().getRegistrations().add(registration);
             }
-            return registration.getCurrentState().toString();
+            return registration;
         } else {
-            return EventState.EVENT_CLOSED.toString();
+            throw new EventRegistrationsClosedException("El evento se encuentra en estado:" + eventState.toString());
         }
     }
 

@@ -4,6 +4,8 @@ import org.DTOs.EventDTO;
 import org.DTOs.accounts.AccountCreateDTO;
 import org.DTOs.accounts.AccountResponseDTO;
 import org.DTOs.registrations.RegistrationCreateDTO;
+import org.DTOs.registrations.RegistrationDTO;
+import org.model.enums.RegistrationState;
 import org.model.events.Category;
 import org.model.events.Event;
 import org.model.events.Registration;
@@ -135,9 +137,9 @@ public class DevController {
         for (EventDTO evento : eventos){
             for(int i = 0; i<30; i++){
                 try {
-                    ResponseEntity<String> rta = eventController.registerUserToEvent(new RegistrationCreateDTO(evento.getId(), users.get(random.nextInt(30)).getUuid()));
+                    ResponseEntity<RegistrationDTO> rta = (ResponseEntity<RegistrationDTO>) eventController.registerUserToEvent(new RegistrationCreateDTO(evento.getId(), users.get(random.nextInt(30)).getUuid()));
                     qRegistrations++;
-                    if (Objects.equals(rta.getBody(), "WAITLIST")){
+                    if (Objects.equals(rta.getBody().getState(), RegistrationState.WAITLIST)){
                         qWaitlist++;
                     }
                 }catch (Exception ignored){}

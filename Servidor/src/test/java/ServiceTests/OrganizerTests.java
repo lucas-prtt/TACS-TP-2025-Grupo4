@@ -1,4 +1,5 @@
 package ServiceTests;
+import org.exceptions.EventRegistrationsClosedException;
 import org.model.enums.EventState;
 import org.model.events.Event;
 import org.model.events.Registration;
@@ -103,10 +104,14 @@ public class OrganizerTests {
         Registration newRegistration = new Registration(newUser);
 
         // Intentar registrar el nuevo participante
-        String result = mockEvent.registerParticipant(newRegistration);
+        assertThrows(EventRegistrationsClosedException.class, () -> {
+            mockEvent.registerParticipant(newRegistration);
+        });
+
+
 
         // Verificar que el resultado es "CERRADO" y que no se agregó al participante
-        assertEquals(EventState.EVENT_CLOSED.toString(), result);
+        assertEquals(EventState.EVENT_CLOSED, mockEvent.getEventState());
         assertFalse(mockEvent.getParticipants().contains(newRegistration));  // Verificar que no fue agregado
     }
 }

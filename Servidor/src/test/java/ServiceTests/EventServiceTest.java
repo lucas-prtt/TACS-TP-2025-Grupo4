@@ -1,7 +1,10 @@
 package ServiceTests;
 
+import org.DTOs.registrations.RegistrationDTO;
+import org.model.enums.RegistrationState;
 import org.model.events.Event;
 import org.model.accounts.Account;
+import org.model.events.Registration;
 import org.repositories.EventRepository;
 import org.repositories.AccountRepository;
 import org.junit.Before;
@@ -52,15 +55,15 @@ public class EventServiceTest {
         accountRepository.save(user2);
 
         // Primer usuario debe quedar confirmado
-        String result1 = eventService.registerParticipantToEvent(event.getId(), user1.getId());
-        assertEquals("CONFIRMED", result1);
+        Registration result1 = eventService.registerParticipantToEvent(event.getId(), user1.getId());
+        assertEquals(RegistrationState.CONFIRMED, result1.getCurrentState());
         assertEquals(1, event.getParticipants().size());
         assertEquals(0, event.getWaitList().size());
         assertEquals(1, user1.getRegistrations().size());
 
         // Segundo usuario debe quedar en waitlist
-        String result2 = eventService.registerParticipantToEvent(event.getId(), user2.getId());
-        assertEquals("WAITLIST", result2);
+        Registration result2 = eventService.registerParticipantToEvent(event.getId(), user2.getId());
+        assertEquals(RegistrationState.WAITLIST, result2.getCurrentState());
         assertEquals(1, event.getParticipants().size());
         assertEquals(1, event.getWaitList().size());
         assertEquals(1, user2.getRegistrations().size());

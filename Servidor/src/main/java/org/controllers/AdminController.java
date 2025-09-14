@@ -21,21 +21,6 @@ public class AdminController {
         this.statsService = statsService;
     }
 
-    @PostMapping("/event")
-    public ResponseEntity<EventDTO> createEvent(@RequestBody EventDTO eventDTO) {
-        Event event = eventService.createEvent(eventDTO);
-        return ResponseEntity.ok(EventDTO.fromEvent(event));
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegistrationDTO registrationDTO) {
-        String status = eventService.registerParticipantToEvent(
-                registrationDTO.getEventId(),
-                registrationDTO.getAccountId()
-        );
-        return ResponseEntity.ok(status);
-    }
-
     @GetMapping("/stats")
     public ResponseEntity<StatsDTO> getStats() {
         return ResponseEntity.ok(statsService.getStats());

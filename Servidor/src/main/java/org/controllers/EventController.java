@@ -2,9 +2,10 @@ package org.controllers;
 
 import org.DTOs.EventDTO;
 import org.DTOs.registrations.RegistrationCreateDTO;
+import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
-import org.exceptions.AccountNotFoundException;
-import org.exceptions.EventNotFoundException;
+import org.exceptions.*;
+import org.model.events.Registration;
 import org.services.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,22 +86,21 @@ public class EventController {
         }
     }
 
-    @PostMapping("/registration")
-    public ResponseEntity<String> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTO) {
+    @PostMapping("/registrations")
+    public ResponseEntity<?> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTO) {
         try {
-            String result = eventService.registerParticipantToEvent(
+            Registration registrationResult= eventService.registerParticipantToEvent(
                 registrationCreateDTO.getEventId(),
                 registrationCreateDTO.getAccountId()
             );
-            // Manejo más claro de los distintos resultados
-          return switch (result) {
-            case "ORGANIZER_CANNOT_REGISTER" -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
-            case "ALREADY_REGISTERED", "ALREADY_IN_WAITLIST" -> ResponseEntity.status(HttpStatus.CONFLICT).body(result);
-            default -> ResponseEntity.ok(result);
-          };
+            return ResponseEntity.ok(RegistrationDTO.toRegistrationDTO(registrationResult));
         } catch (EventNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
+        } catch (OrganizerRegisterException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (AlreadyRegisteredException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (EventRegistrationsClosedException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

@@ -72,7 +72,7 @@ POST /events/registration
 EN PROCESO
 
 POST /accounts/{accountId}/organized-events/{eventId}/close
---> Quedo obsoleto con PATCH /accounts/{accountId}/organized-events/{eventId}
+--> Quedo obsoleto con PATCH events/{eventId}
 
 GET /accounts/{accountId}/organized-events/{eventId}/participants
 GET /accounts/{accountId}/organized-events/{eventId}/waitlist
