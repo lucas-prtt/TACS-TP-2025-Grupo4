@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>Servidor</module>
+        <module>TelegramBot</module>
     </modules>
 
     <properties>

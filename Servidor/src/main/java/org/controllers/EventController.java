@@ -2,16 +2,13 @@ package org.controllers;
 
 import org.DTOs.EventDTO;
 import org.DTOs.registrations.RegistrationCreateDTO;
-import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
-import org.model.enums.EventState;
 import org.services.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
