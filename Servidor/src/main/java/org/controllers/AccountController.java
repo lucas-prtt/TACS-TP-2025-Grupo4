@@ -1,17 +1,16 @@
 package org.controllers;
 
-import static org.DTOs.accounts.AccountResponseDTO.toAccountResponseDTO;
 
-import org.DTOs.accounts.AccountCreateDTO;
-import org.DTOs.EventDTO;
-import org.DTOs.accounts.AccountResponseDTO;
+import static org.utils.SecurityUtils.checkAccountId;
+
+import org.DTOs.events.EventDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.exceptions.AccountNotFoundException;
 import org.model.enums.RegistrationState;
 import org.services.EventService;
-import org.model.accounts.Account;
 import org.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +48,15 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}/registrations")
+    public ResponseEntity<List<RegistrationDTO>> getRegistrations(
+                                                            @PathVariable("accountId") UUID accountId,
+                                                            @RequestParam(name = "page", required = false) Integer page,
+                                                            @RequestParam(name = "limit", required = false) Integer limit){
+        if(!checkAccountId(accountId)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        List<RegistrationDTO> registrations = accountService.getRegistrations(accountId, page, limit);
     public ResponseEntity<List<RegistrationDTO>> getRegistrations(@PathVariable(name = "accountId") String accountId,
                                                                   @RequestParam(name = "page", required = false) Integer page,
                                                                   @RequestParam(name = "limit", required = false) Integer limit,
@@ -57,20 +65,26 @@ public class AccountController {
         return ResponseEntity.ok(registrations);
     }
 
+
     @GetMapping("/{accountId}/organized-events")
-    public ResponseEntity<List<EventDTO>> getOrganizedEvents(@PathVariable(name = "accountId") String accountId,
+    public ResponseEntity<List<EventDTO>> getOrganizedEvents(@PathVariable(name = "accountId") UUID accountId,
                                                              @RequestParam(name = "page", required = false) Integer page,
                                                              @RequestParam(name = "limit", required = false) Integer limit) {
-        List<EventDTO> events = eventService.getEventsByOrganizer(UUID.fromString(accountId), page, limit);
+
+        if(!checkAccountId(accountId)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        List<EventDTO> events = eventService.getEventsByOrganizer(accountId, page, limit);
         return ResponseEntity.ok(events);
     }
 
-    @PostMapping
-    public ResponseEntity<?> createAccount(@RequestBody AccountCreateDTO accountCreateDTO) {
-        if (accountService.existsByUsername(accountCreateDTO.getUsername())) {
-            return ResponseEntity.badRequest().body("Username already exists");
-        }
-        Account account = accountService.createAccount(accountCreateDTO);
-        return ResponseEntity.ok(toAccountResponseDTO(account));
-    }
+//    @PostMapping
+//    public ResponseEntity<?> createAccount(@RequestBody AccountCreateDTO accountCreateDTO) {
+//        if (accountService.existsByUsername(accountCreateDTO.getUsername())) {
+//            return ResponseEntity.badRequest().body("Username already exists");
+//        }
+//        Account account = accountService.createAccount(accountCreateDTO);
+//        return ResponseEntity.ok(toAccountResponseDTO(account));
+//    }
 }

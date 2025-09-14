@@ -1,6 +1,7 @@
 package org.services;
 
-import org.DTOs.EventDTO;
+import org.DTOs.events.EventCreateDTO;
+import org.DTOs.events.EventDTO;
 import org.apache.coyote.BadRequestException;
 import org.model.enums.EventState;
 import org.model.events.Event;
@@ -33,20 +34,40 @@ public class EventService {
     private final AccountRepository accountRepository;
     private final RegistrationRepository registrationRepository;
 
-    public EventService(EventRepository eventRepository, AccountRepository accountRepository, StatsService statsService, RegistrationRepository registrationRepository) {
+    public EventService(EventRepository eventRepository, AccountRepository accountRepository, RegistrationRepository registrationRepository) {
         this.eventRepository = eventRepository;
         this.accountRepository = accountRepository;
         this.registrationRepository = registrationRepository;
     }
 
-    public Event createEvent(EventDTO eventDTO) throws NullPointerException, AccountNotFoundException {
-        Objects.requireNonNull(eventDTO.getOrganizerId());
-        Optional<Account> author = accountRepository.findById(String.valueOf(eventDTO.getOrganizerId()));
-        if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+eventDTO.getOrganizerId());
-        Event newEvent = new Event(eventDTO.getTitle(), eventDTO.getDescription(), eventDTO.getStartDateTime(), eventDTO.getDurationMinutes(), eventDTO.getLocation(), eventDTO.getMaxParticipants(), eventDTO.getMinParticipants(), eventDTO.getPrice(), eventDTO.getCategory(), eventDTO.getTags(), author.get());
+    public Event createEvent(EventCreateDTO eventDTO, UUID organizerId)
+        throws NullPointerException, AccountNotFoundException {
+
+        // Buscar organizador en base al UUID obtenido del token
+        Optional<Account> organizer = accountRepository.findById(organizerId.toString());
+        if (organizer.isEmpty()) {
+            throw new AccountNotFoundException("No se encontró el autor con id " + organizerId);
+        }
+
+        // Crear evento
+        Event newEvent = new Event(
+            eventDTO.getTitle(),
+            eventDTO.getDescription(),
+            eventDTO.getStartDateTime(),
+            eventDTO.getDurationMinutes(),
+            eventDTO.getLocation(),
+            eventDTO.getMaxParticipants(),
+            eventDTO.getMinParticipants(),
+            eventDTO.getPrice(),
+            eventDTO.getCategory(),
+            eventDTO.getTags(),
+            organizer.get()
+        );
+
         eventRepository.save(newEvent);
         return newEvent;
     }
+
     public Event getEvent(UUID eventId) {
         //devuelve el evento (con sus inscriptos y su waitlist)
         Optional<Event> eventOptional = eventRepository.findById(eventId);
@@ -54,8 +75,8 @@ public class EventService {
         return event;
     }
 
-    public EventDTO getEventDTOById(String id) throws EventNotFoundException {
-        Optional<Event> event = eventRepository.findById(UUID.fromString(id));
+    public EventDTO getEventDTOById(UUID id) throws EventNotFoundException {
+        Optional<Event> event = eventRepository.findById(id);
         if (event.isEmpty())
             throw new EventNotFoundException("No se encontró el evento con id " + id);
         return EventDTO.fromEvent(event.get());

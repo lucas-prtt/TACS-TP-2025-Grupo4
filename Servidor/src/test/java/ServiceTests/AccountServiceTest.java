@@ -6,17 +6,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.repositories.AccountRepository;
 import org.services.AccountService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.Assert.*;
 
 public class AccountServiceTest {
     private AccountService accountService;
     private AccountRepository accountRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Before
     public void setUp() {
         accountRepository = new AccountRepository();
-        accountService = new AccountService();
+        passwordEncoder = new BCryptPasswordEncoder();;
+        accountService = new AccountService(accountRepository,passwordEncoder);
         // Inyectar el repo usando reflexión porque usa @Autowired
         try {
             java.lang.reflect.Field repoField = AccountService.class.getDeclaredField("accountRepository");
