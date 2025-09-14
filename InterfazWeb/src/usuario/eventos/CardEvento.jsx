@@ -14,17 +14,18 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PlaceIcon from '@mui/icons-material/Place';
 import PeopleIcon from '@mui/icons-material/People';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, tr } from 'date-fns/locale';
 import { ButtonCustom } from '../../components/Button';
 import { useNavigate } from "react-router-dom";
 import { useTheme } from '@mui/material/styles';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 export const CardEvento = ({ evento, onVerEvento }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   // Formatear fecha y hora
-  const isOrganizador = false;
-  const isAdmin = true;
+  const isOrganizador = true;
+  const isAdmin = false;
   const isUser = false;
   let fecha = evento.fechaInicio;
   let fechaFormateada = '';
@@ -190,11 +191,12 @@ export const CardEvento = ({ evento, onVerEvento }) => {
           {isUser && (
             <>
               <ButtonCustom
-                bgColor="#181828"
-                color="#fff"
-                hoverBgColor="#23234a"
-                hoverColor="#fff"
+                bgColor={theme.palette.primary.main}
+                color={theme.palette.primary.contrastText}
+                hoverBgColor={theme.palette.primary.dark}
+                hoverColor={theme.palette.primary.contrastText}
                 onClick={() => {/* lógica inscribirse */}}
+                startIcon={<PersonAddIcon />}
               >
                 Inscribirse
               </ButtonCustom>

@@ -7,7 +7,8 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarMonthOutlined';
 import ListAltIcon from '@mui/icons-material/ListOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import BarChartIcon from '@mui/icons-material/AssessmentOutlined';
-import PeopleIcon from '@mui/icons-material/PeopleOutlined';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import EventNoteIcon from '@mui/icons-material/EventNote';
 import SettingsIcon from '@mui/icons-material/SettingsOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
@@ -15,9 +16,8 @@ import { useNavigate } from 'react-router-dom';
 const drawerWidth = 250;
 
 // Definí los roles así:
-const isOrganizador = true;
 const isAdmin = false;
-const isUser = false;
+const isUser = true;
 
 // Definí los ítems del menú y los roles que pueden verlos
 const NAV_ITEMS = [
@@ -26,28 +26,42 @@ const NAV_ITEMS = [
     label: "Dashboard",
     icon: <HomeIcon />,
     path: "/dashboard",
-    show: isUser || isOrganizador || isAdmin
+    show: isUser ||  isAdmin
   },
   {
     key: "calendario",
     label: "Calendario",
     icon: <CalendarTodayIcon />,
     path: "/calendario",
-    show: isUser || isOrganizador || isAdmin
+    show: isUser || isAdmin
   },
   {
     key: "eventos",
     label: "Eventos",
     icon: <ListAltIcon />,
     path: "/eventos",
-    show: isUser || isOrganizador || isAdmin
+    show: isUser || isAdmin
   },
   {
     key: "crearEventos",
     label: "Crear Evento",
     icon: <AddIcon />,
     path: "/crearEventos",
-    show: isOrganizador || isAdmin
+    show: isUser || isAdmin
+  },
+  {
+    key: "misInscripciones",
+    label: "Mis Inscripciones",
+    icon: <PeopleAltIcon />,
+    path: "/mis-inscripciones",
+    show: isUser || isAdmin
+  },
+  {
+    key: "misEventos",
+    label: "Mis Eventos",
+    icon: <EventNoteIcon />,
+    path: "/mis-eventos",
+    show: isUser || isAdmin
   },
   {
     key: "analiticas",
@@ -57,19 +71,13 @@ const NAV_ITEMS = [
     show: isAdmin
   },
   {
-    key: "asistentes",
-    label: "Asistentes",
-    icon: <PeopleIcon />,
-    path: "/asistentes",
-    show: isOrganizador || isAdmin
-  },
-  {
     key: "configuracion",
     label: "Configuración",
     icon: <SettingsIcon />,
     path: "/configuracion",
     show: isAdmin
   }
+  
 ];
 
 const NavbarContent = ({ navigate, theme, onClick, showMenuButton }) => (

@@ -3,7 +3,6 @@ import { DashBoard } from "../usuario/dashboard/DashBoard"
 import { Eventos } from "../usuario/eventos/Eventos"
 import { Analiticas } from "../usuario/analiticas/Analiticas"
 import { Calendario } from "../usuario/calendario/Calendario"
-import {Asistentes} from "../usuario/asistentes/Asistentes"
 import { CrearEventos } from "../usuario/crearEventos/CrearEventos"
 import { Configuracion } from "../usuario/configuracion/Configuracion"
 import { Navigate } from "react-router-dom"
@@ -11,7 +10,8 @@ import { VerEvento } from "../usuario/verEvento/VerEvento"
 import { EditarEvento } from "../usuario/editarEvento/editarEvento";
 import { useParams } from "react-router-dom"
 import { datosEventos } from "../usuario/eventos/datosEventos"
-
+import { MisIncripciones } from "../usuario/misIncripciones/MisIncripciones"
+import { MisEventos } from "../usuario/misEventos/MisEventos"
 export const UsuarioRouter = () => {
 
     return (
@@ -22,11 +22,12 @@ export const UsuarioRouter = () => {
             <Route path="/evento/:id" element={<VerEventoWrapper />} />
             <Route path="/analiticas" element={<Analiticas />} />
             <Route path="/calendario" element={<Calendario />} />
-            <Route path="/asistentes" element={<Asistentes />} />
             <Route path="/crearEventos" element={<CrearEventos />} />
             <Route path="/configuracion" element={<Configuracion />} />
             <Route path="/editar-evento/:id" element={<EditarEventoWrapper />} />
+            <Route path="/mis-inscripciones" element={<MisIncripciones />} />
             <Route path="/*" element={<Navigate to="/dashboard" />} />
+            <Route path="/mis-eventos" element={<MisEventos />} />
          </Routes>
         </>
     )

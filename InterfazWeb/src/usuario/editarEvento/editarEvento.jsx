@@ -12,6 +12,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { ButtonTime } from "../../components/ButtonTime";
 import { ButtonCustom } from "../../components/Button";
 import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export const EditarEvento = ({ evento }) => {
   const theme = useTheme();
@@ -65,6 +66,14 @@ export const EditarEvento = ({ evento }) => {
         }}
       >
         <Box sx={{ width: '100%', maxWidth: 1000 }}>
+          {/* Botón Volver */}
+          <Button
+            startIcon={<ArrowBackIcon />}
+            sx={{ mb: 2, textTransform: "none", alignSelf: "flex-start" }}
+            onClick={() => navigate(-1)}
+          >
+            Volver
+          </Button>
           <Typography variant="h5" fontWeight={700} mb={0.5}>
             Editar Evento
           </Typography>
