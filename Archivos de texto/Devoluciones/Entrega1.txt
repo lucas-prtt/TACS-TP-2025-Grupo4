@@ -131,10 +131,9 @@ RESUELTO ¿?
 11) Concurrencia
     Qué pasa si empiezo a tener concurrencia en el proceso de (cancelación + promoción de waitlist)? La operación es atómica como está hecho ahora?
 
-NO RESUELTO
+RESUELTO
 
---> Si hay concurrencia, puede que se introduzca la misma persona de la waitlist 2 veces en la lista de participantes.
-    Hay que resolverlo con campos atomicos o MUTEX (investigar)
+--> Utilizamos un ConcurrentHashmap para gestionar distintos mutex segun el evento, el cual evita que haya problemas al trabajar con las listas
 
 ///////////////////////////////////////////////
 

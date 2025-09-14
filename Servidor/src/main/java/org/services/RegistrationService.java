@@ -5,6 +5,8 @@ import static org.DTOs.registrations.RegistrationDTO.toRegistrationDTO;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import org.DTOs.registrations.RegistrationDTO;
 import org.exceptions.RegistrationNotFoundException;
@@ -25,7 +27,7 @@ public class RegistrationService {
   private final RegistrationRepository registrationRepository;
   private final EventRepository eventRepository;
   private final AccountRepository accountRepository;
-
+  ConcurrentHashMap<UUID, ReentrantLock> locksParticipants= new ConcurrentHashMap<>();
   public RegistrationService(RegistrationRepository registrationRepository, EventRepository eventRepository, AccountRepository accountRepository) {
     this.registrationRepository = registrationRepository;
     this.eventRepository = eventRepository;
@@ -95,16 +97,27 @@ public class RegistrationService {
 
     // Validar que sea del usuario
     if (!reg.getUser().getId().equals(accountId)) throw new WrongUserException("El registro no pertenece al usuario dado");
-
     Event event = reg.getEvent();
+    UUID eventId = event.getId();
 
-    // Eliminar de participantes
-    event.getParticipants().remove(reg);
+    ReentrantLock lock = locksParticipants.computeIfAbsent(eventId, id -> new ReentrantLock());
+    lock.lock();
+    try {
+      // Eliminar de participantes
+      event.getParticipants().remove(reg);
+      // Promocionar a alguien de la waitlist si corresponde
+      event.promoteFromWaitlist();
+      registrationRepository.cancelById(registrationId);
+    }finally {
+      lock.unlock();
+      if (!lock.hasQueuedThreads()) {
+        locksParticipants.remove(eventId, lock);
+      }
+    }
 
-    // Promocionar a alguien de la waitlist si corresponde
-    event.promoteFromWaitlist();
 
-    return registrationRepository.cancelById(registrationId).orElseThrow(() -> new RegistrationNotFoundException("No se encontro un registro con esa ID"));
+    return reg;
+
   }
 
 
