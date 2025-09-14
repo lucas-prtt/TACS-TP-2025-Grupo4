@@ -103,11 +103,16 @@ public class RegistrationService {
     ReentrantLock lock = locksParticipants.computeIfAbsent(eventId, id -> new ReentrantLock());
     lock.lock();
     try {
-      // Eliminar de participantes
-      event.getParticipants().remove(reg);
-      // Promocionar a alguien de la waitlist si corresponde
-      event.promoteFromWaitlist();
+      if(reg.getCurrentState() == RegistrationState.CONFIRMED){
+        // Eliminar de participantes
+        event.getParticipants().remove(reg);
+        // Promocionar a alguien de la waitlist si corresponde
+        event.promoteFromWaitlist();
+      }else {
+        event.getWaitList().remove(reg);
+      }
       registrationRepository.cancelById(registrationId);
+
     }finally {
       lock.unlock();
       if (!lock.hasQueuedThreads()) {

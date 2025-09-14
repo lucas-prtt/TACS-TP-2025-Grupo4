@@ -49,6 +49,7 @@ public class RegistrationRepository {
 
   // Eliminar por id
   // Cancelar inscripción por id (no borrar del repositorio)
+  // TODO: Esto es responsabilidad del service. No se porque lo pusieron aca.
   public Optional<Registration> cancelById(UUID id) {
     Registration reg = registrations.get(id.toString());
     if (reg == null) {
