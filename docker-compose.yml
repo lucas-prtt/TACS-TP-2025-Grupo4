@@ -1,0 +1,14 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Servidor/Dockerfile
+    ports:
+      - "8080:8080"
+  telegrambot:
+    build:
+      context: .
+      dockerfile: TelegramBot/Dockerfile
+    environment:
+      EVENTOS_TELEGRAM_BOT_TOKEN: tokenaqui
+      EVENTOS_TELEGRAM_BOT_USERNAME: TacsEventsGrupo4bot
