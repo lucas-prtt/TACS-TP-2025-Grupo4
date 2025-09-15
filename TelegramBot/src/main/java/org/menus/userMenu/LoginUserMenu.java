@@ -1,6 +1,7 @@
 package org.menus.userMenu;
 
 import org.eventServerClient.dtos.AccountDTO;
+import org.springframework.web.client.HttpClientErrorException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
@@ -15,13 +16,16 @@ public class LoginUserMenu extends MenuState {
         try {
             if(newUser.getUsername() == null){
                 newUser.setUsername(message);
-                return "Ingrese la contraseña";
+                return null;
             }
             newUser.setPassword(message);
             Map<String, Object> res = user.getApiClient().loginUserAndPassword(newUser);
             user.updateUser(res);
             return "Cuenta Logueada\n" + "userID: " + user.getServerAccountId() + "\n"
                     + "username: " + user.getServerAccountUsername() + "\n";
+        }catch (HttpClientErrorException e){
+            System.out.println(e.getMessage());
+            return "Error al crear usuario." + e.getMessage();
         }catch (Exception e){
             System.out.println(e.getMessage());
             user.setMenu(new UserMenu(user));

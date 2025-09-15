@@ -1,6 +1,7 @@
 package org.eventServerClient;
 
 import org.ConfigManager;
+import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.eventServerClient.dtos.AccountDTO;
@@ -8,18 +9,22 @@ import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.EventStateDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
+import org.users.TelegramUser;
 
 import java.util.*;
 
 public class ApiClient {
 
     private final RestTemplate restTemplate;
-
-    public ApiClient(Map<String, Object> loginInfo) {
+    private final TelegramUser user;
+    public ApiClient(Map<String, Object> loginInfo, TelegramUser user) {
+        this.user = user;
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         restTemplate = new RestTemplate(factory);
@@ -32,82 +37,189 @@ public class ApiClient {
             }));
         };
     }
-    public static ApiClient withoutToken(){
-        return new ApiClient(null);
+    public static ApiClient withoutToken(TelegramUser user){
+        return new ApiClient(null, user);
     }
-    public static ApiClient fromToken(String token) {
+    public static ApiClient fromToken(String token, TelegramUser user) {
         Map<String, Object> loginInfo = new HashMap<>();
         loginInfo.put("token", token);
-        return new ApiClient(loginInfo);
+        return new ApiClient(loginInfo, user);
     }
 
     public String getBaseUri(){
-        return "http://"+ ConfigManager.getInstance().get("server.ip")+":"+ConfigManager.getInstance().get("server.port");
+            return "http://"+ ConfigManager.getInstance().get("server.ip")+":"+ConfigManager.getInstance().get("server.port");
     }
 
     public AccountDTO postAccount(String username, String password){
+        try {
         String url = getBaseUri() + "/auth/register";
         return restTemplate.postForObject(url, new AccountDTO(username, password), AccountDTO.class);
+        }catch (HttpClientErrorException e){
+            if(e.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                user.deleteCurrentAccount();
+            }
+            throw e;
+        }
     }
-    public Map<String, Object> loginOneTimeCode(String oneTimeCode){
-        String url = getBaseUri() + "/auth/oneTimeCode";
-        return restTemplate.getForObject(url, Map.class);
+    public Map<String, Object> loginOneTimeCode(String oneTimeCode, String username){
+        try {
+            String url = getBaseUri() + "/auth/oneTimeCode" + "?username=" + username + "&code=" + oneTimeCode;
+            return restTemplate.getForObject(url, Map.class);
+        }catch (HttpClientErrorException e){
+            if(e.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                user.deleteCurrentAccount();
+            }
+            throw e;
+        }
     }
+
     public Map<String, Object> loginUserAndPassword(AccountDTO accountDTO){
-        String url = getBaseUri() + "/auth/login";
-        return restTemplate.postForObject(url, accountDTO, Map.class);
+        try {
+            String url = getBaseUri() + "/auth/login";
+            return restTemplate.postForObject(url, accountDTO, Map.class);
+        }catch (HttpClientErrorException e) {
+            if(e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
     }
+
     public List<EventDTO> getEventsByFilters(String filters, Integer page, Integer limit){
-        String url = getBaseUri() + "/events" + filters + "&page=" + page + "&limit=" + limit;
-        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));
+        try {
+            String url = getBaseUri() + "/events" + filters + "&page=" + page + "&limit=" + limit;
+            return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));
+        }catch (HttpClientErrorException e){
+            if(e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
     }
     public String postRegistration(UUID eventID) throws RestClientResponseException {
-        String url = getBaseUri() + "/events/"+eventID+"/registrations";
-        return restTemplate.postForObject(url, null, String.class);
+        try {
+            String url = getBaseUri() + "/events/" + eventID + "/registrations";
+            return restTemplate.postForObject(url, null, String.class);
+        }catch (HttpClientErrorException e){
+            if(e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
     }
+
     public EventDTO getEvent(UUID uuid){
-        String url = getBaseUri() + "/events/" + uuid.toString();
-        return restTemplate.getForObject(url, EventDTO.class);
+        try{
+            String url = getBaseUri() + "/events/" + uuid.toString();
+            return restTemplate.getForObject(url, EventDTO.class);
+        }
+        catch (HttpClientErrorException e){
+        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+            user.deleteCurrentAccount();
+        throw e;
     }
+
+    }
+
     public List<RegistrationDTO> getRegisteredRegistrations(Integer page, Integer limit){
-        String url = getBaseUri() + "/registrations?registrationState=CONFIRMED" + "&page=" + page + "&limit=" + limit;
-        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+        try {
+            String url = getBaseUri() + "/registrations?registrationState=CONFIRMED" + "&page=" + page + "&limit=" + limit;
+            return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+        }catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
     }
+
+
     public List<RegistrationDTO> getWaitlistRegistrations(Integer page, Integer limit){
-        String url = getBaseUri() + "/registrations?registrationState=WAITLIST"+ "&page=" + page + "&limit=" + limit;
-        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+        try{
+            String url = getBaseUri() + "/registrations?registrationState=WAITLIST"+ "&page=" + page + "&limit=" + limit;
+            return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+        }catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
     }
+
+
     public List<RegistrationDTO> getCanceledRegistrations(Integer page, Integer limit){
-        String url = getBaseUri() + "/registrations?registrationState=CANCELED"+ "&page=" + page + "&limit=" + limit;
-        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+        try {
+            String url = getBaseUri() + "/registrations?registrationState=CANCELED" + "&page=" + page + "&limit=" + limit;
+            return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+        } catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
     }
+
     public List<RegistrationDTO> getAllRegistrations(Integer page, Integer limit){
-        String url = getBaseUri() + "/registrations"+ "?page=" + page + "&limit=" + limit;
-        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+        try {
+            String url = getBaseUri() + "/registrations" + "?page=" + page + "&limit=" + limit;
+            return List.of(Objects.requireNonNull(restTemplate.getForObject(url, RegistrationDTO[].class)));
+        } catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
     }
+
     public void cancelRegistration(UUID registrationID){
-        String url = getBaseUri() +"/registrations/" + registrationID.toString();
-        RegistrationDTO reg = new RegistrationDTO();
-        reg.setState(RegistrationStateDTO.CANCELED);
-        restTemplate.patchForObject(url, reg, Void.class);
+        try {
+            String url = getBaseUri() + "/registrations/" + registrationID.toString();
+            RegistrationDTO reg = new RegistrationDTO();
+            reg.setState(RegistrationStateDTO.CANCELED);
+            restTemplate.patchForObject(url, reg, Void.class);
+        }catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
     }
+
     public EventDTO postEvent(EventDTO eventDTO){
-        String url = getBaseUri() + "/events";
-        return restTemplate.postForObject(url, eventDTO, EventDTO.class);
+        try {
+            String url = getBaseUri() + "/events";
+            return restTemplate.postForObject(url, eventDTO, EventDTO.class);
+        }catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
     }
 
     public List<EventDTO> getEventsOrganizedBy(Integer page, Integer limit){
-        String url = getBaseUri() + "events/organized-events" + "?page=" + page + "&limit=" + limit;
-        return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));
+        try {
+            String url = getBaseUri() + "events/organized-events" + "?page=" + page + "&limit=" + limit;
+            return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));
+        }catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
     }
     public EventDTO patchEvent(UUID idEvent, EventDTO eventDTOPatch){
-        String url = getBaseUri() + "/events/" + idEvent;
-        return restTemplate.patchForObject(url, eventDTOPatch, EventDTO.class);
+        try{
+            String url = getBaseUri() + "/events/" + idEvent;
+            return restTemplate.patchForObject(url, eventDTOPatch, EventDTO.class);
+        }catch (HttpClientErrorException e){
+        if(e.getStatusCode() == HttpStatus.UNAUTHORIZED){
+            user.deleteCurrentAccount();
+        }
+        throw e;
+    }
     }
     public EventDTO patchEventState(UUID idEvent, EventStateDTO newState){
+       try {
         EventDTO eventDTOPatch = new EventDTO();
         eventDTOPatch.setState(newState);
         return patchEvent(idEvent, eventDTOPatch);
+        }catch (HttpClientErrorException e){
+        if(e.getStatusCode() == HttpStatus.UNAUTHORIZED){
+            user.deleteCurrentAccount();
+        }
+        throw e;
+    }
     }
 
 

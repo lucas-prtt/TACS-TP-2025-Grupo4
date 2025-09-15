@@ -4,6 +4,7 @@ import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.CategoryDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.TagDTO;
+import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
@@ -115,7 +116,8 @@ public class NewEventMenu extends MenuState {
     public String getQuestion() {
         if(fields.isEmpty()){
             user.getApiClient().postEvent(eventDTO);
-            return user.setMainMenuAndRespond();
+            user.setMenu(new MainMenu(user));
+            return null;
         }
         return "Ingrese " + fields.getFirst()._2() + ":";
     }

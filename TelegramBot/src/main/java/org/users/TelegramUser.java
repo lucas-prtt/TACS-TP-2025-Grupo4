@@ -3,6 +3,9 @@ package org.users;
 import lombok.Getter;
 import lombok.Setter;
 import org.eventServerClient.ApiClient;
+import org.menus.userMenu.UserMenu;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -34,28 +37,43 @@ public class TelegramUser {
     public TelegramUser(Long chatId){
         this.chatId = chatId;
         menu = new MainMenu(this);
-        apiClient = ApiClient.withoutToken();
+        apiClient = ApiClient.withoutToken(this);
     }
 
     // Responde al menu en el que se encuentra y actualiza al siguiente menu si corresponde
     public SendMessage respondTo(Update update) {
-        if (update.hasMessage()){
-            if(update.getMessage().getText().equals("/start")){ // start manda al menu inicial no importa donde estes
-                this.menu = new MainMenu(this);
-                return null;
-            }else{
-                return menu.responseMessage(update.getMessage());
+        try {
+            if (update.hasMessage()){
+                if(update.getMessage().getText().equals("/start")){ // start manda al menu inicial no importa donde estes
+                    this.menu = new MainMenu(this);
+                    return null;
+                }else{
+                    return menu.responseMessage(update.getMessage());
+                }
+            }
+            else if (update.hasCallbackQuery()){
+                if(update.getCallbackQuery().getData().equals("/start")){ // start manda al menu inicial no importa donde estes
+                    this.menu = new MainMenu(this);
+                    return null;
+                }else{
+                    return menu.responseMessage(update.getCallbackQuery());
+                }
             }
         }
-        else if (update.hasCallbackQuery()){
-            if(update.getCallbackQuery().getData().equals("/start")){ // start manda al menu inicial no importa donde estes
-                this.menu = new MainMenu(this);
-                return null;
-            }else{
-                return menu.responseMessage(update.getCallbackQuery());
+        catch (HttpClientErrorException e){
+            if(e.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                SendMessage rta =  new SendMessage();
+                rta.setText("Se vencio el token");
+                return rta;
             }
+        }catch (Exception e){
+            e.printStackTrace();
+            SendMessage rta =  new SendMessage();
+            rta.setText("Se produjo un error interno al responder");
+            return rta;
         }
-        throw new RuntimeException("Error al responder");
+        System.out.println("Error al responder");
+        return null;
     }
     public String setMenuAndRespond(MenuState menu){
         this.menu = menu;
@@ -74,15 +92,39 @@ public class TelegramUser {
         return "?" + String.join("&", filtros);
     }
     public void updateApiClient(String token){
-        setApiClient(ApiClient.fromToken(token));
+        setApiClient(ApiClient.fromToken(token, this));
     }
     public void updateUser(Map<String, Object> infoLogin){
         updateApiClient((String) infoLogin.get("token"));
         setServerAccountUsername((String) infoLogin.get("username"));
         setServerAccountId((String) infoLogin.get("id"));
+        setMenu(new MainMenu(this));
     }
 
     public SendMessage getQuestion() {
-        return menu.questionMessage();
+        try{
+            return menu.questionMessage();
+        }
+        catch (HttpClientErrorException e){
+            if(e.getStatusCode() == HttpStatus.UNAUTHORIZED){
+                SendMessage rta =  new SendMessage();
+                rta.setText("Se vencio el token\n" + getMenu().getQuestion());
+                return rta;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            SendMessage rta =  new SendMessage();
+            rta.setText("Se produjo un error interno al responder");
+            return rta;
+        }
+        System.out.println("Error al responder");
+        return null;
+    }
+
+    public void deleteCurrentAccount(){
+        this.setServerAccountId(null);
+        this.setServerAccountUsername(null);
+        setApiClient(ApiClient.withoutToken(this));
+        this.menu = new UserMenu(this);
     }
 }
