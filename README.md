@@ -29,19 +29,8 @@
 1. Abrir Docker Desktop si no esta abierto
 
 
-2. Eliminar webhook del bot de telegram (si esta presente, y lo va a utilizar)
-```bash
-curl https://api.telegram.org/bot<TOKEN>/setwebhook
 
-# En windows, si no anda el anterior
-curl --ssl-no-revoke https://api.telegram.org/bot<TOKEN>/setwebhook
-
-# O entrar por un navegador a https://api.telegram.org/bot<TOKEN>/setwebhook
-```
-(Esto se debe a que el bot utiliza long polling para conectarse a los servidores de telegram, y si hay un webhook existente, puede causar errores. 
-Se debe completar \<TOKEN\> con el token del bot.)
-
-3. Ejecutar el script setup.sh
+2. Ejecutar el script setup.sh
     ```bash
     ./setup.sh [modulos]
     ```
@@ -50,7 +39,7 @@ Se debe completar \<TOKEN\> con el token del bot.)
      - telegrambot
 
 
-4. Introducir las variables de entorno por consola:
+3. Introducir las variables de entorno por consola:
    - EVENTOS_TELEGRAM_BOT_TOKEN
    - EVENTOS_TELEGRAM_BOT_USERNAME
    - EVENTOS_SERVER_SECRET_KEY
@@ -65,13 +54,8 @@ Se debe completar \<TOKEN\> con el token del bot.)
     - EVENTOS_SERVER_SECRET_KEY
 
 
-3. Eliminar webhook del bot de telegram
-```bash
-curl https://api.telegram.org/bot<TOKEN>/setwebhook
-```
 
-
-4. Construir y ejecutar red de contenedores:
+3. Construir y ejecutar red de contenedores:
 
 ```bash
 docker-compose up --build
@@ -84,20 +68,15 @@ docker-compose up --build
    - EVENTOS_SERVER_SECRET_KEY
 
 
-2. Eliminar webhook del bot de telegram
-```bash
-curl https://api.telegram.org/bot<TOKEN>/setwebhook
-```
-
-3. Compilar el proyecto
+2. Compilar el proyecto
 ```bash
 mvn clean package
 ```
-4. Ejecutar servidor
+3. Ejecutar servidor
 ```bash
 java -jar Servidor/target/Servidor-1.0.jar
 ```
-5. Ejecutar bot de telegram
+4. Ejecutar bot de telegram
 ```bash
 java -jar TelegramBot/target/TelegramBot-1.0.jar
 ```
@@ -108,7 +87,22 @@ Tras eso, el servidor estará escuchando peticiones en el puerto 8080.
 Se puede comprobar haciendo alguna de las peticiones de ejemplo que se muestran abajo.
 
 ---
+## Posibles problemas
+### 1.  "Error removing old webhook"
+Esto se debe a que el bot utiliza long polling para conectarse a los servidores de telegram, y si hay un webhook existente, puede causar errores.
+En la ultima version, el bot se encarga de eliminarlo automaticamente, pero si aun asi no funciona, puede ser necesario eliminarlo de manera manual.
+Para esto se puede utilizar:
+```bash
+curl https://api.telegram.org/bot<TOKEN>/setwebhook
 
+# En windows, si no anda el anterior
+curl --ssl-no-revoke https://api.telegram.org/bot<TOKEN>/setwebhook
+
+# O entrar por un navegador a https://api.telegram.org/bot<TOKEN>/setwebhook
+```
+(Se debe completar \<TOKEN\> con el token del bot.)
+
+---
 ## API Endpoints
 
 > ⚠️ Importante: todos los `accountId`, `eventId` y `registrationId` que se envían en las requests deben haber sido creados previamente.
