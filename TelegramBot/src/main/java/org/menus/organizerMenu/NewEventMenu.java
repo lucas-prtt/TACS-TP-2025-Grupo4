@@ -24,7 +24,7 @@ public class NewEventMenu extends MenuState {
     public NewEventMenu(TelegramUser user) {
         super(user);
         eventDTO = new EventDTO();
-        eventDTO.setOrganizerId(UUID.fromString(user.getServerAccountId()));
+        eventDTO.setUsernameOrganizer(user.getServerAccountUsername());
         try {
             fields = new ArrayList<Tuple<Field, String>>(List.of(
                     new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("title"), "titulo"),
@@ -113,7 +113,7 @@ public class NewEventMenu extends MenuState {
     @Override
     public String getQuestion() {
         if(fields.isEmpty()){
-            ApiClient.postEvent(eventDTO);
+            user.getApiClient().postEvent(eventDTO);
             return user.setMainMenuAndRespond();
         }
         return "Ingrese " + fields.getFirst()._2() + ":";

@@ -1,25 +1,25 @@
 package org.menus.userMenu;
-
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.AccountDTO;
 import org.users.TelegramUser;
 import org.menus.MenuState;
 
-public class SetUserMenu extends MenuState {
+import java.util.Map;
 
-    public SetUserMenu(TelegramUser user) {
+public class OneTimeCodeMenu extends MenuState {
+
+    public OneTimeCodeMenu(TelegramUser user) {
         super(user);
     }
 
     @Override
     public String respondTo(String message) {
         try {
-            AccountDTO acc = ApiClient.getAccountByUsername(message);
-            user.setServerAccountUsername(acc.getUsername());
-            user.setServerAccountId(acc.getUuid());
+            Map<String, Object> response = user.getApiClient().loginOneTimeCode(message);
+            user.updateUser(response);
             return "Cuenta establecida:\n" +
-                    "  Usuario: "+ acc.getUsername() +
-                    "\n  Uuid: " + acc.getUuid()  + "\n\n"
+                    "  Usuario: "+ user.getServerAccountUsername() +
+                    "\n  Uuid: " + user.getServerAccountId()  + "\n\n"
                     + user.setMainMenuAndRespond();
         }
         catch (Exception e){

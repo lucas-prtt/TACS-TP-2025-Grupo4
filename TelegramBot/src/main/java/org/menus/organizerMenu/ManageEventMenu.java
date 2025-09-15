@@ -18,15 +18,15 @@ public class ManageEventMenu extends MenuState {
         switch (message){
             case "/pause":
                 event.setState(EventStateDTO.EVENT_PAUSED);
-                ApiClient.patchEventState(event.getId(), EventStateDTO.EVENT_PAUSED);
+                user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_PAUSED);
                 return "Evento pausado\n" + getQuestion();
             case "/open":
                 event.setState(EventStateDTO.EVENT_OPEN);
-                ApiClient.patchEventState(event.getId(), EventStateDTO.EVENT_OPEN);
+                user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_OPEN);
                 return "Evento cancelado\n" + getQuestion();
             case "/close":
                 event.setState(EventStateDTO.EVENT_CLOSED);
-                ApiClient.patchEventState(event.getId(), EventStateDTO.EVENT_CLOSED);
+                user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_CLOSED);
                 return "Evento abierto\n" + getQuestion();
             case "/back":
                 return user.setMenuAndRespond(new ManageEventSelectionMenu(user));

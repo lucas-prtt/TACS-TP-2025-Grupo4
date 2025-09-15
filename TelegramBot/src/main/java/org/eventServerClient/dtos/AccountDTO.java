@@ -4,13 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class AccountDTO {
     private String username;
+    private String password;
     private String uuid;
-    public AccountDTO(String username){
+    public AccountDTO(String username, String password){
         this.username = username;
+        this.password = password;
     }
 }

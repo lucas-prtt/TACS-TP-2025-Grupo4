@@ -20,7 +20,7 @@ public class EventDTO {
         UUID id;
         String title;
         String description;
-        UUID organizerId;
+        String usernameOrganizer;
         LocalDateTime startDateTime;
         Integer durationMinutes;
         String location;

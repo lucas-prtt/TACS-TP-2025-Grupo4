@@ -19,8 +19,8 @@ public class OneTimeCode {
         //20^6 combinaciones
     }
     public OneTimeCode(Map<String, Object> cosaDelLogueo){
-        this.code = RandomWordGenerator.randomWord() +  RandomWordGenerator.randomWord() + RandomWordGenerator.randomWord() + RandomWordGenerator.randomWord() + RandomWordGenerator.randomWord() + RandomWordGenerator.randomWord();
-        //20^6 combinaciones
+        this.code = RandomWordGenerator.randomWord()  + "-" +  RandomWordGenerator.randomWord() + "-" + RandomWordGenerator.randomWord() + "-" + RandomWordGenerator.randomWord() + "-" + RandomWordGenerator.randomWord() + "-" + RandomWordGenerator.randomWord();
+        //20^6 combinaciones = 64_000_000
         this.cosaDelLogueo = cosaDelLogueo;
     }
 
