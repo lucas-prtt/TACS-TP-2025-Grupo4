@@ -15,7 +15,7 @@ public class JwtUtil {
 
   private static final String SECRET_KEY = System.getenv("EVENTOS_SERVER_SECRET_KEY");
   private static final Key KEY = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-  private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hora
+  private static final long EXPIRATION_TIME = 1000L * 60 * ConfigManager.getInstance().getIntegerOrElse("security.token.expiration.minutes", 60); // 1 hora
 
   public static String generateToken(String username, UUID accountId, Set<String> roles) {
     return Jwts.builder()
