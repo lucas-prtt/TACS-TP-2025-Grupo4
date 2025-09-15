@@ -42,16 +42,12 @@ Content-Type: application/json
 
 RESUELTO
 
---> Si sacamos el endpoint de post de eventos en /eventos y lo pasamos a /accounts/{id}/eventos
-dejaria de hacer falta. Aun así hay que dejar el get de /eventos para obtener eventos de cualquiera
-O tal vez se refiere a identificar el organizador mediante el token de seguridad?
-Podria ir en un header el userID y el token?
-Probablemente la segunda opcion sea la mejor, ya hablan de las url en otro punto
+--> Ahora el organizerId se extrae del token de la capa de seguridad. No se postea con organizerID
 
 
 3) Pensaron en ponerle password?
 
-EN PROCESO
+RESUELTO
 
 --> Le pusimos password
 
@@ -88,7 +84,7 @@ POST /events/registration
 RESUELTO
 
 Puede ser mejor ocultarlo para mantener la privacidad del organizador, o mostrarlo para que haya mas transparencia
-Tras discutirlo, llegamos a la conclusion de que es mejor mostrar la identidad del organizador para prevenir estafas
+Tras discutirlo, llegamos a la conclusion de que es mejor mostrar la identidad del organizador para prevenir estafas y suplantaciones de identidad
 Pese a eso, utilizamos el username en lugar del id, ya que es mas facilmente reconocible
 
 7) Según cómo plantearon la solución ustedes. Si se filtra el accountId del organizador, estaría en peligro la seguridad de mi API?
@@ -104,7 +100,7 @@ RESUELTO
    "ALREADY_REGISTERED";
    "ALREADY_IN_WAITLIST";
 
-SOLUCIONADO
+RESUELTO
 
 --> Para la NullPointerException, hicimos que se atrape la NullPointerException en capa service (o repository) y
     que lanze una BadRequestException
@@ -114,13 +110,13 @@ SOLUCIONADO
 
 9) Qué pasa si alguien que está en una lista de espera se quiere bajar del evento?
 
-SOLUCIONADO
+RESUELTO
 
 --> Se chequa el estado del registro y en funcion de eso se promueve de la waitlist o solo se cancela
 
 10) (En cancelRegistration) Si un user está intentando acceder a algo que no debería, retorno booleano? mmm eso esta raro.
 
-SOLUCIONADO
+RESUELTO
 
 --> En   @DeleteMapping("/{registrationId}")
     registrationService.cancelRegistration(registrationId, accountId);
@@ -129,7 +125,7 @@ SOLUCIONADO
 11) Concurrencia
     Qué pasa si empiezo a tener concurrencia en el proceso de (cancelación + promoción de waitlist)? La operación es atómica como está hecho ahora?
 
-SOLUCIONADO
+RESUELTO
 
 --> Utilizamos un ConcurrentHashmap para gestionar distintos mutex segun el evento, el cual evita que haya problemas al trabajar con las listas
 --> Lo usamos tambien para postear los registros
@@ -153,5 +149,8 @@ Con eso evitarían tener que introducir la contraseña en mensajes planos. Si es
 primero el bot, pueden arrancar con la contraseña en texto, y luego ver de resolver esto una
 vez que tengan el front donde estar loggeado.
 
-EN PROCESO
+RESUELTO
+
+--> Implementamos temporalmente ambas opciones, mediante un "One time code" y usuario y contraseña.
+    En el futuro probablemente removeremos la opcion de usuario y contraseña. 
 
