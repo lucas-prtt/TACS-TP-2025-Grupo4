@@ -22,9 +22,9 @@ public class UserMenu extends MenuState {
     @Override
     public String getQuestion() {
         return "Menu Usuario \n " +
-                "/setUser: Establecer usuario\n " +
-                "/getUser: Ver usuario actual\n " +
-                "/registerUser: Registrar usuario";
+                "/oneTimeCode: Login con one time code\n " +
+                "/loginUser: Login con username y contraseña\n " +
+                "/registerUser: Registrar usuario nuevo con username y contraseña";
     }
 
     public UserMenu(TelegramUser user) {
