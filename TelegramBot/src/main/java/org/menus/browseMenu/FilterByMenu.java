@@ -1,7 +1,11 @@
 package org.menus.browseMenu;
 
 import org.menus.MenuState;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
+import org.utils.InlineMenuBuilder;
+
+import java.util.List;
 
 public class FilterByMenu extends MenuState {
 
@@ -15,12 +19,16 @@ public class FilterByMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         user.addFilter(filterParameter + "="+ message);
-        return "Filtro configurado: " + filterParameter + "="+ message + "\n\n" + user.setMenuAndRespond(new BrowseMenu(user));
+        user.setMenu(new BrowseMenu(user));
+        return "Filtro configurado: " + filterParameter + "="+ message + "\n\n";
     }
 
     @Override
     public String getQuestion() {
         return "Ingrese el nombre para el filtro \""+ filterParameter +"\"\n" ;
     }
-
+    @Override
+    public SendMessage questionMessage() {
+        return sendMessageText(getQuestion());
+    }
 }

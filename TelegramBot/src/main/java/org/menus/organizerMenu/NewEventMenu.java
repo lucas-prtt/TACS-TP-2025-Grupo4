@@ -4,7 +4,9 @@ import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.CategoryDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.TagDTO;
+import org.menus.MainMenu;
 import org.menus.MenuState;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.yaml.snakeyaml.util.Tuple;
 
@@ -80,7 +82,7 @@ public class NewEventMenu extends MenuState {
                         fields.removeFirst();
                         break;
                     }catch (Exception e){
-                        return "Introduzca un numero entero\n" + getQuestion();
+                        return "Introduzca un numero entero\n";
                     }
 
                 case "CategoryDTO":
@@ -107,15 +109,21 @@ public class NewEventMenu extends MenuState {
             return "Error al ingresar el valor, vuelva a intentar.";
         }
 
-        return getQuestion();
+        return null;
     }
 
     @Override
     public String getQuestion() {
         if(fields.isEmpty()){
             user.getApiClient().postEvent(eventDTO);
-            return user.setMainMenuAndRespond();
+            user.setMenu(new MainMenu(user));
+            return null;
         }
         return "Ingrese " + fields.getFirst()._2() + ":";
+    }
+    @Override
+    public SendMessage questionMessage() {
+        SendMessage message = sendMessageText(getQuestion());
+        return message;
     }
 }

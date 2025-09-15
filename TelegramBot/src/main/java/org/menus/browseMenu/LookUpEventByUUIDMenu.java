@@ -6,8 +6,11 @@ import org.eventServerClient.dtos.event.EventDTO;
 import org.menus.MenuState;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
+import org.utils.InlineMenuBuilder;
 
+import java.util.List;
 import java.util.UUID;
 
 public class LookUpEventByUUIDMenu extends MenuState {
@@ -15,9 +18,10 @@ public class LookUpEventByUUIDMenu extends MenuState {
     public String respondTo(String message) {
         try {
             EventDTO eventDTO = user.getApiClient().getEvent(UUID.fromString(message));
-            return "Evento encontrado \n\n" + user.setMenuAndRespond(new CheckEventMenu(user, eventDTO));
+            user.setMenu(new CheckEventMenu(user, eventDTO));
+            return "Evento encontrado \n\n";
         }catch (RestClientResponseException e){
-            return e.getStatusCode() + "\n\n" + e.getMessage() + "\n\n" + getQuestion();
+            return e.getStatusCode() + "\n\n" + e.getMessage();
         }
     }
 
@@ -28,5 +32,10 @@ public class LookUpEventByUUIDMenu extends MenuState {
 
     public LookUpEventByUUIDMenu(TelegramUser user) {
         super(user);
+    }
+    @Override
+    public SendMessage questionMessage() {
+        SendMessage message = sendMessageText(getQuestion());
+        return message;
     }
 }

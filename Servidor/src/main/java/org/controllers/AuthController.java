@@ -121,10 +121,11 @@ public class AuthController {
 
 
   @GetMapping("/oneTimeCode")
-  public ResponseEntity<?> getToken(@RequestBody OneTimeCodeDTO codeDTO) {
+  public ResponseEntity<?> getToken(@RequestParam(name = "username", required = true) String username,
+                                    @RequestParam(name = "code", required = true) String code) {
     try {
-      OneTimeCode foundCode = oneTimeCodeService.findByUsername(codeDTO.getUsername());
-      if (Objects.equals(foundCode.getCode(), codeDTO.getCode())){
+      OneTimeCode foundCode = oneTimeCodeService.findByUsername(username);
+      if (Objects.equals(foundCode.getCode(), code)){
         oneTimeCodeService.delete(foundCode);
         return ResponseEntity.ok(foundCode.getCosaDelLogueo());
       }
