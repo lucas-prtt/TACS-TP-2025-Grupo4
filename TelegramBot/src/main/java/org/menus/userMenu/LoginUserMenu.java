@@ -1,11 +1,12 @@
 package org.menus.userMenu;
 
-import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.AccountDTO;
 import org.users.TelegramUser;
 import org.menus.MenuState;
 
-public class RegisterUserMenu extends MenuState {
+import java.util.Map;
+
+public class LoginUserMenu extends MenuState {
     AccountDTO newUser = new AccountDTO();
     @Override
     // Recibe el nombre del usuario y lo intenta crear. Si no puede devuelve un error. Si lo crea lo establece como el usado
@@ -16,12 +17,14 @@ public class RegisterUserMenu extends MenuState {
                 return "Ingrese la contraseña";
             }
             newUser.setPassword(message);
-            AccountDTO usuarioCreado = user.getApiClient().postAccount(newUser.getUsername(), newUser.getPassword());
-            return "Cuenta creada\n" + "userID: " + usuarioCreado.getUuid() + "\n"
+            Map<String, Object> res = user.getApiClient().loginUserAndPassword(newUser);
+            user.updateUser(res);
+            return "Cuenta Logueada\n" + "userID: " + user.getServerAccountId() + "\n"
+                    + "username: " + user.getServerAccountUsername() + "\n"
                     + user.setMainMenuAndRespond();
         }catch (Exception e){
             System.out.println(e.getMessage());
-            return "Error al crear usuario." + e.getMessage() + user.setMenuAndRespond(new UserMenu(user));
+            return "Error al loguearse al usuario." + e.getMessage() + user.setMenuAndRespond(new UserMenu(user));
         }
     }
 
@@ -30,7 +33,7 @@ public class RegisterUserMenu extends MenuState {
         return "Ingrese el nombre del usuario a crear";
     }
 
-    public RegisterUserMenu(TelegramUser user) {
+    public LoginUserMenu(TelegramUser user) {
         super(user);
     }
 }

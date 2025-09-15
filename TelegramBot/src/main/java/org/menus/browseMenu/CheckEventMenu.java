@@ -27,7 +27,7 @@ public class CheckEventMenu extends MenuState {
             }
 
             try {
-                String response = ApiClient.postRegistration(evento.getId(), UUID.fromString(user.getServerAccountId()));
+                String response = user.getApiClient().postRegistration(evento.getId());
                 if (response.equalsIgnoreCase("CONFIRMED")) {
                     return "Inscripcion confirmada a la lista de participantes\n\n" + user.setMainMenuAndRespond();
                 } else if (response.equalsIgnoreCase("WAITLIST")) {

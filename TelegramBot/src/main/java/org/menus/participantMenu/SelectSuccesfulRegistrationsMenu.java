@@ -12,7 +12,7 @@ import java.util.UUID;
 public class SelectSuccesfulRegistrationsMenu extends AbstractRegistrationBrowseMenu {
     @Override
     protected List<RegistrationDTO> fetchItems(int page, int limit) {
-        return ApiClient.getRegisteredRegistrations(UUID.fromString(user.getServerAccountId()), page, limit);
+        return user.getApiClient().getRegisteredRegistrations(page, limit);
     }
 
     public SelectSuccesfulRegistrationsMenu(TelegramUser user) {

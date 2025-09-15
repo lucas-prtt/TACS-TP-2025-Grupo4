@@ -2,6 +2,8 @@ package org.users;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.eventServerClient.ApiClient;
+import org.springframework.http.HttpHeaders;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.menus.MainMenu;
@@ -9,10 +11,15 @@ import org.menus.MenuState;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+
 
 @Getter
 public class TelegramUser {
+    @Getter
+    @Setter
+    private ApiClient apiClient;
+    @Getter
     private final Long chatId;
     @Setter
     private String serverAccountId;
@@ -26,6 +33,7 @@ public class TelegramUser {
     public TelegramUser(Long chatId){
         this.chatId = chatId;
         menu = new MainMenu(this);
+        apiClient = ApiClient.withoutToken();
     }
 
     // Responde al menu en el que se encuentra y actualiza al siguiente menu si corresponde
@@ -56,5 +64,13 @@ public class TelegramUser {
     }
     public String getAllFiltersAsQueryParams(){
         return "?" + String.join("&", filtros);
+    }
+    public void updateApiClient(String token){
+        setApiClient(ApiClient.fromToken(token));
+    }
+    public void updateUser(Map<String, Object> infoLogin){
+        updateApiClient((String) infoLogin.get("token"));
+        setServerAccountUsername((String) infoLogin.get("username"));
+        setServerAccountId((String) infoLogin.get("id"));
     }
 }
