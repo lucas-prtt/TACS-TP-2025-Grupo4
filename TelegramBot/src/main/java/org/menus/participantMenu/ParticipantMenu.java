@@ -1,22 +1,31 @@
 package org.menus.participantMenu;
 
+import org.menus.userMenu.UserMenu;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
+import org.utils.InlineMenuBuilder;
+
+import java.util.List;
 
 public class ParticipantMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         switch (message){
             case "/getSuccesfulRegistrations":
-                return user.setMenuAndRespond(new SelectSuccesfulRegistrationsMenu(user));
+                user.setMenu(new SelectSuccesfulRegistrationsMenu(user));
+                return null;
             case "/getWaitlistedRegistrations":
-                return user.setMenuAndRespond(new SelectWaitlistedRegistrationsMenu(user));
+                user.setMenu(new SelectWaitlistedRegistrationsMenu(user));
+                return null;
             case "/getCanceledRegistrations":
-                return user.setMenuAndRespond(new SelectCanceledRegistrationsMenu(user));
+                user.setMenu(new SelectCanceledRegistrationsMenu(user));
+                return null;
             case "/getAllRegistrations":
-                return user.setMenuAndRespond(new SelectAllRegistrationsMenu(user));
+                user.setMenu(new SelectAllRegistrationsMenu(user));
+                return null;
             default:
-                return "Error - opcion invalida\n" + user.getMenu().getQuestion();
+                return "Error - opcion invalida\n";
         }
     }
 
@@ -40,5 +49,10 @@ public class ParticipantMenu extends MenuState {
 
     public ParticipantMenu(TelegramUser user) {
         super(user);
+    }
+    @Override
+    public SendMessage questionMessage() {
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/getSuccesfulRegistrations", "/getWaitlistedRegistrations", "/getCanceledRegistrations"), List.of("/getAllRegistrations", "/start"));
+        return message;
     }
 }

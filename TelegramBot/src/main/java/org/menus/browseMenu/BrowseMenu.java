@@ -1,37 +1,50 @@
 package org.menus.browseMenu;
 
 import org.menus.MenuState;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
+import org.utils.InlineMenuBuilder;
+
+import java.util.List;
 
 public class BrowseMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         switch (message){
             case "/browse":
-                return user.setMenuAndRespond(new BrowseEventsMenu(user));
+                user.setMenu(new BrowseEventsMenu(user));
+                return null;
             case "/filterByCategory":
-                return user.setMenuAndRespond(new FilterByMenu(user, "category"));
+                user.setMenu(new FilterByMenu(user, "category"));
+                return null;
             case "/filterByTags":
-                return user.setMenuAndRespond(new FilterByMenu(user, "tags"));
+                user.setMenu(new FilterByMenu(user, "tags"));
+                return null;
             case "/filterByDate":
-                return user.setMenuAndRespond(new FilterByMenu(user, "maxDate"));
+                user.setMenu(new FilterByMenu(user, "maxDate"));
+                return null;
             case "/filterByTitle":
-                return user.setMenuAndRespond(new FilterByMenu(user, "title"));
+                user.setMenu(new FilterByMenu(user, "title"));
+                return null;
             case "/filterByTitleContains":
-                return user.setMenuAndRespond(new FilterByMenu(user, "titleContains"));
+                user.setMenu(new FilterByMenu(user, "titleContains"));
+                return null;
             case "/filterByMinPrice":
-                return user.setMenuAndRespond(new FilterByMenu(user, "minPrice"));
+                user.setMenu(new FilterByMenu(user, "minPrice"));
+                return null;
             case "/filterByMaxPrice":
-                return user.setMenuAndRespond(new FilterByMenu(user, "maxPrice"));
+                user.setMenu(new FilterByMenu(user, "maxPrice"));
+                return null;
             case "/showFilters":
-                return "Filtros: \n" + String.join("\n   ",user.getFiltros()) + "\n\n" + user.getMenu().getQuestion();
+                return "Filtros: \n" + String.join("\n   ",user.getFiltros());
             case "/clearFilters":
                 user.clearFilters();
-                return "Filtros eliminados\n\n"+ user.getMenu().getQuestion();
+                return "Filtros eliminados\n\n";
             case "/lookupUUID":
-                return user.setMenuAndRespond(new LookUpEventByUUIDMenu(user));
+                user.setMenu(new LookUpEventByUUIDMenu(user));
+                return null;
             default:
-                return "Error: Elija una opcion valida\n" + this.getQuestion();
+                return "Error: Elija una opcion valida\n";
         }
     }
 
@@ -70,6 +83,13 @@ public class BrowseMenu extends MenuState {
                 /start
                     - Volver al menú principal
                 """;
+    }
+
+    @Override
+    public SendMessage questionMessage() {
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/filterByCategory", "/filterByTags"), List.of( "/filterByDate",
+                "/filterByTitle"), List.of("/filterByTitleContains", "/filterByMinPrice") , List.of( "/filterByMaxPrice", "/lookupUUID"), List.of("/showFilters", "/clearFilters") , List.of( "/browse"), List.of("/start"));
+        return message;
     }
 
     public BrowseMenu(TelegramUser user) {

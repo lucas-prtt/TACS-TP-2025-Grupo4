@@ -4,7 +4,12 @@ import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.EventStateDTO;
 import org.menus.MenuState;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
+import org.utils.InlineMenuBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ManageEventMenu extends MenuState {
     EventDTO event;
@@ -19,19 +24,20 @@ public class ManageEventMenu extends MenuState {
             case "/pause":
                 event.setState(EventStateDTO.EVENT_PAUSED);
                 user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_PAUSED);
-                return "Evento pausado\n" + getQuestion();
+                return "Evento pausado\n";
             case "/open":
                 event.setState(EventStateDTO.EVENT_OPEN);
                 user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_OPEN);
-                return "Evento cancelado\n" + getQuestion();
+                return "Evento cancelado\n";
             case "/close":
                 event.setState(EventStateDTO.EVENT_CLOSED);
                 user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_CLOSED);
-                return "Evento abierto\n" + getQuestion();
+                return "Evento abierto\n";
             case "/back":
-                return user.setMenuAndRespond(new ManageEventSelectionMenu(user));
+                user.setMenu(new ManageEventSelectionMenu(user));
+                return null;
             default:
-                return "Error, intente de nuevo" + getQuestion();
+                return "Error, intente de nuevo";
         }
     }
 
@@ -44,4 +50,14 @@ public class ManageEventMenu extends MenuState {
                 "/back --> Volver al menu anterior\n" +
                 "/start --> Volver al menu principal";
     }
+    @Override
+    public SendMessage questionMessage() {
+        List<String> opciones = new ArrayList<>();
+        if(event.getState() != EventStateDTO.EVENT_PAUSED){opciones.add("/pause");}
+        if(event.getState() != EventStateDTO.EVENT_OPEN){opciones.add("/open");}
+        if(event.getState() != EventStateDTO.EVENT_CLOSED){opciones.add("/close");}
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), opciones ,List.of("/back", "/start"));
+        return message;
+    }
+
 }

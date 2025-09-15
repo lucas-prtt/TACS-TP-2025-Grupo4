@@ -3,11 +3,12 @@ package org.users;
 import lombok.Getter;
 import lombok.Setter;
 import org.eventServerClient.ApiClient;
-import org.springframework.http.HttpHeaders;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.menus.MainMenu;
 import org.menus.MenuState;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,17 +38,24 @@ public class TelegramUser {
     }
 
     // Responde al menu en el que se encuentra y actualiza al siguiente menu si corresponde
-    public SendMessage respondTo(Message message) {
-        String chatId = message.getChatId().toString();
-        SendMessage response = new SendMessage();
-        response.setChatId(chatId);
-        if(message.getText().equals("/start")){ // start manda al menu inicial no importa donde estes
-            response.setText(this.setMenuAndRespond(new MainMenu(this)));
-        }else{
-            response.setText(menu.respondTo(message.getText()));
+    public SendMessage respondTo(Update update) {
+        if (update.hasMessage()){
+            if(update.getMessage().getText().equals("/start")){ // start manda al menu inicial no importa donde estes
+                this.menu = new MainMenu(this);
+                return null;
+            }else{
+                return menu.responseMessage(update.getMessage());
+            }
         }
-
-        return response;
+        else if (update.hasCallbackQuery()){
+            if(update.getCallbackQuery().getData().equals("/start")){ // start manda al menu inicial no importa donde estes
+                this.menu = new MainMenu(this);
+                return null;
+            }else{
+                return menu.responseMessage(update.getCallbackQuery());
+            }
+        }
+        throw new RuntimeException("Error al responder");
     }
     public String setMenuAndRespond(MenuState menu){
         this.menu = menu;
@@ -72,5 +80,9 @@ public class TelegramUser {
         updateApiClient((String) infoLogin.get("token"));
         setServerAccountUsername((String) infoLogin.get("username"));
         setServerAccountId((String) infoLogin.get("id"));
+    }
+
+    public SendMessage getQuestion() {
+        return menu.questionMessage();
     }
 }

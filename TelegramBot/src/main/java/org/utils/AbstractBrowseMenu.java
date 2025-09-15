@@ -2,6 +2,8 @@ package org.utils;
 
 import org.ConfigManager;
 import org.menus.MenuState;
+import org.menus.userMenu.UserMenu;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 
 import java.util.List;
@@ -35,31 +37,33 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
         switch (message) {
             case "/prev":
                 page = Math.max(1, page - 1);
-                return getQuestion();
+                return null;
             case "/next":
                 page++;
-                return getQuestion();
+                return null;
             case "/back":
-                return user.setMenuAndRespond(getBackMenu());
+                user.setMenu(getBackMenu());
+                return null;
             default:
                 if (message.startsWith("/page")) {
                     try {
                         int numero = Integer.parseInt(message.substring(6));
                         page = Math.max(numero, 1);
-                        return getQuestion();
+                        return null;
                     } catch (Exception e) {
-                        return "No se pudo identificar la página\n\n" + getQuestion();
+                        return "No se pudo identificar la página\n\n";
                     }
                 }
                 try {
                     int numero = Integer.parseInt(message.substring(1));
                     int index = (numero - (page - 1) * limit) - 1;
                     if (index >= 0 && index < items.size()) {
-                        return user.setMenuAndRespond(itemSelectedMenu(items.get(index)));
+                        user.setMenu(itemSelectedMenu(items.get(index)));
+                        return "Item " + numero + " elegido!";
                     }
                 } catch (Exception ignored) {}
 
-                return "No se eligió una opción válida\n\n" + getQuestion();
+                return "No se eligió una opción válida\n\n";
         }
     }
 
@@ -77,5 +81,10 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
                 "/page <n>     --> Ir a página n\n" +
                 "/back         --> Volver\n" +
                 "/start        --> Menu Principal";
+    }
+    @Override
+    public SendMessage questionMessage() {
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/prev", "/next"), List.of("/back", "/start"));
+        return message;
     }
 }

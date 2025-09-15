@@ -23,35 +23,42 @@ public class BotEventos extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            Long chatId = update.getMessage().getChatId();
-            SendMessage response;
+        Long chatId = -1L;
+        SendMessage response = null;
+        SendMessage question = null;
 
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            chatId = update.getMessage().getChatId();
+        }else if (update.hasCallbackQuery()){
+            chatId = update.getCallbackQuery().getMessage().getChatId();
+        }
 
             //Busca el usuario en el repo
             Optional<TelegramUser> senderOpt = telegramUserRepository.getUser(chatId);
             //Si es nuevo, dice bienvenido y muestra el menu principal
             if(senderOpt.isEmpty()){
                 TelegramUser user = telegramUserRepository.addUser(chatId, new TelegramUser(chatId));
-                response = new SendMessage();
-                response.setChatId(chatId);
-                response.setText("Bienvenido! \n" + user.getMenu().getQuestion() );
+                question = user.getQuestion();
+                question.setChatId(chatId);
                 System.out.println("New user!    id: " + chatId);
             }
             //De lo contrario, muestra respuesta al ultimo menu
             else {
-                response = senderOpt.get().respondTo(update.getMessage());
+                response = senderOpt.get().respondTo(update);
+                question = senderOpt.get().getQuestion();
+                if (response != null) {
+                    response.setChatId(chatId);
+                }
+                question.setChatId(chatId);
             }
 
-
-            if(response.getText() == null)
-                response.setText("Error: Null message");
-            try {
-                execute(response); // Envía el mensaje al usuario
+            try {   if(response != null) {
+                    execute(response);
+                    }
+                    execute(question);
             } catch (TelegramApiException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
-        }
 
 
     }

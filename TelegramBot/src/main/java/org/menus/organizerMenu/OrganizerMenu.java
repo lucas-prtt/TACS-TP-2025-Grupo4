@@ -1,18 +1,24 @@
 package org.menus.organizerMenu;
 
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
+import org.utils.InlineMenuBuilder;
+
+import java.util.List;
 
 public class OrganizerMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         switch (message){
             case "/newEvent":
-                return user.setMenuAndRespond(new NewEventMenu(user));
+                user.setMenu(new NewEventMenu(user));
+                return null;
             case "/manageEvents":
-                return user.setMenuAndRespond(new ManageEventSelectionMenu(user));
+                user.setMenu(new ManageEventSelectionMenu(user));
+                return null;
             default:
-                return "Error - opcion invalida\n" + user.getMenu().getQuestion();
+                return "Error - opcion invalida\n";
         }
 
     }
@@ -34,5 +40,10 @@ public class OrganizerMenu extends MenuState {
 
     public OrganizerMenu(TelegramUser user) {
         super(user);
+    }
+    @Override
+    public SendMessage questionMessage() {
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/newEvent", "/manageEvents", "start"));
+        return message;
     }
 }
