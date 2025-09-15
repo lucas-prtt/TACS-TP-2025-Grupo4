@@ -27,16 +27,30 @@
 
 ### Con Docker Automático
 1. Abrir Docker Desktop si no esta abierto
-2. Ejecutar el script setup.sh
+
+
+2. Eliminar webhook del bot de telegram (si esta presente, y lo va a utilizar)
+```bash
+curl https://api.telegram.org/bot<TOKEN>/setwebhook
+
+# En windows, si no anda el anterior
+curl --ssl-no-revoke https://api.telegram.org/bot<TOKEN>/setwebhook
+
+# O entrar por un navegador a https://api.telegram.org/bot<TOKEN>/setwebhook
+```
+(Esto se debe a que el bot utiliza long polling para conectarse a los servidores de telegram, y si hay un webhook existente, puede causar errores. 
+Se debe completar \<TOKEN\> con el token del bot.)
+
+3. Ejecutar el script setup.sh
     ```bash
     ./setup.sh [modulos]
     ```
     Si se deja vacío se ejecutan todos los modulos. Los modulos posibles son:
      - servidor
      - telegrambot
-    
 
-3. Introducir las variables de entorno:
+
+4. Introducir las variables de entorno por consola:
    - EVENTOS_TELEGRAM_BOT_TOKEN
    - EVENTOS_TELEGRAM_BOT_USERNAME
    - EVENTOS_SERVER_SECRET_KEY
@@ -44,29 +58,46 @@
 ### Con Docker Manual:
 1. Abrir Docker Desktop si no está abierto.
 
+
 2. Crear un archivo .env con las variables de entorno:
     - EVENTOS_TELEGRAM_BOT_TOKEN
     - EVENTOS_TELEGRAM_BOT_USERNAME
     - EVENTOS_SERVER_SECRET_KEY
-3. Ejecutar red de contenedores:
+
+
+3. Eliminar webhook del bot de telegram
+```bash
+curl https://api.telegram.org/bot<TOKEN>/setwebhook
+```
+
+
+4. Construir y ejecutar red de contenedores:
 
 ```bash
-docker-compose up
+docker-compose up --build
 ```
+
 ### Sin Docker:
 1. Crear las variables de entorno en el sistema:
    - EVENTOS_TELEGRAM_BOT_TOKEN
    - EVENTOS_TELEGRAM_BOT_USERNAME
    - EVENTOS_SERVER_SECRET_KEY
-2. Compilar el proyecto
+
+
+2. Eliminar webhook del bot de telegram
+```bash
+curl https://api.telegram.org/bot<TOKEN>/setwebhook
+```
+
+3. Compilar el proyecto
 ```bash
 mvn clean package
 ```
-3. Ejecutar servidor
+4. Ejecutar servidor
 ```bash
 java -jar Servidor/target/Servidor-1.0.jar
 ```
-4. Ejecutar bot de telegram
+5. Ejecutar bot de telegram
 ```bash
 java -jar TelegramBot/target/TelegramBot-1.0.jar
 ```

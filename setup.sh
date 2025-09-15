@@ -24,7 +24,7 @@ fi
 
 
 # 3. Esperar a que se abra docker
-read "Asegúrese que docker este iniciado "
+read -p "Asegúrese que docker este iniciado "
 
 
 # 4. Ejecutar docker-compose
