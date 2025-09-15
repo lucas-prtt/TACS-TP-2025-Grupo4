@@ -7,6 +7,7 @@ import org.menus.MenuState;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
+import java.util.Map;
 
 public class ParticipantMenu extends MenuState {
     @Override
@@ -34,15 +35,15 @@ public class ParticipantMenu extends MenuState {
         return """
                 Menu de participante:
                 
-                /getSuccesfulRegistrations
-                    - Ver registros a eventos como participante
-                /getWaitlistedRegistrations
-                    - Ver registros a eventos en la waitlist
-                /getCanceledRegistrations
-                    - Ver registros cancelados
-                /getAllRegistrations
-                    - Ver todos los registros
-                /start
+                Confirmadas
+                    - Ver inscripciones confirmadas
+                Waitlist
+                    - Ver inscripciones a eventos en waitlist
+                Canceladas
+                    - Ver inscripciones canceladas
+                Todas
+                    - Ver todas las inscripciones
+                Inicio
                     - Volver al menú principal
                 """;
     }
@@ -52,7 +53,7 @@ public class ParticipantMenu extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/getSuccesfulRegistrations", "/getWaitlistedRegistrations", "/getCanceledRegistrations"), List.of("/getAllRegistrations", "/start"));
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of("Confirmadas","/getSuccesfulRegistrations","Waitlist", "/getWaitlistedRegistrations","Canceladas", "/getCanceledRegistrations"), Map.of("Todas","/getAllRegistrations", "Inicio","/start"));
         return message;
     }
 }
