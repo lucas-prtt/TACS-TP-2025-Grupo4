@@ -12,7 +12,7 @@ import java.util.UUID;
 public class SelectCanceledRegistrationsMenu extends AbstractRegistrationBrowseMenu {
     @Override
     protected List<RegistrationDTO> fetchItems(int page, int limit) {
-        return user.getApiClient().getCanceledRegistrations(UUID.fromString(user.getServerAccountId()), page, limit);
+        return user.getApiClient().getCanceledRegistrations(page, limit);
     }
 
     public SelectCanceledRegistrationsMenu(TelegramUser user) {

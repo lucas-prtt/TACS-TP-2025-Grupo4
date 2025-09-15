@@ -17,7 +17,7 @@ public class ManageEventSelectionMenu extends AbstractBrowseMenu<EventDTO>{
 
     @Override
     protected List<EventDTO> fetchItems(int page, int limit) {
-        return user.getApiClient().getEventsOrganizedBy(UUID.fromString(user.getServerAccountId()), page, limit);
+        return user.getApiClient().getEventsOrganizedBy(page, limit);
     }
 
     @Override

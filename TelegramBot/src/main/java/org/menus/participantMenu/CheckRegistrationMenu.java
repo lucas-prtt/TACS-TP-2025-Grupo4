@@ -23,7 +23,7 @@ public class CheckRegistrationMenu extends MenuState {
                 return user.setMenuAndRespond(new ParticipantMenu(user));
             case "/cancel":
                 try {
-                    user.getApiClient().cancelRegistration(UUID.fromString(user.getServerAccountId()), registrationDTO.getRegistrationId());
+                    user.getApiClient().cancelRegistration(registrationDTO.getRegistrationId());
                     return user.setMenuAndRespond(new ParticipantMenu(user));
                 }catch (RestClientException e){
                     return e.getMessage() + "\n" + getQuestion();
