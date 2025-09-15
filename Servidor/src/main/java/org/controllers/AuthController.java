@@ -126,7 +126,7 @@ public class AuthController {
       OneTimeCode foundCode = oneTimeCodeService.findByUsername(codeDTO.getUsername());
       if (Objects.equals(foundCode.getCode(), codeDTO.getCode())){
         oneTimeCodeService.delete(foundCode);
-        return ResponseEntity.ok(foundCode);
+        return ResponseEntity.ok(foundCode.getCosaDelLogueo());
       }
       return ResponseEntity
               .status(HttpStatus.UNAUTHORIZED)
