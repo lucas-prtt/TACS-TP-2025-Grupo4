@@ -6,6 +6,7 @@ import org.menus.MenuState;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
+import java.util.Map;
 
 public class OrganizerMenu extends MenuState {
     @Override
@@ -28,11 +29,11 @@ public class OrganizerMenu extends MenuState {
         return """
                 Menu de organizador:
                 
-                /newEvent
-                    - Crear evento
-                /manageEvents
-                    - Modificar evento en base a su UUID
-                /start
+                Nuevo evento
+                    - Crear y publicar un nuevo evento
+                Gestionar eventos
+                    - Ver y modificar estado de sus eventos
+                Volver al inicio
                     - Volver al menú principal
                 
                 """;
@@ -43,7 +44,7 @@ public class OrganizerMenu extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/newEvent", "/manageEvents", "start"));
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of("Nuevo evento", "/newEvent", "Gestionar eventos", "/manageEvents", "Volver al inicio", "/start"));
         return message;
     }
 }
