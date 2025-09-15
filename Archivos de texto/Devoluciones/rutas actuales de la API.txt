@@ -1,29 +1,28 @@
-Hay que repensar la api. Terimino quedandonos un lio porque cada uno hizo lo suyo.
+REGISTRATIONCONTROLLER
+GET     /registrations
+GET     /registrations/{registrationId}
+CAMBIAMOS A PATCH /registrations/{registrationId} (Antes delete)
 
 
+AUTHCONTROLLER
+/auth/register
+/auth/login
 
-GET     /accounts/{accountId}
-GET     /accounts/usernames/{accountUsername}
-GET     /accounts/{accountId}/registrations
-GET     /accounts/{accountId}/organized-events
-POST    /accounts
-
+ADMINCONTROLLER
 GET     /admin/stats
-
+DEVCONTROLLER
 POST    /dev/load-sample
 POST    /dev/load-big-sample
 
+
+EVENTCONTROLLER
+GET     /events
+GET     /events/organized-events
 POST    /events
 GET     /events/{id}
-GET     /events
-POST    /events/registrations
+POST    /events/{id}/registrations
 PATCH   /events/{id}
+GET     /events/{eventId}/registrations ? type=CONFIRMED/WAITLIST
 
-GET     accounts/{accountId}/organized-events/{eventId}/participants
-GET     accounts/{accountId}/organized-events/{eventId}/waitlist
-POST    accounts/{accountId}/organized-events/{eventId}/close
-
-GET     accounts/{accountId}/registrations/{registrationId}
-DELETE  accounts/{accountId}/registrations/{registrationId}
 
 

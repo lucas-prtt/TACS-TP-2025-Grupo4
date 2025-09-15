@@ -25,13 +25,13 @@ public class RegistrationDTO {
 
     public static RegistrationDTO toRegistrationDTO(Registration reg) {
         return new RegistrationDTO(
-            reg.getId(),
-            reg.getUser().getId(),
-            reg.getEvent().getId(),
-            reg.getEvent().getTitle(),
-            reg.getEvent().getDescription(),
-            reg.getCurrentState(),
-            reg.getDateTime()
+                reg.getId(),
+                reg.getEvent().getId(),
+                reg.getUser().getId(),
+                reg.getEvent().getTitle(),
+                reg.getEvent().getDescription(),
+                reg.getCurrentState(),
+                reg.getDateTime()
         );
     }
 }

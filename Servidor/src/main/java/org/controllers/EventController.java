@@ -1,19 +1,27 @@
 package org.controllers;
 
+import static org.utils.SecurityUtils.checkAccountId;
 import static org.utils.SecurityUtils.getCurrentAccountId;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
+
+import jakarta.servlet.http.HttpServletResponse;
 import org.DTOs.events.EventCreateDTO;
 import org.DTOs.events.EventDTO;
 import org.DTOs.registrations.RegistrationCreateDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
 import org.exceptions.*;
+import org.model.enums.RegistrationState;
 import org.model.events.Registration;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
 import org.model.events.Event;
 import org.services.EventService;
+import org.services.OrganizerService;
+import org.services.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +36,12 @@ import java.util.List;
 public class EventController {
 
     private final EventService eventService;
-
-    public EventController(EventService eventService) {
+    private final OrganizerService organizerService;
+    private final RegistrationService registrationService;
+    public EventController(EventService eventService, OrganizerService organizerService, RegistrationService registrationService) {
         this.eventService = eventService;
+        this.organizerService = organizerService;
+        this.registrationService = registrationService;
     }
 
     /**
@@ -48,6 +59,14 @@ public class EventController {
         } catch (AccountNotFoundException e){
             return ResponseEntity.badRequest().body("Ningún usuario con el id existe");
         }
+    }
+
+    @GetMapping("/organized-events")
+    public ResponseEntity<List<EventDTO>> getOrganizedEvents() {
+        UUID id = getCurrentAccountId();
+        List<EventDTO> events = new ArrayList<>();
+        events = eventService.getEventsByOrganizer(id);
+        return ResponseEntity.ok(events);
     }
 
     /**
@@ -101,12 +120,12 @@ public class EventController {
      * El accountId se obtiene del token, no del body.
      */
 
-    @PostMapping("/registration")
-    public ResponseEntity<?> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTO) {
+    @PostMapping("{id}/registrations")
+    public ResponseEntity<?> registerUserToEvent(@PathVariable(name = "id") UUID eventId) {
         try {
             UUID accountId = getCurrentAccountId();
-            Registration registrationResult = eventService.registerParticipantToEvent(
-                registrationCreateDTO.getEventId(),
+            Registration registrationResult = registrationService.registerParticipantToEvent(
+                eventId,
                 accountId
             );
             return ResponseEntity.ok(RegistrationDTO.toRegistrationDTO(registrationResult));
@@ -129,5 +148,28 @@ public class EventController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/{eventId}/registrations")
+    public ResponseEntity<?> getParticipants(@PathVariable("eventId") UUID eventId,
+                                             @RequestParam(name = "page", required = false) Integer page,
+                                             @RequestParam(name = "limit", required = false) Integer limit,
+                                             @RequestParam(name = "registrationType", required = false) RegistrationState registrationState) {
 
+
+        try {
+            page = PageNormalizer.normalizeRegistrationsPageNumber(page);
+            limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
+            var registrations = organizerService.getRegistrationsFromEvent(eventId, registrationState, page, limit)
+                    .stream()
+                    .map(RegistrationDTO::toRegistrationDTO)
+                    .toList();
+
+            return ResponseEntity.ok(registrations);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
 }

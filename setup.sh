@@ -1,18 +1,20 @@
 #!/bin/bash
 
 # 1. Pedir variables de entorno
-echo "Deje uno o ambos campos vacios para usar el .env existente"
+echo "Deje uno o mas campos vacios para usar el .env existente"
 read -p "Ingresa el TOKEN del bot (EVENTOS_TELEGRAM_BOT_TOKEN): " BOT_TOKEN
 read -p "Ingresa el USERNAME del bot (EVENTOS_TELEGRAM_BOT_USERNAME): " BOT_USERNAME
+read -p "Ingresa la SECRET KEY del server (EVENTOS_SERVER_SECRET_KEY): " SECRET_KEY
 
 # 2. Crear archivo .env en la raíz del proyecto
 ENV_FILE=".env"
-if [ -n "$BOT_TOKEN" ] && [ -n "$BOT_USERNAME" ]; then
+if [ -n "$BOT_TOKEN" ] && [ -n "$BOT_USERNAME" ] && [ -n "$SECRET_KEY" ]; then
   echo "Creando archivo $ENV_FILE en la raíz del proyecto..."
 
 cat > "$ENV_FILE" <<EOF
 EVENTOS_TELEGRAM_BOT_TOKEN=$BOT_TOKEN
 EVENTOS_TELEGRAM_BOT_USERNAME=$BOT_USERNAME
+EVENTOS_SERVER_SECRET_KEY=$SECRET_KEY
 EOF
 
 echo "Archivo $ENV_FILE creado correctamente."

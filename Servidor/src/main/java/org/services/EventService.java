@@ -30,12 +30,10 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final AccountRepository accountRepository;
-    private final RegistrationRepository registrationRepository;
 
     public EventService(EventRepository eventRepository, AccountRepository accountRepository, RegistrationRepository registrationRepository) {
         this.eventRepository = eventRepository;
         this.accountRepository = accountRepository;
-        this.registrationRepository = registrationRepository;
     }
 
     public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException, BadRequestException {
@@ -135,35 +133,6 @@ public class EventService {
         );
     }
 
-    public Registration registerParticipantToEvent(UUID eventId, UUID accountId) throws EventNotFoundException, UserNotFoundException, OrganizerRegisterException, AlreadyRegisteredException, EventRegistrationsClosedException{
-        Event event = eventRepository.findById(eventId)
-            .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
-        Account account = accountRepository.findById(String.valueOf(accountId))
-            .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
-
-        // Verificar si el organizador intenta inscribirse a su propio evento
-        if (event.getOrganizer().getId().equals(accountId)) {
-            throw new OrganizerRegisterException("No se puede escribir a su propio evento");
-        }
-
-        //  Verificar si ya está inscripto
-        if (event.getParticipants().stream().anyMatch(reg -> reg.getUser().getId().equals(accountId))) {
-            throw new AlreadyParticipantException("Ya esta inscripto");
-        }
-
-        //  Verificar si ya está en waitlist
-        if (event.getWaitList().stream().anyMatch(acc -> acc.getUser().getId().equals(accountId))) {
-            throw new AlreadyInWaitlistException("Ya esta en la waitlist");
-        }
-
-        Registration registration = new Registration();
-        registration.setEvent(event);
-        registration.setUser(account);
-
-        event.registerParticipant(registration);
-        registrationRepository.save(registration);
-        return registration;
-    }
 
 
     public List<EventDTO> getEventsByOrganizer(UUID organizerId, Integer page, Integer limit) {

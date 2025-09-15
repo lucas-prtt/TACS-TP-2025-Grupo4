@@ -5,6 +5,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.DTOs.registrations.RegistrationDTO;
 import org.model.enums.RegistrationState;
 import org.model.accounts.Account;
 import lombok.Getter;
@@ -43,4 +45,6 @@ public class Registration {
         history.add(change);
         this.currentState = newState;
     }
+
+
 }

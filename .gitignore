@@ -37,7 +37,10 @@ build/
 ### Mac OS ###
 .DS_Store
 
-### API KEYS
+
+
 .env
-### Queda de antes
 TelegramBot/.env
+
+InterfazWeb/node_modules
+
