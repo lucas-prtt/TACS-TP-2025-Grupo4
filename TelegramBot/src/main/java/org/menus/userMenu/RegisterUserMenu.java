@@ -1,4 +1,4 @@
-package org.menus.userMenu;
+/*package org.menus.userMenu;
 
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.AccountDTO;
@@ -32,3 +32,4 @@ public class RegisterUserMenu extends MenuState {
         super(user);
     }
 }
+*/

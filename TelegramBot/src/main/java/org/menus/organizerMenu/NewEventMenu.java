@@ -113,7 +113,7 @@ public class NewEventMenu extends MenuState {
     @Override
     public String getQuestion() {
         if(fields.isEmpty()){
-            ApiClient.postEvent(eventDTO);
+            user.getApiClient().postEvent(eventDTO);
             return user.setMainMenuAndRespond();
         }
         return "Ingrese " + fields.getFirst()._2() + ":";

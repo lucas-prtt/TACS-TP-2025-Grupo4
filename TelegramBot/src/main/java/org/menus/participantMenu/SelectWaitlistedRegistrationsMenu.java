@@ -12,7 +12,7 @@ import java.util.UUID;
 public class SelectWaitlistedRegistrationsMenu extends AbstractRegistrationBrowseMenu {
     @Override
     protected List<RegistrationDTO> fetchItems(int page, int limit) {
-        return ApiClient.getWaitlistRegistrations(UUID.fromString(user.getServerAccountId()), page, limit);
+        return user.getApiClient().getWaitlistRegistrations(UUID.fromString(user.getServerAccountId()), page, limit);
     }
 
     public SelectWaitlistedRegistrationsMenu(TelegramUser user) {

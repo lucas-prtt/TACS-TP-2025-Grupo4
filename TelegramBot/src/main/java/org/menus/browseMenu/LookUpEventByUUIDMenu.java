@@ -14,7 +14,7 @@ public class LookUpEventByUUIDMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         try {
-            EventDTO eventDTO = ApiClient.getEvent(UUID.fromString(message));
+            EventDTO eventDTO = user.getApiClient().getEvent(UUID.fromString(message));
             return "Evento encontrado \n\n" + user.setMenuAndRespond(new CheckEventMenu(user, eventDTO));
         }catch (RestClientResponseException e){
             return e.getStatusCode() + "\n\n" + e.getMessage() + "\n\n" + getQuestion();

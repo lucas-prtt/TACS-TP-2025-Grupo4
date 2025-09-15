@@ -7,12 +7,14 @@ public class UserMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         switch (message){
+            /*
             case "/setUser":
                 return user.setMenuAndRespond(new SetUserMenu(user));
             case "/getUser":
                 return "Usuario actual: " + user.getServerAccountUsername() + "\nID: "+ user.getServerAccountId() + "\n\n" + user.setMainMenuAndRespond() ;
             case "/registerUser":
                 return user.setMenuAndRespond(new RegisterUserMenu(user));
+            */
             default:
                 return "Error - opcion invalida\n\n" + user.getMenu().getQuestion();
         }

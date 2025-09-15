@@ -16,7 +16,7 @@ public class BrowseEventsMenu extends AbstractBrowseMenu<EventDTO> {
 
     @Override
     protected List<EventDTO> fetchItems(int page, int limit) {
-        return ApiClient.getEventsByFilters(user.getAllFiltersAsQueryParams(), page, limit);
+        return user.getApiClient().getEventsByFilters(user.getAllFiltersAsQueryParams(), page, limit);
     }
 
     @Override
