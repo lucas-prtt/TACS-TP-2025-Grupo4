@@ -1,28 +1,33 @@
 REGISTRATIONCONTROLLER
-GET     /registrations
+GET     /registrations?[estado + pagina]
 GET     /registrations/{registrationId}
-CAMBIAMOS A PATCH /registrations/{registrationId} (Antes delete)
+PATCH   /registrations/{registrationId}
 
 
 AUTHCONTROLLER
-/auth/register
-/auth/login
+POST   /auth/register
+POST   /auth/login
+POST   /auth/oneTimeCode
+GET    /auth/oneTimeCode?username={nombreDeUsuario}&code={codigo}
+--> El GET de onetimecode no es idempotente.
+
 
 ADMINCONTROLLER
 GET     /admin/stats
+
 DEVCONTROLLER
 POST    /dev/load-sample
 POST    /dev/load-big-sample
-
+--> Actualmente fuera de servicio
 
 EVENTCONTROLLER
-GET     /events
+GET     /events?[filtros + pagina]
 GET     /events/organized-events
 POST    /events
 GET     /events/{id}
 POST    /events/{id}/registrations
 PATCH   /events/{id}
-GET     /events/{eventId}/registrations ? type=CONFIRMED/WAITLIST
+GET     /events/{eventId}/registrations ? {type=CONFIRMED/WAITLIST}
 
 
 
