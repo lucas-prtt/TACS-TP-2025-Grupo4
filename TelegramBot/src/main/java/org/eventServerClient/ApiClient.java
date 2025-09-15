@@ -53,6 +53,10 @@ public class ApiClient {
         String url = getBaseUri() + "/auth/oneTimeCode";
         return restTemplate.getForObject(url, Map.class);
     }
+    public Map<String, Object> loginUserAndPassword(AccountDTO accountDTO){
+        String url = getBaseUri() + "/auth/oneTimeCode";
+        return restTemplate.postForObject(url, accountDTO, Map.class);
+    }
     public List<EventDTO> getEventsByFilters(String filters, Integer page, Integer limit){
         String url = getBaseUri() + "/events" + filters + "&page=" + page + "&limit=" + limit;
         return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));

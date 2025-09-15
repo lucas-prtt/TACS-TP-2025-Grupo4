@@ -33,6 +33,7 @@ public class TelegramUser {
     public TelegramUser(Long chatId){
         this.chatId = chatId;
         menu = new MainMenu(this);
+        apiClient = ApiClient.withoutToken();
     }
 
     // Responde al menu en el que se encuentra y actualiza al siguiente menu si corresponde
