@@ -77,14 +77,12 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
                         .map(s -> "/" + ((page - 1) * limit + i.getAndIncrement())  + " " + s)
                         .toList()) +
                 "\n\nPágina " + page + "\n\n" +
-                "/prev    -   /next\n" +
-                "/page <n>     --> Ir a página n\n" +
-                "/back         --> Volver\n" +
-                "/start        --> Menu Principal";
+                "/page <n>     --> Ir a página n\n";
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/prev", "/next"), List.of("/back", "/start"));
+        AtomicInteger i = new AtomicInteger(1);
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/prev", "/next"), (items.stream().map(item -> "/" + i.toString())).toList(), List.of("/back", "/start"));
         return message;
     }
 }
