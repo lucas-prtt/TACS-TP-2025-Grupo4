@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom"
-import { DashBoard } from "./usuario/dashboard/DashBoard"
+import { DashBoard } from "./usuario/dashBoard/DashBoard"
 import { AppRouter } from "./router/AppRouter"
 import { AppTheme } from "./assets/theme/AppTheme"
 

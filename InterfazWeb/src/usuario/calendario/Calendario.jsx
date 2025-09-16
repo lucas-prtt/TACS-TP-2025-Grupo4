@@ -3,7 +3,7 @@ import { Box, Typography, IconButton, Divider } from "@mui/material";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { es } from "date-fns/locale";
+import es from "date-fns/locale/es";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from "date-fns";
 import { datosEventos } from "../eventos/datosEventos";
 import { NavbarApp } from "../../components/NavbarApp"; // Importa la Navbar

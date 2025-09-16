@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom"
-import { DashBoard } from "../usuario/dashboard/DashBoard"
+import { DashBoard } from "../usuario/dashBoard/DashBoard"
 import { Eventos } from "../usuario/eventos/Eventos"
 import { Analiticas } from "../usuario/analiticas/Analiticas"
 import { Calendario } from "../usuario/calendario/Calendario"
