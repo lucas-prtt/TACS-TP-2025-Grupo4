@@ -15,15 +15,15 @@ Location: Alcanza location siendo un string?
     }
 ]
 
-IGNORADO
+RESUELTO?
 
 --> Que la location sea un string provee mas flexibilidad a la hora de que el usuario
 introduzca la ubicacion pero tiene la desventaja que puede no ser facilmente ubicable
 si es un nombre generico. Seria util ponerle Latitud/Longitud u otro sistema de ubicación
 complementario que de la ubicación exacta.
 
-Decidimos que permanezca como STRING, pero que sea una url que indique la ubicacion exacta
-
+Decidimos que permanezca como STRING, pero que sea una url u otra informacion que indique la ubicacion exacta
+Aun no implementamos la logica de validacion.
 
 
 2) El organizerId iría en el body del evento?
