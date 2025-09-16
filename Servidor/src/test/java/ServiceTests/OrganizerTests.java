@@ -65,8 +65,14 @@ public class OrganizerTests {
     Account user1 = new Account("user1@test.com", "pwd1fsadfasd");
     Account user2 = new Account("user2@test.com", "pwd2sdfasfd");
 
-    mockEvent.getParticipants().add(new Registration(user1));
-    mockEvent.getParticipants().add(new Registration(user2));
+    Registration r1 = new Registration(user1);
+    r1.setState(RegistrationState.CONFIRMED);
+
+    Registration r2 = new Registration(user2);
+    r2.setState(RegistrationState.CONFIRMED);
+
+    mockEvent.getParticipants().add(r1);
+    mockEvent.getParticipants().add(r2);
 
     // Simular waitlist
     Account waitUser = new Account("wait@test.com", "pwd-w");
@@ -83,6 +89,7 @@ public class OrganizerTests {
   @Test
   void testGetRegistrationsFromEvent() {
     // Llamar con accountId = organizer.getId() y eventId = mockEvent.getId()
+    System.out.println(eventService.getAllEvents());
     List<Registration> result = organizerService.getRegistrationsFromEvent(
             mockEvent.getId(), RegistrationState.CONFIRMED, null, null
     );

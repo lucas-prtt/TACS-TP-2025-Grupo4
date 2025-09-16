@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.repositories.RegistrationRepository;
 import org.services.EventService;
+import org.services.RegistrationService;
 import org.services.StatsService;
 
 import java.math.BigDecimal;
@@ -25,14 +26,15 @@ public class EventServiceTest {
     private EventRepository eventRepository;
     private AccountRepository accountRepository;
     private RegistrationRepository registrationRepository;
-
+    private RegistrationService registrationService;
   @Before
     public void setUp() {
         eventRepository = new EventRepository();
         accountRepository = new AccountRepository();
         registrationRepository = new RegistrationRepository();
         eventService = new EventService(eventRepository, accountRepository, registrationRepository);
-    }
+        registrationService = new RegistrationService(registrationRepository, eventRepository, accountRepository);
+  }
 
     @Test
     public void testRegisterParticipantToEvent_ConfirmedAndWaitlist() {
@@ -54,14 +56,14 @@ public class EventServiceTest {
         accountRepository.save(user2);
 
         // Primer usuario debe quedar confirmado
-        Registration result1 = eventService.registerParticipantToEvent(event.getId(), user1.getId());
+        Registration result1 = registrationService.registerParticipantToEvent(event.getId(), user1.getId());
         assertEquals(RegistrationState.CONFIRMED, result1.getCurrentState());
         assertEquals(1, event.getParticipants().size());
         assertEquals(0, event.getWaitList().size());
         assertEquals(1, user1.getRegistrations().size());
 
         // Segundo usuario debe quedar en waitlist
-        Registration result2 = eventService.registerParticipantToEvent(event.getId(), user2.getId());
+        Registration result2 = registrationService.registerParticipantToEvent(event.getId(), user2.getId());
         assertEquals(RegistrationState.WAITLIST, result2.getCurrentState());
         assertEquals(1, event.getParticipants().size());
         assertEquals(1, event.getWaitList().size());
