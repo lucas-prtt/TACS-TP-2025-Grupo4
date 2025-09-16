@@ -1,9 +1,8 @@
-package org.DTOs;
+package org.DTOs.events;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.model.enums.EventState;
 import org.model.events.Category;
 import org.model.events.Event;
@@ -15,15 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Data
 @NoArgsConstructor
-@Setter
-@Getter
 @AllArgsConstructor
 public class EventDTO {
     UUID id;
     String title;
     String description;
-    UUID organizerId;
+    String usernameOrganizer;
     LocalDateTime startDateTime;
     Integer durationMinutes;
     String location;
@@ -42,7 +40,7 @@ public class EventDTO {
                 event.getId(),
                 event.getTitle(),
                 event.getDescription(),
-                event.getOrganizer().getId(),
+                event.getOrganizer().getUsername(),
                 event.getStartDateTime(),
                 event.getDurationMinutes(),
                 event.getLocation(),

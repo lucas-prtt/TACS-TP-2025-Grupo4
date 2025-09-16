@@ -1,112 +1,140 @@
 package ServiceTests;
+
+import org.exceptions.EventRegistrationsClosedException;
 import org.model.enums.EventState;
+import org.model.enums.RegistrationState;
 import org.model.events.Event;
 import org.model.events.Registration;
 import org.model.accounts.Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.model.accounts.Account;
+import org.model.enums.EventState;
+import org.model.events.Event;
+import org.model.events.Registration;
 import org.services.EventService;
 import org.services.OrganizerService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Queue;
+import java.util.ArrayList;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+
 public class OrganizerTests {
-    private EventService eventService;
-    private OrganizerService organizerService;
-    private Event mockEvent;
 
-    @BeforeEach
-    void setUp() {
-        eventService = Mockito.mock(EventService.class);
-        organizerService = new OrganizerService(eventService);
 
-        Account organizer = new Account();
+  private EventService eventService;
+  private OrganizerService organizerService;
+  private Event mockEvent;
+  private Account organizer;
 
-        // Crear un evento de prueba
-        mockEvent = new Event(
-                "Test Event",
-                "Description",
-                LocalDateTime.now(),
-                60,
-                "Online",
-                10,
-                null,
-                BigDecimal.TEN,
-                null,
-                new ArrayList<>(),
-                organizer
-        );
+  @BeforeEach
+  void setUp() {
+    // Mock del EventService
+    eventService = Mockito.mock(EventService.class);
+    organizerService = new OrganizerService(eventService);
 
-        // Simular participantes
-        Account user1 = new Account("user1@test.com");
-        Account user2 = new Account("user2@test.com");
+    // Crear organizer (usa el constructor (username, password) según tu modelo)
+    organizer = new Account("organizer@test.com", "pwd-org");
 
-        mockEvent.getParticipants().add(new Registration(user1));
-        mockEvent.getParticipants().add(new Registration(user2));
+    // Crear evento real (constructor que setea id internamente)
+    mockEvent = new Event(
+        "Test Event",
+        "Description",
+        LocalDateTime.now(),
+        60,
+        "Online",
+        10,
+        null,
+        BigDecimal.TEN,
+        null,
+        new ArrayList<>(),
+        organizer
+    );
 
-        // Simular waitlist
-        Account waitUser = new Account("wait@test.com");
-        Registration newRegister=new Registration();
-        newRegister.setEvent(mockEvent);
-        newRegister.setUser(waitUser);
-        mockEvent.getWaitList().add(newRegister);
-    }
+    // asegurarnos que el id esté seteado
+    assertNotNull(mockEvent.getId(), "El constructor del Event debería inicializar un UUID en id");
 
-    @Test
-    void testGetRegistrationsFromEvent() {
-        UUID eventId = mockEvent.getId();
-        when(eventService.getEvent(eventId)).thenReturn(mockEvent);
+    // Simular participantes
+    Account user1 = new Account("user1@test.com", "pwd1fsadfasd");
+    Account user2 = new Account("user2@test.com", "pwd2sdfasfd");
 
-        List<Registration> result = organizerService.getRegistrationsFromEvent(eventId);
+    Registration r1 = new Registration(user1);
+    r1.setState(RegistrationState.CONFIRMED);
 
-        assertEquals(2, result.size());
-        assertEquals("user1@test.com", result.get(0).getUser().getUsername());
-        assertEquals("user2@test.com", result.get(1).getUser().getUsername());
-    }
+    Registration r2 = new Registration(user2);
+    r2.setState(RegistrationState.CONFIRMED);
 
-    @Test
-    void testGetWaitlistFromEvent() {
-        UUID eventId = mockEvent.getId();
-        when(eventService.getEvent(eventId)).thenReturn(mockEvent);
+    mockEvent.getParticipants().add(r1);
+    mockEvent.getParticipants().add(r2);
 
-        Queue<Registration> result = organizerService.getWaitlistFromEvent(eventId);
+    // Simular waitlist
+    Account waitUser = new Account("wait@test.com", "pwd-w");
+    Registration newRegister = new Registration();
+    newRegister.setEvent(mockEvent);
+    newRegister.setUser(waitUser);
+    mockEvent.getWaitList().add(newRegister);
 
-        assertEquals(1, result.size());
-        assert result.peek() != null;
-        assertEquals("wait@test.com", result. peek().getUser().getUsername());
-    }
+    // Stub: cuando EventService pida el evento por su id, devolver mockEvent
+    // Atención: OrganizerService llama eventService.getEvent(eventId) (solo con eventId)
+    when(eventService.getEvent(mockEvent.getId())).thenReturn(mockEvent);
+  }
 
-    @Test
-    void testCloseRegistrations() {
-        UUID eventId = mockEvent.getId();
-        when(eventService.getEvent(eventId)).thenReturn(mockEvent);
+  @Test
+  void testGetRegistrationsFromEvent() {
+    // Llamar con accountId = organizer.getId() y eventId = mockEvent.getId()
+    System.out.println(eventService.getAllEvents());
+    List<Registration> result = organizerService.getRegistrationsFromEvent(
+            mockEvent.getId(), RegistrationState.CONFIRMED, null, null
+    );
 
-        organizerService.closeRegistrations(eventId);
+    assertEquals(2, result.size());
+    assertEquals("user1@test.com", result.get(0).getUser().getUsername());
+    assertEquals("user2@test.com", result.get(1).getUser().getUsername());
+  }
 
-        assertEquals(EventState.EVENT_CLOSED , mockEvent.getEventState());
-    }
-    @Test
-    void testRegisterParticipantAfterClosingRegistrations() {
-        UUID eventId = mockEvent.getId();
-        when(eventService.getEvent(eventId)).thenReturn(mockEvent);
+  @Test
+  void testGetWaitlistFromEvent() {
+    Queue<Registration> result = organizerService.getWaitlistFromEvent(
+        organizer.getId(), mockEvent.getId()
+    );
 
-        // Cerrar inscripciones
-        organizerService.closeRegistrations(eventId);
+    assertEquals(1, result.size());
+    assertNotNull(result.peek());
+    assertEquals("wait@test.com", result.peek().getUser().getUsername());
+  }
 
-        // Intentar registrar un nuevo participante después de cerrar las inscripciones
-        Account newUser = new Account("newuser@test.com");
-        Registration newRegistration = new Registration(newUser);
+  @Test
+  void testCloseRegistrations() {
+    organizerService.closeRegistrations(organizer.getId(), mockEvent.getId());
+
+    assertEquals(EventState.EVENT_CLOSED, mockEvent.getEventState());
+  }
+
+  @Test
+  void testRegisterParticipantAfterClosingRegistrations() {
+    // Cerrar inscripciones usando el servicio (esto cambia el estado del evento)
+    organizerService.closeRegistrations(organizer.getId(), mockEvent.getId());
+
+    // Intentar registrar un nuevo participante después de cerrar las inscripciones
+    Account newUser = new Account("newuser@test.com", "pwd-new");
+    Registration newRegistration = new Registration(newUser);
 
         // Intentar registrar el nuevo participante
-        String result = mockEvent.registerParticipant(newRegistration);
+        assertThrows(EventRegistrationsClosedException.class, () -> {
+            mockEvent.registerParticipant(newRegistration);
+        });
+
+
 
         // Verificar que el resultado es "CERRADO" y que no se agregó al participante
-        assertEquals(EventState.EVENT_CLOSED.toString(), result);
+        assertEquals(EventState.EVENT_CLOSED, mockEvent.getEventState());
         assertFalse(mockEvent.getParticipants().contains(newRegistration));  // Verificar que no fue agregado
     }
 }

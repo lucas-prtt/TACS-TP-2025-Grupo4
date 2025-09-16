@@ -1,13 +1,17 @@
 package ServiceTests;
 
+import org.DTOs.registrations.RegistrationDTO;
+import org.model.enums.RegistrationState;
 import org.model.events.Event;
 import org.model.accounts.Account;
+import org.model.events.Registration;
 import org.repositories.EventRepository;
 import org.repositories.AccountRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.repositories.RegistrationRepository;
 import org.services.EventService;
+import org.services.RegistrationService;
 import org.services.StatsService;
 
 import java.math.BigDecimal;
@@ -15,22 +19,22 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EventServiceTest {
     private EventService eventService;
     private EventRepository eventRepository;
     private AccountRepository accountRepository;
-    private StatsService statsService;
     private RegistrationRepository registrationRepository;
-
+    private RegistrationService registrationService;
   @Before
     public void setUp() {
         eventRepository = new EventRepository();
         accountRepository = new AccountRepository();
         registrationRepository = new RegistrationRepository();
-        statsService = new StatsService(eventRepository,registrationRepository);
-        eventService = new EventService(eventRepository, accountRepository, statsService, registrationRepository);
-    }
+        eventService = new EventService(eventRepository, accountRepository, registrationRepository);
+        registrationService = new RegistrationService(registrationRepository, eventRepository, accountRepository);
+  }
 
     @Test
     public void testRegisterParticipantToEvent_ConfirmedAndWaitlist() {
@@ -52,15 +56,15 @@ public class EventServiceTest {
         accountRepository.save(user2);
 
         // Primer usuario debe quedar confirmado
-        String result1 = eventService.registerParticipantToEvent(event.getId(), user1.getId());
-        assertEquals("CONFIRMED", result1);
+        Registration result1 = registrationService.registerParticipantToEvent(event.getId(), user1.getId());
+        assertEquals(RegistrationState.CONFIRMED, result1.getCurrentState());
         assertEquals(1, event.getParticipants().size());
         assertEquals(0, event.getWaitList().size());
         assertEquals(1, user1.getRegistrations().size());
 
         // Segundo usuario debe quedar en waitlist
-        String result2 = eventService.registerParticipantToEvent(event.getId(), user2.getId());
-        assertEquals("WAITLIST", result2);
+        Registration result2 = registrationService.registerParticipantToEvent(event.getId(), user2.getId());
+        assertEquals(RegistrationState.WAITLIST, result2.getCurrentState());
         assertEquals(1, event.getParticipants().size());
         assertEquals(1, event.getWaitList().size());
         assertEquals(1, user2.getRegistrations().size());

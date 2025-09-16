@@ -1,0 +1,156 @@
+
+
+1) Location: Alcanza location siendo un string?
+Location: Alcanza location siendo un string?
+[
+    {
+    "id": "9a15c50f-c056-4023-90f1-2a94e863e977
+    "title": "Concierto de Jazz",
+    "description": "Noche de jazz en vivo",
+    "location": "Teatro Colón",
+    "startDateTime": "2025-09-10T20:00:00",
+    "durationMinutes": 120,
+    "maxParticipants": 200,
+    "price": 1500
+    }
+]
+
+RESUELTO?
+
+--> Que la location sea un string provee mas flexibilidad a la hora de que el usuario
+introduzca la ubicacion pero tiene la desventaja que puede no ser facilmente ubicable
+si es un nombre generico. Seria util ponerle Latitud/Longitud u otro sistema de ubicación
+complementario que de la ubicación exacta.
+
+Decidimos que permanezca como STRING, pero que sea una url u otra informacion que indique la ubicacion exacta
+Aun no implementamos la logica de validacion.
+
+
+2) El organizerId iría en el body del evento?
+POST /events
+Content-Type: application/json
+{
+"title": "Concierto de Jazz",
+"description": "Noche de jazz en vivo",
+"location": "Teatro Colón",
+"startDateTime": "2025-09-10T20:00:00",
+"durationMinutes": 120,
+"maxParticipants": 200,
+"price": 1500,
+"organizerId": "fcf41137-d0ef-434d-a170-8bb815b67809"
+}
+
+RESUELTO
+
+--> Ahora el organizerId se extrae del token de la capa de seguridad. No se postea con organizerID
+
+
+3) Pensaron en ponerle password?
+
+RESUELTO
+
+--> Le pusimos password
+
+4) Qué pasa si este GET me devuelve un millón de eventos?
+   GET /events?titleContains=Jazz&minPrice=1000&maxPrice=2000
+
+SOLUCIONADO
+
+--> Le pusimos paginacion con ?page=xyz&limit=xyz, con un limite impuesto al tamaño de la pagina y valores por defecto si no son introducidos.
+Los maximos, minimos y valores por defecto son configurables desde un .config
+
+
+5) Endpoints a revisar - REST: Que otra forma se les ocurre de diseñarlo? Cumplen con las convenciones REST?
+POST /accounts/{accountId}/organized-events/{eventId}/close
+GET /accounts/{accountId}/organized-events/{eventId}/participants
+GET /accounts/{accountId}/organized-events/{eventId}/waitlist
+POST /events/registration
+
+RESUELTO
+
+POST /accounts/{accountId}/organized-events/{eventId}/close
+--> Quedo obsoleto con PATCH events/{eventId}
+
+GET /accounts/{accountId}/organized-events/{eventId}/participants
+GET /accounts/{accountId}/organized-events/{eventId}/waitlist
+--> Remplazamos por /organized-events/{eventId}/registrations?registrationType={CONFIRMED/WAITLIST/CANCELED}
+                    El accountId se obtiene de la capa de seguridad
+POST /events/registration
+--> Modificamos para que sea post a events/{id}/registrations
+
+
+6) Me interesa saber qué user organiza el evento? Se plantearon esto cuando lo discutieron?
+
+RESUELTO
+
+Puede ser mejor ocultarlo para mantener la privacidad del organizador, o mostrarlo para que haya mas transparencia
+Tras discutirlo, llegamos a la conclusion de que es mejor mostrar la identidad del organizador para prevenir estafas y suplantaciones de identidad
+Pese a eso, utilizamos el username en lugar del id, ya que es mas facilmente reconocible
+
+7) Según cómo plantearon la solución ustedes. Si se filtra el accountId del organizador, estaría en peligro la seguridad de mi API?
+
+RESUELTO
+
+--> Tras implementar el sistema de login con tokens, se debera enviar el token cada vez que se realice una peticion, por lo que no se pondra en peligro nuestra API si se filtra el accountId.
+
+8) Errores y validaciones
+   Catchear un NullPointerException para validar mi request huele feo :( . Hay una mejor práctica para hacer esto.
+   Manejar casos de uso devolviendo strings y después mapeándolos tampoco es buena práctica:
+   "ORGANIZER_CANNOT_REGISTER";
+   "ALREADY_REGISTERED";
+   "ALREADY_IN_WAITLIST";
+
+RESUELTO
+
+--> Para la NullPointerException, hicimos que se atrape la NullPointerException en capa service (o repository) y
+    que lanze una BadRequestException
+--> Para devolucion de strings, pasamos a dar un objeto de respuesta para los registros:
+    --> Registro exitoso: Devolver el registro
+    --> Registro fallido: Tiramos excepciones personalizadas para cada caso de error y las atrapamos en el controller, tras lo cual tiramos un codigo de error HTTP
+
+9) Qué pasa si alguien que está en una lista de espera se quiere bajar del evento?
+
+RESUELTO
+
+--> Se chequa el estado del registro y en funcion de eso se promueve de la waitlist o solo se cancela
+
+10) (En cancelRegistration) Si un user está intentando acceder a algo que no debería, retorno booleano? mmm eso esta raro.
+
+RESUELTO
+
+--> En   @DeleteMapping("/{registrationId}")
+    registrationService.cancelRegistration(registrationId, accountId);
+    Devuelve el registro cancelado y tire exception si falla, la cual se atrapa en el controller
+
+11) Concurrencia
+    Qué pasa si empiezo a tener concurrencia en el proceso de (cancelación + promoción de waitlist)? La operación es atómica como está hecho ahora?
+
+RESUELTO
+
+--> Utilizamos un ConcurrentHashmap para gestionar distintos mutex segun el evento, el cual evita que haya problemas al trabajar con las listas
+--> Lo usamos tambien para postear los registros
+
+
+///////////////////////////////////////////////
+
+Consulta seguridad por telegram
+
+Cuando uno arranca una conversación con un bot desde una cuenta de telegram, te asigna un
+userID.  Dependiendo de cómo esté configurada la cuenta de telegram, podrías acceder
+al nombre y alias si es que lo tiene generado, para customizar un poco la interacción con
+ese usuario guest.
+
+Ahora, si tienen pensado tener una UI front, con un sign up user y pass, podrían tener
+una opción para generar un one time password (OTP) para loggearte en el bot. Un session
+ticket para poder loggearte y poder identificar el usuario detrás. Tengan en cuenta
+que esos OTP tienen que caducar en pocos minutos, y poder usarse una única vez.
+
+Con eso evitarían tener que introducir la contraseña en mensajes planos. Si están encarando
+primero el bot, pueden arrancar con la contraseña en texto, y luego ver de resolver esto una
+vez que tengan el front donde estar loggeado.
+
+RESUELTO
+
+--> Implementamos temporalmente ambas opciones, mediante un "One time code" y usuario y contraseña.
+    En el futuro probablemente removeremos la opcion de usuario y contraseña. 
+

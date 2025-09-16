@@ -29,4 +29,10 @@ public class AccountRepository {
     public void save(Account account) {
         accounts.put(account.getId().toString(), account);
     }
+
+    public Optional<Account> getByUsername(String username) {
+        return accounts.values().stream()
+                .filter(account -> account.getUsername().equalsIgnoreCase(username)).findFirst();
+    }
+
 }

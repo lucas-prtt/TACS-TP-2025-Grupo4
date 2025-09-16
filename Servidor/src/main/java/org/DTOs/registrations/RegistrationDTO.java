@@ -2,6 +2,7 @@ package org.DTOs.registrations;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,8 +11,7 @@ import org.model.enums.RegistrationState;
 
 import java.util.UUID;
 
-@Setter
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegistrationDTO {
@@ -25,13 +25,13 @@ public class RegistrationDTO {
 
     public static RegistrationDTO toRegistrationDTO(Registration reg) {
         return new RegistrationDTO(
-            reg.getId(),
-            reg.getUser().getId(),
-            reg.getEvent().getId(),
-            reg.getEvent().getTitle(),
-            reg.getEvent().getDescription(),
-            reg.getCurrentState(),
-            reg.getDateTime()
+                reg.getId(),
+                reg.getEvent().getId(),
+                reg.getUser().getId(),
+                reg.getEvent().getTitle(),
+                reg.getEvent().getDescription(),
+                reg.getCurrentState(),
+                reg.getDateTime()
         );
     }
 }

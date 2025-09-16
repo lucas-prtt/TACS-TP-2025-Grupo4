@@ -36,3 +36,11 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+
+
+.env
+TelegramBot/.env
+
+InterfazWeb/node_modules
+

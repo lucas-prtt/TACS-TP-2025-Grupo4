@@ -1,0 +1,16 @@
+Para que con seguridad se puedan hacer requests, hace falta aclarar en el header el token del usuario
+Se usa:
+
+
+RestTemplate restTemplate = new RestTemplate();
+
+HttpHeaders headers = new HttpHeaders();
+headers.setBearerAuth(token);
+
+o
+
+headers.set("Authorization", "Bearer " + token);
+
+HttpEntity<String> entity = new HttpEntity<>(headers);
+
+

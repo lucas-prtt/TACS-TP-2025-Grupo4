@@ -1,4 +1,5 @@
 package RepositoryTests;
+import java.util.Objects;
 import org.model.events.Event;
 import org.model.accounts.Account;
 import org.junit.Test;
@@ -45,19 +46,19 @@ public class EventRepositoryTest {
         List <Event> events = new ArrayList<>(createEvents());
         events.forEach(ev -> eventRepository.save(ev));
         assert eventRepository.getAll().size() == 11;
-        assert eventRepository.getAll().stream().findFirst().get().getTitle() == "Fiesta de cumpleaños";
+        assert Objects.equals(eventRepository.getAll().stream().findFirst().get().getTitle(), "Fiesta de cumpleaños");
     }
     @Test
     public void findByTitle(){
         List <Event> events = new ArrayList<>(createEvents());
         events.forEach(ev -> eventRepository.save(ev));
-        assert eventRepository.findByTitle("Taller de cerámica").getFirst().getDescription() == "Clase práctica para principiantes";
+        assert Objects.equals(eventRepository.findByTitle("Taller de cerámica").get(0).getDescription(), "Clase práctica para principiantes");
     }
     @Test
     public void findByTitleContains(){
         List <Event> events = new ArrayList<>(createEvents());
         events.forEach(ev -> eventRepository.save(ev));
-        assert eventRepository.findByTitleContains("IA").getFirst().getLocation() == "UTN - FRBA - Sede Medrano";
+        assert Objects.equals(eventRepository.findByTitleContains("IA").get(0).getLocation(), "UTN - FRBA - Sede Medrano");
     }
     @Test
     public void findByTitleContainsMultiple(){

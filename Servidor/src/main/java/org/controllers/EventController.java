@@ -1,51 +1,79 @@
 package org.controllers;
 
-import org.DTOs.EventDTO;
+import static org.utils.SecurityUtils.checkAccountId;
+import static org.utils.SecurityUtils.getCurrentAccountId;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.UUID;
+
+import jakarta.servlet.http.HttpServletResponse;
+import org.DTOs.events.EventCreateDTO;
+import org.DTOs.events.EventDTO;
 import org.DTOs.registrations.RegistrationCreateDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
+import org.exceptions.*;
+import org.model.enums.RegistrationState;
+import org.model.events.Registration;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
+import org.model.events.Event;
 import org.services.EventService;
+import org.services.OrganizerService;
+import org.services.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.utils.PageNormalizer;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RestController()
+@RestController
 @RequestMapping("/events")
 public class EventController {
 
-    EventService eventService;
-
-    public EventController(EventService eventService) {
+    private final EventService eventService;
+    private final OrganizerService organizerService;
+    private final RegistrationService registrationService;
+    public EventController(EventService eventService, OrganizerService organizerService, RegistrationService registrationService) {
         this.eventService = eventService;
+        this.organizerService = organizerService;
+        this.registrationService = registrationService;
     }
 
-    // Postea un evento
-    // El evento debe tener todos sus campos obligatorios y no tener ID. De lo contrario, devuelve badRequest
-    // Si la request puede ser procesada, devuelve el EventDTO con el campo ID completo con el que se autogeneró el evento
+    /**
+     * Crea un nuevo evento.
+     * El organizerId se obtiene del usuario autenticado, no del body.
+     */
     @PostMapping
-    public ResponseEntity<?> postEvent(@RequestBody EventDTO eventDTO) {
-        if (eventDTO.getId() != null)
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> postEvent(@RequestBody EventCreateDTO eventCreateDTO) {
         try {
-            return ResponseEntity.ok(EventDTO.fromEvent(eventService.createEvent(eventDTO)));
-        } catch (NullPointerException e) {
+            UUID id = getCurrentAccountId();
+            Event event = eventService.createEvent(eventCreateDTO, id);
+            return ResponseEntity.ok(EventDTO.fromEvent(event));
+        } catch (BadRequestException e) {
             return ResponseEntity.badRequest().body("Al menos uno de los campos obligatorios del evento es nulo. Se requiere enviar: \n-String title\n-String description\n-LocalDateTime startDateTime\n-Integer durationMinutes\n-String location\n-Integer maxParticipants\n-BigDecimal price\n-UUID organizerId");
         } catch (AccountNotFoundException e){
             return ResponseEntity.badRequest().body("Ningún usuario con el id existe");
         }
     }
 
+    @GetMapping("/organized-events")
+    public ResponseEntity<List<EventDTO>> getOrganizedEvents() {
+        UUID id = getCurrentAccountId();
+        List<EventDTO> events = new ArrayList<>();
+        events = eventService.getEventsByOrganizer(id);
+        return ResponseEntity.ok(events);
+    }
 
-    // Obtiene un evento a partir de un uuid en el path
-    // Si no se encuentra devuelve 404 NOTFOUND. De lo contrario devuelve el errorDTO
+    /**
+     * Obtiene un evento por su id.
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<EventDTO> getEventById(@PathVariable(name = "id") String id) {
+    public ResponseEntity<EventDTO> getEventById(@PathVariable(name = "id") UUID id) {
         try {
             EventDTO eventDTO = eventService.getEventDTOById(id);
             return ResponseEntity.ok(eventDTO);
@@ -72,33 +100,76 @@ public class EventController {
             @RequestParam(name = "category", required = false) String category,
             @RequestParam(name = "tags", required = false) List<String> tags,
             @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
-            @RequestParam(name = "minPrice", required = false) BigDecimal minPrice){
+            @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "limit", required = false) Integer limit){
+        page = PageNormalizer.normalizeEventsPageNumber(page);
+        limit = PageNormalizer.normalizeEventsPageLimit(limit);
         try {
-            List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(title, titleContains, maxDate, minDate, category, tags, maxPrice, minPrice);
+            List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(
+                title, titleContains, maxDate, minDate, category, tags, maxPrice, minPrice, page, limit
+            );
             return ResponseEntity.ok(eventsDTO);
         } catch (BadRequestException e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
-    @PostMapping("/registration")
-    public ResponseEntity<String> registerUserToEvent(@RequestBody RegistrationCreateDTO registrationCreateDTO) {
+    /**
+     * Registra al usuario autenticado en un evento.
+     * El accountId se obtiene del token, no del body.
+     */
+
+    @PostMapping("{id}/registrations")
+    public ResponseEntity<?> registerUserToEvent(@PathVariable(name = "id") UUID eventId) {
         try {
-            String result = eventService.registerParticipantToEvent(
-                registrationCreateDTO.getEventId(),
-                registrationCreateDTO.getAccountId()
+            UUID accountId = getCurrentAccountId();
+            Registration registrationResult = registrationService.registerParticipantToEvent(
+                eventId,
+                accountId
             );
-            // Manejo más claro de los distintos resultados
-          return switch (result) {
-            case "ORGANIZER_CANNOT_REGISTER" -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
-            case "ALREADY_REGISTERED", "ALREADY_IN_WAITLIST" -> ResponseEntity.status(HttpStatus.CONFLICT).body(result);
-            default -> ResponseEntity.ok(result);
-          };
+            return ResponseEntity.ok(RegistrationDTO.toRegistrationDTO(registrationResult));
         } catch (EventNotFoundException e) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
+        } catch (OrganizerRegisterException e){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        } catch (AlreadyRegisteredException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (EventRegistrationsClosedException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PatchMapping("/{id}")
+    public ResponseEntity<EventDTO> patchEvent(@PathVariable(name = "id") String id, @RequestBody EventDTO event) {
+        try {
+            EventDTO eventDTO = eventService.patchEvent(id, event);
+            return ResponseEntity.ok(eventDTO);
+        } catch (EventNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/{eventId}/registrations")
+    public ResponseEntity<?> getParticipants(@PathVariable("eventId") UUID eventId,
+                                             @RequestParam(name = "page", required = false) Integer page,
+                                             @RequestParam(name = "limit", required = false) Integer limit,
+                                             @RequestParam(name = "registrationType", required = false) RegistrationState registrationState) {
 
+
+        try {
+            page = PageNormalizer.normalizeRegistrationsPageNumber(page);
+            limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
+            var registrations = organizerService.getRegistrationsFromEvent(eventId, registrationState, page, limit)
+                    .stream()
+                    .map(RegistrationDTO::toRegistrationDTO)
+                    .toList();
+
+            return ResponseEntity.ok(registrations);
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
 }
