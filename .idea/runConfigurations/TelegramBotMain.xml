@@ -5,6 +5,7 @@
     </option>
     <option name="MAIN_CLASS_NAME" value="org.TelegramBotMain" />
     <module name="TelegramBot" />
+    <option name="VM_PARAMETERS" value="-Dserver.ip=localhost" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.*" />

@@ -6,6 +6,7 @@
     <option name="MAIN_CLASS_NAME" value="org.servidor.Servidor" />
     <module name="Servidor" />
     <option name="PROGRAM_PARAMETERS" value="-parameters" />
+    <option name="VM_PARAMETERS" value="-Dspring.data.mongodb.host=localhost" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.servidor.*" />
