@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.model.enums.RegistrationState;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "registrationStateChanges")
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class RegistrationStateChange {
     @Id
     private UUID id;
+    @DBRef(lazy = true)
     private Registration registration;
     private RegistrationState fromState;
     private RegistrationState toState;

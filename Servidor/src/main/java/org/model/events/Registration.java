@@ -13,6 +13,7 @@ import org.model.accounts.Account;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "registrations")
@@ -22,9 +23,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Registration {
     @Id
     private UUID id;
+    @DBRef(lazy = true)
     private Event event;
+    @DBRef(lazy = true)
     private Account user;
     private RegistrationState currentState;
+    @DBRef(lazy = true)
     private List<RegistrationStateChange> history = new ArrayList<>();
     private LocalDateTime dateTime;
 

@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "events")
@@ -27,6 +28,7 @@ public class Event {
     UUID id;
     String title;
     String description;
+    @DBRef(lazy = true)
     Account organizer;
     LocalDateTime startDateTime;
     Integer durationMinutes;
@@ -36,7 +38,9 @@ public class Event {
     BigDecimal price;
     Category category;
     List<Tag> tags;
+    @DBRef(lazy = true)
     List<Registration> participants;
+    @DBRef(lazy = true)
     List<Registration> waitList;
     EventState eventState;
     // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price, Account organizer

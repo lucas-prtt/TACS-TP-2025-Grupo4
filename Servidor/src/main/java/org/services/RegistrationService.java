@@ -165,6 +165,7 @@ public class RegistrationService {
         try {
             event.registerParticipant(registration);
             registrationRepository.save(registration);
+            eventRepository.save(event);
         }
         finally {
             lock.unlock();
