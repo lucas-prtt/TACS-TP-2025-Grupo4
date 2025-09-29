@@ -6,7 +6,12 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-
+  frontend:
+    build:
+      context: .
+      dockerfile: InterfazWeb/Dockerfile
+    ports:
+      - "3000:80"
   server:
     build:
       context: .
