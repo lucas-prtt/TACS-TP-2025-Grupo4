@@ -108,13 +108,13 @@ public class OrganizerTests {
 
   @Test
   void testGetWaitlistFromEvent() {
-    Queue<Registration> result = organizerService.getWaitlistFromEvent(
+    List<Registration> result = organizerService.getWaitlistFromEvent(
         organizer.getId(), mockEvent.getId()
     );
 
     assertEquals(1, result.size());
-    assertNotNull(result.peek());
-    assertEquals("wait@test.com", result.peek().getUser().getUsername());
+    assertNotNull(result.getFirst());
+    assertEquals("wait@test.com", result.getFirst().getUser().getUsername());
   }
 
   @Test
