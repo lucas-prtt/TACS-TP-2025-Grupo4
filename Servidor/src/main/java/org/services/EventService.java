@@ -9,25 +9,19 @@ import org.model.accounts.Account;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
-import org.springframework.stereotype.Service;
-import org.model.events.Registration;
 import org.utils.PageSplitter;
-
 import java.util.UUID;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import java.util.NoSuchElementException;
-
+import org.springframework.stereotype.Service;
 
 @Service
 public class EventService {
-
     private final EventRepository eventRepository;
     private final AccountRepository accountRepository;
 
@@ -40,7 +34,7 @@ public class EventService {
         Event newEvent;
         Optional<Account> author;
         try {
-            author = accountRepository.findById(String.valueOf(organizerId));
+            author = accountRepository.findById(UUID.fromString(String.valueOf(organizerId)));
         }catch (Exception e){
             throw new BadRequestException();
         }
@@ -69,9 +63,8 @@ public class EventService {
 
     public Event getEvent(UUID eventId) {
         //devuelve el evento (con sus inscriptos y su waitlist)
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        Event event = eventOptional.orElseThrow(() -> new NoSuchElementException("Evento no encontrado con ID: " + eventId));
-        return event;
+        return eventRepository.findById(eventId).
+                orElseThrow(() -> new NoSuchElementException("Evento no encontrado con ID: " + eventId));
     }
 
     public EventDTO getEventDTOById(UUID id) throws EventNotFoundException {
@@ -89,11 +82,12 @@ public class EventService {
                 .toList();
         return PageSplitter.getPageList(processedEvents, page, limit);
     }
+
     public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) throws BadRequestException {
         return getEventDTOsByQuery( title,  titleContains,  maxDate,  minDate,  category,  tags,  maxPrice,  minPrice);
     }
 
-        private List<Event> getEventsByTitleOrContains(String title, String titleContains) throws BadRequestException {
+    private List<Event> getEventsByTitleOrContains(String title, String titleContains) throws BadRequestException {
         if (title != null && titleContains != null) {
             throw new BadRequestException("No puede haber titleContains y title simultáneamente");
         }
@@ -115,7 +109,7 @@ public class EventService {
     }
 
     public List<Event> getAllEvents() {
-        return eventRepository.getAll();
+        return eventRepository.findAll();
     }
 
     public Boolean isValidEvent(Event event, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) {
@@ -137,7 +131,7 @@ public class EventService {
 
     public List<EventDTO> getEventsByOrganizer(UUID organizerId, Integer page, Integer limit) {
         // Obtiene todos los eventos y filtra los que tienen como organizador al usuario dado
-        List<EventDTO> processedEvents =  eventRepository.getAll().stream()
+        List<EventDTO> processedEvents =  eventRepository.findAll().stream()
                 .filter(event -> event.getOrganizer() != null && event.getOrganizer().getId().equals(organizerId))
                 .map(EventDTO::fromEvent)
                 .collect(Collectors.toList());

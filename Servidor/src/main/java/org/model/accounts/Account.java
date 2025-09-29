@@ -6,12 +6,15 @@ import lombok.Setter;
 
 import java.util.*;
 import java.util.UUID;
+
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "accounts")
 @Getter
 @Setter
 public class Account {
+    @Id
     private UUID id;
     private String username;
     private String password; // Guardar encriptado con BCrypt

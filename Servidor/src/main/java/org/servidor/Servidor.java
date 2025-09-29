@@ -3,8 +3,11 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
 import java.util.Collections;
 
+@EnableMongoRepositories(basePackages = "org.repositories")
 @ComponentScan(basePackages = {"org.controllers", "org.services", "org.repositories","org.DTOs", "org.model","org.utils"})
 @SpringBootApplication
 public class Servidor {

@@ -11,6 +11,7 @@ import org.model.enums.RegistrationState;
 import org.model.accounts.Account;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "registrations")
@@ -18,16 +19,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @AllArgsConstructor
 public class Registration {
-
-    public Registration(Account user1) {
-        user=user1;
-    }
+    @Id
     private UUID id;
     private Event event;
     private Account user;
     private RegistrationState currentState;
     private List<RegistrationStateChange> history = new ArrayList<>();
     private LocalDateTime dateTime;
+
+    public Registration(Account user1) {
+        user=user1;
+    }
 
     public Registration(){
         this.id = UUID.randomUUID();

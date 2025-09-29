@@ -12,6 +12,8 @@ import org.model.accounts.Account;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "events")
@@ -19,6 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @AllArgsConstructor
 public class Event {
+    @Id
     UUID id;
     String title;
     String description;

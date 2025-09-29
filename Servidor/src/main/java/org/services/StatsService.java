@@ -2,36 +2,33 @@ package org.services;
 
 import org.DTOs.StatsDTO;
 import org.repositories.EventRepository;
-import org.repositories.RegistrationRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class StatsService {
-
-
+    private final RegistrationService registrationService;
     private final EventRepository eventRepository;
-    private final RegistrationRepository registrationRepository;
 
-    public StatsService(EventRepository eventRepository, RegistrationRepository registrationRepository) {
+    public StatsService(EventRepository eventRepository, RegistrationService registrationService) {
         this.eventRepository = eventRepository;
-        this.registrationRepository = registrationRepository;
+        this.registrationService = registrationService;
     }
 
     public long eventsAmount(){
-        return  eventRepository.getAll().size();
+        return  eventRepository.findAll().size();
     }
     public long registrationsAmount(){
-        return  eventRepository.getAll().stream().flatMap(evento -> evento.getParticipants().stream()).toList().size();
+        return  eventRepository.findAll().stream().flatMap(evento -> evento.getParticipants().stream()).toList().size();
     }
 
     // Cantidad de inscripciones que alguna vez estuvieron en WAITLIST
     public long waitListAmount() {
-        return registrationRepository.findAllThatWereInWaitlist().size();
+        return registrationService.findAllThatWereInWaitlist().size();
     }
 
     // Cantidad de inscripciones que fueron promovidas desde WAITLIST a CONFIRMED
     public long waitListPromoted() {
-        return registrationRepository.findAllPromotedFromWaitlist().size();
+        return registrationService.findAllPromotedFromWaitlist().size();
     }
 
     public StatsDTO getStats() {

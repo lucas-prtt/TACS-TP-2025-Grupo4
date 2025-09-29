@@ -63,7 +63,7 @@ public class AccountServiceTest {
         assertTrue(account.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN")));
 
         ArgumentCaptor<Account> captor = ArgumentCaptor.forClass(Account.class);
-        verify(accountRepository, times(1)).save(captor.capture());
+        verify(accountRepository, times(1)).saveAccount(captor.capture());
         assertEquals(account, captor.getValue());
     }
 
@@ -130,7 +130,7 @@ public class AccountServiceTest {
     @Test
     public void testGetAccountById_NotFound_ShouldThrow() {
         UUID id = UUID.randomUUID();
-        when(accountRepository.findById(String.valueOf(id))).thenReturn(Optional.empty());
+        when(accountRepository.findById(UUID.fromString(String.valueOf(id)))).thenReturn(Optional.empty());
 
         assertThrows(AccountNotFoundException.class, () -> accountService.getAccountById(id));
     }
