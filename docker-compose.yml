@@ -1,10 +1,26 @@
 services:
+  mongo:
+    image: mongo:7
+    container_name: eventos-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
   server:
     build:
       context: .
       dockerfile: Servidor/Dockerfile
     ports:
       - "8080:8080"
+    depends_on:
+      - mongo
+    environment:
+      SPRING_DATA_MONGODB_HOST: mongo
+      SPRING_DATA_MONGODB_PORT: 27017
+      SPRING_DATA_MONGODB_DATABASE: eventos
+      # otras variables de entorno necesarias para tu app
+
   telegrambot:
     build:
       context: .
@@ -12,3 +28,6 @@ services:
     environment:
       EVENTOS_TELEGRAM_BOT_TOKEN: ${EVENTOS_TELEGRAM_BOT_TOKEN}
       EVENTOS_TELEGRAM_BOT_USERNAME: ${EVENTOS_TELEGRAM_BOT_USERNAME}
+
+volumes:
+  mongo_data:

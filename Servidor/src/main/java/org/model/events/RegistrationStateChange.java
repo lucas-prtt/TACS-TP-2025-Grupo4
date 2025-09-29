@@ -5,7 +5,9 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import org.model.enums.RegistrationState;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "registrationStateChanges")
 @Getter
 @Setter
 public class RegistrationStateChange {

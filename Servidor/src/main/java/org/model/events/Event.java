@@ -12,7 +12,9 @@ import org.model.accounts.Account;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "events")
 @Getter
 @Setter
 @AllArgsConstructor

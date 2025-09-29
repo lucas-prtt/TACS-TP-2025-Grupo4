@@ -6,17 +6,9 @@ import lombok.Setter;
 
 import java.util.*;
 import java.util.UUID;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.*;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.*;
-
+@Document(collection = "accounts")
 @Getter
 @Setter
 public class Account {

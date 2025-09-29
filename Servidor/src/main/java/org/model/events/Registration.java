@@ -11,7 +11,9 @@ import org.model.enums.RegistrationState;
 import org.model.accounts.Account;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "registrations")
 @Setter
 @Getter
 @AllArgsConstructor
