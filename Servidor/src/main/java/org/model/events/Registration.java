@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import lombok.NoArgsConstructor;
 import org.DTOs.registrations.RegistrationDTO;
 import org.model.enums.RegistrationState;
 import org.model.accounts.Account;

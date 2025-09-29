@@ -29,7 +29,7 @@ public class OrganizerService {
         return PageSplitter.getPageList(event.getParticipants().stream().filter(registration -> state == null || registration.getCurrentState() == state).toList(), page, limit);
     }
 
-    public Queue<Registration> getWaitlistFromEvent(UUID accountId, UUID eventId) {
+    public List<Registration> getWaitlistFromEvent(UUID accountId, UUID eventId) {
         Event event = eventService.getEvent(eventId);
         validateOrganizer(accountId, event);
         return event.getWaitList();

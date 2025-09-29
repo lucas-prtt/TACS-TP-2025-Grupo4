@@ -2,6 +2,7 @@ package org.model.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.DTOs.events.EventDTO;
 import org.exceptions.EventRegistrationsClosedException;
@@ -20,6 +21,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Event {
     @Id
     UUID id;
@@ -35,7 +37,7 @@ public class Event {
     Category category;
     List<Tag> tags;
     List<Registration> participants;
-    Queue<Registration> waitList;
+    List<Registration> waitList;
     EventState eventState;
     // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price, Account organizer
     public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags, Account organizer) throws NullPointerException{
@@ -69,7 +71,7 @@ public class Event {
 
         // Automaticos
         this.participants = new ArrayList<>();
-        this.waitList = new ArrayDeque<>();
+        this.waitList = new ArrayList<>();
         this.id = UUID.randomUUID();
         this.eventState=EventState.EVENT_OPEN;
     }
@@ -109,7 +111,7 @@ public class Event {
 
     public void promoteFromWaitlist() {
         if (participants.size() < maxParticipants && !waitList.isEmpty()) {
-            Registration next = waitList.poll();  // saca el primero
+            Registration next = waitList.stream().findFirst().get();  // saca el primero
             next.setState(RegistrationState.CONFIRMED);
             participants.add(next);
         }

@@ -1,5 +1,6 @@
 package org.model.accounts;
 
+import lombok.NoArgsConstructor;
 import org.model.events.Registration;
 import lombok.Getter;
 import lombok.Setter;
