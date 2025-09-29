@@ -5,6 +5,7 @@ import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.eventServerClient.dtos.AccountDTO;
+import org.eventServerClient.dtos.LoginRequestDTO;
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
 import org.eventServerClient.dtos.event.EventDTO;
@@ -73,7 +74,7 @@ public class ApiClient {
         }
     }
 
-    public Map<String, Object> loginUserAndPassword(AccountDTO accountDTO){
+    public Map<String, Object> loginUserAndPassword(LoginRequestDTO accountDTO){
         try {
             String url = getBaseUri() + "/auth/login";
             return restTemplate.postForObject(url, accountDTO, Map.class);

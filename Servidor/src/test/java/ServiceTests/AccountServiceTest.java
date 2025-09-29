@@ -63,7 +63,7 @@ public class AccountServiceTest {
         assertTrue(account.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN")));
 
         ArgumentCaptor<Account> captor = ArgumentCaptor.forClass(Account.class);
-        verify(accountRepository, times(1)).saveAccount(captor.capture());
+        verify(accountRepository, times(1)).save(captor.capture());
         assertEquals(account, captor.getValue());
     }
 
@@ -121,7 +121,7 @@ public class AccountServiceTest {
     public void testGetAccountById_Found_ShouldReturnAccount() {
         UUID id = UUID.randomUUID();
         Account acc = new Account("user1", "pass");
-        when(accountRepository.findById(String.valueOf(id))).thenReturn(Optional.of(acc));
+        when(accountRepository.findById(id)).thenReturn(Optional.of(acc));
 
         Account result = accountService.getAccountById(id);
         assertEquals(acc, result);
@@ -181,7 +181,7 @@ public class AccountServiceTest {
         when(reg2.getEvent()).thenReturn(event2);
 
         acc.setRegistrations(Arrays.asList(reg1, reg2));
-        when(accountRepository.findById(String.valueOf(id))).thenReturn(Optional.of(acc));
+        when(accountRepository.findById(id)).thenReturn(Optional.of(acc));
 
         List<RegistrationDTO> result = accountService.getRegistrations(id, 0, 10, RegistrationState.CONFIRMED);
         assertEquals(1, result.size());
