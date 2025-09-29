@@ -81,8 +81,10 @@ public class AccountServiceTest {
     @Test
     public void testLogin_CorrectPassword_ShouldReturnAccount() {
         String username = "user1";
-        String password = "password";
-        Account acc = new Account(username, "hashedPassword");
+        String password = "hashedPassword";
+        Account acc = new Account();
+        acc.setPassword(password);
+        acc.setUsername(username);
 
         when(accountRepository.findByUsername(username)).thenReturn(Optional.of(acc));
         when(passwordEncoder.matches(password, "hashedPassword")).thenReturn(true);
@@ -95,7 +97,9 @@ public class AccountServiceTest {
     public void testLogin_WrongPassword_ShouldThrow() {
         String username = "user1";
         String password = "password";
-        Account acc = new Account(username, "hashedPassword");
+        Account acc = new Account();
+        acc.setPassword(password);
+        acc.setUsername(username);
 
         when(accountRepository.findByUsername(username)).thenReturn(Optional.of(acc));
         when(passwordEncoder.matches(password, "hashedPassword")).thenReturn(false);
@@ -120,7 +124,9 @@ public class AccountServiceTest {
     @Test
     public void testGetAccountById_Found_ShouldReturnAccount() {
         UUID id = UUID.randomUUID();
-        Account acc = new Account("user1", "pass");
+        Account acc = new Account();
+        acc.setUsername("user1");
+        acc.setPassword("pass");
         when(accountRepository.findById(id)).thenReturn(Optional.of(acc));
 
         Account result = accountService.getAccountById(id);
@@ -141,7 +147,10 @@ public class AccountServiceTest {
     @Test
     public void testGetAccountByUsername_Found_ShouldReturnAccount() {
         String username = "user1";
-        Account acc = new Account(username, "pass");
+        String password = "pass";
+        Account acc = new Account();
+        acc.setPassword(password);
+        acc.setUsername(username);
         when(accountRepository.findByUsername(username)).thenReturn(Optional.of(acc));
 
         Account result = accountService.getAccountByUsername(username);
@@ -160,8 +169,9 @@ public class AccountServiceTest {
     @Test
     public void testGetRegistrations_ShouldReturnFilteredList() {
         UUID id = UUID.randomUUID();
-        Account acc = new Account("user1", "pass");
-
+        Account acc = new Account();
+        acc.setUsername("user1");
+        acc.setPassword("pass");
         Registration reg1 = mock(Registration.class);
         Registration reg2 = mock(Registration.class);
 

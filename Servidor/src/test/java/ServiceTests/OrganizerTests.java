@@ -41,8 +41,9 @@ public class OrganizerTests {
     organizerService = new OrganizerService(eventService);
 
     // Crear organizer (usa el constructor (username, password) según tu modelo)
-    organizer = new Account("organizer@test.com", "pwd-org");
-
+    organizer = new Account();
+    organizer.setUsername("organizer@test.com");
+    organizer.setPassword("pwd-org");
     // Crear evento real (constructor que setea id internamente)
     mockEvent = new Event(
         "Test Event",
@@ -62,8 +63,12 @@ public class OrganizerTests {
     assertNotNull(mockEvent.getId(), "El constructor del Event debería inicializar un UUID en id");
 
     // Simular participantes
-    Account user1 = new Account("user1@test.com", "pwd1fsadfasd");
-    Account user2 = new Account("user2@test.com", "pwd2sdfasfd");
+    Account user1 = new Account();
+    user1.setUsername("user1@test.com");
+    user1.setPassword("pwd1fsadfasd");
+    Account user2 = new Account();
+    user2.setUsername("user2@test.com");
+    user2.setPassword("pwd2sdfasfd");
 
     Registration r1 = new Registration(user1);
     r1.setState(RegistrationState.CONFIRMED);
@@ -75,7 +80,9 @@ public class OrganizerTests {
     mockEvent.getParticipants().add(r2);
 
     // Simular waitlist
-    Account waitUser = new Account("wait@test.com", "pwd-w");
+    Account waitUser = new Account();
+    waitUser.setUsername("wait@test.com");
+    waitUser.setPassword("pwd-w");
     Registration newRegister = new Registration();
     newRegister.setEvent(mockEvent);
     newRegister.setUser(waitUser);
@@ -123,7 +130,9 @@ public class OrganizerTests {
     organizerService.closeRegistrations(organizer.getId(), mockEvent.getId());
 
     // Intentar registrar un nuevo participante después de cerrar las inscripciones
-    Account newUser = new Account("newuser@test.com", "pwd-new");
+    Account newUser = new Account();
+    newUser.setUsername("newuser@test.com");
+    newUser.setPassword("pwd-new");
     Registration newRegistration = new Registration(newUser);
 
         // Intentar registrar el nuevo participante

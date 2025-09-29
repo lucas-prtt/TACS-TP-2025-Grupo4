@@ -68,15 +68,12 @@ public class AuthController {
   public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
     try {
       Account account = accountService.login(request.getUsername(), request.getPassword());
-
       Set<String> roles = account.getRoles()
           .stream()
           .map(Role::getName)
           .map(r -> r.replace("ROLE_", "")) //  le saco el prefijo
           .collect(Collectors.toSet());
-
       String token = JwtUtil.generateToken(account.getUsername(), account.getId(), roles);
-
 
       return ResponseEntity.ok(Map.of(
           "username", account.getUsername(),

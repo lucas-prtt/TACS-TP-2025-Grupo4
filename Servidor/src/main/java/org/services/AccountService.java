@@ -32,7 +32,9 @@ public class AccountService {
         validatePassword(password);
 
         String hashedPassword = passwordEncoder.encode(password);
-        Account account = new Account(username, hashedPassword);
+        Account account = new Account();
+        account.setUsername(username);
+        account.setPassword(hashedPassword);
 
         if (isAdmin) {
             account.getRoles().add(new Role("ROLE_ADMIN"));

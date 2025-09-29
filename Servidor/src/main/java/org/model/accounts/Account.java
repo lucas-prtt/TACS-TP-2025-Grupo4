@@ -21,12 +21,6 @@ public class Account {
     private Set<Role> roles = new HashSet<>();
     private List<Registration> registrations = new ArrayList<>();
 
-    public Account(String username, String password) {
-        this.id = UUID.randomUUID();
-        this.username = username;
-        this.password = password;
-        this.roles.add(new Role("ROLE_USER")); // por defecto todos arrancan como usuario común
-    }
 
     public Account() {
         this.id = UUID.randomUUID();
