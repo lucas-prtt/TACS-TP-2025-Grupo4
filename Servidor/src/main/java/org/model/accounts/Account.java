@@ -1,5 +1,6 @@
 package org.model.accounts;
 
+import lombok.NoArgsConstructor;
 import org.model.events.Registration;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,31 +8,22 @@ import lombok.Setter;
 import java.util.*;
 import java.util.UUID;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.*;
-
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.*;
-
+@Document(collection = "accounts")
 @Getter
 @Setter
 public class Account {
+    @Id
     private UUID id;
     private String username;
     private String password; // Guardar encriptado con BCrypt
     private Set<Role> roles = new HashSet<>();
+    @DBRef(lazy = true)
     private List<Registration> registrations = new ArrayList<>();
 
-    public Account(String username, String password) {
-        this.id = UUID.randomUUID();
-        this.username = username;
-        this.password = password;
-        this.roles.add(new Role("ROLE_USER")); // por defecto todos arrancan como usuario común
-    }
 
     public Account() {
         this.id = UUID.randomUUID();

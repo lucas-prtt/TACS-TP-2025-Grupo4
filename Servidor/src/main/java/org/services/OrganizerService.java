@@ -1,19 +1,17 @@
 package org.services;
 
-
 import org.model.enums.RegistrationState;
 import org.model.events.Event;
 import org.model.events.Registration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.utils.PageSplitter;
-
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 
 @Service
 public class OrganizerService {
-
     private final EventService eventService;
 
     public OrganizerService(EventService eventService) {
@@ -31,7 +29,7 @@ public class OrganizerService {
         return PageSplitter.getPageList(event.getParticipants().stream().filter(registration -> state == null || registration.getCurrentState() == state).toList(), page, limit);
     }
 
-    public Queue<Registration> getWaitlistFromEvent(UUID accountId, UUID eventId) {
+    public List<Registration> getWaitlistFromEvent(UUID accountId, UUID eventId) {
         Event event = eventService.getEvent(eventId);
         validateOrganizer(accountId, event);
         return event.getWaitList();

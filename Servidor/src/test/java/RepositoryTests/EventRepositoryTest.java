@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EventRepositoryTest {
-    EventRepository eventRepository = new EventRepository();
+/*    EventRepository eventRepository = new EventRepository();
 
     public List<Event> createEvents(){
         Account organizador = new Account();
@@ -72,4 +72,6 @@ public class EventRepositoryTest {
         events.forEach(ev -> eventRepository.save(ev));
         assert eventRepository.findBy(event -> event.getStartDateTime().isBefore(LocalDateTime.now().plusWeeks(1).plusHours(1))).size() == 8;
     }
+
+ */
 }

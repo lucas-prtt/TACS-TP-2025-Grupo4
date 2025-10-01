@@ -6,26 +6,35 @@ import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import lombok.NoArgsConstructor;
 import org.DTOs.registrations.RegistrationDTO;
 import org.model.enums.RegistrationState;
 import org.model.accounts.Account;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "registrations")
 @Setter
 @Getter
 @AllArgsConstructor
 public class Registration {
+    @Id
+    private UUID id;
+    @DBRef(lazy = true)
+    private Event event;
+    @DBRef(lazy = true)
+    private Account user;
+    private RegistrationState currentState;
+    @DBRef(lazy = true)
+    private List<RegistrationStateChange> history = new ArrayList<>();
+    private LocalDateTime dateTime;
 
     public Registration(Account user1) {
         user=user1;
     }
-    private UUID id;
-    private Event event;
-    private Account user;
-    private RegistrationState currentState;
-    private List<RegistrationStateChange> history = new ArrayList<>();
-    private LocalDateTime dateTime;
 
     public Registration(){
         this.id = UUID.randomUUID();

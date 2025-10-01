@@ -7,8 +7,7 @@ import org.model.events.Registration;
 import org.model.enums.RegistrationState;
 import org.model.accounts.Account;
 import org.springframework.boot.CommandLineRunner;
-//import org.springframework.stereotype.Component;
-//
+
 //@Component
 public class DataInitializer implements CommandLineRunner {
 

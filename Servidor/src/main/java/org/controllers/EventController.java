@@ -158,6 +158,7 @@ public class EventController {
         try {
             page = PageNormalizer.normalizeRegistrationsPageNumber(page);
             limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
+            System.out.println(organizerService.getRegistrationsFromEvent(eventId, registrationState, page, limit));
             var registrations = organizerService.getRegistrationsFromEvent(eventId, registrationState, page, limit)
                     .stream()
                     .map(RegistrationDTO::toRegistrationDTO)

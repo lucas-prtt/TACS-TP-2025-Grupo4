@@ -1,6 +1,7 @@
 package org.menus.userMenu;
 
 import org.eventServerClient.dtos.AccountDTO;
+import org.eventServerClient.dtos.LoginRequestDTO;
 import org.springframework.web.client.HttpClientErrorException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
@@ -9,7 +10,7 @@ import org.menus.MenuState;
 import java.util.Map;
 
 public class LoginUserMenu extends MenuState {
-    AccountDTO newUser = new AccountDTO();
+    LoginRequestDTO newUser = new LoginRequestDTO();
     @Override
     // Recibe el nombre del usuario y lo intenta crear. Si no puede devuelve un error. Si lo crea lo establece como el usado
     public String respondTo(String message) {
