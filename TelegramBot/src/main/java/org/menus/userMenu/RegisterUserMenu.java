@@ -24,7 +24,8 @@ public class RegisterUserMenu extends MenuState {
             return "Cuenta creada\n" + "userID: " + usuarioCreado.getUuid() + "\n";
         }catch (HttpClientErrorException e){
             System.out.println(e.getMessage());
-            return "Error al crear usuario." + e.getMessage();
+            user.setMenu(new UserMenu(user));
+            return "Error al crear usuario." + e.getResponseBodyAsString();
         }
         catch (Exception e){
             System.out.println(e.getMessage());

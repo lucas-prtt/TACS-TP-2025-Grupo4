@@ -26,7 +26,7 @@ public class LoginUserMenu extends MenuState {
                     + "username: " + user.getServerAccountUsername() + "\n";
         }catch (HttpClientErrorException e){
             System.out.println(e.getMessage());
-            return "Error al crear usuario." + e.getMessage();
+            return "Error al loguear usuario." + e.getMessage();
         }catch (Exception e){
             System.out.println(e.getMessage());
             user.setMenu(new UserMenu(user));
