@@ -82,7 +82,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
     @Override
     public SendMessage questionMessage() {
         AtomicInteger i = new AtomicInteger(1);
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/prev", "/next"), (items.stream().map(item -> "/" + i.toString())).toList(), List.of("/back", "/start"));
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/prev", "/next"), (items.stream().map(item -> "/" + i.getAndIncrement())).toList(), List.of("/back", "/start"));
         return message;
     }
 }
