@@ -39,9 +39,9 @@ public class Event {
     Category category;
     List<Tag> tags;
     @DBRef(lazy = true)
-    List<Registration> participants;
+    List<Registration> participants = new ArrayList<>();
     @DBRef(lazy = true)
-    List<Registration> waitList;
+    List<Registration> waitList = new ArrayList<>();
     EventState eventState;
     // Constructor de Event. Requiere: String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price, Account organizer
     public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags, Account organizer) throws NullPointerException{

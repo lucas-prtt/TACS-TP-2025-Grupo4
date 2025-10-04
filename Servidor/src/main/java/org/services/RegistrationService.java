@@ -143,7 +143,9 @@ public class RegistrationService {
 
 
         ReentrantLock lock = locksParticipants.computeIfAbsent(eventId, id -> new ReentrantLock());
+        Registration registration;
         lock.lock();
+        try {
         // Verificar si el organizador intenta inscribirse a su propio evento
         if (event.getOrganizer().getId().equals(accountId)) {
           throw new OrganizerRegisterException("No se puede escribir a su propio evento");
@@ -158,11 +160,10 @@ public class RegistrationService {
         if (event.getWaitList().stream().anyMatch(acc -> acc.getUser().getId().equals(accountId))) {
           throw new AlreadyInWaitlistException("Ya esta en la waitlist");
         }
-        Registration registration = new Registration();
+        registration = new Registration();
         registration.setEvent(event);
         registration.setUser(account);
 
-        try {
             event.registerParticipant(registration);
             registrationRepository.save(registration);
             eventRepository.save(event);
