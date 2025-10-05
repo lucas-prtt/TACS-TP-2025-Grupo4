@@ -34,7 +34,13 @@ public class RegistrationService {
         this.accountRepository = accountRepository;
     }
 
-    // Crear una inscripción y devolver DTO
+    /**
+     * Crea una inscripción y devuelve su DTO. Si ya existe, retorna vacío.
+     * @param accountId ID del usuario
+     * @param eventId ID del evento
+     * @param state Estado inicial de la inscripción
+     * @return Optional con el DTO de la inscripción creada, vacío si ya existe
+     */
     public Optional<RegistrationDTO> register(UUID accountId, UUID eventId, RegistrationState state) {
         // Validar que no esté ya inscrito
         if (registrationRepository.existsByUser_IdAndEvent_Id(accountId, eventId)) {
@@ -54,40 +60,67 @@ public class RegistrationService {
         return Optional.of(toRegistrationDTO(reg));
     }
 
-    // Buscar inscripción por id
+    /**
+     * Busca una inscripción por su ID y devuelve su DTO.
+     * @param id ID de la inscripción
+     * @return Optional con el DTO de la inscripción
+     */
     public Optional<RegistrationDTO> findById(UUID id) {
         return registrationRepository.findById(id).map(RegistrationDTO::toRegistrationDTO);
     }
 
-    // Listar todas las inscripciones
+    /**
+     * Devuelve la lista de todas las inscripciones en formato DTO.
+     * @return Lista de DTOs de inscripciones
+     */
     public List<RegistrationDTO> findAll() {
         return registrationRepository.findAll().stream()
             .map(RegistrationDTO::toRegistrationDTO)
             .collect(Collectors.toList());
     }
 
-    // Listar inscripciones de un usuario
+    /**
+     * Devuelve la lista de inscripciones de un usuario por ID en formato DTO.
+     * @param accountId ID del usuario
+     * @return Lista de DTOs de inscripciones
+     */
     public List<RegistrationDTO> findByAccountId(UUID accountId) {
         return registrationRepository.findByUser_Id(accountId).stream()
             .map(RegistrationDTO::toRegistrationDTO)
             .collect(Collectors.toList());
     }
 
-    // Listar inscripciones de un evento
+    /**
+     * Devuelve la lista de inscripciones de un evento en formato DTO.
+     * @param eventId ID del evento
+     * @return Lista de DTOs de inscripciones
+     */
     public List<RegistrationDTO> findByEventId(UUID eventId) {
         return registrationRepository.findByEvent_Id(eventId).stream()
             .map(RegistrationDTO::toRegistrationDTO)
             .collect(Collectors.toList());
     }
 
-    // Buscar inscripcion de un usuario dado el id de inscripcion
+    /**
+     * Busca una inscripción por usuario y por ID de inscripción.
+     * @param accountId ID del usuario
+     * @param registrationId ID de la inscripción
+     * @return Optional con el DTO de la inscripción
+     */
     public Optional<RegistrationDTO> findByUserAndRegistrationId(UUID accountId, UUID registrationId) {
         return registrationRepository.findById(registrationId)
             .filter(reg -> reg.getUser().getId().equals(accountId))
             .map(RegistrationDTO::toRegistrationDTO);
     }
 
-    // Cancelar inscripción (usuario solo puede cancelar la suya)
+    /**
+     * Cancela una inscripción, solo si pertenece al usuario.
+     * @param registrationId ID de la inscripción
+     * @param accountId ID del usuario
+     * @return La inscripción cancelada
+     * @throws RegistrationNotFoundException si no existe la inscripción
+     * @throws WrongUserException si la inscripción no pertenece al usuario
+     */
     public Registration cancelRegistration(UUID registrationId, UUID accountId) {
         Optional<Registration> optReg = registrationRepository.findById(registrationId);
 
@@ -122,6 +155,14 @@ public class RegistrationService {
         return reg;
     }
 
+    /**
+     * Actualiza parcialmente una inscripción, permitiendo cancelarla.
+     * @param registrationId ID de la inscripción
+     * @param accountId ID del usuario
+     * @param registrationDTO DTO con los datos a actualizar
+     * @return La inscripción actualizada
+     * @throws RegistrationNotFoundException si no existe la inscripción
+     */
     public Registration patchRegistration(UUID registrationId, UUID accountId, RegistrationDTO registrationDTO) {
         Optional<Registration> optReg = registrationRepository.findById(registrationId);
         if (optReg.isEmpty()){
@@ -135,6 +176,17 @@ public class RegistrationService {
         return reg;
     }
 
+    /**
+     * Inscribe un usuario a un evento, validando reglas de negocio.
+     * @param eventId ID del evento
+     * @param accountId ID del usuario
+     * @return La inscripción realizada
+     * @throws EventNotFoundException si el evento no existe
+     * @throws UserNotFoundException si el usuario no existe
+     * @throws OrganizerRegisterException si el organizador intenta inscribirse
+     * @throws AlreadyRegisteredException si el usuario ya está inscripto
+     * @throws EventRegistrationsClosedException si el evento está cerrado
+     */
     public Registration registerParticipantToEvent(UUID eventId, UUID accountId) throws EventNotFoundException, UserNotFoundException, OrganizerRegisterException, AlreadyRegisteredException, EventRegistrationsClosedException{
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
@@ -178,7 +230,10 @@ public class RegistrationService {
         return registration;
     }
 
-    // Obtener todas las inscripciones que alguna vez estuvieron en WAITLIST
+    /**
+     * Devuelve todas las inscripciones que alguna vez estuvieron en WAITLIST.
+     * @return Lista de inscripciones en WAITLIST
+     */
     public List<Registration> findAllThatWereInWaitlist() {
         return registrationRepository.findAll().stream()
                 .filter(reg -> reg.getHistory() != null && reg.getHistory().stream()
@@ -186,7 +241,10 @@ public class RegistrationService {
                 .collect(Collectors.toList());
     }
 
-    // Obtener todas las inscripciones que transicionaron de WAITLIST a CONFIRMED
+    /**
+     * Devuelve todas las inscripciones que fueron promovidas de WAITLIST a CONFIRMED.
+     * @return Lista de inscripciones promovidas
+     */
     public List<Registration> findAllPromotedFromWaitlist() {
         return registrationRepository.findAll().stream()
                 .filter(reg -> reg.getHistory() != null && reg.getHistory().stream()

@@ -1,6 +1,5 @@
 package org.controllers;
 
-import static org.utils.SecurityUtils.checkAccountId;
 import static org.utils.SecurityUtils.getCurrentAccountId;
 
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.UUID;
 import jakarta.servlet.http.HttpServletResponse;
 import org.DTOs.events.EventCreateDTO;
 import org.DTOs.events.EventDTO;
-import org.DTOs.registrations.RegistrationCreateDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
 import org.exceptions.*;
@@ -45,8 +43,9 @@ public class EventController {
     }
 
     /**
-     * Crea un nuevo evento.
-     * El organizerId se obtiene del usuario autenticado, no del body.
+     * Crea un nuevo evento. El organizerId se obtiene del usuario autenticado.
+     * @param eventCreateDTO DTO con los datos del evento a crear
+     * @return ResponseEntity con el evento creado o error
      */
     @PostMapping
     public ResponseEntity<?> postEvent(@RequestBody EventCreateDTO eventCreateDTO) {
@@ -61,6 +60,12 @@ public class EventController {
         }
     }
 
+    /**
+     * Obtiene los eventos organizados por el usuario autenticado, con paginación.
+     * @param page Número de página (opcional)
+     * @param limit Cantidad de elementos por página (opcional)
+     * @return ResponseEntity con la lista de eventos organizados
+     */
     @GetMapping("/organized-events")
     public ResponseEntity<List<EventDTO>> getOrganizedEvents(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
         UUID id = getCurrentAccountId();
@@ -70,7 +75,9 @@ public class EventController {
     }
 
     /**
-     * Obtiene un evento por su id.
+     * Obtiene un evento por su ID.
+     * @param id ID del evento
+     * @return ResponseEntity con el evento o error si no existe
      */
     @GetMapping("/{id}")
     public ResponseEntity<EventDTO> getEventById(@PathVariable(name = "id") UUID id) {
@@ -83,14 +90,21 @@ public class EventController {
     }
 
 
-    // Permite buscar dentro de la lista de eventos aplicando filtros
-    // Los filtros admitidos son:
-    // title o titleContains (uno solo de los dos. Un string que debe ser o contenerse en el título)
-    // maxDate y/o minDate (Las fechas dentro de las cuales puede comenzar el evento)
-    // lista de tags que debe incluir el evento
-    // categorize
-    // precio minimo y precio maxim (>= y <=)
-    // todos estos filtros son opcionales. Puede hacerse una consulta sin filtros para obtener todos los eventos
+    /**
+     * Busca eventos aplicando filtros opcionales como título, fechas, categoría, tags y precio.
+     * Todos los filtros son opcionales y se puede obtener la lista completa de eventos.
+     * @param title Título exacto del evento (opcional)
+     * @param titleContains Subcadena que debe estar en el título (opcional)
+     * @param maxDate Fecha máxima de inicio (opcional)
+     * @param minDate Fecha mínima de inicio (opcional)
+     * @param category Categoría del evento (opcional)
+     * @param tags Lista de tags (opcional)
+     * @param maxPrice Precio máximo (opcional)
+     * @param minPrice Precio mínimo (opcional)
+     * @param page Número de página (opcional)
+     * @param limit Cantidad de elementos por página (opcional)
+     * @return ResponseEntity con la lista de eventos filtrados
+     */
     @GetMapping
     public ResponseEntity<List<EventDTO>> getEventsByParams(
             @RequestParam(name = "title", required = false) String title,
@@ -116,8 +130,10 @@ public class EventController {
     }
 
     /**
-     * Registra al usuario autenticado en un evento.
-     * El accountId se obtiene del token, no del body.
+     * Registra al usuario autenticado en el evento indicado por su ID.
+     * El accountId se obtiene del token.
+     * @param eventId ID del evento
+     * @return ResponseEntity con la inscripción realizada o error
      */
 
     @PostMapping("{id}/registrations")
@@ -139,6 +155,12 @@ public class EventController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    /**
+     * Actualiza parcialmente los datos de un evento por su ID.
+     * @param id ID del evento
+     * @param event DTO con los datos a actualizar
+     * @return ResponseEntity con el evento actualizado o error si no existe
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<EventDTO> patchEvent(@PathVariable(name = "id") String id, @RequestBody EventDTO event) {
         try {
@@ -148,17 +170,22 @@ public class EventController {
             return ResponseEntity.notFound().build();
         }
     }
+    /**
+     * Obtiene la lista de participantes de un evento, con paginación y filtrado por tipo de inscripción.
+     * @param eventId ID del evento
+     * @param page Número de página (opcional)
+     * @param limit Cantidad de elementos por página (opcional)
+     * @param registrationState Tipo de inscripción (opcional)
+     * @return ResponseEntity con la lista de inscripciones o error
+     */
     @GetMapping("/{eventId}/registrations")
     public ResponseEntity<?> getParticipants(@PathVariable("eventId") UUID eventId,
                                              @RequestParam(name = "page", required = false) Integer page,
                                              @RequestParam(name = "limit", required = false) Integer limit,
                                              @RequestParam(name = "registrationType", required = false) RegistrationState registrationState) {
-
-
         try {
             page = PageNormalizer.normalizeRegistrationsPageNumber(page);
             limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-            System.out.println(organizerService.getRegistrationsFromEvent(eventId, registrationState, page, limit));
             var registrations = organizerService.getRegistrationsFromEvent(eventId, registrationState, page, limit)
                     .stream()
                     .map(RegistrationDTO::toRegistrationDTO)

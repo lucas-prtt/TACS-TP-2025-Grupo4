@@ -22,8 +22,12 @@ public class EventBuilder {
     @Setter private List<Tag> tags;
     @Setter private Account organizer;
 
-    // Construye y devuelve un Event. Requiere antes settear al menos los siguientes campos:
-    // String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, BigDecimal price
+    /**
+     * Construye y devuelve un objeto Event usando los valores seteados previamente.
+     * Requiere que los campos obligatorios estén seteados.
+     * @return Nuevo objeto Event
+     * @throws NullPointerException si falta algún campo obligatorio
+     */
     public Event build() throws NullPointerException{
         return new Event(title, description, startDateTime, durationMinutes, location, maxParticipants, minParticipants, price, category, tags, organizer);
     }

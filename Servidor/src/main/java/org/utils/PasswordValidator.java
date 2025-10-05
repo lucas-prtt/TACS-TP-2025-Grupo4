@@ -1,13 +1,23 @@
+
 package org.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.exceptions.WeakPasswordException;
 
-
-
+/**
+ * Utilidad para validar contraseñas según criterios de seguridad definidos.
+ */
 public class PasswordValidator {
 
+  /**
+   * Valida la contraseña recibida según los siguientes criterios:
+   * longitud mínima, mayúsculas, minúsculas, números, caracteres especiales y sin espacios.
+   * Si la contraseña no cumple, lanza una WeakPasswordException con los errores encontrados.
+   *
+   * @param password Contraseña a validar.
+   * @throws WeakPasswordException Si la contraseña no cumple los requisitos de seguridad.
+   */
   public static void validatePassword(String password) {
     List<String> errors = new ArrayList<>();
 

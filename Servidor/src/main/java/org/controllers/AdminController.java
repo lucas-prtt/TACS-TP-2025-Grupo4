@@ -1,15 +1,7 @@
 package org.controllers;
 
-import static org.utils.SecurityUtils.getCurrentAccountId;
 
-import java.util.UUID;
-import org.DTOs.events.EventCreateDTO;
-import org.DTOs.events.EventDTO;
-import org.DTOs.registrations.RegistrationDTO;
 import org.DTOs.StatsDTO;
-import org.apache.coyote.BadRequestException;
-import org.model.events.Event;
-import org.model.events.Registration;
 import org.services.EventService;
 import org.services.StatsService;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +17,10 @@ public class AdminController {
         this.statsService = statsService;
     }
 
+    /**
+     * Obtiene las estadísticas generales del sistema para el panel de administración.
+     * @return ResponseEntity con el objeto StatsDTO que contiene las estadísticas
+     */
     @GetMapping("/stats")
     public ResponseEntity<StatsDTO> getStats() {
         return ResponseEntity.ok(statsService.getStats());
