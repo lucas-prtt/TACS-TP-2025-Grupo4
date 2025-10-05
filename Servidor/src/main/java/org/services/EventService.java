@@ -30,6 +30,14 @@ public class EventService {
         this.accountRepository = accountRepository;
     }
 
+    /**
+     * Crea un nuevo evento a partir de los datos recibidos y el ID del organizador.
+     * @param eventDTO DTO con los datos del evento
+     * @param organizerId ID del organizador
+     * @return El evento creado
+     * @throws AccountNotFoundException si el organizador no existe
+     * @throws BadRequestException si los datos son inválidos
+     */
     public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException, BadRequestException {
         Event newEvent;
         Optional<Account> author;
@@ -61,12 +69,23 @@ public class EventService {
         return newEvent;
     }
 
+    /**
+     * Devuelve el evento por su ID, incluyendo inscriptos y lista de espera.
+     * @param eventId ID del evento
+     * @return El evento encontrado
+     * @throws NoSuchElementException si no existe el evento
+     */
     public Event getEvent(UUID eventId) {
-        //devuelve el evento (con sus inscriptos y su waitlist)
         return eventRepository.findById(eventId).
                 orElseThrow(() -> new NoSuchElementException("Evento no encontrado con ID: " + eventId));
     }
 
+    /**
+     * Devuelve el DTO de un evento por su ID.
+     * @param id ID del evento
+     * @return DTO del evento
+     * @throws EventNotFoundException si no existe el evento
+     */
     public EventDTO getEventDTOById(UUID id) throws EventNotFoundException {
         Optional<Event> event = eventRepository.findById(id);
         if (event.isEmpty())
@@ -74,6 +93,21 @@ public class EventService {
         return EventDTO.fromEvent(event.get());
     }
 
+    /**
+     * Busca eventos aplicando filtros y devuelve una lista paginada de DTOs.
+     * @param title Título exacto (opcional)
+     * @param titleContains Subcadena en el título (opcional)
+     * @param maxDate Fecha máxima (opcional)
+     * @param minDate Fecha mínima (opcional)
+     * @param category Categoría (opcional)
+     * @param tags Lista de tags (opcional)
+     * @param maxPrice Precio máximo (opcional)
+     * @param minPrice Precio mínimo (opcional)
+     * @param page Página (opcional)
+     * @param limit Límite (opcional)
+     * @return Lista paginada de eventos
+     * @throws BadRequestException si los filtros son inválidos
+     */
     public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice, Integer page, Integer limit) throws BadRequestException {
         List<Event> events = getEventsByTitleOrContains(title, titleContains);
         List<EventDTO> processedEvents = events.stream()
@@ -83,10 +117,30 @@ public class EventService {
         return PageSplitter.getPageList(processedEvents, page, limit);
     }
 
+    /**
+     * Variante de búsqueda de eventos sin paginación.
+     * @param title Título exacto (opcional)
+     * @param titleContains Subcadena en el título (opcional)
+     * @param maxDate Fecha máxima (opcional)
+     * @param minDate Fecha mínima (opcional)
+     * @param category Categoría (opcional)
+     * @param tags Lista de tags (opcional)
+     * @param maxPrice Precio máximo (opcional)
+     * @param minPrice Precio mínimo (opcional)
+     * @return Lista de eventos filtrados
+     * @throws BadRequestException si los filtros son inválidos
+     */
     public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) throws BadRequestException {
         return getEventDTOsByQuery( title,  titleContains,  maxDate,  minDate,  category,  tags,  maxPrice,  minPrice);
     }
 
+    /**
+     * Devuelve eventos filtrando por título exacto o por subcadena en el título.
+     * @param title Título exacto (opcional)
+     * @param titleContains Subcadena en el título (opcional)
+     * @return Lista de eventos filtrados
+     * @throws BadRequestException si ambos filtros están presentes
+     */
     private List<Event> getEventsByTitleOrContains(String title, String titleContains) throws BadRequestException {
         if (title != null && titleContains != null) {
             throw new BadRequestException("No puede haber titleContains y title simultáneamente");
@@ -100,18 +154,43 @@ public class EventService {
         }
     }
 
+    /**
+     * Devuelve eventos que coinciden exactamente con el título.
+     * @param title Título exacto
+     * @return Lista de eventos
+     */
     public List<Event> getEventsByTitle(String title) {
         return eventRepository.findByTitle(title);
     }
 
+    /**
+     * Devuelve eventos cuyo título contiene la subcadena dada.
+     * @param titleContains Subcadena a buscar en el título
+     * @return Lista de eventos
+     */
     public List<Event> getEventsByTitleContains(String titleContains) {
         return eventRepository.findByTitleContains(titleContains);
     }
 
+    /**
+     * Devuelve todos los eventos.
+     * @return Lista de todos los eventos
+     */
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
 
+    /**
+     * Verifica si un evento cumple con los filtros dados.
+     * @param event Evento a validar
+     * @param maxDate Fecha máxima (opcional)
+     * @param minDate Fecha mínima (opcional)
+     * @param category Categoría (opcional)
+     * @param tags Lista de tags (opcional)
+     * @param maxPrice Precio máximo (opcional)
+     * @param minPrice Precio mínimo (opcional)
+     * @return true si el evento cumple los filtros, false si no
+     */
     public Boolean isValidEvent(Event event, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) {
         return (
                 (maxDate == null || event.getStartDateTime().isBefore(maxDate)) &&
@@ -129,18 +208,36 @@ public class EventService {
 
 
 
+    /**
+     * Obtiene los eventos organizados por el usuario dado, con paginación.
+     * @param organizerId ID del organizador
+     * @param page Número de página (opcional)
+     * @param limit Cantidad de elementos por página (opcional)
+     * @return Lista paginada de eventos organizados
+     */
     public List<EventDTO> getEventsByOrganizer(UUID organizerId, Integer page, Integer limit) {
-        // Obtiene todos los eventos y filtra los que tienen como organizador al usuario dado
         List<EventDTO> processedEvents =  eventRepository.findAll().stream()
                 .filter(event -> event.getOrganizer() != null && event.getOrganizer().getId().equals(organizerId))
                 .map(EventDTO::fromEvent)
                 .collect(Collectors.toList());
         return PageSplitter.getPageList(processedEvents, page, limit);
     }
+    /**
+     * Variante sin paginación para obtener eventos organizados por el usuario.
+     * @param organizerId ID del organizador
+     * @return Lista de eventos organizados
+     */
     public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
         return getEventsByOrganizer(organizerId, null, null);
     }
 
+    /**
+     * Actualiza parcialmente los datos de un evento por su ID.
+     * @param id ID del evento
+     * @param eventPatch DTO con los datos a actualizar
+     * @return DTO del evento actualizado
+     * @throws EventNotFoundException si no existe el evento
+     */
     public EventDTO patchEvent(String id, EventDTO eventPatch) {
         Optional<Event> eventOptional = eventRepository.findById(UUID.fromString(id));
         if(eventOptional.isEmpty())

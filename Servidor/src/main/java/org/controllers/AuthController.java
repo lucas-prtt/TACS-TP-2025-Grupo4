@@ -14,14 +14,11 @@ import org.DTOs.accounts.LoginRequestDTO;
 import org.DTOs.accounts.RegisterRequestDTO;
 import org.model.accounts.Account;
 import org.model.accounts.OneTimeCode;
-import org.DTOs.OneTimeCodeDTO;
 import org.model.accounts.Role;
 import org.services.AccountService;
 import org.services.OneTimeCodeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 import org.utils.JwtUtil;
 
@@ -36,7 +33,11 @@ public class AuthController {
       this.oneTimeCodeService = oneTimeCodeService;
   }
 
-  // Registro de usuario normal
+  /**
+   * Registra un usuario normal en el sistema.
+   * @param request DTO con los datos de registro (usuario y contraseña)
+   * @return ResponseEntity con el usuario registrado o error
+   */
   @PostMapping("/register")
   public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request) {
     System.out.println("USUARIO REGISTRADO");
@@ -63,7 +64,11 @@ public class AuthController {
 //    }
 //  }
 
-  // Login
+  /**
+   * Realiza el login de un usuario.
+   * @param request DTO con los datos de login (usuario y contraseña)
+   * @return ResponseEntity con los datos del usuario y el token JWT, o error
+   */
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
     try {
@@ -88,6 +93,10 @@ public class AuthController {
     }
   }
 
+  /**
+   * Genera un código de un solo uso (OneTimeCode) para el usuario autenticado.
+   * @return ResponseEntity con el código generado o error
+   */
   @PostMapping("/oneTimeCode")
   public ResponseEntity<?> createCode() {
     try {
@@ -117,6 +126,12 @@ public class AuthController {
   }
 
 
+  /**
+   * Verifica el código de un solo uso y retorna el token de login si es correcto.
+   * @param username Nombre de usuario
+   * @param code Código de un solo uso
+   * @return ResponseEntity con el token de login o error
+   */
   @GetMapping("/oneTimeCode")
   public ResponseEntity<?> getToken(@RequestParam(name = "username", required = true) String username,
                                     @RequestParam(name = "code", required = true) String code) {

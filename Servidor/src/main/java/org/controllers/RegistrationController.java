@@ -1,12 +1,10 @@
 package org.controllers;
 
 
-import static org.utils.SecurityUtils.checkAccountId;
 import static org.utils.SecurityUtils.getCurrentAccountId;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 import org.DTOs.registrations.RegistrationDTO;
@@ -18,7 +16,6 @@ import org.services.AccountService;
 import org.services.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.utils.PageNormalizer;
@@ -35,6 +32,13 @@ public class RegistrationController {
     this.accountService = accountService;
   }
 
+  /**
+   * Obtiene la lista de inscripciones del usuario autenticado, con paginación y filtrado por estado.
+   * @param page Número de página (opcional)
+   * @param limit Cantidad de elementos por página (opcional)
+   * @param registrationState Estado de la inscripción (opcional)
+   * @return ResponseEntity con la lista de inscripciones
+   */
   @GetMapping
   public ResponseEntity<List<RegistrationDTO>> getRegistrations(@RequestParam(name = "page", required = false) Integer page,
                                                                 @RequestParam(name = "limit", required = false) Integer limit,
@@ -47,6 +51,11 @@ public class RegistrationController {
     return ResponseEntity.ok(registrations);
   }
 
+  /**
+   * Obtiene una inscripción específica por su ID, validando que pertenezca al usuario autenticado.
+   * @param registrationId ID de la inscripción
+   * @return ResponseEntity con la inscripción o error si no existe o no pertenece al usuario
+   */
   @GetMapping("/{registrationId}")
   public ResponseEntity<?> getRegistrationByUserAndById(@PathVariable("registrationId") UUID registrationId) {
     UUID accountId = getCurrentAccountId();
@@ -57,7 +66,12 @@ public class RegistrationController {
   }
 
 
-  // Cancelar inscripción
+  /**
+   * Cancela una inscripción específica del usuario autenticado.
+   * @param registrationId ID de la inscripción a cancelar
+   * @param registrationDTO DTO con los datos de la inscripción
+   * @return ResponseEntity sin contenido si se cancela correctamente, o error si no corresponde al usuario o no existe
+   */
   @PatchMapping("/{registrationId}")
   public ResponseEntity<?> cancelar(@PathVariable("registrationId") UUID registrationId, @RequestBody RegistrationDTO registrationDTO) {
     try {

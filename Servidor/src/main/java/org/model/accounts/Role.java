@@ -17,7 +17,11 @@ public class Role {
     private UUID id;
     private String name; // "ROLE_USER", "ROLE_ADMIN"
 
-    public Role(String name) {
+  /**
+   * Constructor que inicializa el rol con el nombre especificado.
+   * @param name Nombre del rol (por ejemplo, "ROLE_USER", "ROLE_ADMIN")
+   */
+  public Role(String name) {
     this.name = name;
   }
 }

@@ -14,6 +14,11 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class Tag {
+    /**
+     * Representa una etiqueta para categorizar eventos.
+     * @param id Identificador único
+     * @param nombre Nombre de la etiqueta
+     */
     @Id
     private UUID id;
     String nombre;

@@ -23,6 +23,13 @@ public class RegistrationStateChange {
     private RegistrationState toState;
     private LocalDateTime changedAt;
 
+    /**
+     * Constructor que registra un cambio de estado en una inscripción.
+     * @param registration Inscripción afectada
+     * @param fromState Estado anterior
+     * @param toState Estado nuevo
+     * @param changedAt Fecha y hora del cambio
+     */
     public RegistrationStateChange(Registration registration, RegistrationState fromState, RegistrationState toState, LocalDateTime changedAt) {
         this.id = UUID.randomUUID();
         this.registration = registration;
