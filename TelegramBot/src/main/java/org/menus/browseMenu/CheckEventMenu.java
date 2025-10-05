@@ -2,6 +2,8 @@ package org.menus.browseMenu;
 
 import com.sun.tools.javac.Main;
 import org.eventServerClient.ApiClient;
+import org.eventServerClient.dtos.RegistrationDTO;
+import org.eventServerClient.dtos.RegistrationStateDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.menus.MainMenu;
 import org.menus.MenuState;
@@ -28,13 +30,13 @@ public class CheckEventMenu extends MenuState {
                 user.setMenu(new UserMenu(user));
                 return "Primero debe registarse" ;
             }
-
             try {
-                String response = user.getApiClient().postRegistration(evento.getId());
-                if (response.equalsIgnoreCase("CONFIRMED")) {
+                RegistrationDTO response = user.getApiClient().postRegistration(evento.getId());
+
+                if (response.getState().equals(RegistrationStateDTO.CONFIRMED)) {
                     user.setMenu(new MainMenu(user));
                     return "Inscripcion confirmada a la lista de participantes\n\n";
-                } else if (response.equalsIgnoreCase("WAITLIST")) {
+                } else if (response.getState().equals(RegistrationStateDTO.WAITLIST)) {
                     user.setMenu(new MainMenu(user));
                     return "Inscripcion confirmada a la Waitlist\n\n";
                 } else {

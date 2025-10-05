@@ -95,10 +95,10 @@ public class ApiClient {
             throw e;
         }
     }
-    public String postRegistration(UUID eventID) throws RestClientResponseException {
+    public RegistrationDTO postRegistration(UUID eventID) throws RestClientResponseException {
         try {
             String url = getBaseUri() + "/events/" + eventID + "/registrations";
-            return restTemplate.postForObject(url, null, String.class);
+            return restTemplate.postForObject(url, null, RegistrationDTO.class);
         }catch (HttpClientErrorException e){
             if(e.getStatusCode() == HttpStatus.UNAUTHORIZED)
                 user.deleteCurrentAccount();
