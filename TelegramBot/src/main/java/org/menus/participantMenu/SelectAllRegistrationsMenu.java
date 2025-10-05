@@ -12,7 +12,7 @@ import java.util.UUID;
 public class SelectAllRegistrationsMenu extends AbstractRegistrationBrowseMenu {
     @Override
     protected List<RegistrationDTO> fetchItems(int page, int limit) {
-        return user.getApiClient().getAllRegistrations(page, limit);
+        return user.getApiClient().getARegistrations(page, limit);
     }
 
     public SelectAllRegistrationsMenu(TelegramUser user) {
