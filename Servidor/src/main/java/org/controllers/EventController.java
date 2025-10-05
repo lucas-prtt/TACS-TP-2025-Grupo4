@@ -62,10 +62,10 @@ public class EventController {
     }
 
     @GetMapping("/organized-events")
-    public ResponseEntity<List<EventDTO>> getOrganizedEvents() {
+    public ResponseEntity<List<EventDTO>> getOrganizedEvents(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
         UUID id = getCurrentAccountId();
         List<EventDTO> events = new ArrayList<>();
-        events = eventService.getEventsByOrganizer(id);
+        events = eventService.getEventsByOrganizer(id, page, limit);
         return ResponseEntity.ok(events);
     }
 

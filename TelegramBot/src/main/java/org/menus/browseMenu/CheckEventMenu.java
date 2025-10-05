@@ -1,14 +1,12 @@
 package org.menus.browseMenu;
 
+import com.sun.tools.javac.Main;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.menus.userMenu.UserMenu;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestClientResponseException;
+import org.springframework.web.client.*;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.utils.InlineMenuBuilder;
@@ -41,10 +39,18 @@ public class CheckEventMenu extends MenuState {
                     return "Inscripcion confirmada a la Waitlist\n\n";
                 } else {
                     user.setMenu(new MainMenu(user));
-                    return "ERROR DESCONOCIDO\n\n";
+                    return "ERROR DESCONOCIDO - Estado " + response + " no reconocido\n\n";
                 }
-            } catch (RestClientResponseException e) {
-                return e.getStatusCode().toString() + "\n" + e.getResponseBodyAsString() + "\n\n" + user.setMainMenuAndRespond();
+            } catch (HttpClientErrorException e) {
+                user.setMenu(new MainMenu(user));
+                return e.getStatusCode().toString() + "\n" + e.getResponseBodyAsString() + "\n\n";
+            }catch (ResourceAccessException e) {
+                System.out.println("Servidor no disponible: " + e.getMessage());
+                user.setMenu(new UserMenu(user));
+                return "Error: el servidor no está disponible. Intente más tarde.";
+            }catch (Exception e){
+                user.setMenu(new MainMenu(user));
+                return "Error desconocido";
             }
         }
         return "Respuesta invalida \n\n" + getQuestion();

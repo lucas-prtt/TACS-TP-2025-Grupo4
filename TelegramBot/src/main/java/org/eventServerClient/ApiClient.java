@@ -191,7 +191,7 @@ public class ApiClient {
 
     public List<EventDTO> getEventsOrganizedBy(Integer page, Integer limit){
         try {
-            String url = getBaseUri() + "events/organized-events" + "?page=" + page + "&limit=" + limit;
+            String url = getBaseUri() + "/events/organized-events" + "?page=" + page + "&limit=" + limit;
             return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));
         }catch (HttpClientErrorException e){
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)

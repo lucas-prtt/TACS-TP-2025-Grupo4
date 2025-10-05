@@ -1,8 +1,10 @@
 package org.menus.userMenu;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eventServerClient.dtos.AccountDTO;
 import org.eventServerClient.dtos.LoginRequestDTO;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
@@ -26,11 +28,22 @@ public class LoginUserMenu extends MenuState {
                     + "username: " + user.getServerAccountUsername() + "\n";
         }catch (HttpClientErrorException e){
             System.out.println(e.getMessage());
-            return "Error al loguear usuario." + e.getMessage();
+            try {
+                Map<String, String> errorMap = new ObjectMapper().readValue(e.getResponseBodyAsString(), Map.class);
+                return e.getStatusCode().toString()+"\n" + errorMap.getOrDefault("error", "Error desconocido") + "\n\n";
+            } catch (Exception e2) {
+                System.out.println(e2.getMessage());
+                user.setMenu(new UserMenu(user));
+                return "Error desconocido en el servidor.";
+            }
+        }catch (ResourceAccessException e) {
+            System.out.println("Servidor no disponible: " + e.getMessage());
+            user.setMenu(new UserMenu(user));
+            return "Error: el servidor no está disponible. Intente más tarde.";
         }catch (Exception e){
             System.out.println(e.getMessage());
             user.setMenu(new UserMenu(user));
-            return "Error al loguearse al usuario." + e.getMessage();
+            return "Error interno en el bot.";
         }
     }
     @Override
