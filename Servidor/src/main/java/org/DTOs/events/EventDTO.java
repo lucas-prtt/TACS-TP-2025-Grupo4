@@ -31,6 +31,8 @@ public class EventDTO {
     Category category;
     List<Tag> tags;
     EventState state;
+    Integer registered;
+    Integer waitlisted;
 
 
     // Crea un EventDTO a partir de un Event
@@ -49,7 +51,9 @@ public class EventDTO {
                 event.getPrice(),
                 event.getCategory(),
                 new ArrayList<>(event.getTags()),
-                event.getEventState()
+                event.getEventState(),
+                event.getParticipants().size(),
+                event.getWaitList().size()
         );
     }
 }
