@@ -10,6 +10,12 @@ public class OneTimeCodeGenerator {
     public static char generateChar(){
         return CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length()));
     }
+
+    /**
+     * Genera aleatoriamente un codigo de 6 caracteres
+     * El codigo esta compuesto de letras mayusculas y digitos
+     * @return El codigo generado
+     */
     public static String generateCode(){
         StringBuilder randomCodeBuilder = new StringBuilder();
         for (int i = 0; i<LENGTH; i++){
