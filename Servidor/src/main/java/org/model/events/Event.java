@@ -129,11 +129,11 @@ public class Event {
             if (hasAvailableSpots()) {
                 registration.setState(RegistrationState.CONFIRMED);
                 participants.add(registration);
-                registration.getUser().getRegistrations().add(registration);
+                registration.getUser().addRegistration(registration);
             } else {
                 registration.setState(RegistrationState.WAITLIST);
                 waitList.add(registration);
-                registration.getUser().getRegistrations().add(registration);
+                registration.getUser().addRegistration(registration);
             }
             return registration;
         } else {

@@ -30,6 +30,9 @@ public class Account {
         this.id = UUID.randomUUID();
         this.roles.add(new Role("ROLE_USER"));
     }
+    public void addRegistration(Registration registration){
+        registrations.add(registration);
+    }
 }
 
 
