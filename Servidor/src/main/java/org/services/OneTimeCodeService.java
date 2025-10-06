@@ -2,15 +2,23 @@ package org.services;
 
 import org.exceptions.UserNotFoundException;
 import org.model.accounts.OneTimeCode;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class OneTimeCodeService {
-    List<OneTimeCode> codigos = new ArrayList<>();
+    List<OneTimeCode> codigos = Collections.synchronizedList(new ArrayList<>()); // Thread safe
+
+
+    @Scheduled(fixedRate = 900_000, initialDelay = 900_000) // Cada 15 minutos borra los codigos expirados
+    public void removeExpiredCodes() {
+        codigos.removeIf(OneTimeCode::isExpired);
+        System.out.println("Se llevo a cabo la limpiza de codigos expirados  -  " + LocalDateTime.now());
+    }
 
     /**
      * Busca un código de un solo uso por nombre de usuario.
@@ -18,8 +26,14 @@ public class OneTimeCodeService {
      * @return El código encontrado
      * @throws UserNotFoundException si no existe el usuario
      */
-    public OneTimeCode findByUsername(String username){
-        return codigos.stream().filter(oneTimeCode -> Objects.equals(oneTimeCode.getCosaDelLogueo().get("username"), username)).findFirst().orElseThrow(() -> new UserNotFoundException("No se encontro un One time code con ese usuario"));
+    public List<OneTimeCode> findByUsername(String username){
+        List<OneTimeCode> codigosDelUsuario = codigos.stream()
+                .filter(oneTimeCode -> Objects.equals(oneTimeCode.getCosaDelLogueo().get("username"), username))
+                .filter(OneTimeCode::isValid).toList();
+        if(codigosDelUsuario.isEmpty()){
+            throw new UserNotFoundException("No se encontró un One time code con ese usuario");
+        }
+        return codigosDelUsuario;
     }
     /**
      * Elimina un código de un solo uso.
