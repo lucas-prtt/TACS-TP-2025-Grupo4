@@ -4,10 +4,7 @@ package org.controllers;
 import static org.DTOs.accounts.AccountResponseDTO.toAccountResponseDTO;
 import static org.utils.SecurityUtils.getCurrentAccountId;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.DTOs.accounts.LoginRequestDTO;
@@ -136,14 +133,17 @@ public class AuthController {
   public ResponseEntity<?> getToken(@RequestParam(name = "username", required = true) String username,
                                     @RequestParam(name = "code", required = true) String code) {
     try {
-      OneTimeCode foundCode = oneTimeCodeService.findByUsername(username);
-      if (Objects.equals(foundCode.getCode(), code)){
-        oneTimeCodeService.delete(foundCode);
-        return ResponseEntity.ok(foundCode.getCosaDelLogueo());
+      List<OneTimeCode> foundCodes = oneTimeCodeService.findByUsername(username);
+      for(OneTimeCode foundCode : foundCodes){
+        if (Objects.equals(foundCode.getCode(), code) && foundCode.isValid()){
+          oneTimeCodeService.delete(foundCode);
+          return ResponseEntity.ok(foundCode.getCosaDelLogueo());
+        }
       }
+      // Si la concurrencia hace que se invalide justo o se puso mal el código
       return ResponseEntity
               .status(HttpStatus.UNAUTHORIZED)
-              .body(Map.of("description", "Wrong code"));
+              .body(Map.of("error", "Código equivocado"));
     } catch (RuntimeException e) {
       return ResponseEntity
               .status(HttpStatus.UNAUTHORIZED)
