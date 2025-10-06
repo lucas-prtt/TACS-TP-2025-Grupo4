@@ -219,6 +219,7 @@ public class RegistrationService {
             event.registerParticipant(registration);
             registrationRepository.save(registration);
             eventRepository.save(event);
+            accountRepository.save(account);        // Se le agrega la registration en event.registerParticipant(registration)
         }
         finally {
             lock.unlock();
