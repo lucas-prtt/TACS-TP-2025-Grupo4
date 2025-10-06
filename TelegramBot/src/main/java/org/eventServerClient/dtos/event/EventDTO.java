@@ -31,6 +31,8 @@ public class EventDTO {
         CategoryDTO category;
         List<TagDTO> tags;
         EventStateDTO state;
+        Integer registered;
+        Integer waitlisted;
         public String asShortString(){
                 return " - " + ( title != null ? title : "Sin titulo") + "\n" + ( description != null ? (description.length()<1000 ? description : description.substring(0, 996).concat("...")): "Sin descripcion");
         }
@@ -50,7 +52,9 @@ public class EventDTO {
                         "\nEstado: " +
                         ( state != null ? state.toString() : "Sin estado")+
                         "\nDuracion: " +
-                        ( durationMinutes != null ? Duration.ofMinutes(durationMinutes).toHours() + "h " + Duration.ofMinutes(durationMinutes).toMinutesPart() + "m " : "Sin duracion");
+                        ( durationMinutes != null ? Duration.ofMinutes(durationMinutes).toHours() + "h " + Duration.ofMinutes(durationMinutes).toMinutesPart() + "m " : "Sin duracion")+
+                        "\nRegistrados: " + registered + "/" + maxParticipants +
+                        "\nEn waitlist: " + waitlisted;
         }
 
 }

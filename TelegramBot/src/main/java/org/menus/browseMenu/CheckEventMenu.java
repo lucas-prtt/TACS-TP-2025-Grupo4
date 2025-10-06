@@ -62,7 +62,7 @@ public class CheckEventMenu extends MenuState {
     public String getQuestion() {
         return evento.asDetailedString() +
                 "\n\n"+
-                "/register --> registrarse al evento\n"+
+                (evento.getMaxParticipants() == evento.getRegistered() ? "/register --> Registrarse a la waitlist\n" : "/register --> Registrarse al evento\n")+
                 "/start    --> volver al menu inicial";
     }
     @Override
