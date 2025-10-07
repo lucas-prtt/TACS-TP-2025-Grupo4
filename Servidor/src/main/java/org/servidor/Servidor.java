@@ -1,10 +1,16 @@
 package org.servidor;
+
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
 import java.util.Collections;
 
+@EnableScheduling
+@EnableMongoRepositories(basePackages = "org.repositories")
 @ComponentScan(basePackages = {"org.controllers", "org.services", "org.repositories","org.DTOs", "org.model","org.utils"})
 @SpringBootApplication
 public class Servidor {

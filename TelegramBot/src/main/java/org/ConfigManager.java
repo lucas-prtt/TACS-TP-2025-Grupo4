@@ -20,6 +20,12 @@ public class ConfigManager {
         } catch (IOException e) {
             throw new RuntimeException("Error al leer el archivo de configuración", e);
         }
+        for (String key : properties.stringPropertyNames()) {
+            String override = System.getProperty(key);
+            if (override != null) {
+                properties.setProperty(key, override);
+            }
+        }
     }
 
     public static synchronized ConfigManager getInstance() {

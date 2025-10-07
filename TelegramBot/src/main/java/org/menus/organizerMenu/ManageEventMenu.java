@@ -28,11 +28,11 @@ public class ManageEventMenu extends MenuState {
             case "/open":
                 event.setState(EventStateDTO.EVENT_OPEN);
                 user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_OPEN);
-                return "Evento cancelado\n";
+                return "Evento abierto\n";
             case "/close":
                 event.setState(EventStateDTO.EVENT_CLOSED);
                 user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_CLOSED);
-                return "Evento abierto\n";
+                return "Evento cancelado\n";
             case "/back":
                 user.setMenu(new ManageEventSelectionMenu(user));
                 return null;

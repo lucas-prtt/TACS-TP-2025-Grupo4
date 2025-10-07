@@ -4,11 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.UUID;
 
+@Document(collection = "tags")
 @NoArgsConstructor
 @Setter
 @Getter
 @AllArgsConstructor
 public class Tag {
+    /**
+     * Representa una etiqueta para categorizar eventos.
+     * @param id Identificador único
+     * @param nombre Nombre de la etiqueta
+     */
+    @Id
+    private UUID id;
     String nombre;
 }

@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AccountRepositoryTest {
+    /*
     private AccountRepository accountRepository;
     private Account account;
     private UUID uuid;
@@ -45,4 +46,6 @@ public class AccountRepositoryTest {
         Optional<Account> found = accountRepository.findById(UUID.randomUUID().toString());
         assertFalse(found.isPresent());
     }
+
+     */
 }

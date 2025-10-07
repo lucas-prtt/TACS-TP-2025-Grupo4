@@ -1,6 +1,5 @@
-package org.DTOs.registrations;
+package org.eventServerClient.dtos;
 
-import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationCreateDTO {
-  private UUID eventId;
+public class LoginRequestDTO {
+  private String username;
+  private String password;
 }

@@ -1,3 +1,4 @@
+
 package org.utils;
 
 import jakarta.servlet.FilterChain;
@@ -16,9 +17,23 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/**
+ * Filtro de autenticación JWT para validar el token en cada request y establecer el usuario autenticado en el contexto de seguridad.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+  /**
+   * Procesa cada request HTTP verificando el header Authorization y validando el token JWT.
+   * Si el token es válido, establece el usuario autenticado en el contexto de Spring Security.
+   * Si el token es inválido, responde con estado UNAUTHORIZED.
+   *
+   * @param request Request HTTP entrante.
+   * @param response Response HTTP saliente.
+   * @param filterChain Cadena de filtros de la request.
+   * @throws ServletException Si ocurre un error en el filtro.
+   * @throws IOException Si ocurre un error de IO.
+   */
   @Override
   protected void doFilterInternal(HttpServletRequest request,
                                   HttpServletResponse response,
@@ -30,7 +45,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       String token = header.substring(7);
       try {
         var claims = JwtUtil.validateToken(token);
-        String username = claims.getSubject();
         UUID accountId = UUID.fromString(claims.get("accountId", String.class));
         @SuppressWarnings("unchecked")
         var roles = ((List<String>) claims.get("roles")).stream()

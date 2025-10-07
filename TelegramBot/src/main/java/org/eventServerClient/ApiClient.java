@@ -5,6 +5,7 @@ import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.eventServerClient.dtos.AccountDTO;
+import org.eventServerClient.dtos.LoginRequestDTO;
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
 import org.eventServerClient.dtos.event.EventDTO;
@@ -73,7 +74,7 @@ public class ApiClient {
         }
     }
 
-    public Map<String, Object> loginUserAndPassword(AccountDTO accountDTO){
+    public Map<String, Object> loginUserAndPassword(LoginRequestDTO accountDTO){
         try {
             String url = getBaseUri() + "/auth/login";
             return restTemplate.postForObject(url, accountDTO, Map.class);
@@ -94,10 +95,10 @@ public class ApiClient {
             throw e;
         }
     }
-    public String postRegistration(UUID eventID) throws RestClientResponseException {
+    public RegistrationDTO postRegistration(UUID eventID) throws RestClientResponseException {
         try {
             String url = getBaseUri() + "/events/" + eventID + "/registrations";
-            return restTemplate.postForObject(url, null, String.class);
+            return restTemplate.postForObject(url, null, RegistrationDTO.class);
         }catch (HttpClientErrorException e){
             if(e.getStatusCode() == HttpStatus.UNAUTHORIZED)
                 user.deleteCurrentAccount();
@@ -190,7 +191,7 @@ public class ApiClient {
 
     public List<EventDTO> getEventsOrganizedBy(Integer page, Integer limit){
         try {
-            String url = getBaseUri() + "events/organized-events" + "?page=" + page + "&limit=" + limit;
+            String url = getBaseUri() + "/events/organized-events" + "?page=" + page + "&limit=" + limit;
             return List.of(Objects.requireNonNull(restTemplate.getForObject(url, EventDTO[].class)));
         }catch (HttpClientErrorException e){
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)

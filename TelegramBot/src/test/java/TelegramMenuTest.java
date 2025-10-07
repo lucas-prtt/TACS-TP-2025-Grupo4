@@ -1,5 +1,6 @@
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.AccountDTO;
+import org.eventServerClient.dtos.LoginRequestDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -39,7 +40,7 @@ public class TelegramMenuTest {
         AccountDTO registerResponse = new AccountDTO("Pepe", null);
         registerResponse.setUuid("f6834356-d03d-4450-8df1-9644caf9fe7d");
         when(mockClient.postAccount("Pepe", "Pepe123##")).thenReturn(registerResponse);
-        when(mockClient.loginUserAndPassword(new AccountDTO("Pepe","Pepe123##"))).thenReturn(Map.of("roles", List.of("USER"), "username" , "Pepe", "token", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQZXBlIiwiYWNjb3VudElkIjoiZjY4MzQzNTYtZDAzZC00NDUwLThkZjEtOTY0NGNhZjlmZTdkIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3NTgwMjM1NDQsImV4cCI6MTc1ODYyODM0NH0.igUDNFWCJ8VJ2VA0lbVuDjvNL9gRcki3J6JI5d7Xr2o", "id", "f6834356-d03d-4450-8df1-9644caf9fe7d"));
+        when(mockClient.loginUserAndPassword(new LoginRequestDTO("Pepe","Pepe123##"))).thenReturn(Map.of("roles", List.of("USER"), "username" , "Pepe", "token", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQZXBlIiwiYWNjb3VudElkIjoiZjY4MzQzNTYtZDAzZC00NDUwLThkZjEtOTY0NGNhZjlmZTdkIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3NTgwMjM1NDQsImV4cCI6MTc1ODYyODM0NH0.igUDNFWCJ8VJ2VA0lbVuDjvNL9gRcki3J6JI5d7Xr2o", "id", "f6834356-d03d-4450-8df1-9644caf9fe7d"));
         when(mockClient.loginOneTimeCode("Pepe", "Pepe123##")).thenReturn(Map.of("roles", List.of("USER"), "username" , "Pepe", "token", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQZXBlIiwiYWNjb3VudElkIjoiZjY4MzQzNTYtZDAzZC00NDUwLThkZjEtOTY0NGNhZjlmZTdkIiwicm9sZXMiOlsiVVNFUiJdLCJpYXQiOjE3NTgwMjM1NDQsImV4cCI6MTc1ODYyODM0NH0.igUDNFWCJ8VJ2VA0lbVuDjvNL9gRcki3J6JI5d7Xr2p", "id", "f6834356-d03d-4450-8df1-9644caf9fe7d"));
         user.setApiClient(mockClient);
     }
