@@ -162,12 +162,15 @@ public class EventController {
      * @return ResponseEntity con el evento actualizado o error si no existe
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<EventDTO> patchEvent(@PathVariable(name = "id") String id, @RequestBody EventDTO event) {
+    public ResponseEntity<?> patchEvent(@PathVariable(name = "id") String id, @RequestBody EventDTO event) {
         try {
             EventDTO eventDTO = eventService.patchEvent(id, event);
             return ResponseEntity.ok(eventDTO);
         } catch (EventNotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN)
+                    .body(Map.of("error", e.getMessage()));
         }
     }
     /**

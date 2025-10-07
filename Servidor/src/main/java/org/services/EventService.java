@@ -42,7 +42,7 @@ public class EventService {
         Event newEvent;
         Optional<Account> author;
         try {
-            author = accountRepository.findById(UUID.fromString(String.valueOf(organizerId)));
+            author = accountRepository.findById(organizerId);
         }catch (Exception e){
             throw new BadRequestException();
         }
@@ -242,8 +242,16 @@ public class EventService {
         Optional<Event> eventOptional = eventRepository.findById(UUID.fromString(id));
         if(eventOptional.isEmpty())
             throw new EventNotFoundException("No se encontro un evento con ese id");
-        eventOptional.get().patch(eventPatch);
-        eventRepository.save(eventOptional.get());
-        return EventDTO.fromEvent(eventOptional.get());
+
+        Event event = eventOptional.get();
+        // Validar que el usuario autenticado sea el organizador
+        UUID currentUserId = org.utils.SecurityUtils.getCurrentAccountId();
+        if (event.getOrganizer() == null || event.getOrganizer().getId() == null || !event.getOrganizer().getId().equals(currentUserId)) {
+            throw new SecurityException("Solo el organizador puede modificar este evento");
+        }
+
+        event.patch(eventPatch);
+        eventRepository.save(event);
+        return EventDTO.fromEvent(event);
     }
 }
