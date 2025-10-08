@@ -124,12 +124,18 @@ public class RegistrationService {
     public Registration cancelRegistration(UUID registrationId, UUID accountId) {
         Optional<Registration> optReg = registrationRepository.findById(registrationId);
 
-        if (optReg.isEmpty()) throw new RegistrationNotFoundException("No se encontro un registro con esa ID");
+        if (optReg.isEmpty())
+            throw new RegistrationNotFoundException("No se encontro un registro con esa ID");
+
 
         Registration reg = optReg.get();
 
+        if(reg.getCurrentState() == RegistrationState.CANCELED)
+            throw new AlreadyCanceledException("El registro ya esta cancelado");
+
         // Validar que sea del usuario
-        if (!reg.getUser().getId().equals(accountId)) throw new WrongUserException("El registro no pertenece al usuario dado");
+        if (!reg.getUser().getId().equals(accountId))
+            throw new WrongUserException("El registro no pertenece al usuario dado");
         Event event = reg.getEvent();
         UUID eventId = event.getId();
 
@@ -166,7 +172,12 @@ public class RegistrationService {
      */
     public Registration patchRegistration(UUID registrationId, UUID accountId, RegistrationDTO registrationDTO) {
         if(registrationDTO.getState() != null && registrationDTO.getState() == RegistrationState.CANCELED){
-            this.cancelRegistration(registrationId, accountId); // Ya hace save
+            try{
+                this.cancelRegistration(registrationId, accountId); // Ya hace save
+            }
+            catch (AlreadyCanceledException ignored){
+                // Se ignora para mantener idempotencia sin tirar error
+            }
         }
         Optional<Registration> optReg = registrationRepository.findById(registrationId);
         if (optReg.isEmpty()){
