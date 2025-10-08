@@ -117,8 +117,7 @@ public class RegistrationService {
      * Cancela una inscripción, solo si pertenece al usuario.
      * @param registration inscripción a cancelar
      * @return La inscripción cancelada
-     * @throws RegistrationNotFoundException si no existe la inscripción
-     * @throws WrongUserException si la inscripción no pertenece al usuario
+     * @throws AlreadyCanceledException si ya está cancelada
      */
     public Registration cancelRegistration(Registration registration) {
 
