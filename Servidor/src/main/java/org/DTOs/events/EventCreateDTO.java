@@ -23,4 +23,9 @@ public class EventCreateDTO {
   private BigDecimal price;
   private Category category;
   private List<Tag> tags;
+
+  public boolean isValid(){
+    return title != null && description != null && startDateTime != null && durationMinutes != null && location != null && maxParticipants != null && price != null;
+  }
+
 }

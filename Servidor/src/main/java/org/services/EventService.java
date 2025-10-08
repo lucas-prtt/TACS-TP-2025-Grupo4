@@ -38,17 +38,11 @@ public class EventService {
      * @throws AccountNotFoundException si el organizador no existe
      * @throws BadRequestException si los datos son inválidos
      */
-    public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException, BadRequestException {
+    public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException{
         Event newEvent;
         Optional<Account> author;
-        try {
-            author = accountRepository.findById(organizerId);
-        }catch (Exception e){
-            throw new BadRequestException();
-        }
+        author = accountRepository.findById(organizerId);
         if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+ organizerId.toString());
-        try {
-        // Crear evento
         newEvent = new Event(
             eventDTO.getTitle(),
             eventDTO.getDescription(),
@@ -63,9 +57,6 @@ public class EventService {
             author.get()
         );
         eventRepository.save(newEvent);
-        } catch (Exception e) {
-        throw new BadRequestException();
-        }
         return newEvent;
     }
 

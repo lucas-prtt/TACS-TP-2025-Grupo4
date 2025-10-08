@@ -49,14 +49,15 @@ public class EventController {
      */
     @PostMapping
     public ResponseEntity<?> postEvent(@RequestBody EventCreateDTO eventCreateDTO) {
+        if(!eventCreateDTO.isValid()){  // Se fija que los atributos obligatorios no sean null
+            return ResponseEntity.badRequest().body(Map.of("error", "Al menos uno de los campos obligatorios del evento es nulo. Se requiere enviar: \n-String title\n-String description\n-LocalDateTime startDateTime\n-Integer durationMinutes\n-String location\n-Integer maxParticipants\n-BigDecimal price"));
+        }
         try {
             UUID id = getCurrentAccountId();
             Event event = eventService.createEvent(eventCreateDTO, id);
             return ResponseEntity.ok(EventDTO.fromEvent(event));
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().body("Al menos uno de los campos obligatorios del evento es nulo. Se requiere enviar: \n-String title\n-String description\n-LocalDateTime startDateTime\n-Integer durationMinutes\n-String location\n-Integer maxParticipants\n-BigDecimal price\n-UUID organizerId");
         } catch (AccountNotFoundException e){
-            return ResponseEntity.badRequest().body("Ningún usuario con el id existe");
+            return ResponseEntity.badRequest().body(Map.of("error", "Ningún usuario con el id existe"));
         }
     }
 
