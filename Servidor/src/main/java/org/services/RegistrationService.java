@@ -115,44 +115,39 @@ public class RegistrationService {
 
     /**
      * Cancela una inscripción, solo si pertenece al usuario.
-     * @param registrationId ID de la inscripción
-     * @param accountId ID del usuario
+     * @param registration inscripción a cancelar
      * @return La inscripción cancelada
-     * @throws RegistrationNotFoundException si no existe la inscripción
-     * @throws WrongUserException si la inscripción no pertenece al usuario
+     * @throws AlreadyCanceledException si ya está cancelada
      */
-    public Registration cancelRegistration(UUID registrationId, UUID accountId) {
-        Optional<Registration> optReg = registrationRepository.findById(registrationId);
+    public Registration cancelRegistration(Registration registration) {
 
-        if (optReg.isEmpty()) throw new RegistrationNotFoundException("No se encontro un registro con esa ID");
+        if(registration.getCurrentState() == RegistrationState.CANCELED)
+            throw new AlreadyCanceledException("El registro ya esta cancelado");
 
-        Registration reg = optReg.get();
-
-        // Validar que sea del usuario
-        if (!reg.getUser().getId().equals(accountId)) throw new WrongUserException("El registro no pertenece al usuario dado");
-        Event event = reg.getEvent();
+        Event event = registration.getEvent();
         UUID eventId = event.getId();
 
         ReentrantLock lock = locksParticipants.computeIfAbsent(eventId, id -> new ReentrantLock());
         lock.lock();
         try {
-            if(reg.getCurrentState() == RegistrationState.CONFIRMED){
+            if(registration.getCurrentState() == RegistrationState.CONFIRMED){
                 // Eliminar de participantes
-                event.getParticipants().remove(reg);
+                event.getParticipants().remove(registration);
                 // Promocionar a alguien de la waitlist si corresponde
                 event.promoteFromWaitlist();
             }else {
-                event.getWaitList().remove(reg);
+                event.getWaitList().remove(registration);
             }
-            reg.setState(RegistrationState.CANCELED);
-            registrationRepository.save(reg);
+            registration.setState(RegistrationState.CANCELED);
+            registrationRepository.save(registration);
+            eventRepository.save(event);
         }finally {
             lock.unlock();
             if (!lock.hasQueuedThreads()) {
                 locksParticipants.remove(eventId, lock);
             }
         }
-        return reg;
+        return registration;
     }
 
     /**
@@ -164,15 +159,23 @@ public class RegistrationService {
      * @throws RegistrationNotFoundException si no existe la inscripción
      */
     public Registration patchRegistration(UUID registrationId, UUID accountId, RegistrationDTO registrationDTO) {
+        // Verifica que exista registration con ese ID
         Optional<Registration> optReg = registrationRepository.findById(registrationId);
         if (optReg.isEmpty()){
-          throw new RegistrationNotFoundException("No se encontro el registro");
+            throw new RegistrationNotFoundException("No se encontro el registro"); // Ya deberia ser verificado por cancelRegistration, pero lo pongo igual por las dudas
         }
         Registration reg = optReg.get();
-        if(registrationDTO.getState() != null && registrationDTO.getState() == RegistrationState.CANCELED){
-          this.cancelRegistration(reg.getId(), accountId);
+        // Verifica que sea una registration del usuario
+        if (!reg.getUser().getId().equals(accountId))
+            throw new WrongUserException("El registro no pertenece al usuario dado");
+
+        if(registrationDTO.getState() != null
+            && registrationDTO.getState() == RegistrationState.CANCELED
+            && reg.getCurrentState() != RegistrationState.CANCELED)
+        {
+                cancelRegistration(reg); // Ya hace save
         }
-        registrationRepository.save(reg);
+
         return reg;
     }
 
