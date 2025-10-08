@@ -70,5 +70,9 @@ public class Registration {
         this.currentState = newState;
     }
 
+    public String toString(){
+        return "(" + id + " - " + event.getTitle() + " - " + user.getUsername() + " - " + currentState + " - " + history.size() + ")";
+    }
+
 
 }

@@ -146,6 +146,7 @@ public class RegistrationService {
             }
             reg.setState(RegistrationState.CANCELED);
             registrationRepository.save(reg);
+            eventRepository.save(event);
         }finally {
             lock.unlock();
             if (!lock.hasQueuedThreads()) {
@@ -164,16 +165,14 @@ public class RegistrationService {
      * @throws RegistrationNotFoundException si no existe la inscripción
      */
     public Registration patchRegistration(UUID registrationId, UUID accountId, RegistrationDTO registrationDTO) {
+        if(registrationDTO.getState() != null && registrationDTO.getState() == RegistrationState.CANCELED){
+            this.cancelRegistration(registrationId, accountId); // Ya hace save
+        }
         Optional<Registration> optReg = registrationRepository.findById(registrationId);
         if (optReg.isEmpty()){
-          throw new RegistrationNotFoundException("No se encontro el registro");
+            throw new RegistrationNotFoundException("No se encontro el registro"); // Ya deberia ser verificado por cancelRegistration, pero lo pongo igual por las dudas
         }
-        Registration reg = optReg.get();
-        if(registrationDTO.getState() != null && registrationDTO.getState() == RegistrationState.CANCELED){
-          this.cancelRegistration(reg.getId(), accountId);
-        }
-        registrationRepository.save(reg);
-        return reg;
+        return optReg.get();
     }
 
     /**
