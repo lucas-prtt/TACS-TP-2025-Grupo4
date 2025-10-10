@@ -1,21 +1,62 @@
 key,es,en,de,pt,fr,it
+languageEmoji,🇦🇷,🇬🇧,🇩🇪,🇧🇷,🇫🇷,🇮🇹
 language,Español,English,Deutsch,Português,Français,Italiano
-/userMenu,Menu de usuario,User menu,Benutzermenü,Menu do usuário,Menu utilisateur,Menu utente
-/organizerMenu,Menu de organizador,Organizer menu,Organizer-Menü,Menu do organizador,Menu organisateur,Menu dell'organizzatore
-/participantMenu,Menu de participante,Participant menu,Teilnehmermenü,Menu do participante,Menu des participants,Menù dei partecipanti
-/browseMenu,Menu de busqueda,Search menu,Suchmenü,Menu de pesquisa,Menu de recherche,Cerca nel menu
-/languageMenu,Menu de lenguaje,Language menu,Sprachenmenü,Menu de idiomas,Menu de langue,Menu della lingua
+/userMenu,🔐 Menu de usuario,🔐 User menu,🔐 Benutzermenü,🔐 Menu do usuário,🔐 Menu utilisateur,🔐 Menu utente
+/organizerMenu,🗓️ Menu de organizador,🗓️ Organizer Menu,🗓️ Organizer-Menü,🗓️ Menu do Organizador,🗓️ Menu Organisateur,🗓️ Menù Organizzatore
+/participantMenu,🎟️ Menu de participante,🎟️ Participant menu,🎟️ Teilnehmermenü,🎟️ Menu do participante,🎟️ Menu des participants,🎟️ Menù dei partecipanti
+/browseMenu,🔍 Menu de busqueda,🔍 Search menu,🔍 Suchmenü,🔍 Menu de pesquisa,🔍 Menu de recherche,🔍 Cerca nel menu
+/languageMenu,🌐 Menu de idioma,🌐 Language menu,🌐 Sprachmenü,🌐 Menu de idiomas,🌐 Menu de langue,🌐 Menu della lingua
 languageMenuQuestion,Elija su lenguaje,Choose your language,Wählen Sie Ihre Sprache,Escolha seu idioma,Choisissez votre langue,Scegli la tua lingua
 wrongOption,Opcion invalida,Invalid option,Ungültige Option,Opção inválida,Option invalide,Opzione non valida
 languageSelected,Lenguaje elegido: {0},Chosen language: {0},Ausgewählte Sprache: {0},Idioma escolhido: {0},Langue choisie : {0},Lingua scelta: {0}
-/back,Atras,Back,Zurück,Voltar,Dos,Indietro
-mainMenuQuestion,"Menu principal
-Elija una opcion","Main menu
-Choose an option","Hauptmenü
-Option auswählen","Menu principal
-Escolha uma opção","Menu principal
-Choisir une option","Menu principale
-Scegli un'opzione"
+/back,↩️ Atras,↩️ Back,↩️ Zurück,↩️ Voltar,↩️ Retour,↩️ Indietro
+mainMenuQuestionLoggedOut,"Menu principal
+
+Elija una opcion
+
+ - {0}: Crear y cambiar de cuenta
+ - {1}: Cambiar idioma del menu
+
+Usted no esta logueado actualmente. Ingrese a su cuenta para acceder a mas opciones
+","Main Menu
+
+Choose an option
+
+- {0}: Create and switch accounts
+- {1}: Change menu language
+
+You are not currently logged in. Log in to your account to access more options.
+","Hauptmenü
+
+Option auswählen
+
+- {0}: Konten erstellen und wechseln
+- {1}: Menüsprache ändern
+
+Sie sind derzeit nicht angemeldet. Melden Sie sich in Ihrem Konto an, um auf weitere Optionen zuzugreifen.
+","Menu Principal
+
+Escolha uma opção
+
+- {0}: Criar e alternar contas
+- {1}: Alterar idioma do menu
+
+Você não está conectado no momento. Faça login na sua conta para acessar mais opções.
+","Menu principal
+
+Choisir une option
+
+- {0} : Créer et changer de compte
+- {1} : Changer la langue du menu
+
+Vous n'êtes pas connecté(e). Connectez-vous à votre compte pour accéder à plus d'options.","Menu principale
+
+Scegli un'opzione
+
+- {0}: Crea e cambia account
+- {1}: Cambia lingua del menu
+
+Non hai effettuato l'accesso. Accedi al tuo account per accedere ad altre opzioni."
 requestInputUsername,Escriba su nombre de usuario,Enter your username,Geben Sie Ihren Benutzernamen ein,Digite seu nome de usuário,Entrez votre nom d'utilisateur,Inserisci il tuo nome utente
 requestInputPassword,Escriba su contraseña,Enter your password,Geben Sie Ihr Passwort ein,Digite sua senha,Entrez votre mot de passe,Inserisci la tua password
 successfulLogin,"Login exitoso:
@@ -47,9 +88,9 @@ ID do usuário: {0}","Compte créé avec succès
 Identifiant utilisateur : {0}","Account creato con successo
 ID utente: {0}"
 requestInputOneTimeCode,Ingrese el codigo de un solo uso,Enter the single-use code,Geben Sie den Einmalcode ein,Digite o código de uso único,Entrez le code à usage unique,Inserisci il codice monouso
-/oneTimeCode,Codigo de un solo uso,Single-use code,Einmalcode,Código de uso único,Code à usage unique,Codice monouso
-/registerUser,Registrarse,Register,Registrieren,Registrar,Registre,Registro
-/loginUser,Loguearse,Log in,Einloggen,Conecte-se,Se connecter,Login
+/oneTimeCode,🔄 Codigo de un solo uso,🔄 Single-use code,🔄 Einmalcode,🔄 Código de uso único,🔄 Code à usage unique,🔄 Codice monouso
+/registerUser,👤+ Registrarse,👤+ Register,👤+ Registrieren,👤+ Cadastre-se,👤+ S'inscrire,👤+ Registrati
+/loginUser,🔑 Loguearse,🔑 Log in,🔑 Einloggen,🔑 Entrar,🔑 Connectez-vous,🔑 Accedi
 userMenuQuestion,"Menu de usuario
 Por favor elija una opcion
 Aclaración: Se recomienda loguearse mediante un codigo de un solo uso por motivos de seguridad","User Menu
@@ -63,3 +104,54 @@ Veuillez choisir une option
 Remarque : Pour des raisons de sécurité, il est recommandé de se connecter avec un code à usage unique.","Menu utente
 Seleziona un'opzione
 Nota: per motivi di sicurezza, si consiglia di effettuare l'accesso utilizzando un codice monouso."
+mainMenuQuestionLoggedIn,"Menu principal
+
+Elija una opcion
+
+ - {0}: Crear y cambiar de cuenta
+ - {1}: Crear y gestionar eventos
+ - {2}: Ver inscripciones
+ - {3}: Buscar nuevos eventos
+ - {4}: Cambiar idioma del menu","Main Menu
+
+Choose an option
+
+- {0}: Create and switch accounts
+- {1}: Create and manage events
+- {2}: View registrations
+- {3}: Search for new events
+- {4}: Change menu language","Hauptmenü
+
+Option auswählen
+
+- {0}: Konten erstellen und wechseln
+- {1}: Veranstaltungen erstellen und verwalten
+- {2}: Anmeldungen anzeigen
+- {3}: Nach neuen Veranstaltungen suchen
+- {4}: Menüsprache ändern","Menu Principal
+
+Escolha uma opção
+
+- {0}: Criar e alternar contas
+- {1}: Criar e gerenciar eventos
+- {2}: Ver inscrições
+- {3}: Buscar novos eventos
+- {4}: Alterar idioma do menu","Menu principal
+
+Choisir une option
+
+- {0} : Créer et changer de compte
+- {1} : Créer et gérer des événements
+- {2} : Consulter les inscriptions
+- {3} : Rechercher de nouveaux événements
+- {4} : Changer la langue du menu","Menu principale
+
+Scegli un'opzione
+
+- {0}: Crea e cambia account
+- {1}: Crea e gestisci eventi
+- {2}: Visualizza le registrazioni
+- {3}: Cerca nuovi eventi
+- {4}: Cambia lingua del menu"
+mustLoginFirst,Debe iniciar sesion primero,You must log in first,Sie müssen sich zuerst anmelden,Você deve fazer login primeiro,Vous devez d'abord vous connecter,Devi prima effettuare l'accesso
+mustLoginBeforeMenu,Debe iniciar sesion antes de entrar a este menu,You must log in before entering this menu.,"Sie müssen sich anmelden, bevor Sie dieses Menü aufrufen können.",Você deve efetuar login antes de entrar neste menu.,Vous devez vous connecter avant d'entrer dans ce menu.,Devi effettuare l'accesso prima di entrare in questo menu.

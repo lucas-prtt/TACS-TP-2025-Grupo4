@@ -38,7 +38,7 @@ public class LanguageMenu extends MenuState {
         Set<String> keys = I18nManager.getLanguageKeys();
         List<Map<String, String>> botones = new ArrayList<>();
         for(String key : keys){
-            botones.add(Map.of(I18nManager.get("language", key), "/"+key));
+            botones.add(Map.of(I18nManager.get("languageEmoji", key) + " - "+ I18nManager.get("language", key), "/"+key));
         }
         botones.add(Map.of(user.getLocalizedMessage("/back"), "/back"));
         return InlineMenuBuilder.menu(getQuestion(), botones.toArray(new Map[0]));

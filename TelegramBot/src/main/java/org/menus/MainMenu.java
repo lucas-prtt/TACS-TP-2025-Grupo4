@@ -21,7 +21,10 @@ public class MainMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return user.getLocalizedMessage("mainMenuQuestion");
+        if(user.getServerAccountUsername() == null)
+            return user.getLocalizedMessage("mainMenuQuestionLoggedOut", user.getLocalizedMessage("/userMenu"), user.getLocalizedMessage("/languageMenu"));
+        else
+            return user.getLocalizedMessage("mainMenuQuestionLoggedIn", user.getLocalizedMessage("/userMenu"), user.getLocalizedMessage("/organizerMenu"), user.getLocalizedMessage("/participantMenu"), user.getLocalizedMessage("/browseMenu"), user.getLocalizedMessage("/languageMenu"));
     }
 
     @Override

@@ -27,7 +27,7 @@ public class UserMenu extends MenuState {
             return null;
 
             default:
-                return "Error - opcion invalida\n\n";
+                return user.getLocalizedMessage("wrongOption");
         }
     }
 
