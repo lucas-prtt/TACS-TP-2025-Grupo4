@@ -6,7 +6,9 @@ import org.menus.userMenu.UserMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -51,7 +53,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
                         page = Math.max(numero, 1);
                         return null;
                     } catch (Exception e) {
-                        return "No se pudo identificar la página\n\n";
+                        return user.getLocalizedMessage("unidentifiablePage") + "\n\n";
                     }
                 }
                 try {
@@ -59,30 +61,31 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
                     int index = (numero - (page - 1) * limit) - 1;
                     if (index >= 0 && index < items.size()) {
                         user.setMenu(itemSelectedMenu(items.get(index)));
-                        return "Item " + numero + " elegido!";
+                        return user.getLocalizedMessage("itemSelected", numero);
                     }
                 } catch (Exception ignored) {}
 
-                return "No se eligió una opción válida\n\n";
+                return user.getLocalizedMessage("wrongOption")+"\n\n";
         }
     }
 
     @Override
     public String getQuestion() {
         AtomicInteger i = new AtomicInteger(1);
-        items = fetchItems(page, limit);
-        return "Navegando resultados:\n\n" +
+        return user.getLocalizedMessage("abstractBrowseMenuQuestion",
                 String.join("\n", items.stream()
                         .map(this::toShortString)
-                        .map(s -> "/" + ((page - 1) * limit + i.getAndIncrement())  + " " + s)
-                        .toList()) +
-                "\n\nPágina " + page + "\n\n" +
-                "/page <n>     --> Ir a página n\n";
+                        .map(s -> "- " + ((page - 1) * limit + i.getAndIncrement())  + " " + s)
+                        .toList()), page);
     }
     @Override
     public SendMessage questionMessage() {
-        AtomicInteger i = new AtomicInteger(1);
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/prev", "/next"), (items.stream().map(item -> "/" + i.getAndIncrement())).toList(), List.of("/back", "/start"));
+        items = fetchItems(page, limit);
+        Map <String, String> optionsMap = new HashMap<>();
+        for(int i = 0; i<items.size(); i++){
+            optionsMap.put(String.valueOf((i+1)), "/" + (i+1));
+        }
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of(user.getLocalizedMessage("/prev"), "/prev",user.getLocalizedMessage( "/next"), "/next"), optionsMap, Map.of(user.getLocalizedMessage("/back"), "/back", user.getLocalizedMessage("/start"), "/start"));
         return message;
     }
 }

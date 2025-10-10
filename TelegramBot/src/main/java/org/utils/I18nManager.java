@@ -53,7 +53,7 @@ public class I18nManager {
 
         return new MessageFormat(template, getLocaleForLanguage(lang)).format(args);
     }
-    private static Locale getLocaleForLanguage(String lang) {
+    public static Locale getLocaleForLanguage(String lang) {
         return switch (lang) {
             case "es" -> Locale.forLanguageTag("es-AR");
             case "en" -> Locale.US;

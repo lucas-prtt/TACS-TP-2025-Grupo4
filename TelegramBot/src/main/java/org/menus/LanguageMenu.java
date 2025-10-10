@@ -20,6 +20,7 @@ public class LanguageMenu extends MenuState {
         String languageCode = message.substring(1);
         if(I18nManager.getLanguageKeys().contains(languageCode)){
             user.setLang(languageCode);
+            user.setUserLocale(I18nManager.getLocaleForLanguage(languageCode));
             user.setMenu(new MainMenu(user));
             return user.getLocalizedMessage("languageSelected", user.getLocalizedMessage("language"));
         }else{

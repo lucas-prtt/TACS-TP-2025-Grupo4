@@ -15,10 +15,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.utils.I18nManager;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.*;
 
 
 @Getter
@@ -37,6 +37,8 @@ public class TelegramUser {
     private final List<String> filtros = new ArrayList();
     @Setter
     private String lang = "en";
+    @Setter
+    private Locale userLocale = Locale.US;
 
     public TelegramUser(Long chatId){
         this.chatId = chatId;
@@ -135,4 +137,10 @@ public class TelegramUser {
     public String getLocalizedMessage(String key, Object... args) {
         return I18nManager.get(key, this.lang, args);
     }
+    public String localizeDate(LocalDateTime date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                .withLocale(userLocale);
+        return date.format(formatter);
+    }
+
 }

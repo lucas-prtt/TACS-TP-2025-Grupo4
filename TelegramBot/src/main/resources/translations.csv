@@ -2,7 +2,7 @@ key,es,en,de,pt,fr,it
 languageEmoji,🇦🇷,🇬🇧,🇩🇪,🇧🇷,🇫🇷,🇮🇹
 language,Español,English,Deutsch,Português,Français,Italiano
 /userMenu,🔐 Menu de usuario,🔐 User menu,🔐 Benutzermenü,🔐 Menu do usuário,🔐 Menu utilisateur,🔐 Menu utente
-/organizerMenu,🗓️ Menu de organizador,🗓️ Organizer Menu,🗓️ Organizer-Menü,🗓️ Menu do Organizador,🗓️ Menu Organisateur,🗓️ Menù Organizzatore
+/organizerMenu,🗓️ Menu de organizador,🗓️ Organizer menu,🗓️ Organizer-Menü,🗓️ Menu do organizador,🗓️ Menu organisateur,🗓️ Menù dell'organizzatore
 /participantMenu,🎟️ Menu de participante,🎟️ Participant menu,🎟️ Teilnehmermenü,🎟️ Menu do participante,🎟️ Menu des participants,🎟️ Menù dei partecipanti
 /browseMenu,🔍 Menu de busqueda,🔍 Search menu,🔍 Suchmenü,🔍 Menu de pesquisa,🔍 Menu de recherche,🔍 Cerca nel menu
 /languageMenu,🌐 Menu de idioma,🌐 Language menu,🌐 Sprachmenü,🌐 Menu de idiomas,🌐 Menu de langue,🌐 Menu della lingua
@@ -155,3 +155,192 @@ Scegli un'opzione
 - {4}: Cambia lingua del menu"
 mustLoginFirst,Debe iniciar sesion primero,You must log in first,Sie müssen sich zuerst anmelden,Você deve fazer login primeiro,Vous devez d'abord vous connecter,Devi prima effettuare l'accesso
 mustLoginBeforeMenu,Debe iniciar sesion antes de entrar a este menu,You must log in before entering this menu.,"Sie müssen sich anmelden, bevor Sie dieses Menü aufrufen können.",Você deve efetuar login antes de entrar neste menu.,Vous devez vous connecter avant d'entrer dans ce menu.,Devi effettuare l'accesso prima di entrare in questo menu.
+/pause,⏸️ Pausar evento,⏸️ Pause event,⏸️ Ereignis pausieren,⏸️ Pausar evento,⏸️ Suspendre l'événement,⏸️ Metti in pausa l'evento
+/open,▶️ Reabrir evento,▶️ Reopen event,▶️ Wiedereröffnungsveranstaltung,▶️ Evento de reabertura,▶️ Événement de réouverture,▶️ Riapri evento
+/close,⏹️ Cerrar evento,⏹️ Close event,⏹️ Ereignis schließen,⏹️ Fechar evento,⏹️ Clôture de l'événement,⏹️ Chiudi evento
+manageEventMenuQuestion,"Evento seleccionado:
+{0}","Selected event:
+{0}","Ausgewählte Veranstaltung:
+{0}","Evento selecionado:
+{0}","Événement sélectionné :
+{0}","Evento selezionato:
+{0}"
+eventAsDetailedString,"Titulo: {0}
+Descripcion: {1}
+Ubicacion: {2}
+Fecha de inicio: {3}
+Precio: ${4}
+Categoria: {5}
+Tags: {6}
+Estado: {7}
+Duracion: {8}
+Registrados: {9}/{10}
+En waitlist: {11}","Title: {0}
+Description: {1}
+Location: {2}
+Start Date: {3}
+Price: ${4}
+Category: {5}
+Tags: {6}
+Status: {7}
+Duration: {8}
+Registrants: {9}/{10}
+On Waitlist: {11}","Titel: {0}
+Beschreibung: {1}
+Ort: {2}
+Startdatum: {3}
+Preis: {4} $
+Kategorie: {5}
+Tags: {6}
+Status: {7}
+Dauer: {8}
+Anmelder: {9}/{10}
+Auf der Warteliste: {11}","Título: {0}
+Descrição: {1}
+Local: {2}
+Data de início: {3}
+Preço: ${4}
+Categoria: {5}
+Tags: {6}
+Status: {7}
+Duração: {8}
+Inscritos: {9}/{10}
+Na lista de espera: {11}","Titre : {0}
+Description : {1}
+Lieu : {2}
+Date de début : {3}
+Prix : {4} $
+Catégorie : {5}
+Mots-clés : {6}
+Statut : {7}
+Durée : {8}
+Inscrits : {9}/{10}
+Liste d'attente : {11}","Titolo: {0}
+Descrizione: {1}
+Luogo: {2}
+Data di inizio: {3}
+Prezzo: ${4}
+Categoria: {5}
+Tag: {6}
+Stato: {7}
+Durata: {8}
+Iscritti: {9}/{10}
+In lista d'attesa: {11}"
+EVENT_CLOSED,Cerrado,Closed,Geschlossen,Fechado,Fermé,Chiuso
+EVENT_OPEN,Abierto,Open,Offen,Abrir,Ouvrir,Aprire
+EVENT_PAUSED,En pausa,On pause,Auf Pause,Em pausa,En pause,In pausa
+nullState,Sin estado,Stateless,Staatenlos,Apátrida,Apatride,Apolide
+nullPrice,Sin precio,No price,Kein Preis,Sem preço,Pas de prix,Nessun prezzo
+nullLocation,Sin ubicacion,No location,Kein Standort,Sem localização,Aucun emplacement,Nessuna posizione
+nullDescription,Sin descripcion,No description,Keine Beschreibung,Sem descrição,Aucune description,Nessuna descrizione
+nullTags,Sin tags,No tags,Keine Tags,Sem tags,Aucune balise,Nessun tag
+nullDuration,Sin duracion,No duration,Keine Dauer,Sem duração,Aucune durée,Nessuna durata
+nullCategory,Sin categoria,Uncategorized,Unkategorisiert,Sem categoria,Non classé,Non categorizzato
+nullTitle,Sin titulo,Untitled,Ohne Titel,Sem título,Sans titre,Senza titolo
+successfulPause,Se ha pausado el evento,The event has been paused,Die Veranstaltung wurde pausiert,O evento foi pausado,L'événement a été suspendu,L'evento è stato sospeso
+successfulOpen,Se ha abierto el evento,The event has been opened,Die Veranstaltung ist eröffnet,O evento foi aberto,L'événement a été ouvert,L'evento è stato aperto
+successfulClose,Se ha cerrado el evento,The event has been closed,Die Veranstaltung wurde geschlossen,O evento foi encerrado,L'événement a été fermé,L'evento è stato chiuso
+/start,🏠 Menu principal,🏠 Main menu,🏠 Hauptmenü,🏠 Menu principal,🏠 Menu principal,🏠 Menu principale
+unidentifiablePage,No se pudo identificar la pagina,The page could not be identified,Die Seite konnte nicht identifiziert werden,A página não pôde ser identificada,La page n'a pas pu être identifiée,La pagina non può essere identificata
+/prev,⬅️ ,⬅️,⬅️,⬅️,⬅️,⬅️
+/next,➡️ ,➡️,➡️,➡️,➡️,➡️
+requestInputPage,Ingresar pagina,Enter page,Seite eingeben,Entrar na página,Entrer dans la page,Entra nella pagina
+itemSelected,Item {0} elegido!,Item {0} chosen!,Artikel {0} ausgewählt!,Item {0} escolhido!,Article {0} choisi !,Articolo {0} scelto!
+abstractBrowseMenuQuestion,"Navegando resultados:
+
+{0}
+
+Pagina: {1}
+/page <n> --> Ir a pagina n","Browsing results:
+
+{0}
+
+Page: {1}
+/page <n> --> Go to page n","Suchergebnisse:
+
+{0}
+
+Seite: {1}
+/Seite <n> --> Gehe zu Seite n","Resultados da navegação:
+
+{0}
+
+Página: {1}
+/página <n> --> Ir para a página n","Résultats de navigation :
+
+{0}
+
+Page : {1}
+/page <n> --> Accéder à la page n","Risultati della navigazione:
+
+{0}
+
+Pagina: {1}
+/pagina <n> --> Vai alla pagina n"
+title,el titulo,the title,der Titel,o título,le titre,il titolo
+description,la descripcion,the description,die Beschreibung,a descrição,la description,la descrizione
+startDateTime,la fecha de inicio,the start date,das Startdatum,a data de início,la date de début,la data di inizio
+durationMinutes,la duracion del evento en minutos,the duration of the event in minutes,die Dauer des Ereignisses in Minuten,a duração do evento em minutos,la durée de l'événement en minutes,la durata dell'evento in minuti
+location,la ubicacion,the location,der Standort,a localização,l'emplacement,la posizione
+maxParticipants,la maxima cantidad de participantes,the maximum number of participants,die maximale Teilnehmerzahl,o número máximo de participantes,le nombre maximum de participants,il numero massimo di partecipanti
+minParticipants,la minima cantidad de participantes,the minimum number of participants,die Mindestteilnehmerzahl,o número mínimo de participantes,le nombre minimum de participants,il numero minimo di partecipanti
+price,el precio de entrada,the entrance price,der Eintrittspreis,o preço de entrada,le prix d'entrée,il prezzo d'ingresso
+category,la categoria,the category,die Kategorie,a categoria,la catégorie,la categoria
+tags,las etiquetas. Ingrese /stop para finalizar,the labels. Enter /stop to end,"die Etiketten. Geben Sie /stop ein, um zu beenden",os rótulos. Digite /stop para finalizar,les étiquettes. Entrez /stop pour terminer,le etichette. Inserisci /stop per terminare
+wrongDateTimeFormat,"Formato de fecha y hora inválido.
+Use el formato ISO: yyyy-MM-ddTHH:mm:ss","Invalid date and time format.
+Use the ISO format: yyyy-MM-ddTHH:mm:ss","Ungültiges Datums- und Uhrzeitformat.
+Verwenden Sie das ISO-Format: jjjj-MM-ttTHH:mm:ss","Formato de data e hora inválido.
+Use o formato ISO: aaaa-MM-ddTHH:mm:ss","Format de date et d'heure non valide.
+Utilisez le format ISO : aaaa-MM-jjTHH:mm:ss","Formato data e ora non valido.
+Utilizzare il formato ISO: aaaa-MM-ggTHH:mm:ss"
+wrongBigDecimalFormat,Introdujo mal el campo. (Utilice el siguiente formato 123.45),You entered the field incorrectly. (Use the following format: 123.45),Sie haben das Feld falsch ausgefüllt. (Verwenden Sie das folgende Format: 123.45),Você digitou o campo incorretamente. (Use o seguinte formato: 123.45),Vous avez mal saisi le champ. (Utilisez le format suivant : 123.45),Hai inserito il campo in modo errato. (Usa il seguente formato: 123.45)
+wrongIntegerFormat,Introduzca un numero entero,Enter an integer,Geben Sie eine Ganzzahl ein,Digite um número inteiro,Entrez un entier,Inserisci un numero intero
+unsupportedField,ERROR: Campo no soportado,ERROR: Unsupported field,FEHLER: Nicht unterstütztes Feld,ERRO: Campo não suportado,ERREUR : champ non pris en charge,ERRORE: campo non supportato
+unknownInputError,"Error al ingresar el valor, vuelva a intentar","Error entering value, please try again",Fehler bei der Eingabe des Werts. Bitte versuchen Sie es erneut.,"Erro ao inserir valor, tente novamente","Erreur lors de la saisie de la valeur, veuillez réessayer","Errore nell'inserimento del valore, riprovare"
+inputGeneric,Ingrese {0}: ,Enter {0}:,Geben Sie {0} ein:,Digite {0}:,Entrez {0} :,Inserisci {0}:
+/newEvent,🗓️+ Crear nuevo evento,🗓️+ Create new event,🗓️+ Neues Ereignis erstellen,🗓️+ Criar novo evento,🗓️+ Créer un nouvel événement,🗓️+ Crea un nuovo evento
+/manageEvents,📈 Gestionar eventos,📈 Manage events,📈 Ereignisse verwalten,📈 Gerenciar eventos,📈 Gérer les événements,📈 Gestisci eventi
+organizerMenuQuestion,"Menu de organizador:
+
+{0}
+ - Crear y publicar un nuevo evento
+{1}
+ - Ver y modificar estado de sus eventos
+{2}
+ - Volver al menú principal","Organizer Menu:
+
+{0}
+- Create and publish a new event
+{1}
+- View and modify the status of your events
+{2}
+- Return to the main menu","Veranstaltermenü:
+
+{0}
+– Neue Veranstaltung erstellen und veröffentlichen
+{1}
+– Status Ihrer Veranstaltungen einsehen und ändern
+{2}
+– Zurück zum Hauptmenü","Menu do Organizador:
+
+{0}
+- Criar e publicar um novo evento
+{1}
+- Visualizar e modificar o status dos seus eventos
+{2}
+- Retornar ao menu principal","Menu Organisateur :
+
+{0}
+- Créer et publier un événement
+{1}
+- Consulter et modifier le statut de vos événements
+{2}
+- Retour au menu principal","Menu Organizzatore:
+
+{0}
+- Crea e pubblica un nuovo evento
+{1}
+- Visualizza e modifica lo stato dei tuoi eventi
+{2}
+- Torna al menu principale"
