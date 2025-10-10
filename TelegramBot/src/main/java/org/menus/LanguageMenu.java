@@ -35,7 +35,7 @@ public class LanguageMenu extends MenuState {
     @Override
     @SuppressWarnings("unchecked")
     public SendMessage questionMessage() {
-        Set<String> keys = I18nManager.getLanguageKeys();
+        List<String> keys = I18nManager.getLanguageKeys();
         List<Map<String, String>> botones = new ArrayList<>();
         for(String key : keys){
             botones.add(Map.of(I18nManager.get("languageEmoji", key) + " - "+ I18nManager.get("language", key), "/"+key));

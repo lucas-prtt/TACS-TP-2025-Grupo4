@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class I18nManager {
     private static final Map<String, Map<String, String>> MESSAGES = new HashMap<>();
@@ -17,8 +18,8 @@ public class I18nManager {
         loadMessages("translations.csv");
     }
 
-    public static Set<String> getLanguageKeys(){
-        return MESSAGES.get("language").keySet();
+    public static List<String> getLanguageKeys(){
+        return MESSAGES.get("language").keySet().stream().sorted().collect(Collectors.toList());
     }
     private static void loadMessages(String resourcePath) {
         try (InputStream input = I18nManager.class.getClassLoader().getResourceAsStream(resourcePath);
