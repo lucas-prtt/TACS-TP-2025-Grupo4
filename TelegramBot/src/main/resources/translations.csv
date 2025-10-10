@@ -16,3 +16,50 @@ Option auswählen","Menu principal
 Escolha uma opção","Menu principal
 Choisir une option","Menu principale
 Scegli un'opzione"
+requestInputUsername,Escriba su nombre de usuario,Enter your username,Geben Sie Ihren Benutzernamen ein,Digite seu nome de usuário,Entrez votre nom d'utilisateur,Inserisci il tuo nome utente
+requestInputPassword,Escriba su contraseña,Enter your password,Geben Sie Ihr Passwort ein,Digite sua senha,Entrez votre mot de passe,Inserisci la tua password
+successfulLogin,"Login exitoso:
+UserID: {0}
+Username: {1}","Successful login:
+UserID: {0}
+Username: {1}","Erfolgreiche Anmeldung:
+Benutzer-ID: {0}
+Benutzername: {1}","Login bem-sucedido:
+ID do usuário: {0}
+Nome de usuário: {1}","Connexion réussie :
+ID utilisateur : {0}
+Nom d’utilisateur : {1}","Accesso riuscito:
+ID utente: {0}
+Nome utente: {1}"
+unknownErrorInServer,Error desconocido en el servidor,Unknown error on the server,Unbekannter Fehler auf dem Server,Erro desconhecido no servidor,Erreur inconnue sur le serveur,Errore sconosciuto sul server
+serverUnavailable,Error: el servidor no está disponible. Intente más tarde.,Error: The server is unavailable. Please try again later.,Fehler: Der Server ist nicht verfügbar. Bitte versuchen Sie es später erneut.,Erro: O servidor não está disponível. Tente novamente mais tarde.,Erreur : le serveur est indisponible. Veuillez réessayer ultérieurement.,Errore: il server non è disponibile. Riprova più tardi.
+internalBotError,"Error interno en el bot. 
+Intente de nuevo o escriba /start para volver al inicio","Internal error in the bot.
+Please try again or type /start to return to the home screen.","Interner Fehler im Bot.
+Bitte versuchen Sie es erneut oder geben Sie /start ein, um zum Startbildschirm zurückzukehren.","Erro interno no bot.
+Tente novamente ou digite /start para retornar à tela inicial.",Erreur interne dans le bot. Veuillez réessayer ou saisir /start pour revenir à l'écran d'accueil.,"Errore interno nel bot.
+Riprova o digita /start per tornare alla schermata iniziale."
+successfulRegister,"Cuenta creada exitosamente
+ID de usuario: {0}","Account created successfully
+User ID: {0}","Konto erfolgreich erstellt
+Benutzer-ID: {0}","Conta criada com sucesso
+ID do usuário: {0}","Compte créé avec succès
+Identifiant utilisateur : {0}","Account creato con successo
+ID utente: {0}"
+requestInputOneTimeCode,Ingrese el codigo de un solo uso,Enter the single-use code,Geben Sie den Einmalcode ein,Digite o código de uso único,Entrez le code à usage unique,Inserisci il codice monouso
+/oneTimeCode,Codigo de un solo uso,Single-use code,Einmalcode,Código de uso único,Code à usage unique,Codice monouso
+/registerUser,Registrarse,Register,Registrieren,Registrar,Registre,Registro
+/loginUser,Loguearse,Log in,Einloggen,Conecte-se,Se connecter,Login
+userMenuQuestion,"Menu de usuario
+Por favor elija una opcion
+Aclaración: Se recomienda loguearse mediante un codigo de un solo uso por motivos de seguridad","User Menu
+Please choose an option
+Note: Logging in using a one-time code is recommended for security reasons.","Benutzermenü
+Bitte wählen Sie eine Option.
+Hinweis: Aus Sicherheitsgründen wird die Anmeldung mit einem Einmalcode empfohlen.","Menu do Usuário
+Escolha uma opção
+Observação: por motivos de segurança, é recomendável fazer login com um código de uso único.","Menu utilisateur
+Veuillez choisir une option
+Remarque : Pour des raisons de sécurité, il est recommandé de se connecter avec un code à usage unique.","Menu utente
+Seleziona un'opzione
+Nota: per motivi di sicurezza, si consiglia di effettuare l'accesso utilizzando un codice monouso."

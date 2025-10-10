@@ -1,5 +1,6 @@
 package org.menus.userMenu;
 
+import org.menus.MainMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
@@ -21,6 +22,9 @@ public class UserMenu extends MenuState {
             case "/registerUser":
                 user.setMenu(new RegisterUserMenu(user));
                 return null;
+            case "/back":
+                user.setMenu(new MainMenu(user));
+            return null;
 
             default:
                 return "Error - opcion invalida\n\n";
@@ -29,22 +33,11 @@ public class UserMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return """
-               \s
-                 Menu de Usuario\s
-                \s
-                - Use one-time-code: Login con un código unico disponible desde la web
-               \s
-                - Login: Login con username y contraseña
-               \s
-                - Register: Registrar usuario nuevo con username y contraseña
-               \s
-               Aclaración: Se recomienda loguearse mediante one-time-code por motivos de seguridad
-               """;
+        return user.getLocalizedMessage("userMenuQuestion");
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of("Use one-time-code","/oneTimeCode" ), Map.of("Register", "/registerUser", "Login", "/loginUser"));
+        SendMessage message = InlineMenuBuilder.localizedMenu(user, getQuestion(), List.of("/oneTimeCode"), List.of("/registerUser", "/loginUser"), List.of("/back"));
         return message;
     }
 

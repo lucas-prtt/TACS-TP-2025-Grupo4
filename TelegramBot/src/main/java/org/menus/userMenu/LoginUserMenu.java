@@ -24,26 +24,25 @@ public class LoginUserMenu extends MenuState {
             newUser.setPassword(message);
             Map<String, Object> res = user.getApiClient().loginUserAndPassword(newUser);
             user.updateUser(res);
-            return "Cuenta Logueada\n" + "userID: " + user.getServerAccountId() + "\n"
-                    + "username: " + user.getServerAccountUsername() + "\n";
-        }catch (HttpClientErrorException e){
+            return user.getLocalizedMessage("successfulLogin", user.getServerAccountId(), user.getServerAccountUsername());
+            }catch (HttpClientErrorException e){
             System.out.println(e.getMessage());
             try {
                 Map<String, String> errorMap = new ObjectMapper().readValue(e.getResponseBodyAsString(), Map.class);
-                return e.getStatusCode().toString()+"\n" + errorMap.getOrDefault("error", "Error desconocido") + "\n\n";
+                return e.getStatusCode().toString()+"\n" + errorMap.getOrDefault("error", user.getLocalizedMessage("unknownErrorInServer")) + "\n\n";
             } catch (Exception e2) {
                 System.out.println(e2.getMessage());
                 user.setMenu(new UserMenu(user));
-                return "Error desconocido en el servidor.";
+                return user.getLocalizedMessage("unknownErrorInServer");
             }
         }catch (ResourceAccessException e) {
             System.out.println("Servidor no disponible: " + e.getMessage());
             user.setMenu(new UserMenu(user));
-            return "Error: el servidor no está disponible. Intente más tarde.";
+            return user.getLocalizedMessage("serverUnavailable");
         }catch (Exception e){
             System.out.println(e.getMessage());
             user.setMenu(new UserMenu(user));
-            return "Error interno en el bot.";
+            return user.getLocalizedMessage("internalBotError");
         }
     }
     @Override
@@ -54,9 +53,9 @@ public class LoginUserMenu extends MenuState {
     @Override
     public String getQuestion() {
         if (newUser.getUsername() == null)
-            return "Ingrese el nombre del usuario";
+            return user.getLocalizedMessage("requestInputUsername");
         else if (newUser.getPassword() == null)
-            return "Ingrese la contraseña:";
+            return user.getLocalizedMessage("requestInputPassword");
         return user.setMainMenuAndRespond();
     }
 
