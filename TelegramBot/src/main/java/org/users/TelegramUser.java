@@ -12,8 +12,11 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.utils.I18nManager;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +35,8 @@ public class TelegramUser {
     @Setter
     private MenuState menu;
     private final List<String> filtros = new ArrayList();
-
+    @Setter
+    private String lang = "en";
 
     public TelegramUser(Long chatId){
         this.chatId = chatId;
@@ -126,5 +130,9 @@ public class TelegramUser {
         this.setServerAccountUsername(null);
         setApiClient(ApiClient.withoutToken(this));
         this.menu = new UserMenu(this);
+    }
+
+    public String getLocalizedMessage(String key, Object... args) {
+        return I18nManager.get(key, this.lang, args);
     }
 }

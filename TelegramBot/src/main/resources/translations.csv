@@ -1,0 +1,18 @@
+key,es,en,de,pt,fr,it
+language,Español,English,Deutsch,Português,Français,Italiano
+/userMenu,Menu de usuario,User menu,Benutzermenü,Menu do usuário,Menu utilisateur,Menu utente
+/organizerMenu,Menu de organizador,Organizer menu,Organizer-Menü,Menu do organizador,Menu organisateur,Menu dell'organizzatore
+/participantMenu,Menu de participante,Participant menu,Teilnehmermenü,Menu do participante,Menu des participants,Menù dei partecipanti
+/browseMenu,Menu de busqueda,Search menu,Suchmenü,Menu de pesquisa,Menu de recherche,Cerca nel menu
+/languageMenu,Menu de lenguaje,Language menu,Sprachenmenü,Menu de idiomas,Menu de langue,Menu della lingua
+languageMenuQuestion,Elija su lenguaje,Choose your language,Wählen Sie Ihre Sprache,Escolha seu idioma,Choisissez votre langue,Scegli la tua lingua
+wrongOption,Opcion invalida,Invalid option,Ungültige Option,Opção inválida,Option invalide,Opzione non valida
+languageSelected,Lenguaje elegido: {0},Chosen language: {0},Ausgewählte Sprache: {0},Idioma escolhido: {0},Langue choisie : {0},Lingua scelta: {0}
+/back,Atras,Back,Zurück,Voltar,Dos,Indietro
+mainMenuQuestion,"Menu principal
+Elija una opcion","Main menu
+Choose an option","Hauptmenü
+Option auswählen","Menu principal
+Escolha uma opção","Menu principal
+Choisir une option","Menu principale
+Scegli un'opzione"

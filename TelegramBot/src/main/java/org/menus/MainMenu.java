@@ -21,21 +21,16 @@ public class MainMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return "Menu principal: \n " +
-                "/userMenu: Menu de gestion de usuario\n " +
-                (user.getServerAccountUsername() != null ?
-                "/organizerMenu. Menu de gestion de eventos organizados\n " +
-                "/participantMenu. Menu de gestion de eventos a los que participa\n" +
-                "/browseMenu. Menu para buscar nuevos eventos a los que participar" : "");
+        return user.getLocalizedMessage("mainMenuQuestion");
     }
 
     @Override
     public SendMessage questionMessage() {
         SendMessage message;
         if(user.getServerAccountUsername() != null){
-            message = InlineMenuBuilder.menu(getQuestion(), List.of("/userMenu"), List.of( "/organizerMenu"), List.of( "/participantMenu"), List.of( "/browseMenu"));
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/userMenu", "/organizerMenu", "/participantMenu", "/browseMenu", "/languageMenu");
         }else {
-            message = InlineMenuBuilder.menu(getQuestion(), List.of("/userMenu"));
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/userMenu", "/languageMenu");
         }
         return message;
     }
@@ -63,6 +58,9 @@ public class MainMenu extends MenuState {
                 return null;
             case "/browseMenu":
                 user.setMenu(new BrowseMenu(user));
+                return null;
+            case "/languageMenu":
+                user.setMenu(new LanguageMenu(user));
                 return null;
             default:
                 return "Error - opcion invalida\n";
