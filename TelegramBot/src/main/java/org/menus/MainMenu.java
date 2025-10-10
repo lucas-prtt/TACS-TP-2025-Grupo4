@@ -47,7 +47,7 @@ public class MainMenu extends MenuState {
                         Objects.equals(message, "/browseMenu")
                         )
         )
-            return "Inicia sesion antes de entrar a estos menus";
+            return user.getLocalizedMessage("mustLoginBeforeMenu");
 
         switch (message){
             case "/userMenu":
