@@ -15,7 +15,7 @@ public abstract class AbstractRegistrationBrowseMenu extends AbstractBrowseMenu<
 
     @Override
     protected String toShortString(RegistrationDTO item) {
-        return item.toShortString();
+        return item.toShortString(user);
     }
 
     @Override

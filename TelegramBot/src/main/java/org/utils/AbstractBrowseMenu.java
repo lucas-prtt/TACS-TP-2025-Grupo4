@@ -85,7 +85,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
         for(int i = 0; i<items.size(); i++){
             optionsMap.put(String.valueOf((i+1)), "/" + (i+1));
         }
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of(user.getLocalizedMessage("/prev"), "/prev",user.getLocalizedMessage( "/next"), "/next"), optionsMap, Map.of(user.getLocalizedMessage("/back"), "/back", user.getLocalizedMessage("/start"), "/start"));
+        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of(user.getLocalizedMessage("/next"), "/next",user.getLocalizedMessage( "/prev"), "/prev"), optionsMap, Map.of(user.getLocalizedMessage("/back"), "/back", user.getLocalizedMessage("/start"), "/start"));
         return message;
     }
 }

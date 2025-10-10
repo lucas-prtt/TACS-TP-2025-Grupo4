@@ -344,3 +344,116 @@ organizerMenuQuestion,"Menu de organizador:
 - Visualizza e modifica lo stato dei tuoi eventi
 {2}
 - Torna al menu principale"
+/cancel,❌ Cancelar inscripcion,❌ Cancel registration,❌ Registrierung stornieren,❌ Cancelar inscrição,❌ Annuler l'inscription,❌ Annulla registrazione
+registrationAsDetailedString,"Estado: {0}
+Evento: {1}
+Descripcion:{2}
+ID: {3}
+Fecha de inicio: {4}","Status: {0}
+Event: {1}
+Description: {2}
+ID: {3}
+Start Date: {4}","Status: {0}
+Ereignis: {1}
+Beschreibung: {2}
+ID: {3}
+Startdatum: {4}","Status: {0}
+Evento: {1}
+Descrição: {2}
+ID: {3}
+Data de início: {4}","Statut : {0}
+Événement : {1}
+Description : {2}
+ID : {3}
+Date de début : {4}","Stato: {0}
+Evento: {1}
+Descrizione: {2}
+ID: {3}
+Data di inizio: {4}"
+registrationAsShortString,"Estado: {0}
+Evento: {1}
+ID: {2}","Status: {0}
+Event: {1}
+ID: {2}","Status: {0}
+Ereignis: {1}
+ID: {2}","Status: {0}
+Evento: {1}
+ID: {2}","Statut : {0}
+Événement : {1}
+ID : {2}","Stato: {0}
+Evento: {1}
+ID: {2}"
+CONFIRMED,✅ Confirmada,✅ Confirmed,✅ Bestätigt,✅ Confirmado,✅ Confirmé,✅ Confermato
+WAITLIST,⏳ En lista de espera,⏳ On the waiting list,⏳ Auf der Warteliste,⏳ Na lista de espera,⏳ Sur la liste d'attente,⏳ In lista d'attesa
+CANCELED,❌ Cancelada,❌ Cancelled,❌ Abgesagt,❌ Cancelado,❌ Annulé,❌ Annullato
+participantMenuQuestion,"Menu de participante:
+
+{0}
+ - Ver inscripciones confirmadas
+{1}
+ - Ver inscripciones a eventos en waitlist
+{2}
+ - Ver inscripciones canceladas
+{3}
+ - Ver todas las inscripciones
+{4}
+ - Volver al menú principal","Participant menu:
+
+{0}
+- View confirmed registrations
+{1}
+- View event registrations on the waitlist
+{2}
+- View canceled registrations
+{3}
+- View all registrations
+{4}
+- Return to the main menu","Teilnehmermenü:
+
+{0}
+– Bestätigte Anmeldungen anzeigen
+{1}
+– Veranstaltungsanmeldungen auf der Warteliste anzeigen
+{2}
+– Stornierte Anmeldungen anzeigen
+{3}
+– Alle Anmeldungen anzeigen
+{4}
+– Zurück zum Hauptmenü","Menu do participante:
+
+{0}
+- Ver inscrições confirmadas
+{1}
+- Ver inscrições de eventos na lista de espera
+{2}
+- Ver inscrições canceladas
+{3}
+- Ver todas as inscrições
+{4}
+- Voltar ao menu principal","Menu des participants :
+
+{0}
+- Consulter les inscriptions confirmées
+{1}
+- Consulter les inscriptions à l'événement en liste d'attente
+{2}
+- Consulter les inscriptions annulées
+{3}
+- Consulter toutes les inscriptions
+{4}
+- Retourner au menu principal","Menu partecipanti:
+
+{0}
+- Visualizza le registrazioni confermate
+{1}
+- Visualizza le registrazioni agli eventi in lista d'attesa
+{2}
+- Visualizza le registrazioni annullate
+{3}
+- Visualizza tutte le registrazioni
+{4}
+- Torna al menu principale"
+/getSuccesfulRegistrations,✅ Confirmadas,✅ Confirmed,✅ Bestätigt,✅ Confirmado,✅ Confirmé,✅ Confermato
+/getWaitlistedRegistrations,⏳ En lista de espera,⏳ On the waiting list,⏳ Auf der Warteliste,⏳ Na lista de espera,⏳ Sur la liste d'attente,⏳ In lista d'attesa
+/getCanceledRegistrations,❌ Canceladas,❌ Cancelled,❌ Abgesagt,❌ Cancelado,❌ Annulé,❌ Annullato
+/getAllRegistrations,📦 Todas,📦 All,📦 Alle,📦 Todos,📦 Tous,📦 Tutti

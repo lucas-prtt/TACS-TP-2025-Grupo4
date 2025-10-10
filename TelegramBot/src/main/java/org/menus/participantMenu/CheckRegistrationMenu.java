@@ -35,25 +35,22 @@ public class CheckRegistrationMenu extends MenuState {
                     return e.getMessage() + "\n";
                 }
             default:
-                return "Opcion invalida\n";
+                return user.getLocalizedMessage("wrongOption");
         }
     }
 
     @Override
     public String getQuestion() {
-        return registrationDTO.toDetailedString() +
-                (registrationDTO.getState()==RegistrationStateDTO.CANCELED? "" :  "\n/cancel --> Cancelar registro") +
-                "\n/back" +
-                "\n/start";
+        return registrationDTO.toDetailedString(user);
     }
     @Override
     public SendMessage questionMessage() {
         SendMessage message;
         if (registrationDTO.getState() == RegistrationStateDTO.CANCELED){
-            message = InlineMenuBuilder.menu(getQuestion(), List.of("/back", "/start"));
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back", "/start");
         }
         else{
-            message = InlineMenuBuilder.menu(getQuestion(), List.of("/cancel", "/back", "/start"));
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/cancel", "/back", "/start");
         }
         return message;
     }
