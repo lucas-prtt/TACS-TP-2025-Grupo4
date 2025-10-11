@@ -32,20 +32,13 @@ public class ParticipantMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return """
-                Menu de participante:
-                
-                Confirmadas
-                    - Ver inscripciones confirmadas
-                Waitlist
-                    - Ver inscripciones a eventos en waitlist
-                Canceladas
-                    - Ver inscripciones canceladas
-                Todas
-                    - Ver todas las inscripciones
-                Inicio
-                    - Volver al menú principal
-                """;
+        return user.getLocalizedMessage("participantMenuQuestion",
+                user.getLocalizedMessage("/getSuccesfulRegistrations"),
+                user.getLocalizedMessage("/getWaitlistedRegistrations"),
+                user.getLocalizedMessage("/getCanceledRegistrations"),
+                user.getLocalizedMessage("/getAllRegistrations"),
+                user.getLocalizedMessage("/start")
+        );
     }
 
     public ParticipantMenu(TelegramUser user) {
@@ -53,7 +46,7 @@ public class ParticipantMenu extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of("Confirmadas","/getSuccesfulRegistrations","Waitlist", "/getWaitlistedRegistrations","Canceladas", "/getCanceledRegistrations"), Map.of("Todas","/getAllRegistrations", "Inicio","/start"));
+        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/getSuccesfulRegistrations", "/getWaitlistedRegistrations", "/getCanceledRegistrations", "/getAllRegistrations", "/start");
         return message;
     }
 }

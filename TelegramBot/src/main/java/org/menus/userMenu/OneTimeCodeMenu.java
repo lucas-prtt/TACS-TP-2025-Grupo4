@@ -8,6 +8,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
+import org.utils.ErrorHandler;
 
 import java.util.Map;
 
@@ -28,27 +29,17 @@ public class OneTimeCodeMenu extends MenuState {
             Map<String, Object> response = user.getApiClient().loginOneTimeCode(message, username);
             user.updateUser(response);
             user.setMenu(new MainMenu(user));
-            return "Cuenta establecida:\n" +
-                    "  Usuario: "+ user.getServerAccountUsername() +
-                    "\n  Uuid: " + user.getServerAccountId()  + "\n\n";
+            return user.getLocalizedMessage("successfulLogin", user.getServerAccountId(), user.getServerAccountUsername());
         }catch (HttpClientErrorException e){
-            System.out.println(e.getMessage());
-            try {
-                Map<String, String> errorMap = new ObjectMapper().readValue(e.getResponseBodyAsString(), Map.class);
-                return e.getStatusCode().toString()+"\n" + errorMap.getOrDefault("error", "Error desconocido") + "\n\n";
-            } catch (Exception e2) {
-                System.out.println(e2.getMessage());
-                user.setMenu(new UserMenu(user));
-                return "Error desconocido en el servidor.";
-            }
-        }catch (ResourceAccessException e) {
-            System.out.println("Servidor no disponible: " + e.getMessage());
             user.setMenu(new UserMenu(user));
-            return "Error: el servidor no está disponible. Intente más tarde.";
+            return ErrorHandler.getLocalizedErrorMessage(e, user);
+        }catch (ResourceAccessException e) {
+            user.setMenu(new UserMenu(user));
+            return user.getLocalizedMessage("serverUnavailable");
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
-            return "Error desconocido al asignar el usuario. Vuelva a intentar o escriba /start para volver al inicio\n\n";
+            System.err.println(e.getMessage());
+            return user.getLocalizedMessage("internalBotError");
         }
     }
     @Override
@@ -60,8 +51,8 @@ public class OneTimeCodeMenu extends MenuState {
     @Override
     public String getQuestion() {
         if(username == null){
-            return "Ingrese el nombre de usuario";
+            return user.getLocalizedMessage("requestInputUsername");
         }
-        return "Ingrese el one Time Code";
+        return user.getLocalizedMessage("requestInputOneTimeCode");
     }
 }

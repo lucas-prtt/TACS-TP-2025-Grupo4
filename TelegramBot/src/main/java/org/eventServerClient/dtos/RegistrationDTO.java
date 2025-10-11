@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.users.TelegramUser;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,16 +20,11 @@ public class RegistrationDTO {
     private String description;
     private RegistrationStateDTO state;
     private LocalDateTime dateTime;
-    public String toShortString(){
-        return "Estado: " + state.toString().toLowerCase() + "\n  Evento: " + title + "\n  Id: " + registrationId + "\n\n";
+    public String toShortString(TelegramUser user){
+        return user.getLocalizedMessage("registrationAsShortString", user.getLocalizedMessage(state.toString()), title, registrationId);
     }
-    public String toDetailedString(){
-        return "Estado: " + state.toString().toLowerCase() + "\n  Evento: " + title + "\n Descipcion: " + (description.length()<1000 ? description : description.substring(0, 996).concat("...")) +
-                "\n  Id: " + registrationId + "\n" + "Fecha de inicio" + dateTime;
-    }
-    @Override
-    public String toString(){
-        return toDetailedString();
+    public String toDetailedString(TelegramUser user){
+        return user.getLocalizedMessage("registrationAsDetailedString", user.getLocalizedMessage(state.toString()), title, (description.length()<1000 ? description : description.substring(0, 996).concat("...")), registrationId, user.localizeDate(dateTime));
     }
 
 }

@@ -26,17 +26,7 @@ public class OrganizerMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return """
-                Menu de organizador:
-                
-                Nuevo evento
-                    - Crear y publicar un nuevo evento
-                Gestionar eventos
-                    - Ver y modificar estado de sus eventos
-                Volver al inicio
-                    - Volver al menú principal
-                
-                """;
+        return user.getLocalizedMessage("organizerMenuQuestion", user.getLocalizedMessage("/newEvent"), user.getLocalizedMessage("/manageEvents"), user.getLocalizedMessage("/start"));
     }
 
     public OrganizerMenu(TelegramUser user) {
@@ -44,7 +34,7 @@ public class OrganizerMenu extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of("Nuevo evento", "/newEvent", "Gestionar eventos", "/manageEvents", "Volver al inicio", "/start"));
+        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(),"/newEvent", "/manageEvents", "/start");
         return message;
     }
 }

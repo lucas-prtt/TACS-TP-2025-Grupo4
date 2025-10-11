@@ -12,10 +12,13 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.utils.I18nManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.*;
 
 
 @Getter
@@ -31,8 +34,11 @@ public class TelegramUser {
     private String serverAccountUsername;
     @Setter
     private MenuState menu;
-    private final List<String> filtros = new ArrayList();
-
+    private final List<QueryFilter> filtros = new ArrayList();
+    @Setter
+    private String lang = "en";
+    @Setter
+    private Locale userLocale = Locale.US;
 
     public TelegramUser(Long chatId){
         this.chatId = chatId;
@@ -82,14 +88,14 @@ public class TelegramUser {
     public String setMainMenuAndRespond(){
         return setMenuAndRespond(new MainMenu(this));
     }
-    public void addFilter(String filter){
+    public void addFilter(QueryFilter filter){
         filtros.add(filter);
     }
     public void clearFilters(){
         filtros.clear();
     }
     public String getAllFiltersAsQueryParams(){
-        return "?" + String.join("&", filtros);
+        return "?" + String.join("&", filtros.toString());
     }
     public void updateApiClient(String token){
         setApiClient(ApiClient.fromToken(token, this));
@@ -127,4 +133,14 @@ public class TelegramUser {
         setApiClient(ApiClient.withoutToken(this));
         this.menu = new UserMenu(this);
     }
+
+    public String getLocalizedMessage(String key, Object... args) {
+        return I18nManager.get(key, this.lang, args);
+    }
+    public String localizeDate(LocalDateTime date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                .withLocale(userLocale);
+        return date.format(formatter);
+    }
+
 }

@@ -22,7 +22,7 @@ public class ManageEventSelectionMenu extends AbstractBrowseMenu<EventDTO>{
 
     @Override
     protected String toShortString(EventDTO item) {
-        return item.asShortString();
+        return item.asShortString(user);
     }
 
     @Override

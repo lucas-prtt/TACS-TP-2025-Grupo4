@@ -3,6 +3,7 @@ package org.utils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.users.TelegramUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +11,27 @@ import java.util.List;
 import java.util.Map;
 
 public class InlineMenuBuilder {
+
+    public static SendMessage localizedMenu(TelegramUser user, String text, List<String>... lines) {
+        List<List<Button>> layout = new ArrayList<>();
+        for (List<String> line: lines) {
+            List<Button> row = new ArrayList<>();
+            for (String option : line) {
+                row.add(new Button(user.getLocalizedMessage(option), option)); // texto, comando
+            }
+            layout.add(row);
+        }
+        return menu(text, layout);
+    }
+    public static SendMessage localizedVerticalMenu(TelegramUser user, String text, String... lines) {
+        List<List<Button>> layout = new ArrayList<>();
+        for (String line: lines) {
+            List<Button> row = new ArrayList<>();
+            row.add(new Button(user.getLocalizedMessage(line), line));
+            layout.add(row);
+        }
+        return menu(text, layout);
+    }
 
 
     public static SendMessage menu(String text, List<String>... lines) {

@@ -21,21 +21,19 @@ public class MainMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return "Menu principal: \n " +
-                "/userMenu: Menu de gestion de usuario\n " +
-                (user.getServerAccountUsername() != null ?
-                "/organizerMenu. Menu de gestion de eventos organizados\n " +
-                "/participantMenu. Menu de gestion de eventos a los que participa\n" +
-                "/browseMenu. Menu para buscar nuevos eventos a los que participar" : "");
+        if(user.getServerAccountUsername() == null)
+            return user.getLocalizedMessage("mainMenuQuestionLoggedOut", user.getLocalizedMessage("/userMenu"), user.getLocalizedMessage("/languageMenu"));
+        else
+            return user.getLocalizedMessage("mainMenuQuestionLoggedIn", user.getLocalizedMessage("/userMenu"), user.getLocalizedMessage("/organizerMenu"), user.getLocalizedMessage("/participantMenu"), user.getLocalizedMessage("/browseMenu"), user.getLocalizedMessage("/languageMenu"));
     }
 
     @Override
     public SendMessage questionMessage() {
         SendMessage message;
         if(user.getServerAccountUsername() != null){
-            message = InlineMenuBuilder.menu(getQuestion(), List.of("/userMenu"), List.of( "/organizerMenu"), List.of( "/participantMenu"), List.of( "/browseMenu"));
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/userMenu", "/organizerMenu", "/participantMenu", "/browseMenu", "/languageMenu");
         }else {
-            message = InlineMenuBuilder.menu(getQuestion(), List.of("/userMenu"));
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/userMenu", "/languageMenu");
         }
         return message;
     }
@@ -49,7 +47,7 @@ public class MainMenu extends MenuState {
                         Objects.equals(message, "/browseMenu")
                         )
         )
-            return "Inicia sesion antes de entrar a estos menus";
+            return user.getLocalizedMessage("mustLoginBeforeMenu");
 
         switch (message){
             case "/userMenu":
@@ -64,8 +62,11 @@ public class MainMenu extends MenuState {
             case "/browseMenu":
                 user.setMenu(new BrowseMenu(user));
                 return null;
+            case "/languageMenu":
+                user.setMenu(new LanguageMenu(user));
+                return null;
             default:
-                return "Error - opcion invalida\n";
+                return user.getLocalizedMessage("wrongOption");
         }
 
     }

@@ -4,10 +4,12 @@ import org.apache.http.client.HttpResponseException;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.menus.MenuState;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
+import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
@@ -16,18 +18,23 @@ import java.util.UUID;
 public class LookUpEventByUUIDMenu extends MenuState {
     @Override
     public String respondTo(String message) {
+        EventDTO eventDTO;
         try {
-            EventDTO eventDTO = user.getApiClient().getEvent(UUID.fromString(message));
+             eventDTO = user.getApiClient().getEvent(UUID.fromString(message));
+        }catch (IllegalArgumentException e){
+            return user.getLocalizedMessage("invalidUUID");
+        }
+        try {
             user.setMenu(new CheckEventMenu(user, eventDTO));
-            return "Evento encontrado \n\n";
-        }catch (RestClientResponseException e){
-            return e.getStatusCode() + "\n\n" + e.getMessage();
+            return user.getLocalizedMessage("eventFound");
+        }catch (HttpClientErrorException e){
+            return ErrorHandler.getLocalizedErrorMessage(e, user);
         }
     }
 
     @Override
     public String getQuestion() {
-        return "Ingrese la ID del evento\n(o ingrese /start para volver al menu principal)";
+        return user.getLocalizedMessage("requestInputEventID");
     }
 
     public LookUpEventByUUIDMenu(TelegramUser user) {

@@ -2,30 +2,32 @@ package org.menus.browseMenu;
 
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.users.QueryFilter;
 import org.users.TelegramUser;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
 
 public class FilterByMenu extends MenuState {
+    QueryFilter filter;
 
-    String filterParameter;
     public FilterByMenu(TelegramUser user, String filterParameter) {
         super(user);
-        this.filterParameter = filterParameter;
+        this.filter = new QueryFilter(filterParameter);
     }
 
 
     @Override
     public String respondTo(String message) {
-        user.addFilter(filterParameter + "="+ message);
-        user.setMenu(new BrowseMenu(user));
-        return "Filtro configurado: " + filterParameter + "="+ message + "\n\n";
+        filter.setValue(message);
+        user.addFilter(filter);
+        user.setMenu(new FilterMenu(user));
+        return user.getLocalizedMessage("configuredFilter", filter.getTypeLocalized(user), message);
     }
 
     @Override
     public String getQuestion() {
-        return "Ingrese el nombre para el filtro \""+ filterParameter +"\"\n" ;
+        return user.getLocalizedMessage("requestInputFilter", filter.getTypeLocalized(user));
     }
     @Override
     public SendMessage questionMessage() {
