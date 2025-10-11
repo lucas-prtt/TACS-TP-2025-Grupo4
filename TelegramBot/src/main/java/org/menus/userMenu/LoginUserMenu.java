@@ -8,6 +8,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
+import org.utils.ErrorHandler;
 
 import java.util.Map;
 
@@ -25,22 +26,17 @@ public class LoginUserMenu extends MenuState {
             Map<String, Object> res = user.getApiClient().loginUserAndPassword(newUser);
             user.updateUser(res);
             return user.getLocalizedMessage("successfulLogin", user.getServerAccountId(), user.getServerAccountUsername());
-            }catch (HttpClientErrorException e){
-            System.out.println(e.getMessage());
-            try {
-                Map<String, String> errorMap = new ObjectMapper().readValue(e.getResponseBodyAsString(), Map.class);
-                return e.getStatusCode().toString()+"\n" + errorMap.getOrDefault("error", user.getLocalizedMessage("unknownErrorInServer")) + "\n\n";
-            } catch (Exception e2) {
-                System.out.println(e2.getMessage());
-                user.setMenu(new UserMenu(user));
-                return user.getLocalizedMessage("unknownErrorInServer");
             }
-        }catch (ResourceAccessException e) {
-            System.out.println("Servidor no disponible: " + e.getMessage());
+        catch (HttpClientErrorException e)
+        {
+            user.setMenu(new UserMenu(user));
+            return ErrorHandler.getLocalizedErrorMessage(e, user);
+        }
+        catch (ResourceAccessException e) {
             user.setMenu(new UserMenu(user));
             return user.getLocalizedMessage("serverUnavailable");
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             user.setMenu(new UserMenu(user));
             return user.getLocalizedMessage("internalBotError");
         }

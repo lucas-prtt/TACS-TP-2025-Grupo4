@@ -68,7 +68,7 @@ public class EventService {
      */
     public Event getEvent(UUID eventId) {
         return eventRepository.findById(eventId).
-                orElseThrow(() -> new NoSuchElementException("Evento no encontrado con ID: " + eventId));
+                orElseThrow(() -> new NoSuchElementException("Evento no encontrado con ID dada"));
     }
 
     /**

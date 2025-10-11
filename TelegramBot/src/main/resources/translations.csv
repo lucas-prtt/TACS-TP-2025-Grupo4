@@ -59,17 +59,17 @@ Scegli un'opzione
 Non hai effettuato l'accesso. Accedi al tuo account per accedere ad altre opzioni."
 requestInputUsername,Escriba su nombre de usuario,Enter your username,Geben Sie Ihren Benutzernamen ein,Digite seu nome de usuário,Entrez votre nom d'utilisateur,Inserisci il tuo nome utente
 requestInputPassword,Escriba su contraseña,Enter your password,Geben Sie Ihr Passwort ein,Digite sua senha,Entrez votre mot de passe,Inserisci la tua password
-successfulLogin,"Login exitoso:
+successfulLogin,"✅ Login exitoso:
 UserID: {0}
-Username: {1}","Successful login:
+Username: {1}","✅ Successful login:
 UserID: {0}
-Username: {1}","Erfolgreiche Anmeldung:
+Username: {1}","✅ Erfolgreiche Anmeldung:
 Benutzer-ID: {0}
-Benutzername: {1}","Login bem-sucedido:
+Benutzername: {1}","✅ Login bem-sucedido:
 ID do usuário: {0}
-Nome de usuário: {1}","Connexion réussie :
+Nome de usuário: {1}","✅ Connexion réussie :
 ID utilisateur : {0}
-Nom d’utilisateur : {1}","Accesso riuscito:
+Nom d’utilisateur : {1}","✅ Accesso riuscito:
 ID utente: {0}
 Nome utente: {1}"
 unknownErrorInServer,Error desconocido en el servidor,Unknown error on the server,Unbekannter Fehler auf dem Server,Erro desconhecido no servidor,Erreur inconnue sur le serveur,Errore sconosciuto sul server
@@ -493,3 +493,21 @@ requestInputEventID,"Ingrese la ID del evento:
 (oppure digita /start per tornare al menu principale)"
 appliedFilters,Filtros aplicados:,Filters applied:,Angewandte Filter:,Filtros aplicados:,Filtres appliqués :,Filtri applicati:
 noFilters,Ningun filtro,No filter,Kein Filter,Sem filtro,Pas de filtre,Nessun filtro
+La contraseña debe tener entre 8 caracteres,⚠️ La contraseña debe tener entre 8 caracteres,⚠️ The password must be between 8 characters,⚠️ Das Passwort muss zwischen 8 Zeichen lang sein,⚠️ A senha deve ter entre 8 caracteres,⚠️ Le mot de passe doit comporter entre 8 caractères,⚠️ La password deve essere compresa tra 8 caratteri
+Debe contener al menos una letra mayúscula,⚠️ La contraseña debe contener al menos una letra mayúscula,⚠️ The password must contain at least one capital letter,⚠️ Das Passwort muss mindestens einen Großbuchstaben enthalten,⚠️ A senha deve conter pelo menos uma letra maiúscula,⚠️ Le mot de passe doit contenir au moins une lettre majuscule,⚠️ La password deve contenere almeno una lettera maiuscola
+Debe contener al menos una letra minúscula,⚠️ La contraseña debe contener al menos una letra minúscula,⚠️ The password must contain at least one lowercase letter,⚠️ Das Passwort muss mindestens einen Kleinbuchstaben enthalten,⚠️ A senha deve conter pelo menos uma letra minúscula,⚠️ Le mot de passe doit contenir au moins une lettre minuscule,⚠️ La password deve contenere almeno una lettera minuscola
+Debe contener al menos un número,⚠️ La contraseña debe contener al menos un número,⚠️ The password must contain at least one number,⚠️ Das Passwort muss mindestens eine Zahl enthalten,⚠️ A senha deve conter pelo menos um número,⚠️ Le mot de passe doit contenir au moins un chiffre,⚠️ La password deve contenere almeno un numero
+Debe contener al menos un carácter especial (!@#$%^&*()-_+=),⚠️ La contraseña debe contener al menos un carácter especial (!@#$%^&*()-_+=),⚠️ The password must contain at least one special character (!@#$%^&*()-_+=),⚠️ Das Passwort muss mindestens ein Sonderzeichen enthalten (!@#$%^&*()-_+=),⚠️ A senha deve conter pelo menos um caractere especial (!@#$%^&*()-_+=),⚠️ Le mot de passe doit contenir au moins un caractère spécial (!@#$%^&*()-_+=),⚠️ La password deve contenere almeno un carattere speciale (!@#$%^&*()-_+=)
+No debe contener espacios,⚠️ La contraseña no debe contener espacios,⚠️ The password must not contain spaces,⚠️ Das Passwort darf keine Leerzeichen enthalten,⚠️ A senha não deve conter espaços,⚠️ Le mot de passe ne doit pas contenir d'espaces,⚠️ La password non deve contenere spazi
+El usuario ya existe,⚠️ El usuario ya existe,⚠️ The user already exists,⚠️ Der Benutzer existiert bereits,⚠️ O usuário já existe,⚠️ L'utilisateur existe déjà,⚠️ L'utente esiste già
+Usuario o contraseña incorrectos,⚠️ Usuario o contraseña incorrectos,⚠️ Incorrect username or password,⚠️ Falscher Benutzername oder falsches Passwort,⚠️ Nome de usuário ou senha incorretos,⚠️ Nom d'utilisateur ou mot de passe incorrect,⚠️ Nome utente o password errati
+Código equivocado,⚠️ Código equivocado,⚠️ Wrong code,⚠️ Falscher Code,⚠️ Código errado,⚠️ Code erroné,⚠️ Codice errato
+No se encontró un One time code con ese usuario,⚠️ No se encontró un One time code con ese usuario,⚠️ No One Time Code found for that user.,⚠️ Für diesen Benutzer wurde kein einmaliger Code gefunden.,⚠️ Nenhum código de tempo único encontrado para esse usuário.,⚠️ Aucun code à usage unique trouvé pour cet utilisateur.,⚠️ Nessun codice monouso trovato per quell'utente.
+No se puede escribir a su propio evento,⚠️ No se puede escribir a su propio evento,⚠️ You cannot write to your own event,⚠️ Sie können nicht zu Ihrer eigenen Veranstaltung schreiben,⚠️ Você não pode escrever para seu próprio evento,⚠️ Vous ne pouvez pas écrire à votre propre événement,⚠️ Non puoi scrivere al tuo evento
+Ya esta inscripto,⚠️ Ya esta inscripto,⚠️ You are already registered,⚠️ Sie sind bereits registriert,⚠️ Você já está registrado,⚠️ Vous êtes déjà inscrit,⚠️ Sei già registrato
+Ya esta en la waitlist,⚠️ Ya esta en la waitlist,⚠️ It's already on the waitlist,⚠️ Es steht bereits auf der Warteliste,⚠️ Já está na lista de espera,⚠️ C'est déjà sur la liste d'attente,⚠️ È già in lista d'attesa
+Evento no encontrado,⚠️ Evento no encontrado,⚠️ Event not found,⚠️ Ereignis nicht gefunden,⚠️ Evento não encontrado,⚠️ Événement non trouvé,⚠️ Evento non trovato
+Usuario no encontrado,⚠️ Usuario no encontrado,⚠️ User not found,⚠️ Benutzer nicht gefunden,⚠️ Usuário não encontrado,⚠️ Utilisateur non trouvé,⚠️ Utente non trovato
+Evento no encontrado con ID dada,⚠️ Evento no encontrado con ID dada,⚠️ Event not found with given ID,⚠️ Ereignis mit der angegebenen ID nicht gefunden,⚠️ Evento não encontrado com o ID fornecido,⚠️ Événement non trouvé avec l'ID donné,⚠️ Evento non trovato con l'ID fornito
+No puede haber titleContains y title simultáneamente,⚠️ No puede haber coincidencia exacta e inexacta de titulo simultaneamente,⚠️ There cannot be an exact and inexact title match simultaneously.,⚠️ Es kann nicht gleichzeitig eine exakte und eine ungenaue Titelübereinstimmung geben.,⚠️ Não pode haver uma correspondência de título exata e inexata simultaneamente.,⚠️ Il ne peut pas y avoir de correspondance de titre exacte et inexacte simultanément.,⚠️ Non può esserci una corrispondenza esatta e inesatta del titolo contemporaneamente.
+invalidUUID,⚠️ UUID inválido,⚠️ Invalid UUID,⚠️ Ungültige UUID,⚠️ UUID inválido,⚠️ UUID non valide,⚠️ UUID non valido
