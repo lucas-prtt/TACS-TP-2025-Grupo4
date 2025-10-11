@@ -1,0 +1,9 @@
+Se pueden encontrar las traducciones actualmente implementadas en el siguiente documento
+Las traducciones se deben exportar como CSV
+
+https://docs.google.com/spreadsheets/d/1ghYog1Ol8yVTSn5AqZusmwNQ5p9YLZyuB9OivJpQMRA/edit?usp=sharing
+(visible desde correos UTN FRBA)
+
+Para crear mas traducciones se deben añadir columnas con el código del lenguaje arriba y agregar su correspondiente "locale" en I18nManager.
+Para añadir mas terminos hay que añadir nuevas filas
+
