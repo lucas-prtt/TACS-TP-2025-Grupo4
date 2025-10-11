@@ -34,7 +34,7 @@ public class TelegramUser {
     private String serverAccountUsername;
     @Setter
     private MenuState menu;
-    private final List<String> filtros = new ArrayList();
+    private final List<QueryFilter> filtros = new ArrayList();
     @Setter
     private String lang = "en";
     @Setter
@@ -88,14 +88,14 @@ public class TelegramUser {
     public String setMainMenuAndRespond(){
         return setMenuAndRespond(new MainMenu(this));
     }
-    public void addFilter(String filter){
+    public void addFilter(QueryFilter filter){
         filtros.add(filter);
     }
     public void clearFilters(){
         filtros.clear();
     }
     public String getAllFiltersAsQueryParams(){
-        return "?" + String.join("&", filtros);
+        return "?" + String.join("&", filtros.toString());
     }
     public void updateApiClient(String token){
         setApiClient(ApiClient.fromToken(token, this));

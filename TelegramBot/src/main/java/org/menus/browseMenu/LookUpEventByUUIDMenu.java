@@ -19,7 +19,7 @@ public class LookUpEventByUUIDMenu extends MenuState {
         try {
             EventDTO eventDTO = user.getApiClient().getEvent(UUID.fromString(message));
             user.setMenu(new CheckEventMenu(user, eventDTO));
-            return "Evento encontrado \n\n";
+            return user.getLocalizedMessage("eventFound");
         }catch (RestClientResponseException e){
             return e.getStatusCode() + "\n\n" + e.getMessage();
         }
@@ -27,7 +27,7 @@ public class LookUpEventByUUIDMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return "Ingrese la ID del evento\n(o ingrese /start para volver al menu principal)";
+        return user.getLocalizedMessage("requestInputEventID");
     }
 
     public LookUpEventByUUIDMenu(TelegramUser user) {

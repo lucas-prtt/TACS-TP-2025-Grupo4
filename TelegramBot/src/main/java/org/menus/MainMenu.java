@@ -66,7 +66,7 @@ public class MainMenu extends MenuState {
                 user.setMenu(new LanguageMenu(user));
                 return null;
             default:
-                return "Error - opcion invalida\n";
+                return user.getLocalizedMessage("wrongOption");
         }
 
     }

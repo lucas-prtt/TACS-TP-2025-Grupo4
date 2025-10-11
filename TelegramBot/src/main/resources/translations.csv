@@ -226,9 +226,9 @@ Stato: {7}
 Durata: {8}
 Iscritti: {9}/{10}
 In lista d'attesa: {11}"
-EVENT_CLOSED,Cerrado,Closed,Geschlossen,Fechado,Fermé,Chiuso
-EVENT_OPEN,Abierto,Open,Offen,Abrir,Ouvrir,Aprire
-EVENT_PAUSED,En pausa,On pause,Auf Pause,Em pausa,En pause,In pausa
+EVENT_CLOSED,⛔ Cerrado,⛔ Closed,⛔ Geschlossen,⛔ Fechado,⛔ Fermé,⛔ Chiuso
+EVENT_OPEN,✅ Abierto,✅ Open,✅ Geöffnet,✅ Aberto,✅ Ouvert,✅ Aperto
+EVENT_PAUSED,⏸️ En pausa,⏸️ On pause,⏸️ Angehalten,⏸️ Em pausa,⏸️ En pause,⏸️ In pausa
 nullState,Sin estado,Stateless,Staatenlos,Apátrida,Apatride,Apolide
 nullPrice,Sin precio,No price,Kein Preis,Sem preço,Pas de prix,Nessun prezzo
 nullLocation,Sin ubicacion,No location,Kein Standort,Sem localização,Aucun emplacement,Nessuna posizione
@@ -457,3 +457,39 @@ participantMenuQuestion,"Menu de participante:
 /getWaitlistedRegistrations,⏳ En lista de espera,⏳ On the waiting list,⏳ Auf der Warteliste,⏳ Na lista de espera,⏳ Sur la liste d'attente,⏳ In lista d'attesa
 /getCanceledRegistrations,❌ Canceladas,❌ Cancelled,❌ Abgesagt,❌ Cancelado,❌ Annulé,❌ Annullato
 /getAllRegistrations,📦 Todas,📦 All,📦 Alle,📦 Todos,📦 Tous,📦 Tutti
+filterMenuQuestion,Elija que filtro aplicar,Choose which filter to apply,Wählen Sie den anzuwendenden Filter aus,Escolha qual filtro aplicar,Choisissez le filtre à appliquer,Scegli quale filtro applicare
+/filterByMaxPrice,💲▼ Precio maximo,💲▼ Maximum price,💲▼ Höchstpreis,💲▼ Preço máximo,💲▼ Prix maximum,💲▼ Prezzo massimo
+/filterByMinPrice,💲▲ Precio minimo,💲▲ Minimum price,💲▲ Mindestpreis,💲▲ Preço mínimo,💲▲ Prix minimum,💲▲ Prezzo minimo
+/filterByTitleContains,💬 Titulo,💬 Title,💬 Titel,💬 Título,💬 Titre,💬 Titolo
+/filterByTitle,💬‼️ Titulo exacto,💬‼️ Exact title,💬‼️ Genauer Titel,💬‼️ Título exato,💬‼️ Titre exact,💬‼️ Titolo esatto
+/filterByDate,📆 Fecha maxima,📆 Deadline,📆 Frist,📆 Prazo,📆 Date limite,📆 Scadenza
+/filterByTags,🏷️ Tag,🏷️ Tag,🏷️ Tag,🏷️ Etiqueta,Étiquette 🏷️,🏷️ Etichetta
+/filterByCategory,🗂️ Categoria,🗂️ Category,🗂️ Kategorie,🗂️ Categoria,🗂️ Catégorie,🗂️ Categoria
+configuredFilter,Filtro configurado: {0} = {1},Filter set: {0} = {1},Filtersatz: {0} = {1},Conjunto de filtros: {0} = {1},Ensemble de filtres : {0} = {1},Set di filtri: {0} = {1}
+requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the criteria for the filter """"{0}""""","Geben Sie die Kriterien für den Filter """"{0}"""" ein.","Insira os critérios para o filtro """"{0}""""",Saisissez les critères du filtre « {0} »,"Inserisci i criteri per il filtro """"{0}"""""
+/filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer des filtres,Applica filtri
+filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
+category,Categoria,Category,Kategorie,Categoria,Catégorie,Categoria
+tags,Tags,Tags,Schlagwörter,Etiquetas,Mots-clés,Etichette
+maxDate,Fecha máxima,Maximum date,Maximales Datum,Data máxima,Date maximale,Data massima
+title,Titulo exacto,Exact title,Genauer Titel,Título exato,Titre exact,Titolo esatto
+titleContains,Titulo,Qualification,Qualifikation,Qualificação,Qualification,Qualificazione
+minPrice,Precio Maximo,Maximum Price,Höchstpreis,Preço Máximo,Prix ​​maximum,Prezzo massimo
+maxPrice,Precio Maximo,Maximum Price,Höchstpreis,Preço Máximo,Prix ​​maximum,Prezzo massimo
+/browse,🔍 Buscar,🔍 Search,🔍 Suche,🔍 Pesquisar,🔍 Rechercher,🔍 Cerca
+/filter,⚙️ Aplicar filtros,⚙️ Apply filters,⚙️ Filter anwenden,⚙️ Aplicar filtros,⚙️ Appliquer les filtres,⚙️ Applica filtri
+/showFilters,👀 Ver filtros,👀 See filters,👀 Siehe Filter,👀 Ver filtros,👀 Voir les filtres,👀 Vedi filtri
+/clearFilters,🗑️ Borrar filtros,🗑️ Clear filters,🗑️ Filter löschen,🗑️ Limpar filtros,🗑️ Effacer les filtres,🗑️ Cancella filtri
+/lookupUUID,🔗 Buscar por ID,🔗 Search by ID,🔗 Suche nach ID,🔗 Pesquisar por ID,🔗 Recherche par identifiant,🔗 Cerca per ID
+appliedFiltersAmount,{0} filtros aplicados,{0} filters applied,{0} Filter angewendet,{0} filtros aplicados,{0} filtres appliqués,{0} filtri applicati
+browseMenuQuestion,Menu de busqueda:,Search menu:,Suchmenü:,Menu de pesquisa:,Menu de recherche :,Cerca nel menu:
+eventFound,Evento encontrado!,Event found!,Veranstaltung gefunden!,Evento encontrado!,Événement trouvé !,Evento trovato!
+requestInputEventID,"Ingrese la ID del evento:
+(o ingrese /start para volver al menu principal)","Enter the event ID:
+(or enter /start to return to the main menu)","Geben Sie die Ereignis-ID ein:
+(oder geben Sie /start ein, um zum Hauptmenü zurückzukehren)","Digite o ID do evento:
+(ou digite /start para retornar ao menu principal)","Saisissez l'ID de l'événement :
+(ou appuyez sur /start pour revenir au menu principal)","Inserisci l'ID dell'evento:
+(oppure digita /start per tornare al menu principale)"
+appliedFilters,Filtros aplicados:,Filters applied:,Angewandte Filter:,Filtros aplicados:,Filtres appliqués :,Filtri applicati:
+noFilters,Ningun filtro,No filter,Kein Filter,Sem filtro,Pas de filtre,Nessun filtro
