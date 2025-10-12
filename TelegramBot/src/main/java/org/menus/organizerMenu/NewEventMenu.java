@@ -4,10 +4,12 @@ import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.CategoryDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.TagDTO;
+import org.exceptions.DateAlreadySetException;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
+import org.utils.DateInputHelper;
 import org.yaml.snakeyaml.util.Tuple;
 
 import java.lang.reflect.Field;
@@ -15,14 +17,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class NewEventMenu extends MenuState {
     EventDTO eventDTO;
     List<Tuple<Field, String>> fields;
+    DateInputHelper dateInputHelper = new DateInputHelper(user);
     public NewEventMenu(TelegramUser user) {
         super(user);
         eventDTO = new EventDTO();
@@ -60,12 +60,13 @@ public class NewEventMenu extends MenuState {
 
                 case "LocalDateTime":
                     try {
-                        field.set(eventDTO, LocalDateTime.parse(message));
-                        fields.removeFirst();
-                    } catch (DateTimeParseException e) {
-                        return user.getLocalizedMessage("wrongDateTimeFormat");
+                        return dateInputHelper.respondTo(message);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                        user.setMenu(new MainMenu(user));
+                        return user.getLocalizedMessage("errorBackToMainMenu");
                     }
-                    break;
+
 
                 case "BigDecimal":
                     try {
@@ -93,7 +94,7 @@ public class NewEventMenu extends MenuState {
                 case "List":
                     if (Objects.equals(message, "/stop")) {
                         fields.removeFirst();
-                        return getQuestion();
+                        return user.getLocalizedMessage("endTagsInput") + "\n\n" + user.getLocalizedMessage("eventSuccesfullyCreated");
                     }
                     List<TagDTO> tags = (List<TagDTO>) field.get(eventDTO);
                     if (tags == null)
@@ -108,22 +109,32 @@ public class NewEventMenu extends MenuState {
         } catch (IllegalAccessException e) {
             return user.getLocalizedMessage("unknownInputError");
         }
-
         return null;
     }
 
     @Override
     public String getQuestion() {
-        if(fields.isEmpty()){
-            user.getApiClient().postEvent(eventDTO);
-            user.setMenu(new MainMenu(user));
-            return null;
-        }
-        return user.getLocalizedMessage("inputGeneric", fields.getFirst()._2());
+        return " - ";
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = sendMessageText(getQuestion());
-        return message;
+        if(fields.isEmpty()){
+            user.getApiClient().postEvent(eventDTO);
+            user.setMenu(new MainMenu(user));
+            return user.getQuestion();
+        }
+        try {
+            if(fields.getFirst()._1().getType() == LocalDateTime.class)
+                return dateInputHelper.questionMessage();
+        }catch (DateAlreadySetException e){
+            try {
+                fields.getFirst()._1().set(eventDTO, dateInputHelper.getDate());
+                fields.removeFirst();
+            }catch (Exception e2){
+                return sendMessageText(user.getLocalizedMessage("internalBotError"));
+            }
+        }
+        return sendMessageText(user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage(fields.getFirst()._2())));
     }
 }
+

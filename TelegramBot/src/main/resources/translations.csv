@@ -469,13 +469,13 @@ configuredFilter,Filtro configurado: {0} = {1},Filter set: {0} = {1},Filtersatz:
 requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the criteria for the filter """"{0}""""","Geben Sie die Kriterien für den Filter """"{0}"""" ein.","Insira os critérios para o filtro """"{0}""""",Saisissez les critères du filtre « {0} »,"Inserisci i criteri per il filtro """"{0}"""""
 /filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer des filtres,Applica filtri
 filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
-category,Categoria,Category,Kategorie,Categoria,Catégorie,Categoria
-tags,Tags,Tags,Schlagwörter,Etiquetas,Mots-clés,Etichette
-maxDate,Fecha máxima,Maximum date,Maximales Datum,Data máxima,Date maximale,Data massima
-title,Titulo exacto,Exact title,Genauer Titel,Título exato,Titre exact,Titolo esatto
-titleContains,Titulo,Qualification,Qualifikation,Qualificação,Qualification,Qualificazione
-minPrice,Precio Maximo,Maximum Price,Höchstpreis,Preço Máximo,Prix ​​maximum,Prezzo massimo
-maxPrice,Precio Maximo,Maximum Price,Höchstpreis,Preço Máximo,Prix ​​maximum,Prezzo massimo
+category,categoria,category,Kategorie,categoria,catégorie,categoria
+tags,tags. Ingrese /stop para detenerse,tags. Enter /stop to stop,"Tags. Geben Sie /stop ein, um zu stoppen",tags. Digite /stop para parar,balises. Entrez /stop pour arrêter,tag. Inserisci /stop per interrompere
+maxDate,fecha máxima,maximum date,maximales Datum,data máxima,date maximale,data massima
+title,titulo del evento,event title,Veranstaltungstitel,título do evento,titre de l'événement,titolo dell'evento
+titleContains,subcadena del titulo,title substring,Titel-Teilzeichenfolge,substring de título,sous-chaîne de titre,sottostringa del titolo
+minPrice,precio Maximo,Maximum price,Höchstpreis,Preço máximo,Prix ​​maximum,Prezzo massimo
+maxPrice,precio Maximo,Maximum price,Höchstpreis,Preço máximo,Prix ​​maximum,Prezzo massimo
 /browse,🔍 Buscar,🔍 Search,🔍 Suche,🔍 Pesquisar,🔍 Rechercher,🔍 Cerca
 /filter,⚙️ Aplicar filtros,⚙️ Apply filters,⚙️ Filter anwenden,⚙️ Aplicar filtros,⚙️ Appliquer les filtres,⚙️ Applica filtri
 /showFilters,👀 Ver filtros,👀 See filters,👀 Siehe Filter,👀 Ver filtros,👀 Voir les filtres,👀 Vedi filtri
@@ -511,3 +511,15 @@ Usuario no encontrado,⚠️ Usuario no encontrado,⚠️ User not found,⚠️ 
 Evento no encontrado con ID dada,⚠️ Evento no encontrado con ID dada,⚠️ Event not found with given ID,⚠️ Ereignis mit der angegebenen ID nicht gefunden,⚠️ Evento não encontrado com o ID fornecido,⚠️ Événement non trouvé avec l'ID donné,⚠️ Evento non trovato con l'ID fornito
 No puede haber titleContains y title simultáneamente,⚠️ No puede haber coincidencia exacta e inexacta de titulo simultaneamente,⚠️ There cannot be an exact and inexact title match simultaneously.,⚠️ Es kann nicht gleichzeitig eine exakte und eine ungenaue Titelübereinstimmung geben.,⚠️ Não pode haver uma correspondência de título exata e inexata simultaneamente.,⚠️ Il ne peut pas y avoir de correspondance de titre exacte et inexacte simultanément.,⚠️ Non può esserci una corrispondenza esatta e inesatta del titolo contemporaneamente.
 invalidUUID,⚠️ UUID inválido,⚠️ Invalid UUID,⚠️ Ungültige UUID,⚠️ UUID inválido,⚠️ UUID non valide,⚠️ UUID non valido
+requestInputYear,Ingrese el año en el que se realizara el evento,Enter the year in which the event will take place,"Geben Sie das Jahr ein, in dem die Veranstaltung stattfinden soll",Insira o ano em que o evento ocorrerá,Entrez l'année dans laquelle l'événement aura lieu,Inserisci l'anno in cui si svolgerà l'evento
+requestInputMonth,Ingrese el mes en el que se realizara el evento,Enter the month in which the event will take place,"Geben Sie den Monat ein, in dem die Veranstaltung stattfinden soll",Insira o mês em que o evento ocorrerá,Entrez le mois au cours duquel l'événement aura lieu,Inserisci il mese in cui si svolgerà l'evento
+requestInputDay,Ingrese el dia en el que se realizara el evento,Enter the day on which the event will take place,"Geben Sie den Tag ein, an dem die Veranstaltung stattfindet",Insira o dia em que o evento ocorrerá,Entrez le jour où l'événement aura lieu,Inserisci il giorno in cui si svolgerà l'evento
+requestInputHour,Ingrese la hora en la que se realizara el evento,Enter the time the event will take place,"Geben Sie die Uhrzeit ein, zu der die Veranstaltung stattfinden soll",Insira o horário em que o evento ocorrerá,Entrez l'heure à laquelle l'événement aura lieu,Inserisci l'ora in cui si svolgerà l'evento
+requestInputMinute,Ingrese el minuto en el que se realizara el evento,Enter the minute at which the event will take place,"Geben Sie die Minute ein, zu der das Ereignis stattfinden soll",Insira o minuto em que o evento ocorrerá,Entrez la minute à laquelle l'événement aura lieu,Inserisci il minuto in cui avrà luogo l'evento
+successfullDateInput,Fecha ingresada valida,Valid date entered,Gültiges Datum eingegeben,Data válida inserida,Date valide saisie,Data di inserimento valida
+unsuccessfullDateInput,Error: Fecha invalida,Error: Invalid date,Fehler: Ungültiges Datum,Erro: Data inválida,Erreur : date invalide,Errore: data non valida
+doNotPressThoseButtons,No presione esos botones,Don't press those buttons,Drücken Sie diese Tasten nicht,Não aperte esses botões,N'appuie pas sur ces boutons,Non premere quei pulsanti
+errorBackToMainMenu,Hubo un error desconocido. Volviendo al menú principal.,There was an unknown error. Returning to the main menu.,Es ist ein unbekannter Fehler aufgetreten. Zurück zum Hauptmenü.,Ocorreu um erro desconhecido. Retornando ao menu principal.,Une erreur inconnue s'est produite. Retour au menu principal.,Si è verificato un errore sconosciuto. Ritorno al menu principale.
+endTagsInput,Finalizada la introduccion de tags,Tag entry complete,Tag-Eintrag abgeschlossen,Entrada de tag concluída,Entrée de balise terminée,Inserimento tag completato
+eventSuccesfullyCreated,Evento creado,Event created,Ereignis erstellt,Evento criado,Événement créé,Evento creato
+cannotGoBackwards,No se puede ir mas atras,You can't go back any further,Weiter geht es nicht mehr,Você não pode voltar mais,Tu ne peux pas revenir plus loin,Non puoi tornare più indietro
