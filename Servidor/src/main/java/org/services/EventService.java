@@ -9,24 +9,28 @@ import org.model.accounts.Account;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.utils.PageSplitter;
-import java.util.UUID;
+
+import java.util.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.NoSuchElementException;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public class EventService {
     private final EventRepository eventRepository;
     private final AccountRepository accountRepository;
-
+    @Autowired
+    private MongoTemplate mongoTemplate;
     public EventService(EventRepository eventRepository, AccountRepository accountRepository, RegistrationRepository registrationRepository) {
         this.eventRepository = eventRepository;
         this.accountRepository = accountRepository;
@@ -101,68 +105,64 @@ public class EventService {
      * @return Lista paginada de eventos
      * @throws BadRequestException si los filtros son inválidos
      */
-    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice, Integer page, Integer limit) throws BadRequestException {
-        List<Event> events = getEventsByTitleOrContains(title, titleContains);
-        List<EventDTO> processedEvents = events.stream()
-                .filter(event -> isValidEvent(event, maxDate, minDate, category, tags, maxPrice, minPrice))
-                .map(EventDTO::fromEvent)
-                .toList();
-        return PageSplitter.getPageList(processedEvents, page, limit);
-    }
+    public List<EventDTO> getEventDTOsByQuery(
+            String title, String titleContains,
+            LocalDateTime maxDate, LocalDateTime minDate,
+            String category, List<String> tags,
+            BigDecimal maxPrice, BigDecimal minPrice,
+            Integer page, Integer limit) throws BadRequestException {
 
-    /**
-     * Variante de búsqueda de eventos sin paginación.
-     * @param title Título exacto (opcional)
-     * @param titleContains Subcadena en el título (opcional)
-     * @param maxDate Fecha máxima (opcional)
-     * @param minDate Fecha mínima (opcional)
-     * @param category Categoría (opcional)
-     * @param tags Lista de tags (opcional)
-     * @param maxPrice Precio máximo (opcional)
-     * @param minPrice Precio mínimo (opcional)
-     * @return Lista de eventos filtrados
-     * @throws BadRequestException si los filtros son inválidos
-     */
-    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) throws BadRequestException {
-        return getEventDTOsByQuery( title,  titleContains,  maxDate,  minDate,  category,  tags,  maxPrice,  minPrice);
-    }
+        if(page == null || limit == null){
+            throw  new NullPageInfoException();
+        }
 
-    /**
-     * Devuelve eventos filtrando por título exacto o por subcadena en el título.
-     * @param title Título exacto (opcional)
-     * @param titleContains Subcadena en el título (opcional)
-     * @return Lista de eventos filtrados
-     * @throws BadRequestException si ambos filtros están presentes
-     */
-    private List<Event> getEventsByTitleOrContains(String title, String titleContains) throws BadRequestException {
+        List<Criteria> criteriaList = new ArrayList<>();
+
         if (title != null && titleContains != null) {
             throw new BadRequestException("No puede haber titleContains y title simultáneamente");
         }
+
         if (title != null) {
-            return getEventsByTitle(title);
+            criteriaList.add(Criteria.where("title").is(title));
         } else if (titleContains != null) {
-            return getEventsByTitleContains(titleContains);
-        } else {
-            return getAllEvents();
+            criteriaList.add(Criteria.where("title").regex(".*" + Pattern.quote(titleContains) + ".*", "i"));
         }
-    }
 
-    /**
-     * Devuelve eventos que coinciden exactamente con el título.
-     * @param title Título exacto
-     * @return Lista de eventos
-     */
-    public List<Event> getEventsByTitle(String title) {
-        return eventRepository.findByTitle(title);
-    }
+        if (minDate != null) {
+            criteriaList.add(Criteria.where("startDate").gte(minDate));
+        }
+        if (maxDate != null) {
+            criteriaList.add(Criteria.where("startDate").lte(maxDate));
+        }
 
-    /**
-     * Devuelve eventos cuyo título contiene la subcadena dada.
-     * @param titleContains Subcadena a buscar en el título
-     * @return Lista de eventos
-     */
-    public List<Event> getEventsByTitleContains(String titleContains) {
-        return eventRepository.findByTitleContains(titleContains);
+        if (category != null) {
+            criteriaList.add(Criteria.where("category").is(category));
+        }
+
+        if (tags != null && !tags.isEmpty()) {
+            criteriaList.add(Criteria.where("tags").all(tags));
+        }
+
+        if (minPrice != null) {
+            criteriaList.add(Criteria.where("price").gte(minPrice));
+        }
+        if (maxPrice != null) {
+            criteriaList.add(Criteria.where("price").lte(maxPrice));
+        }
+
+        Query query = new Query();
+
+        if (!criteriaList.isEmpty()) {
+            query.addCriteria(new Criteria().andOperator(criteriaList.toArray(new Criteria[0])));
+        }
+
+        query.with(PageRequest.of(page, limit));
+
+        List<Event> events = mongoTemplate.find(query, Event.class);
+
+        return events.stream()
+                .map(EventDTO::fromEvent)
+                .toList();
     }
 
     /**
@@ -172,33 +172,6 @@ public class EventService {
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
-
-    /**
-     * Verifica si un evento cumple con los filtros dados.
-     * @param event Evento a validar
-     * @param maxDate Fecha máxima (opcional)
-     * @param minDate Fecha mínima (opcional)
-     * @param category Categoría (opcional)
-     * @param tags Lista de tags (opcional)
-     * @param maxPrice Precio máximo (opcional)
-     * @param minPrice Precio mínimo (opcional)
-     * @return true si el evento cumple los filtros, false si no
-     */
-    public Boolean isValidEvent(Event event, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) {
-        return (
-                (maxDate == null || event.getStartDateTime().isBefore(maxDate)) &&
-                        (minDate == null || event.getStartDateTime().isAfter(minDate)) &&
-                        (category == null || (event.getCategory() != null && Objects.equals(event.getCategory().getTitle(), category))) &&
-                        ((tags == null || tags.isEmpty()) ||
-                                tags.stream().allMatch(comparedTagAsString ->
-                                        event.getTags().stream().anyMatch(tag -> Objects.equals(tag.getNombre(), comparedTagAsString))
-                                )
-                        ) &&
-                        (maxPrice == null || event.getPrice().compareTo(maxPrice) <= 0) &&
-                        (minPrice == null || event.getPrice().compareTo(minPrice) >= 0)
-        );
-    }
-
 
 
     /**
