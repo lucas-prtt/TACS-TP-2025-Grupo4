@@ -18,5 +18,5 @@ public interface EventRepository extends MongoRepository<Event, UUID> {
     // Recibe un String y busca todos los eventos que tengan en su título ese string, devolviéndolos como lista inmutable de Event
     public List<Event> findByTitleContains(String title);
 
-    List<Event> findByOrganizerId(UUID organizerId, Pageable pageable);
+    Page<Event> findByOrganizerId(UUID organizerId, Pageable pageable);
 }

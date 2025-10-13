@@ -212,7 +212,7 @@ public class EventService {
         if(page == null || limit == null){
             throw new NullPageInfoException();
         }
-        List<Event> organizerEvents =  eventRepository.findByOrganizerId(organizerId, PageRequest.of(page, limit));
+        List<Event> organizerEvents =  eventRepository.findByOrganizerId(organizerId, PageRequest.of(page, limit)).getContent();
         return organizerEvents.stream().map(EventDTO::fromEvent).toList();
     }
 
