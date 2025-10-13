@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public abstract class AbstractBrowseMenu<T> extends MenuState {
-    protected Integer page = 1;
+    protected Integer page = 0;
     protected Integer limit = ConfigManager.getInstance().getOptionalInteger("view.page.limit").orElse(5);
     protected List<T> items;
 
@@ -38,7 +38,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
     public String respondTo(String message) {
         switch (message) {
             case "/prev":
-                page = Math.max(1, page - 1);
+                page = Math.max(0, page - 1);
                 return null;
             case "/next":
                 page++;
@@ -76,7 +76,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
                 String.join("\n", items.stream()
                         .map(this::toShortString)
                         .map(s -> "- " + ((page - 1) * limit + i.getAndIncrement())  + " " + s)
-                        .toList()), page);
+                        .toList()), page+1);
     }
     @Override
     public SendMessage questionMessage() {

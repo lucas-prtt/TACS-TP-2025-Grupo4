@@ -262,6 +262,9 @@ public class RegistrationService {
         if(page == null || limit == null){
             throw new NullPageInfoException();
         }
+        if(registrationState == null){
+            return registrationRepository.findByUser_Id(accountId, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
+        }
         return registrationRepository.findByUser_IdAndCurrentState(accountId, registrationState, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
     }
 
