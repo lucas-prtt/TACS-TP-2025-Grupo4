@@ -38,6 +38,8 @@ public class InlineMenuBuilder {
         List<List<Button>> layout = new ArrayList<>();
 
         for (List<String> line : lines) {
+            if(line == null)
+                continue;
             List<Button> row = new ArrayList<>();
             for (String option : line) {
                 row.add(new Button(option, option)); // texto = callback_data

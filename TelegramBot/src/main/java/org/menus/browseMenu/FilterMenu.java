@@ -20,7 +20,7 @@ public class FilterMenu extends MenuState {
                 user.setMenu(new FilterByMenu(user, "tags"));
                 return null;
             case "/filterByDate":
-                user.setMenu(new FilterByMenu(user, "maxDate"));
+                user.setMenu(new FilterByDateMenu(user, "maxDate"));
                 return null;
             case "/filterByTitle":
                 user.setMenu(new FilterByMenu(user, "title"));

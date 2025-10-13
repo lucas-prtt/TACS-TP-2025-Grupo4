@@ -19,7 +19,7 @@ public class BrowseMenu extends MenuState {
                 user.setMenu(new FilterMenu(user));
                 return null;
             case "/showFilters":
-                return "Filtros: \n" + String.join("\n   ",user.getFiltros().stream().map(queryFilter -> queryFilter.toLocalizedString(user)).toList());
+                return user.getLocalizedMessage("filters:") + " \n" + String.join("\n   ",user.getFiltros().stream().map(queryFilter -> queryFilter.toLocalizedString(user)).toList());
             case "/clearFilters":
                 user.clearFilters();
                 return user.getLocalizedMessage("filtersCleared");

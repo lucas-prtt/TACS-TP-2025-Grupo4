@@ -2,7 +2,7 @@ key,es,en,de,pt,fr,it
 languageEmoji,🇦🇷,🇬🇧,🇩🇪,🇧🇷,🇫🇷,🇮🇹
 language,Español,English,Deutsch,Português,Français,Italiano
 /userMenu,🔐 Menu de usuario,🔐 User menu,🔐 Benutzermenü,🔐 Menu do usuário,🔐 Menu utilisateur,🔐 Menu utente
-/organizerMenu,🗓️ Menu de organizador,🗓️ Organizer menu,🗓️ Organizer-Menü,🗓️ Menu do organizador,🗓️ Menu organisateur,🗓️ Menù dell'organizzatore
+/organizerMenu,🗓️ Menu de organizador,🗓️ Organizer Menu,🗓️ Organizer-Menü,🗓️ Menu do Organizador,🗓️ Menu Organisateur,🗓️ Menù Organizzatore
 /participantMenu,🎟️ Menu de participante,🎟️ Participant menu,🎟️ Teilnehmermenü,🎟️ Menu do participante,🎟️ Menu des participants,🎟️ Menù dei partecipanti
 /browseMenu,🔍 Menu de busqueda,🔍 Search menu,🔍 Suchmenü,🔍 Menu de pesquisa,🔍 Menu de recherche,🔍 Cerca nel menu
 /languageMenu,🌐 Menu de idioma,🌐 Language menu,🌐 Sprachmenü,🌐 Menu de idiomas,🌐 Menu de langue,🌐 Menu della lingua
@@ -277,16 +277,16 @@ Page : {1}
 
 Pagina: {1}
 /pagina <n> --> Vai alla pagina n"
-title,el titulo,the title,der Titel,o título,le titre,il titolo
-description,la descripcion,the description,die Beschreibung,a descrição,la description,la descrizione
-startDateTime,la fecha de inicio,the start date,das Startdatum,a data de início,la date de début,la data di inizio
-durationMinutes,la duracion del evento en minutos,the duration of the event in minutes,die Dauer des Ereignisses in Minuten,a duração do evento em minutos,la durée de l'événement en minutes,la durata dell'evento in minuti
-location,la ubicacion,the location,der Standort,a localização,l'emplacement,la posizione
-maxParticipants,la maxima cantidad de participantes,the maximum number of participants,die maximale Teilnehmerzahl,o número máximo de participantes,le nombre maximum de participants,il numero massimo di partecipanti
-minParticipants,la minima cantidad de participantes,the minimum number of participants,die Mindestteilnehmerzahl,o número mínimo de participantes,le nombre minimum de participants,il numero minimo di partecipanti
-price,el precio de entrada,the entrance price,der Eintrittspreis,o preço de entrada,le prix d'entrée,il prezzo d'ingresso
-category,la categoria,the category,die Kategorie,a categoria,la catégorie,la categoria
-tags,las etiquetas. Ingrese /stop para finalizar,the labels. Enter /stop to end,"die Etiketten. Geben Sie /stop ein, um zu beenden",os rótulos. Digite /stop para finalizar,les étiquettes. Entrez /stop pour terminer,le etichette. Inserisci /stop per terminare
+thetitle,el titulo,the title,der Titel,o título,le titre,il titolo
+thedescription,la descripcion,the description,die Beschreibung,a descrição,la description,la descrizione
+thestartDateTime,la fecha de inicio,the start date,das Startdatum,a data de início,la date de début,la data di inizio
+thedurationMinutes,la duracion del evento en minutos,the duration of the event in minutes,die Dauer des Ereignisses in Minuten,a duração do evento em minutos,la durée de l'événement en minutes,la durata dell'evento in minuti
+thelocation,la ubicacion,the location,der Standort,a localização,l'emplacement,la posizione
+themaxParticipants,la maxima cantidad de participantes,the maximum number of participants,die maximale Teilnehmerzahl,o número máximo de participantes,le nombre maximum de participants,il numero massimo di partecipanti
+theminParticipants,la minima cantidad de participantes,the minimum number of participants,die Mindestteilnehmerzahl,o número mínimo de participantes,le nombre minimum de participants,il numero minimo di partecipanti
+theprice,el precio de entrada,the entrance price,der Eintrittspreis,o preço de entrada,le prix d'entrée,il prezzo d'ingresso
+thecategory,la categoria,the category,die Kategorie,a categoria,la catégorie,la categoria
+thetags,las etiquetas,the labels,die Etiketten,os rótulos,les étiquettes,le etichette
 wrongDateTimeFormat,"Formato de fecha y hora inválido.
 Use el formato ISO: yyyy-MM-ddTHH:mm:ss","Invalid date and time format.
 Use the ISO format: yyyy-MM-ddTHH:mm:ss","Ungültiges Datums- und Uhrzeitformat.
@@ -469,13 +469,13 @@ configuredFilter,Filtro configurado: {0} = {1},Filter set: {0} = {1},Filtersatz:
 requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the criteria for the filter """"{0}""""","Geben Sie die Kriterien für den Filter """"{0}"""" ein.","Insira os critérios para o filtro """"{0}""""",Saisissez les critères du filtre « {0} »,"Inserisci i criteri per il filtro """"{0}"""""
 /filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer des filtres,Applica filtri
 filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
-category,Categoria,Category,Kategorie,Categoria,Catégorie,Categoria
-tags,Tags,Tags,Schlagwörter,Etiquetas,Mots-clés,Etichette
-maxDate,Fecha máxima,Maximum date,Maximales Datum,Data máxima,Date maximale,Data massima
-title,Titulo exacto,Exact title,Genauer Titel,Título exato,Titre exact,Titolo esatto
-titleContains,Titulo,Qualification,Qualifikation,Qualificação,Qualification,Qualificazione
-minPrice,Precio Maximo,Maximum Price,Höchstpreis,Preço Máximo,Prix ​​maximum,Prezzo massimo
-maxPrice,Precio Maximo,Maximum Price,Höchstpreis,Preço Máximo,Prix ​​maximum,Prezzo massimo
+category,categoria,category,Kategorie,categoria,catégorie,categoria
+tags,tags,tags,Schlagworte,etiquetas,balises,etichette
+maxDate,fecha máxima,maximum date,maximales Datum,data máxima,date maximale,data massima
+title,titulo del evento,event title,Veranstaltungstitel,título do evento,titre de l'événement,titolo dell'evento
+titleContains,subcadena del titulo,title substring,Titel-Teilzeichenfolge,substring de título,sous-chaîne de titre,sottostringa del titolo
+minPrice,precio Maximo,Maximum price,Höchstpreis,Preço máximo,Prix ​​maximum,Prezzo massimo
+maxPrice,precio Maximo,Maximum price,Höchstpreis,Preço máximo,Prix ​​maximum,Prezzo massimo
 /browse,🔍 Buscar,🔍 Search,🔍 Suche,🔍 Pesquisar,🔍 Rechercher,🔍 Cerca
 /filter,⚙️ Aplicar filtros,⚙️ Apply filters,⚙️ Filter anwenden,⚙️ Aplicar filtros,⚙️ Appliquer les filtres,⚙️ Applica filtri
 /showFilters,👀 Ver filtros,👀 See filters,👀 Siehe Filter,👀 Ver filtros,👀 Voir les filtres,👀 Vedi filtri
@@ -511,3 +511,30 @@ Usuario no encontrado,⚠️ Usuario no encontrado,⚠️ User not found,⚠️ 
 Evento no encontrado con ID dada,⚠️ Evento no encontrado con ID dada,⚠️ Event not found with given ID,⚠️ Ereignis mit der angegebenen ID nicht gefunden,⚠️ Evento não encontrado com o ID fornecido,⚠️ Événement non trouvé avec l'ID donné,⚠️ Evento non trovato con l'ID fornito
 No puede haber titleContains y title simultáneamente,⚠️ No puede haber coincidencia exacta e inexacta de titulo simultaneamente,⚠️ There cannot be an exact and inexact title match simultaneously.,⚠️ Es kann nicht gleichzeitig eine exakte und eine ungenaue Titelübereinstimmung geben.,⚠️ Não pode haver uma correspondência de título exata e inexata simultaneamente.,⚠️ Il ne peut pas y avoir de correspondance de titre exacte et inexacte simultanément.,⚠️ Non può esserci una corrispondenza esatta e inesatta del titolo contemporaneamente.
 invalidUUID,⚠️ UUID inválido,⚠️ Invalid UUID,⚠️ Ungültige UUID,⚠️ UUID inválido,⚠️ UUID non valide,⚠️ UUID non valido
+requestInputYear,Ingrese el año,Enter the year,Geben Sie das Jahr ein,Digite o ano,Entrez l'année,Inserisci l'anno
+requestInputMonth,Ingrese el mes,Enter the month,Geben Sie den Monat ein,Digite o mês,Entrez le mois,Inserisci il mese
+requestInputDay,Ingrese el dia,Enter the day,Geben Sie den Tag ein,Entre no dia,Entrez le jour,Inserisci il giorno
+requestInputHour,Ingrese la hora,Enter the time,Geben Sie die Uhrzeit ein,Digite o tempo,Entrez l'heure,Inserisci l'ora
+requestInputMinute,Ingrese el minuto,Enter the minute,Geben Sie die Minute ein,Digite o minuto,Entrez la minute,Inserisci il minuto
+successfullDateInput,Fecha ingresada valida,Valid date entered,Gültiges Datum eingegeben,Data válida inserida,Date valide saisie,Data di inserimento valida
+unsuccessfullDateInput,Error: Fecha invalida,Error: Invalid date,Fehler: Ungültiges Datum,Erro: Data inválida,Erreur : date invalide,Errore: data non valida
+doNotPressThoseButtons,No presione esos botones,Don't press those buttons,Drücken Sie diese Tasten nicht,Não aperte esses botões,N'appuie pas sur ces boutons,Non premere quei pulsanti
+errorBackToMainMenu,Hubo un error desconocido. Volviendo al menú principal.,There was an unknown error. Returning to the main menu.,Es ist ein unbekannter Fehler aufgetreten. Zurück zum Hauptmenü.,Ocorreu um erro desconhecido. Retornando ao menu principal.,Une erreur inconnue s'est produite. Retour au menu principal.,Si è verificato un errore sconosciuto. Ritorno al menu principale.
+endTagsInput,Finalizada la introduccion de tags,Tag entry complete,Tag-Eintrag abgeschlossen,Entrada de tag concluída,Entrée de balise terminée,Inserimento tag completato
+eventSuccesfullyCreated,Evento creado,Event created,Ereignis erstellt,Evento criado,Événement créé,Evento creato
+cannotGoBackwards,No se puede ir mas atras,You can't go back any further,Weiter geht es nicht mehr,Você não pode voltar mais,Tu ne peux pas revenir plus loin,Non puoi tornare più indietro
+freePrice,Sin costo,Free of charge,Kostenlos,Grátis,Gratuitement,Gratuito
+/stop,Finalizar,Finish,Beenden,Terminar,Finition,Fine
+month1,Enero,January,Januar,Janeiro,Janvier,Gennaio
+month2,Febrero,February,Februar,Fevereiro,Février,Febbraio
+month3,Marzo ,March ,März,Marchar ,Mars ,Marzo 
+month4,abril,April,April,abril,Avril,aprile
+month5,mayo,May,Mai,Poderia,Peut,Maggio
+month6,junio,June,Juni,Junho,Juin,Giugno
+month7,julio,July,Juli,Julho,Juillet,Luglio
+month8,agosto,August,August,Agosto,Août,agosto
+month9,septiembre,September,September,Setembro,Septembre,settembre
+month10,octubre,October,Oktober,outubro,Octobre,ottobre
+month11,noviembre,November,November,novembro,Novembre,novembre
+month12,diciembre,December,Dezember,dezembro,Décembre,Dicembre
+filters:,Filtros: ,Filters:,Filter:,Filtros:,Filtres:,Filtri:
