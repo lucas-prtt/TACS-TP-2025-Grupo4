@@ -31,5 +31,7 @@ public interface RegistrationRepository extends MongoRepository<Registration, UU
   Page<Registration> findByUser_IdAndCurrentState(UUID accountId, RegistrationState registrationState, Pageable of);
 
   Page<Registration> findByEvent_IdAndCurrentState(UUID eventId, RegistrationState registrationState, Pageable of);
+
+  Page<Registration> findByEvent_Id(UUID eventId, Pageable pageable);
 }
 
