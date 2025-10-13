@@ -58,7 +58,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
                 }
                 try {
                     int numero = Integer.parseInt(message.substring(1));
-                    int index = (numero - (page - 1) * limit) - 1;
+                    int index = (numero - (page) * limit) - 1;
                     if (index >= 0 && index < items.size()) {
                         user.setMenu(itemSelectedMenu(items.get(index)));
                         return user.getLocalizedMessage("itemSelected", numero);
@@ -75,7 +75,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
         return user.getLocalizedMessage("abstractBrowseMenuQuestion",
                 String.join("\n", items.stream()
                         .map(this::toShortString)
-                        .map(s -> "- " + ((page - 1) * limit + i.getAndIncrement())  + " " + s)
+                        .map(s -> "- " + ((page) * limit + i.getAndIncrement())  + " " + s)
                         .toList()), page+1);
     }
     @Override
@@ -83,7 +83,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
         items = fetchItems(page, limit);
         Map <String, String> optionsMap = new HashMap<>();
         for(int i = 0; i<items.size(); i++){
-            optionsMap.put(String.valueOf((i+1)), "/" + (i+1));
+            optionsMap.put(String.valueOf((i+1) + (page * limit)), "/" + (i+1 + (page * limit)));
         }
         SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of(user.getLocalizedMessage("/next"), "/next",user.getLocalizedMessage( "/prev"), "/prev"), optionsMap, Map.of(user.getLocalizedMessage("/back"), "/back", user.getLocalizedMessage("/start"), "/start"));
         return message;
