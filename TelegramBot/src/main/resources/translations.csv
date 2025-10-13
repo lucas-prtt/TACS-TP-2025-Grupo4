@@ -277,16 +277,16 @@ Page : {1}
 
 Pagina: {1}
 /pagina <n> --> Vai alla pagina n"
-title,el titulo,the title,der Titel,o título,le titre,il titolo
-description,la descripcion,the description,die Beschreibung,a descrição,la description,la descrizione
-startDateTime,la fecha de inicio,the start date,das Startdatum,a data de início,la date de début,la data di inizio
-durationMinutes,la duracion del evento en minutos,the duration of the event in minutes,die Dauer des Ereignisses in Minuten,a duração do evento em minutos,la durée de l'événement en minutes,la durata dell'evento in minuti
-location,la ubicacion,the location,der Standort,a localização,l'emplacement,la posizione
-maxParticipants,la maxima cantidad de participantes,the maximum number of participants,die maximale Teilnehmerzahl,o número máximo de participantes,le nombre maximum de participants,il numero massimo di partecipanti
-minParticipants,la minima cantidad de participantes,the minimum number of participants,die Mindestteilnehmerzahl,o número mínimo de participantes,le nombre minimum de participants,il numero minimo di partecipanti
-price,el precio de entrada,the entrance price,der Eintrittspreis,o preço de entrada,le prix d'entrée,il prezzo d'ingresso
-category,la categoria,the category,die Kategorie,a categoria,la catégorie,la categoria
-tags,las etiquetas,the labels,die Etiketten,os rótulos,les étiquettes,le etichette
+thetitle,el titulo,the title,der Titel,o título,le titre,il titolo
+thedescription,la descripcion,the description,die Beschreibung,a descrição,la description,la descrizione
+thestartDateTime,la fecha de inicio,the start date,das Startdatum,a data de início,la date de début,la data di inizio
+thedurationMinutes,la duracion del evento en minutos,the duration of the event in minutes,die Dauer des Ereignisses in Minuten,a duração do evento em minutos,la durée de l'événement en minutes,la durata dell'evento in minuti
+thelocation,la ubicacion,the location,der Standort,a localização,l'emplacement,la posizione
+themaxParticipants,la maxima cantidad de participantes,the maximum number of participants,die maximale Teilnehmerzahl,o número máximo de participantes,le nombre maximum de participants,il numero massimo di partecipanti
+theminParticipants,la minima cantidad de participantes,the minimum number of participants,die Mindestteilnehmerzahl,o número mínimo de participantes,le nombre minimum de participants,il numero minimo di partecipanti
+theprice,el precio de entrada,the entrance price,der Eintrittspreis,o preço de entrada,le prix d'entrée,il prezzo d'ingresso
+thecategory,la categoria,the category,die Kategorie,a categoria,la catégorie,la categoria
+thetags,las etiquetas,the labels,die Etiketten,os rótulos,les étiquettes,le etichette
 wrongDateTimeFormat,"Formato de fecha y hora inválido.
 Use el formato ISO: yyyy-MM-ddTHH:mm:ss","Invalid date and time format.
 Use the ISO format: yyyy-MM-ddTHH:mm:ss","Ungültiges Datums- und Uhrzeitformat.
@@ -470,7 +470,7 @@ requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the c
 /filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer des filtres,Applica filtri
 filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
 category,categoria,category,Kategorie,categoria,catégorie,categoria
-tags,tags. Ingrese /stop para detenerse,tags. Enter /stop to stop,"Tags. Geben Sie /stop ein, um zu stoppen",tags. Digite /stop para parar,balises. Entrez /stop pour arrêter,tag. Inserisci /stop per interrompere
+tags,tags,tags,Schlagworte,etiquetas,balises,etichette
 maxDate,fecha máxima,maximum date,maximales Datum,data máxima,date maximale,data massima
 title,titulo del evento,event title,Veranstaltungstitel,título do evento,titre de l'événement,titolo dell'evento
 titleContains,subcadena del titulo,title substring,Titel-Teilzeichenfolge,substring de título,sous-chaîne de titre,sottostringa del titolo
@@ -525,3 +525,15 @@ eventSuccesfullyCreated,Evento creado,Event created,Ereignis erstellt,Evento cri
 cannotGoBackwards,No se puede ir mas atras,You can't go back any further,Weiter geht es nicht mehr,Você não pode voltar mais,Tu ne peux pas revenir plus loin,Non puoi tornare più indietro
 freePrice,Sin costo,Free of charge,Kostenlos,Grátis,Gratuitement,Gratuito
 /stop,Finalizar,Finish,Beenden,Terminar,Finition,Fine
+month1,Enero,January,Januar,Janeiro,Janvier,Gennaio
+month2,Febrero,February,Februar,Fevereiro,Février,Febbraio
+month3,Marzo ,March ,März,Marchar ,Mars ,Marzo 
+month4,abril,April,April,abril,Avril,aprile
+month5,mayo,May,Mai,Poderia,Peut,Maggio
+month6,junio,June,Juni,Junho,Juin,Giugno
+month7,julio,July,Juli,Julho,Juillet,Luglio
+month8,agosto,August,August,Agosto,Août,agosto
+month9,septiembre,September,September,Setembro,Septembre,settembre
+month10,octubre,October,Oktober,outubro,Octobre,ottobre
+month11,noviembre,November,November,novembro,Novembre,novembre
+month12,diciembre,December,Dezember,dezembro,Décembre,Dicembre

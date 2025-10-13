@@ -49,8 +49,13 @@ public class DateInputHelper{
                 step ++;
                 break;
             case 1:
-                month = Integer.parseInt(message);
-                step ++;
+                if(message.startsWith("month")){
+                    month = Integer.parseInt(message.substring(5));
+                    if(month >12 || month< 1) {
+                        return false;
+                    }
+                    step ++;
+                }
                 break;
             case 2:
                 if(Objects.equals(message, "-")){
@@ -123,9 +128,9 @@ public class DateInputHelper{
         return InlineMenuBuilder.localizedMenu(user, getQuestion(),List.of("/prev", "/next"), displayedYears);
     }
     private SendMessage monthSelectMenu(){
-        List<String> displayedMonths = IntStream.rangeClosed(1, 12).mapToObj(String::valueOf)
+        List<String> displayedMonths = IntStream.rangeClosed(1, 12).mapToObj(n -> "month" + n)
                 .collect(Collectors.toList());
-        return InlineMenuBuilder.menu(getQuestion(), displayedMonths.subList(0, 4),displayedMonths.subList(4, 8), displayedMonths.subList(8, 12));
+        return InlineMenuBuilder.localizedMenu(user, getQuestion(), displayedMonths.subList(0, 3),displayedMonths.subList(3, 6), displayedMonths.subList(6, 9), displayedMonths.subList(9, 12));
     }
     private SendMessage daySelectMenu(){
         assert this.month != null;
