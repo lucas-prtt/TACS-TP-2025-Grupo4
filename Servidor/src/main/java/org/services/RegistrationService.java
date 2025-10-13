@@ -258,17 +258,17 @@ public class RegistrationService {
                 .collect(Collectors.toList());
     }
 
-    public List<RegistrationDTO> findByAccountIdAndRegistrationState(UUID accountId, RegistrationState registrationState, Integer page, Integer limit) {
+    public List<RegistrationDTO> findByUser_IdAndRegistrationState(UUID accountId, RegistrationState registrationState, Integer page, Integer limit) {
         if(page == null || limit == null){
             throw new NullPageInfoException();
         }
-        return registrationRepository.findByAccountIdAndCurrentState(accountId, registrationState, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
+        return registrationRepository.findByUser_IdAndCurrentState(accountId, registrationState, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
     }
 
-    public List<RegistrationDTO> findByEventIdAndRegistrationState(UUID eventId, RegistrationState registrationState, Integer page, Integer limit) {
+    public List<RegistrationDTO> findByEvent_IdAndRegistrationState(UUID eventId, RegistrationState registrationState, Integer page, Integer limit) {
         if(page == null || limit == null){
             throw new NullPageInfoException();
         }
-        return registrationRepository.findByEventIdAndCurrentState(eventId, registrationState, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
+        return registrationRepository.findByEvent_IdAndCurrentState(eventId, registrationState, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
     }
 }

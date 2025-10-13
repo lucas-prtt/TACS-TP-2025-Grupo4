@@ -194,7 +194,7 @@ public class EventController {
         try {
             page = PageNormalizer.normalizeRegistrationsPageNumber(page);
             limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-            List<RegistrationDTO> registrationDTOS = registrationService.findByEventIdAndRegistrationState(eventId, registrationState, page, limit);
+            List<RegistrationDTO> registrationDTOS = registrationService.findByEvent_IdAndRegistrationState(eventId, registrationState, page, limit);
 
             return ResponseEntity.ok(registrationDTOS);
         } catch (SecurityException e) {

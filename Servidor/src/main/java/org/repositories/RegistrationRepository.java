@@ -24,8 +24,8 @@ public interface RegistrationRepository extends MongoRepository<Registration, UU
   // Verificar si ya existe inscripción
   boolean existsByUser_IdAndEvent_Id(UUID accountId, UUID eventId);
 
-  Page<Registration> findByAccountIdAndCurrentState(UUID accountId, RegistrationState registrationState, Pageable of);
+  Page<Registration> findByUser_IdAndCurrentState(UUID accountId, RegistrationState registrationState, Pageable of);
 
-  Page<Registration> findByEventIdAndCurrentState(UUID eventId, RegistrationState registrationState, Pageable of);
+  Page<Registration> findByEvent_IdAndCurrentState(UUID eventId, RegistrationState registrationState, Pageable of);
 }
 
