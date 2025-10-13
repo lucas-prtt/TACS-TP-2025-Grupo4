@@ -511,11 +511,11 @@ Usuario no encontrado,⚠️ Usuario no encontrado,⚠️ User not found,⚠️ 
 Evento no encontrado con ID dada,⚠️ Evento no encontrado con ID dada,⚠️ Event not found with given ID,⚠️ Ereignis mit der angegebenen ID nicht gefunden,⚠️ Evento não encontrado com o ID fornecido,⚠️ Événement non trouvé avec l'ID donné,⚠️ Evento non trovato con l'ID fornito
 No puede haber titleContains y title simultáneamente,⚠️ No puede haber coincidencia exacta e inexacta de titulo simultaneamente,⚠️ There cannot be an exact and inexact title match simultaneously.,⚠️ Es kann nicht gleichzeitig eine exakte und eine ungenaue Titelübereinstimmung geben.,⚠️ Não pode haver uma correspondência de título exata e inexata simultaneamente.,⚠️ Il ne peut pas y avoir de correspondance de titre exacte et inexacte simultanément.,⚠️ Non può esserci una corrispondenza esatta e inesatta del titolo contemporaneamente.
 invalidUUID,⚠️ UUID inválido,⚠️ Invalid UUID,⚠️ Ungültige UUID,⚠️ UUID inválido,⚠️ UUID non valide,⚠️ UUID non valido
-requestInputYear,Ingrese el año en el que se realizara el evento,Enter the year in which the event will take place,"Geben Sie das Jahr ein, in dem die Veranstaltung stattfinden soll",Insira o ano em que o evento ocorrerá,Entrez l'année dans laquelle l'événement aura lieu,Inserisci l'anno in cui si svolgerà l'evento
-requestInputMonth,Ingrese el mes en el que se realizara el evento,Enter the month in which the event will take place,"Geben Sie den Monat ein, in dem die Veranstaltung stattfinden soll",Insira o mês em que o evento ocorrerá,Entrez le mois au cours duquel l'événement aura lieu,Inserisci il mese in cui si svolgerà l'evento
-requestInputDay,Ingrese el dia en el que se realizara el evento,Enter the day on which the event will take place,"Geben Sie den Tag ein, an dem die Veranstaltung stattfindet",Insira o dia em que o evento ocorrerá,Entrez le jour où l'événement aura lieu,Inserisci il giorno in cui si svolgerà l'evento
-requestInputHour,Ingrese la hora en la que se realizara el evento,Enter the time the event will take place,"Geben Sie die Uhrzeit ein, zu der die Veranstaltung stattfinden soll",Insira o horário em que o evento ocorrerá,Entrez l'heure à laquelle l'événement aura lieu,Inserisci l'ora in cui si svolgerà l'evento
-requestInputMinute,Ingrese el minuto en el que se realizara el evento,Enter the minute at which the event will take place,"Geben Sie die Minute ein, zu der das Ereignis stattfinden soll",Insira o minuto em que o evento ocorrerá,Entrez la minute à laquelle l'événement aura lieu,Inserisci il minuto in cui avrà luogo l'evento
+requestInputYear,Ingrese el año,Enter the year,Geben Sie das Jahr ein,Digite o ano,Entrez l'année,Inserisci l'anno
+requestInputMonth,Ingrese el mes,Enter the month,Geben Sie den Monat ein,Digite o mês,Entrez le mois,Inserisci il mese
+requestInputDay,Ingrese el dia,Enter the day,Geben Sie den Tag ein,Entre no dia,Entrez le jour,Inserisci il giorno
+requestInputHour,Ingrese la hora,Enter the time,Geben Sie die Uhrzeit ein,Digite o tempo,Entrez l'heure,Inserisci l'ora
+requestInputMinute,Ingrese el minuto,Enter the minute,Geben Sie die Minute ein,Digite o minuto,Entrez la minute,Inserisci il minuto
 successfullDateInput,Fecha ingresada valida,Valid date entered,Gültiges Datum eingegeben,Data válida inserida,Date valide saisie,Data di inserimento valida
 unsuccessfullDateInput,Error: Fecha invalida,Error: Invalid date,Fehler: Ungültiges Datum,Erro: Data inválida,Erreur : date invalide,Errore: data non valida
 doNotPressThoseButtons,No presione esos botones,Don't press those buttons,Drücken Sie diese Tasten nicht,Não aperte esses botões,N'appuie pas sur ces boutons,Non premere quei pulsanti
@@ -537,3 +537,4 @@ month9,septiembre,September,September,Setembro,Septembre,settembre
 month10,octubre,October,Oktober,outubro,Octobre,ottobre
 month11,noviembre,November,November,novembro,Novembre,novembre
 month12,diciembre,December,Dezember,dezembro,Décembre,Dicembre
+filters:,Filtros: ,Filters:,Filter:,Filtros:,Filtres:,Filtri:
