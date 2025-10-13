@@ -9,6 +9,8 @@ import org.model.accounts.Account;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.utils.PageSplitter;
 import java.util.UUID;
 import java.math.BigDecimal;
@@ -207,19 +209,11 @@ public class EventService {
      * @return Lista paginada de eventos organizados
      */
     public List<EventDTO> getEventsByOrganizer(UUID organizerId, Integer page, Integer limit) {
-        List<EventDTO> processedEvents =  eventRepository.findAll().stream()
-                .filter(event -> event.getOrganizer() != null && event.getOrganizer().getId().equals(organizerId))
-                .map(EventDTO::fromEvent)
-                .collect(Collectors.toList());
-        return PageSplitter.getPageList(processedEvents, page, limit);
-    }
-    /**
-     * Variante sin paginación para obtener eventos organizados por el usuario.
-     * @param organizerId ID del organizador
-     * @return Lista de eventos organizados
-     */
-    public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
-        return getEventsByOrganizer(organizerId, null, null);
+        if(page == null || limit == null){
+            throw new NullPageInfoException();
+        }
+        List<Event> organizerEvents =  eventRepository.findByOrganizerId(organizerId, PageRequest.of(page, limit));
+        return organizerEvents.stream().map(EventDTO::fromEvent).toList();
     }
 
     /**

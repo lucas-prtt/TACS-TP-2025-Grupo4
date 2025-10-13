@@ -20,9 +20,11 @@ import org.model.events.Event;
 import org.services.EventService;
 import org.services.OrganizerService;
 import org.services.RegistrationService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.utils.ConfigManager;
 import org.utils.PageNormalizer;
 
 import java.math.BigDecimal;
@@ -69,8 +71,10 @@ public class EventController {
      */
     @GetMapping("/organized-events")
     public ResponseEntity<List<EventDTO>> getOrganizedEvents(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
+        page = PageNormalizer.normalizeEventsPageNumber(page);
+        limit = PageNormalizer.normalizeEventsPageLimit(page);
         UUID id = getCurrentAccountId();
-        List<EventDTO> events = new ArrayList<>();
+        List<EventDTO> events;
         events = eventService.getEventsByOrganizer(id, page, limit);
         return ResponseEntity.ok(events);
     }
