@@ -6,6 +6,7 @@ import org.menus.userMenu.UserMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
                     }
                 }
                 try {
-                    int numero = Integer.parseInt(message.substring(1));
+                    int numero = Integer.parseInt(message);
                     int index = (numero - (page) * limit) - 1;
                     if (index >= 0 && index < items.size()) {
                         user.setMenu(itemSelectedMenu(items.get(index)));
@@ -81,11 +82,10 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
     @Override
     public SendMessage questionMessage() {
         items = fetchItems(page, limit);
-        Map <String, String> optionsMap = new HashMap<>();
+        List<String> optionsList = new ArrayList<>();
         for(int i = 0; i<items.size(); i++){
-            optionsMap.put(String.valueOf((i+1) + (page * limit)), "/" + (i+1 + (page * limit)));
+            optionsList.add(String.valueOf((i+1) + (page * limit)));
         }
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of(user.getLocalizedMessage("/next"), "/next",user.getLocalizedMessage( "/prev"), "/prev"), optionsMap, Map.of(user.getLocalizedMessage("/back"), "/back", user.getLocalizedMessage("/start"), "/start"));
-        return message;
+        return InlineMenuBuilder.localizedMenu(user, getQuestion(), List.of("/prev", "/next"), optionsList, List.of( "/back", "/start"));
     }
 }
