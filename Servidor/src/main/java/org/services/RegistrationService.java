@@ -17,6 +17,7 @@ import org.model.accounts.Account;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 
@@ -255,5 +256,9 @@ public class RegistrationService {
                         .anyMatch(change -> change.getFromState() == RegistrationState.WAITLIST
                                 && change.getToState() == RegistrationState.CONFIRMED))
                 .collect(Collectors.toList());
+    }
+
+    public List<RegistrationDTO> findByAccountIdAndRegistrationState(UUID accountId, RegistrationState registrationState, Integer page, Integer limit) {
+        return registrationRepository.findByAccountIdAndCurrentState(accountId, registrationState, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
     }
 }

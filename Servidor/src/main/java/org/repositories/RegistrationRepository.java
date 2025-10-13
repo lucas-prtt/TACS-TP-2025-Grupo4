@@ -2,7 +2,11 @@ package org.repositories;
 
 import java.util.List;
 import java.util.UUID;
+
+import org.model.enums.RegistrationState;
 import org.model.events.Registration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,5 +20,7 @@ public interface RegistrationRepository extends MongoRepository<Registration, UU
 
   // Verificar si ya existe inscripción
   boolean existsByUser_IdAndEvent_Id(UUID accountId, UUID eventId);
+
+  Page<Registration> findByAccountIdAndCurrentState(UUID accountId, RegistrationState registrationState, PageRequest of);
 }
 

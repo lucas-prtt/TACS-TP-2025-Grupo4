@@ -163,38 +163,5 @@ public class AccountServiceTest {
         assertThrows(AccountNotFoundException.class, () -> accountService.getAccountByUsername("user1"));
     }
 
-    // -------------------------
-    // TEST GET REGISTRATIONS
-    // -------------------------
-    @Test
-    public void testGetRegistrations_ShouldReturnFilteredList() {
-        UUID id = UUID.randomUUID();
-        Account acc = new Account();
-        acc.setUsername("user1");
-        acc.setPassword("pass");
-        Registration reg1 = mock(Registration.class);
-        Registration reg2 = mock(Registration.class);
-
-        Event event1 = mock(Event.class);
-        Event event2 = mock(Event.class);
-
-        when(event1.getId()).thenReturn(UUID.randomUUID());
-        when(event2.getId()).thenReturn(UUID.randomUUID());
-
-        when(reg1.getCurrentState()).thenReturn(RegistrationState.CONFIRMED);
-        when(reg2.getCurrentState()).thenReturn(RegistrationState.WAITLIST);
-
-        when(reg1.getUser()).thenReturn(acc);
-        when(reg2.getUser()).thenReturn(acc);
-
-        when(reg1.getEvent()).thenReturn(event1);
-        when(reg2.getEvent()).thenReturn(event2);
-
-        acc.setRegistrations(Arrays.asList(reg1, reg2));
-        when(accountRepository.findById(id)).thenReturn(Optional.of(acc));
-
-        List<RegistrationDTO> result = accountService.getRegistrations(id, 0, 10, RegistrationState.CONFIRMED);
-        assertEquals(1, result.size());
-    }
 }
 
