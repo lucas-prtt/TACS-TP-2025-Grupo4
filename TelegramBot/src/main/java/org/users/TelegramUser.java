@@ -95,7 +95,7 @@ public class TelegramUser {
         filtros.clear();
     }
     public String getAllFiltersAsQueryParams(){
-        return "?" + String.join("&", filtros.toString());
+        return "?" + String.join("&", filtros.stream().map(Object::toString).toList());
     }
     public void updateApiClient(String token){
         setApiClient(ApiClient.fromToken(token, this));
