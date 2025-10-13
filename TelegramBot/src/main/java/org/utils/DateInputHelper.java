@@ -31,19 +31,19 @@ public class DateInputHelper{
         this.user = user;
     }
 
-    public String respondTo(String message) {
+    public boolean respondTo(String message) {
         switch (step){
             case 0:
                 if(Objects.equals(message, "/next")){
                     yearSelectPage++;
-                    return null;
+                    return false;
                 }
                 if(Objects.equals(message, "/prev")){
                     if(yearSelectPage == 0){
-                        return user.getLocalizedMessage("cannotGoBackwards");
+                        return false;
                     }
                     yearSelectPage--;
-                    return null;
+                    return false;
                 }
                 year = Integer.parseInt(message);
                 step ++;
@@ -54,12 +54,12 @@ public class DateInputHelper{
                 break;
             case 2:
                 if(Objects.equals(message, "-")){
-                    return user.getLocalizedMessage("doNotPressThoseButtons");
+                    return false;
                 }
                 try {
                     day = Integer.parseInt(message);
                 }catch (Exception e){
-                    return user.getLocalizedMessage("wrongOption");
+                    return false;
                 }
                 step ++;
                 break;
@@ -71,11 +71,11 @@ public class DateInputHelper{
                 minute = Integer.parseInt(message.substring(message.indexOf(':')+1));
                 step ++;
                 date= LocalDateTime.of(year, month, day, hour, minute, 0, 0);
-                break;
+                return true;
             case 5:
                 throw new DateAlreadySetException("Date already set");
         }
-        return null;
+        return false;
     }
 
 

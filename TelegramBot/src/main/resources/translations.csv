@@ -2,7 +2,7 @@ key,es,en,de,pt,fr,it
 languageEmoji,🇦🇷,🇬🇧,🇩🇪,🇧🇷,🇫🇷,🇮🇹
 language,Español,English,Deutsch,Português,Français,Italiano
 /userMenu,🔐 Menu de usuario,🔐 User menu,🔐 Benutzermenü,🔐 Menu do usuário,🔐 Menu utilisateur,🔐 Menu utente
-/organizerMenu,🗓️ Menu de organizador,🗓️ Organizer menu,🗓️ Organizer-Menü,🗓️ Menu do organizador,🗓️ Menu organisateur,🗓️ Menù dell'organizzatore
+/organizerMenu,🗓️ Menu de organizador,🗓️ Organizer Menu,🗓️ Organizer-Menü,🗓️ Menu do Organizador,🗓️ Menu Organisateur,🗓️ Menù Organizzatore
 /participantMenu,🎟️ Menu de participante,🎟️ Participant menu,🎟️ Teilnehmermenü,🎟️ Menu do participante,🎟️ Menu des participants,🎟️ Menù dei partecipanti
 /browseMenu,🔍 Menu de busqueda,🔍 Search menu,🔍 Suchmenü,🔍 Menu de pesquisa,🔍 Menu de recherche,🔍 Cerca nel menu
 /languageMenu,🌐 Menu de idioma,🌐 Language menu,🌐 Sprachmenü,🌐 Menu de idiomas,🌐 Menu de langue,🌐 Menu della lingua
@@ -286,7 +286,7 @@ maxParticipants,la maxima cantidad de participantes,the maximum number of partic
 minParticipants,la minima cantidad de participantes,the minimum number of participants,die Mindestteilnehmerzahl,o número mínimo de participantes,le nombre minimum de participants,il numero minimo di partecipanti
 price,el precio de entrada,the entrance price,der Eintrittspreis,o preço de entrada,le prix d'entrée,il prezzo d'ingresso
 category,la categoria,the category,die Kategorie,a categoria,la catégorie,la categoria
-tags,las etiquetas. Ingrese /stop para finalizar,the labels. Enter /stop to end,"die Etiketten. Geben Sie /stop ein, um zu beenden",os rótulos. Digite /stop para finalizar,les étiquettes. Entrez /stop pour terminer,le etichette. Inserisci /stop per terminare
+tags,las etiquetas,the labels,die Etiketten,os rótulos,les étiquettes,le etichette
 wrongDateTimeFormat,"Formato de fecha y hora inválido.
 Use el formato ISO: yyyy-MM-ddTHH:mm:ss","Invalid date and time format.
 Use the ISO format: yyyy-MM-ddTHH:mm:ss","Ungültiges Datums- und Uhrzeitformat.
@@ -523,3 +523,5 @@ errorBackToMainMenu,Hubo un error desconocido. Volviendo al menú principal.,The
 endTagsInput,Finalizada la introduccion de tags,Tag entry complete,Tag-Eintrag abgeschlossen,Entrada de tag concluída,Entrée de balise terminée,Inserimento tag completato
 eventSuccesfullyCreated,Evento creado,Event created,Ereignis erstellt,Evento criado,Événement créé,Evento creato
 cannotGoBackwards,No se puede ir mas atras,You can't go back any further,Weiter geht es nicht mehr,Você não pode voltar mais,Tu ne peux pas revenir plus loin,Non puoi tornare più indietro
+freePrice,Sin costo,Free of charge,Kostenlos,Grátis,Gratuitement,Gratuito
+/stop,Finalizar,Finish,Beenden,Terminar,Finition,Fine
