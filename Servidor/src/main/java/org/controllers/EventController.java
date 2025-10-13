@@ -194,12 +194,9 @@ public class EventController {
         try {
             page = PageNormalizer.normalizeRegistrationsPageNumber(page);
             limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-            var registrations = organizerService.getRegistrationsFromEvent(eventId, registrationState, page, limit)
-                    .stream()
-                    .map(RegistrationDTO::toRegistrationDTO)
-                    .toList();
+            List<RegistrationDTO> registrationDTOS = registrationService.findByEventIdAndRegistrationState(eventId, registrationState, page, limit);
 
-            return ResponseEntity.ok(registrations);
+            return ResponseEntity.ok(registrationDTOS);
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN)
                     .body(Map.of("error", e.getMessage()));
