@@ -20,9 +20,11 @@ import org.model.events.Event;
 import org.services.EventService;
 import org.services.OrganizerService;
 import org.services.RegistrationService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.utils.ConfigManager;
 import org.utils.PageNormalizer;
 
 import java.math.BigDecimal;
@@ -69,8 +71,10 @@ public class EventController {
      */
     @GetMapping("/organized-events")
     public ResponseEntity<List<EventDTO>> getOrganizedEvents(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
+        page = PageNormalizer.normalizeEventsPageNumber(page);
+        limit = PageNormalizer.normalizeEventsPageLimit(limit);
         UUID id = getCurrentAccountId();
-        List<EventDTO> events = new ArrayList<>();
+        List<EventDTO> events;
         events = eventService.getEventsByOrganizer(id, page, limit);
         return ResponseEntity.ok(events);
     }
@@ -190,12 +194,9 @@ public class EventController {
         try {
             page = PageNormalizer.normalizeRegistrationsPageNumber(page);
             limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-            var registrations = organizerService.getRegistrationsFromEvent(eventId, registrationState, page, limit)
-                    .stream()
-                    .map(RegistrationDTO::toRegistrationDTO)
-                    .toList();
+            List<RegistrationDTO> registrationDTOS = registrationService.findByEvent_IdAndRegistrationState(eventId, registrationState, page, limit);
 
-            return ResponseEntity.ok(registrations);
+            return ResponseEntity.ok(registrationDTOS);
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN)
                     .body(Map.of("error", e.getMessage()));

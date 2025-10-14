@@ -66,33 +66,7 @@ public class AccountService {
             .orElseThrow(() -> new RuntimeException("Usuario o contraseña incorrectos"));
     }
 
-
-    /**
-     * Devuelve las inscripciones del usuario, con paginación y filtrado por estado.
-     * @param accountID ID del usuario
-     * @param page Número de página (opcional)
-     * @param limit Cantidad de elementos por página (opcional)
-     * @param registrationState Estado de la inscripción (opcional)
-     * @return Lista paginada de DTOs de inscripciones
-     */
-    public List<RegistrationDTO> getRegistrations(UUID accountID, Integer page, Integer limit, RegistrationState registrationState) {
-        Account account = accountRepository.findById(UUID.fromString(String.valueOf(accountID)))
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        List<RegistrationDTO> processedRegistrations = account.getRegistrations().stream()
-            .filter(r -> registrationState == null || r.getCurrentState() == registrationState)
-            .map(RegistrationDTO::toRegistrationDTO)
-            .collect(Collectors.toList());
-        return PageSplitter.getPageList(processedRegistrations, page, limit);
-    }
-    /**
-     * Variante sin paginación ni filtro para obtener inscripciones del usuario.
-     * @param accountID ID del usuario
-     * @return Lista de DTOs de inscripciones
-     */
-    public List<RegistrationDTO> getRegistrations(UUID accountID) {
-        return getRegistrations(accountID, null, null, null);
-    }
+    
     /**
      * Devuelve el usuario por su ID.
      * @param accountID ID del usuario

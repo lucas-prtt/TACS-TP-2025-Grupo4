@@ -47,7 +47,7 @@ public class RegistrationController {
 
     page = PageNormalizer.normalizeRegistrationsPageNumber(page);
     limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-    List<RegistrationDTO> registrations = accountService.getRegistrations(accountId, page, limit, registrationState);
+    List<RegistrationDTO> registrations = registrationService.findByUser_IdAndRegistrationState(accountId, registrationState, page, limit);
     return ResponseEntity.ok(registrations);
   }
 

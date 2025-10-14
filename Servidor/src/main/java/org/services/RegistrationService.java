@@ -17,6 +17,7 @@ import org.model.accounts.Account;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 
@@ -255,5 +256,27 @@ public class RegistrationService {
                         .anyMatch(change -> change.getFromState() == RegistrationState.WAITLIST
                                 && change.getToState() == RegistrationState.CONFIRMED))
                 .collect(Collectors.toList());
+    }
+
+    public List<RegistrationDTO> findByUser_IdAndRegistrationState(UUID accountId, RegistrationState registrationState, Integer page, Integer limit) {
+        if(page == null || limit == null){
+            throw new NullPageInfoException();
+        }
+        if(registrationState == null){
+            return registrationRepository.findByUser_Id(accountId, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
+        }
+        return registrationRepository.findByUser_IdAndCurrentState(accountId, registrationState, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
+    }
+
+    public List<RegistrationDTO> findByEvent_IdAndRegistrationState(UUID eventId, RegistrationState registrationState, Integer page, Integer limit) {
+        if(page == null || limit == null){
+            throw new NullPageInfoException();
+        }
+        if(registrationState == null){
+            return registrationRepository.findByEvent_Id(eventId, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
+
+        }
+
+        return registrationRepository.findByEvent_IdAndCurrentState(eventId, registrationState, PageRequest.of(page, limit)).getContent().stream().map(RegistrationDTO::toRegistrationDTO).toList();
     }
 }
