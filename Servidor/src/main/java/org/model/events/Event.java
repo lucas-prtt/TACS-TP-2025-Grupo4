@@ -43,6 +43,7 @@ public class Event {
     @DBRef(lazy = true)
     List<Registration> waitList = new ArrayList<>();
     EventState eventState;
+    private String image;
     /**
      * Constructor principal de Event. Requiere los campos obligatorios para crear un evento.
      * @param title Título del evento
@@ -56,8 +57,9 @@ public class Event {
      * @param category Categoría del evento (opcional)
      * @param tags Lista de tags (opcional)
      * @param organizer Organizador del evento
+     * @param image Url de la imagen de portada del evento (opcional)
      */
-    public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags, Account organizer) throws NullPointerException{
+    public Event(String title, String description, LocalDateTime startDateTime, Integer durationMinutes, String location, Integer maxParticipants, Integer minParticipants, BigDecimal price, Category category, List<Tag> tags, Account organizer, String image) throws NullPointerException{
         //Obligatorios
         Objects.requireNonNull(title);
         Objects.requireNonNull(description);
@@ -85,6 +87,7 @@ public class Event {
         else {
             this.tags = new ArrayList<>();
         }
+        this.image = image;
 
         // Automaticos
         this.participants = new ArrayList<>();

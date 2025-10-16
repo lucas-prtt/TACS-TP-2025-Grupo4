@@ -56,7 +56,8 @@ public class OrganizerTests {
         BigDecimal.TEN,
         null,
         new ArrayList<>(),
-        organizer
+        organizer,
+            null
     );
 
     // asegurarnos que el id esté seteado

@@ -33,6 +33,7 @@ public class EventDTO {
     EventState state;
     Integer registered;
     Integer waitlisted;
+    private String image;
 
 
     // Crea un EventDTO a partir de un Event
@@ -53,7 +54,8 @@ public class EventDTO {
                 new ArrayList<>(event.getTags()),
                 event.getEventState(),
                 event.getParticipants().size(),
-                event.getWaitList().size()
+                event.getWaitList().size(),
+                event.getImage()
         );
     }
 }
