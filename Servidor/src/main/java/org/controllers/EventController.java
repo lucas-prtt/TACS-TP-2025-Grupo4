@@ -60,6 +60,8 @@ public class EventController {
             return ResponseEntity.ok(EventDTO.fromEvent(event));
         } catch (AccountNotFoundException e){
             return ResponseEntity.badRequest().body(Map.of("error", "Ningún usuario con el id existe"));
+        } catch (InvalidEventUrlException e){
+            return ResponseEntity.badRequest().body(Map.of("error", "La url de la imagen no es valida"));
         }
     }
 

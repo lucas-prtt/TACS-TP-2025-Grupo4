@@ -11,19 +11,17 @@ import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.utils.PageSplitter;
 
 import java.util.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.utils.Validator;
 
 @Service
 public class EventService {
@@ -44,11 +42,14 @@ public class EventService {
      * @throws AccountNotFoundException si el organizador no existe
      * @throws BadRequestException si los datos son inválidos
      */
-    public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException{
+    public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException, InvalidEventUrlException{
         Event newEvent;
         Optional<Account> author;
         author = accountRepository.findById(organizerId);
         if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+ organizerId.toString());
+        if(eventDTO.getImage() != null && !Validator.isValidUrlNonLocalhost(eventDTO.getImage()))
+            throw new InvalidEventUrlException("La url de la imagen no es valida.");
+
         newEvent = new Event(
             eventDTO.getTitle(),
             eventDTO.getDescription(),
@@ -60,7 +61,8 @@ public class EventService {
             eventDTO.getPrice(),
             eventDTO.getCategory(),
             eventDTO.getTags(),
-            author.get()
+            author.get(),
+            eventDTO.getImage()
         );
         eventRepository.save(newEvent);
         return newEvent;
