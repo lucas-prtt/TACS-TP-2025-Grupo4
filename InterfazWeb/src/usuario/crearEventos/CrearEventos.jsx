@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Alert } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { TextFieldCustom } from "../../components/TextField";
 import { SelectorCustom } from "../../components/Selector";
@@ -11,17 +11,129 @@ import { ButtonTime } from '../../components/ButtonTime';
 import { useState } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { ButtonCustom } from '../../components/Button';
+import { useGetEvents } from '../../hooks/useGetEvents';
+import { useNavigate } from 'react-router-dom';
 
 export const CrearEventos = () => {
     const theme = useTheme();
+    const navigate = useNavigate();
+    const { createEvent, loading, error: apiError } = useGetEvents();
 
-    // Estado controlado para los selectores
-    const [categoria, setCategoria] = useState("");
-    const [estado, setEstado] = useState("");
-    // Estado para la fecha
+    // Estado del formulario
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        startDateTime: null,
+        durationMinutes: '',
+        location: '',
+        maxParticipants: '',
+        price: '',
+        category: '',
+        tags: '',
+        imageUrl: ''
+    });
+
     const [fecha, setFecha] = useState(null);
     const [horaInicio, setHoraInicio] = useState(null);
-    const [horaFin, setHoraFin] = useState(null);
+    const [localError, setLocalError] = useState('');
+    const [success, setSuccess] = useState('');
+
+    // Manejar cambios en los campos
+    const handleChange = (field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+        setLocalError('');
+        setSuccess('');
+    };
+
+    // Combinar fecha y hora en LocalDateTime
+    const combineDateTime = (date, time) => {
+        if (!date || !time) return null;
+        
+        const dateObj = new Date(date);
+        const timeObj = new Date(time);
+        
+        dateObj.setHours(timeObj.getHours());
+        dateObj.setMinutes(timeObj.getMinutes());
+        dateObj.setSeconds(0);
+        dateObj.setMilliseconds(0);
+        
+        return dateObj.toISOString();
+    };
+
+    // Validar formulario
+    const validateForm = () => {
+        if (!formData.title.trim()) {
+            setLocalError('El título es obligatorio');
+            return false;
+        }
+        if (!formData.description.trim()) {
+            setLocalError('La descripción es obligatoria');
+            return false;
+        }
+        if (!fecha || !horaInicio) {
+            setLocalError('La fecha y hora de inicio son obligatorias');
+            return false;
+        }
+        if (!formData.durationMinutes || formData.durationMinutes <= 0) {
+            setLocalError('La duración debe ser mayor a 0');
+            return false;
+        }
+        if (!formData.location.trim()) {
+            setLocalError('La ubicación es obligatoria');
+            return false;
+        }
+        if (!formData.maxParticipants || formData.maxParticipants <= 0) {
+            setLocalError('La capacidad máxima debe ser mayor a 0');
+            return false;
+        }
+        if (formData.price === '' || formData.price < 0) {
+            setLocalError('El precio debe ser mayor o igual a 0');
+            return false;
+        }
+        return true;
+    };
+
+    // Manejar creación del evento
+    const handleCreateEvent = async () => {
+        setLocalError('');
+        setSuccess('');
+
+        if (!validateForm()) {
+            return;
+        }
+
+        try {
+            const startDateTime = combineDateTime(fecha, horaInicio);
+            
+            const eventData = {
+                title: formData.title.trim(),
+                description: formData.description.trim(),
+                startDateTime: startDateTime,
+                durationMinutes: parseInt(formData.durationMinutes),
+                location: formData.location.trim(),
+                maxParticipants: parseInt(formData.maxParticipants),
+                price: parseFloat(formData.price),
+                category: formData.category || null,
+                tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+                imageUrl: formData.imageUrl.trim() || null
+            };
+
+            await createEvent(eventData);
+            setSuccess('¡Evento creado exitosamente!');
+            
+            setTimeout(() => {
+                navigate('/mis-eventos');
+            }, 1500);
+        } catch (err) {
+            const errorMessage = err.response?.data?.error 
+                || apiError 
+                || 'Error al crear el evento';
+            setLocalError(errorMessage);
+        }
+    };
 
     return (
         <Box minHeight="100vh" sx={{ display: 'flex', flexDirection: 'row', bgcolor: theme.palette.background.primary }}>
@@ -39,7 +151,6 @@ export const CrearEventos = () => {
             >
                 <NavbarApp />
             </Box>
-            {/* Responsive content wrapper */}
             <Box
                 flex={1}
                 p={3}
@@ -59,6 +170,19 @@ export const CrearEventos = () => {
                     <Typography variant="body1" color="text.secondary" mb={3}>
                         Completa la información para crear un nuevo evento
                     </Typography>
+
+                    {/* Mensajes de error y éxito */}
+                    {localError && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {localError}
+                        </Alert>
+                    )}
+                    {success && (
+                        <Alert severity="success" sx={{ mb: 2 }}>
+                            {success}
+                        </Alert>
+                    )}
+
                     {/* Layout principal */}
                     <Box sx={{
                         display: 'flex',
@@ -89,14 +213,20 @@ export const CrearEventos = () => {
                                 <Typography variant="h6" fontWeight={600} mb={3}>
                                     Información General
                                 </Typography>
+
+                                {/* Título */}
                                 <Box mb={2}>
                                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
                                         Título del Evento *
                                     </Typography>
                                     <TextFieldCustom
                                         placeholder="Ej: Conferencia de Tecnología 2025"
+                                        value={formData.title}
+                                        onChange={(e) => handleChange('title', e.target.value)}
                                     />
                                 </Box>
+
+                                {/* Descripción */}
                                 <Box mb={2}>
                                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
                                         Descripción *
@@ -106,61 +236,51 @@ export const CrearEventos = () => {
                                         multiline
                                         minRows={3}
                                         maxRows={3}
+                                        value={formData.description}
+                                        onChange={(e) => handleChange('description', e.target.value)}
                                     />
                                 </Box>
-                                <Box
-                                    mb={2}
-                                    sx={{
-                                        display: 'flex',
-                                        gap: 2,
-                                        flexDirection: { xs: 'column', sm: 'row' },
-                                    }}
-                                >
-                                    <Box sx={{ flex: 1, width: { xs: '100%', sm: 'auto' } }}>
-                                        <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                            Categoría *
-                                        </Typography>
-                                        <SelectorCustom
-                                            placeholder="Selecciona una categoría"
-                                            opciones={["Tecnología", "Música", "Deporte", "Arte", "Gastronomía"]}
-                                            value={categoria}
-                                            onChange={e => setCategoria(e.target.value)}
-                                            fullWidth
-                                        />
-                                    </Box>
-                                    <Box sx={{ flex: 1, width: { xs: '100%', sm: 'auto' } }}>
-                                        <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                            Estado *
-                                        </Typography>
-                                        <SelectorCustom
-                                            placeholder="Selecciona el estado"
-                                            opciones={["Programado", "Activo", "Finalizado"]}
-                                            value={estado}
-                                            onChange={e => setEstado(e.target.value)}
-                                            fullWidth
-                                        />
-                                    </Box>
-                                </Box>
-                                {/* Organizador */}
+
+                                {/* Categoría */}
                                 <Box mb={2}>
                                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                        Organizador *
+                                        Categoría (Opcional)
                                     </Typography>
-                                    <TextFieldCustom
-                                        placeholder="Nombre del organizador o empresa"
+                                    <SelectorCustom
+                                        placeholder="Selecciona una categoría"
+                                        opciones={["Tecnología", "Música", "Deporte", "Arte", "Gastronomía", "Educación", "Negocios"]}
+                                        value={formData.category}
+                                        onChange={(e) => handleChange('category', e.target.value)}
+                                        fullWidth
                                     />
                                 </Box>
+
                                 {/* Etiquetas */}
-                                <Box>
+                                <Box mb={2}>
                                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                        Etiquetas *
+                                        Etiquetas (Opcional)
                                     </Typography>
                                     <TextFieldCustom
-                                        placeholder="Agregar etiqueta..."
+                                        placeholder="Separadas por comas: tech, innovación, startup"
+                                        value={formData.tags}
+                                        onChange={(e) => handleChange('tags', e.target.value)}
+                                    />
+                                </Box>
+
+                                {/* URL de imagen */}
+                                <Box>
+                                    <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
+                                        URL de Imagen (Opcional)
+                                    </Typography>
+                                    <TextFieldCustom
+                                        placeholder="https://ejemplo.com/imagen.jpg"
+                                        value={formData.imageUrl}
+                                        onChange={(e) => handleChange('imageUrl', e.target.value)}
                                     />
                                 </Box>
                             </Box>
                         </Box>
+
                         {/* Columna derecha */}
                         <Box sx={{
                             flex: 1,
@@ -185,6 +305,8 @@ export const CrearEventos = () => {
                                     </Typography>
                                     <CalendarMonthOutlinedIcon sx={{ color: theme.palette.text.primary, fontSize: 24 }} />
                                 </Box>
+
+                                {/* Fecha */}
                                 <Box mb={1}>
                                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
                                         Fecha *
@@ -194,31 +316,35 @@ export const CrearEventos = () => {
                                         onChange={setFecha}
                                     />
                                 </Box>
-                                <Box sx={{ display: 'flex', gap: 1, mb: 1, width: '100%' }}>
-                                    <Box sx={{ flex: 1, minWidth: 0 }}>
-                                        <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                            Inicio *
-                                        </Typography>
-                                        <ButtonTime
-                                            placeholder="Inicio *"
-                                            value={horaInicio}
-                                            onChange={setHoraInicio}
-                                            fullWidth
-                                        />
-                                    </Box>
-                                    <Box sx={{ flex: 1, minWidth: 0 }}>
-                                        <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                            Fin *
-                                        </Typography>
-                                        <ButtonTime
-                                            placeholder="Fin *"
-                                            value={horaFin}
-                                            onChange={setHoraFin}
-                                            fullWidth
-                                        />
-                                    </Box>
+
+                                {/* Hora de inicio */}
+                                <Box mb={1}>
+                                    <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
+                                        Hora de Inicio *
+                                    </Typography>
+                                    <ButtonTime
+                                        placeholder="Hora de inicio"
+                                        value={horaInicio}
+                                        onChange={setHoraInicio}
+                                        fullWidth
+                                    />
+                                </Box>
+
+                                {/* Duración */}
+                                <Box>
+                                    <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
+                                        Duración (minutos) *
+                                    </Typography>
+                                    <TextFieldCustom
+                                        placeholder="Ej: 120"
+                                        fullWidth
+                                        onlyNumbers={true}
+                                        value={formData.durationMinutes}
+                                        onChange={(e) => handleChange('durationMinutes', e.target.value)}
+                                    />
                                 </Box>
                             </Box>
+
                             {/* Ubicación */}
                             <Box
                                 sx={{
@@ -241,8 +367,11 @@ export const CrearEventos = () => {
                                 <TextFieldCustom
                                     placeholder="Ej: Centro de Convenciones"
                                     fullWidth
+                                    value={formData.location}
+                                    onChange={(e) => handleChange('location', e.target.value)}
                                 />
                             </Box>
+
                             {/* Detalles Adicionales */}
                             <Box
                                 sx={{
@@ -259,30 +388,39 @@ export const CrearEventos = () => {
                                     </Typography>
                                     <PeopleAltOutlinedIcon sx={{ color: theme.palette.text.primary, fontSize: 24 }} />
                                 </Box>
+
+                                {/* Capacidad máxima */}
                                 <Box mb={1}>
                                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                        Capacidad maxima *
+                                        Capacidad Máxima *
                                     </Typography>
                                     <TextFieldCustom
-                                        placeholder="Numero maximo de participantes"
+                                        placeholder="Número máximo de participantes"
                                         fullWidth
                                         onlyNumbers={true}
+                                        value={formData.maxParticipants}
+                                        onChange={(e) => handleChange('maxParticipants', e.target.value)}
                                     />
                                 </Box>
+
+                                {/* Precio */}
                                 <Box>
                                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                        Precio (opcional) *
+                                        Precio *
                                     </Typography>
                                     <TextFieldCustom
-                                        placeholder="$ 0,00"
+                                        placeholder="$ 0.00"
                                         fullWidth
                                         onlyNumbers={true}
                                         allowFloat={true}
+                                        value={formData.price}
+                                        onChange={(e) => handleChange('price', e.target.value)}
                                     />
                                 </Box>
                             </Box>
                         </Box>
                     </Box>
+
                     {/* Botón Crear Evento */}
                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                         <ButtonCustom
@@ -291,6 +429,7 @@ export const CrearEventos = () => {
                             hoverBgColor={theme.palette.primary.dark}
                             hoverColor={theme.palette.primary.contrastText}
                             startIcon={<SaveIcon />}
+                            disabled={loading}
                             sx={{
                                 minWidth: 220,
                                 fontSize: 17,
@@ -301,9 +440,9 @@ export const CrearEventos = () => {
                                 boxShadow: 'none',
                                 textTransform: 'none'
                             }}
-                            onClick={() => {/* lógica de crear evento */}}
+                            onClick={handleCreateEvent}
                         >
-                            Crear Evento
+                            {loading ? 'Creando...' : 'Crear Evento'}
                         </ButtonCustom>
                     </Box>
                 </Box>

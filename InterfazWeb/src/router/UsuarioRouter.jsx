@@ -12,8 +12,8 @@ import { useParams } from "react-router-dom"
 import { datosEventos } from "../usuario/eventos/datosEventos"
 import { MisIncripciones } from "../usuario/misIncripciones/MisIncripciones"
 import { MisEventos } from "../usuario/misEventos/MisEventos"
-export const UsuarioRouter = () => {
 
+export const UsuarioRouter = () => {
     return (
         <>
         <Routes>
@@ -26,20 +26,17 @@ export const UsuarioRouter = () => {
             <Route path="/configuracion" element={<Configuracion />} />
             <Route path="/editar-evento/:id" element={<EditarEventoWrapper />} />
             <Route path="/mis-inscripciones" element={<MisIncripciones />} />
-            <Route path="/*" element={<Navigate to="/dashboard" />} />
             <Route path="/mis-eventos" element={<MisEventos />} />
+            <Route path="/*" element={<Navigate to="/dashboard" />} />
          </Routes>
         </>
     )
-
 }
 
 // Wrapper para buscar el evento por id y pasarlo como prop a VerEvento
 const VerEventoWrapper = () => {
     const { id } = useParams();
-    // Asegúrate de que cada evento en datosEventos tenga un campo id único y bien definido
     const evento = datosEventos.find(ev => String(ev.id) === String(id));
-    // Si no se encuentra el evento, podrías redirigir o mostrar un mensaje
     if (!evento) return <Navigate to="/eventos" />;
     return <VerEvento evento={evento} />;
 };
