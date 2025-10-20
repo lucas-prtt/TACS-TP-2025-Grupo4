@@ -2,7 +2,9 @@ package org.services;
 
 import static org.utils.PasswordValidator.validatePassword;
 import org.DTOs.registrations.RegistrationDTO;
+import org.exceptions.AccountAlreadyExistsException;
 import org.exceptions.AccountNotFoundException;
+import org.exceptions.InvalidLoginException;
 import org.model.accounts.Account;
 import org.model.accounts.Role;
 import org.model.enums.RegistrationState;
@@ -32,9 +34,9 @@ public class AccountService {
      * @return El usuario registrado
      * @throws RuntimeException si el usuario ya existe o la contraseña es inválida
      */
-    public Account register(String username, String password, boolean isAdmin) {
+    public Account register(String username, String password, boolean isAdmin) throws AccountAlreadyExistsException {
         if (accountRepository.existsByUsername(username)) {
-            throw new RuntimeException("El usuario ya existe");
+            throw new AccountAlreadyExistsException();
         }
 
         validatePassword(password);
@@ -63,7 +65,7 @@ public class AccountService {
     public Account login(String username, String password) {
         return accountRepository.findByUsername(username)
             .filter(acc -> passwordEncoder.matches(password, acc.getPassword()))
-            .orElseThrow(() -> new RuntimeException("Usuario o contraseña incorrectos"));
+            .orElseThrow(InvalidLoginException::new);
     }
 
     
@@ -75,7 +77,7 @@ public class AccountService {
      */
     public Account getAccountById(UUID accountID){
         return accountRepository.findById(UUID.fromString(String.valueOf(accountID)))
-                .orElseThrow(() -> new AccountNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new AccountNotFoundException());
     }
     /**
      * Devuelve el usuario por su nombre de usuario.
@@ -85,6 +87,6 @@ public class AccountService {
      */
     public Account getAccountByUsername(String accountUsername){
         return accountRepository.findByUsername(accountUsername)
-                .orElseThrow(() -> new AccountNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new AccountNotFoundException());
     }
 }

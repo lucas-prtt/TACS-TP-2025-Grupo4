@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 
 import org.DTOs.accounts.LoginRequestDTO;
 import org.DTOs.accounts.RegisterRequestDTO;
+import org.exceptions.AccountAlreadyExistsException;
+import org.exceptions.HttpResponseError;
+import org.exceptions.WeakPasswordException;
+import org.exceptions.WrongOneTimeCodeException;
 import org.model.accounts.Account;
 import org.model.accounts.OneTimeCode;
 import org.model.accounts.Role;
@@ -17,6 +21,7 @@ import org.services.OneTimeCodeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.utils.I18nManager;
 import org.utils.JwtUtil;
 
 @RestController
@@ -36,15 +41,13 @@ public class AuthController {
    * @return ResponseEntity con el usuario registrado o error
    */
   @PostMapping("/register")
-  public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request) {
+  public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request, @RequestHeader(name = "Accept-Language", required = false) String lang) {
     System.out.println("USUARIO REGISTRADO");
     try {
       Account account = accountService.register(request.getUsername(), request.getPassword(), false);
       return ResponseEntity.ok(toAccountResponseDTO(account));
-    } catch (RuntimeException e) {
-      return ResponseEntity
-          .badRequest()
-          .body(Map.of("error", e.getMessage()));
+    } catch (HttpResponseError e) {
+      return e.httpResponse(lang);
     }
   }
 
@@ -67,7 +70,7 @@ public class AuthController {
    * @return ResponseEntity con los datos del usuario y el token JWT, o error
    */
   @PostMapping("/login")
-  public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
+  public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, @RequestHeader(name = "Accept-Language", required = false) String lang) {
     try {
       Account account = accountService.login(request.getUsername(), request.getPassword());
       Set<String> roles = account.getRoles()
@@ -83,10 +86,8 @@ public class AuthController {
           "roles", roles,
           "token", token
       ));
-    } catch (RuntimeException e) {
-      return ResponseEntity
-          .status(HttpStatus.UNAUTHORIZED)
-          .body(Map.of("error", e.getMessage()));
+    } catch (HttpResponseError e) {
+      return e.httpResponse(lang);
     }
   }
 
@@ -95,7 +96,7 @@ public class AuthController {
    * @return ResponseEntity con el código generado o error
    */
   @PostMapping("/oneTimeCode")
-  public ResponseEntity<?> createCode() {
+  public ResponseEntity<?> createCode(@RequestHeader(name = "Accept-Language", required = false) String lang) {
     try {
       UUID accountId = getCurrentAccountId();
       Account account = accountService.getAccountById(accountId);
@@ -115,10 +116,8 @@ public class AuthController {
       OneTimeCode code = oneTimeCodeService.addNewCode(infoLogin);
       return ResponseEntity.ok(code);
 
-    } catch (RuntimeException e) {
-      return ResponseEntity
-              .status(HttpStatus.UNAUTHORIZED)
-              .body(Map.of("error", e.getMessage()));
+    } catch (HttpResponseError e) {
+      return e.httpResponse(lang);
     }
   }
 
@@ -131,7 +130,8 @@ public class AuthController {
    */
   @GetMapping("/oneTimeCode")
   public ResponseEntity<?> getToken(@RequestParam(name = "username", required = true) String username,
-                                    @RequestParam(name = "code", required = true) String code) {
+                                    @RequestParam(name = "code", required = true) String code,
+                                    @RequestHeader(name = "Accept-Language", required = false) String lang) {
     try {
       List<OneTimeCode> foundCodes = oneTimeCodeService.findByUsername(username);
       for(OneTimeCode foundCode : foundCodes){
@@ -141,13 +141,9 @@ public class AuthController {
         }
       }
       // Si la concurrencia hace que se invalide justo o se puso mal el código
-      return ResponseEntity
-              .status(HttpStatus.UNAUTHORIZED)
-              .body(Map.of("error", "Código equivocado"));
-    } catch (RuntimeException e) {
-      return ResponseEntity
-              .status(HttpStatus.UNAUTHORIZED)
-              .body(Map.of("error", e.getMessage()));
+      throw new WrongOneTimeCodeException();
+    } catch (HttpResponseError e) {
+      return e.httpResponse(lang);
     }
   }
 }

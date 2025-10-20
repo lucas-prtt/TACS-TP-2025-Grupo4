@@ -195,7 +195,7 @@ public class RegistrationService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
         Account account = accountRepository.findById(UUID.fromString(String.valueOf(accountId)))
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+                .orElseThrow(AccountNotFoundException::new);
 
 
         ReentrantLock lock = locksParticipants.computeIfAbsent(eventId, id -> new ReentrantLock());

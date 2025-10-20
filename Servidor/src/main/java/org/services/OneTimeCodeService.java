@@ -1,6 +1,8 @@
 package org.services;
 
+import org.exceptions.AccountNotFoundException;
 import org.exceptions.UserNotFoundException;
+import org.exceptions.WrongOneTimeCodeException;
 import org.model.accounts.OneTimeCode;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ public class OneTimeCodeService {
                 .filter(oneTimeCode -> Objects.equals(oneTimeCode.getCosaDelLogueo().get("username"), username))
                 .filter(OneTimeCode::isValid).toList();
         if(codigosDelUsuario.isEmpty()){
-            throw new UserNotFoundException("No se encontró un One time code con ese usuario");
+            throw new WrongOneTimeCodeException();
         }
         return codigosDelUsuario;
     }
