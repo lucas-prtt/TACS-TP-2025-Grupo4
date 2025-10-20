@@ -10,3 +10,12 @@ PROBLEM_SPACE,No debe contener espacios,Must not contain spaces,Darf keine Leerz
 ERROR_LOGIN,Usuario o contraseña incorrectos,Incorrect username or password,Falscher Benutzername oder falsches Passwort,Nome de usuário ou senha incorretos,Nom d'utilisateur ou mot de passe incorrect,Nome utente o password errati
 ERROR_ACCOUNT_NOT_FOUND,Usuario no encontrado,User not found,Benutzer nicht gefunden,Usuário não encontrado,Utilisateur non trouvé,Utente non trovato
 ERROR_INVALID_ONE_TIME_CODE,Error: Ese One Time Code no es valido para ese usuario,Error: That One Time Code is not valid for that user,Fehler: Dieser Einmalcode ist für diesen Benutzer ungültig,Erro: Esse código único não é válido para esse usuário,Erreur : ce code à usage unique n'est pas valide pour cet utilisateur,Errore: il codice monouso non è valido per quell'utente
+ERROR_EVENT_NULL_FIELDS,No se pudo crear el evento dado que hay campos faltantes: {0},The event could not be created because there are missing fields: {0},"Das Ereignis konnte nicht erstellt werden, da folgende Felder fehlen: {0}",O evento não pôde ser criado porque faltam campos: {0},L'événement n'a pas pu être créé car il manque des champs : {0},L'evento non può essere creato perché mancano i campi: {0}
+PROBLEM_NULL_TITLE,Titulo del evento,Event title,Veranstaltungstitel,Título do evento,Titre de l'événement,Titolo dell'evento
+PROBLEM_NULL_DESCRIPTION,Descripcion del evento,Event description,Veranstaltungsbeschreibung,Descrição do evento,Description de l'événement,Descrizione dell'evento
+PROBLEM_NULL_STARTDATETIME,Inicio del evento,Start of the event,Beginn der Veranstaltung,Início do evento,Début de l'événement,Inizio dell'evento
+PROBLEM_NULL_DURATIONMINUTES,Duracion del evento,Duration of the event,Dauer der Veranstaltung,Duração do evento,Durée de l'événement,Durata dell'evento
+PROBLEM_NULL_LOCATION,Ubicacoin del evento,Locate the event,Suchen Sie das Ereignis,Localize o evento,Localiser l'événement,Individuare l'evento
+PROBLEM_NULL_MAXPARTICIPANTS,Maxima cantidad de participantes,Maximum number of participants,Maximale Teilnehmerzahl,Número máximo de participantes,Nombre maximum de participants,Numero massimo di partecipanti
+PROBLEM_NULL_PRICE,Precio del evento,Event price,Veranstaltungspreis,Preço do evento,Prix ​​de l'événement,Prezzo dell'evento
+ERROR_INVALID_URL,La url de la imagen no es valida,The image URL is not valid.,Die Bild-URL ist ungültig.,O URL da imagem não é válido.,L'URL de l'image n'est pas valide.,L'URL dell'immagine non è valido.
