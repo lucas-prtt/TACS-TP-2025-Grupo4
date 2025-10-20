@@ -5,13 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.utils.HttpErrorResponseBuilder;
 import org.utils.I18nManager;
 
-public class InvalidLoginException extends HttpResponseError{
+public class InvalidLoginException extends RuntimeException{
     public InvalidLoginException() {
         super("Usuario o contraseña incorrectos");
     }
 
-    @Override
-    public ResponseEntity<?> httpResponse(String lang) {
-        return basicResponse(lang, "ERROR_LOGIN", HttpStatus.UNAUTHORIZED);
-    }
+
 }

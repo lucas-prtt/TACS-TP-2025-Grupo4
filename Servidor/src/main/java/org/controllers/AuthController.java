@@ -9,19 +9,14 @@ import java.util.stream.Collectors;
 
 import org.DTOs.accounts.LoginRequestDTO;
 import org.DTOs.accounts.RegisterRequestDTO;
-import org.exceptions.AccountAlreadyExistsException;
-import org.exceptions.HttpResponseError;
-import org.exceptions.WeakPasswordException;
 import org.exceptions.WrongOneTimeCodeException;
 import org.model.accounts.Account;
 import org.model.accounts.OneTimeCode;
 import org.model.accounts.Role;
 import org.services.AccountService;
 import org.services.OneTimeCodeService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.utils.I18nManager;
 import org.utils.JwtUtil;
 
 @RestController
@@ -43,12 +38,8 @@ public class AuthController {
   @PostMapping("/register")
   public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request, @RequestHeader(name = "Accept-Language", required = false) String lang) {
     System.out.println("USUARIO REGISTRADO");
-    try {
-      Account account = accountService.register(request.getUsername(), request.getPassword(), false);
-      return ResponseEntity.ok(toAccountResponseDTO(account));
-    } catch (HttpResponseError e) {
-      return e.httpResponse(lang);
-    }
+    Account account = accountService.register(request.getUsername(), request.getPassword(), false);
+    return ResponseEntity.ok(toAccountResponseDTO(account));
   }
 
 //  // Registro de admin
@@ -71,7 +62,6 @@ public class AuthController {
    */
   @PostMapping("/login")
   public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, @RequestHeader(name = "Accept-Language", required = false) String lang) {
-    try {
       Account account = accountService.login(request.getUsername(), request.getPassword());
       Set<String> roles = account.getRoles()
           .stream()
@@ -86,9 +76,6 @@ public class AuthController {
           "roles", roles,
           "token", token
       ));
-    } catch (HttpResponseError e) {
-      return e.httpResponse(lang);
-    }
   }
 
   /**
@@ -97,7 +84,6 @@ public class AuthController {
    */
   @PostMapping("/oneTimeCode")
   public ResponseEntity<?> createCode(@RequestHeader(name = "Accept-Language", required = false) String lang) {
-    try {
       UUID accountId = getCurrentAccountId();
       Account account = accountService.getAccountById(accountId);
 
@@ -115,10 +101,6 @@ public class AuthController {
 
       OneTimeCode code = oneTimeCodeService.addNewCode(infoLogin);
       return ResponseEntity.ok(code);
-
-    } catch (HttpResponseError e) {
-      return e.httpResponse(lang);
-    }
   }
 
 
@@ -132,7 +114,6 @@ public class AuthController {
   public ResponseEntity<?> getToken(@RequestParam(name = "username", required = true) String username,
                                     @RequestParam(name = "code", required = true) String code,
                                     @RequestHeader(name = "Accept-Language", required = false) String lang) {
-    try {
       List<OneTimeCode> foundCodes = oneTimeCodeService.findByUsername(username);
       for(OneTimeCode foundCode : foundCodes){
         if (Objects.equals(foundCode.getCode(), code) && foundCode.isValid()){
@@ -142,8 +123,5 @@ public class AuthController {
       }
       // Si la concurrencia hace que se invalide justo o se puso mal el código
       throw new WrongOneTimeCodeException();
-    } catch (HttpResponseError e) {
-      return e.httpResponse(lang);
-    }
   }
 }
