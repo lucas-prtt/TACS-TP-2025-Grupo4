@@ -32,7 +32,7 @@ public class OneTimeCodeMenu extends MenuState {
             return user.getLocalizedMessage("successfulLogin", user.getServerAccountId(), user.getServerAccountUsername());
         }catch (HttpClientErrorException e){
             user.setMenu(new UserMenu(user));
-            return ErrorHandler.getLocalizedErrorMessage(e, user);
+            return ErrorHandler.getErrorMessage(e, user);
         }catch (ResourceAccessException e) {
             user.setMenu(new UserMenu(user));
             return user.getLocalizedMessage("serverUnavailable");
