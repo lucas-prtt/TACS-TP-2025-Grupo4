@@ -24,14 +24,13 @@ import java.util.*;
 @Getter
 public class TelegramUser {
     @Getter
-    @Setter
-    private ApiClient apiClient;
-    @Getter
     private final Long chatId;
     @Setter
     private String serverAccountId;
     @Setter
     private String serverAccountUsername;
+    @Setter
+    private String token;
     @Setter
     private MenuState menu;
     private final List<QueryFilter> filtros = new ArrayList();
@@ -43,7 +42,6 @@ public class TelegramUser {
     public TelegramUser(Long chatId){
         this.chatId = chatId;
         menu = new MainMenu(this);
-        apiClient = ApiClient.withoutToken(this);
     }
 
     // Responde al menu en el que se encuentra y actualiza al siguiente menu si corresponde
@@ -97,13 +95,11 @@ public class TelegramUser {
     public String getAllFiltersAsQueryParams(){
         return "?" + String.join("&", filtros.stream().map(Object::toString).toList());
     }
-    public void updateApiClient(String token){
-        setApiClient(ApiClient.fromToken(token, this));
-    }
+
     public void updateUser(Map<String, Object> infoLogin){
-        updateApiClient((String) infoLogin.get("token"));
-        setServerAccountUsername((String) infoLogin.get("username"));
-        setServerAccountId((String) infoLogin.get("id"));
+        this.token = (String) infoLogin.get("token");
+        this.serverAccountUsername = ((String) infoLogin.get("username"));
+        this.serverAccountId = ((String) infoLogin.get("id"));
         setMenu(new MainMenu(this));
     }
 
@@ -128,9 +124,9 @@ public class TelegramUser {
     }
 
     public void deleteCurrentAccount(){
-        this.setServerAccountId(null);
-        this.setServerAccountUsername(null);
-        setApiClient(ApiClient.withoutToken(this));
+        this.serverAccountId = null;
+        this.serverAccountUsername = null;
+        this.token = null;
         this.menu = new UserMenu(this);
     }
 
@@ -141,6 +137,9 @@ public class TelegramUser {
         DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
                 .withLocale(userLocale);
         return date.format(formatter);
+    }
+    public ApiClient getApiClient(){
+        return new ApiClient(token, this);
     }
 
 }

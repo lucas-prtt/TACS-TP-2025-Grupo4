@@ -27,7 +27,7 @@ public class ApiClient {
 
     private final RestTemplate restTemplate;
     private final TelegramUser user;
-    public ApiClient(Map<String, Object> loginInfo, TelegramUser user) {
+    public ApiClient(String token, TelegramUser user) {
         this.user = user;
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
@@ -40,8 +40,7 @@ public class ApiClient {
             return execution.execute(request, body);
         });
 
-        if(loginInfo != null){
-            String token = (String) loginInfo.get("token");
+        if(token != null){
             interceptors.add(
                 (request, body, execution) ->
                     {
@@ -58,9 +57,7 @@ public class ApiClient {
         return new ApiClient(null, user);
     }
     public static ApiClient fromToken(String token, TelegramUser user) {
-        Map<String, Object> loginInfo = new HashMap<>();
-        loginInfo.put("token", token);
-        return new ApiClient(loginInfo, user);
+        return new ApiClient(token, user);
     }
 
     public String getBaseUri(){
