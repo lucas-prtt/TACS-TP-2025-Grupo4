@@ -28,7 +28,7 @@ public class LookUpEventByUUIDMenu extends MenuState {
             user.setMenu(new CheckEventMenu(user, eventDTO));
             return user.getLocalizedMessage("eventFound");
         }catch (HttpClientErrorException e){
-            return ErrorHandler.getLocalizedErrorMessage(e, user);
+            return ErrorHandler.getErrorMessage(e, user);
         }
     }
 

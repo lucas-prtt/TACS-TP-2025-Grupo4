@@ -71,7 +71,7 @@ public class RegistrationController {
   public ResponseEntity<?> cancelar(@PathVariable("registrationId") UUID registrationId, @RequestBody RegistrationDTO registrationDTO) {
     UUID accountId = getCurrentAccountId();
     Registration registration = registrationService.patchRegistration(registrationId, accountId, registrationDTO);
-    return ResponseEntity.ok(registration);
+    return ResponseEntity.noContent().build();
   }
 }
 

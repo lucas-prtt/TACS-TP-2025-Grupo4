@@ -30,7 +30,7 @@ public class LoginUserMenu extends MenuState {
         catch (HttpClientErrorException e)
         {
             user.setMenu(new UserMenu(user));
-            return ErrorHandler.getLocalizedErrorMessage(e, user);
+            return ErrorHandler.getErrorMessage(e, user);
         }
         catch (ResourceAccessException e) {
             user.setMenu(new UserMenu(user));

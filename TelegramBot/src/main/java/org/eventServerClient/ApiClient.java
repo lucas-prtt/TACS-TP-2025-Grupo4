@@ -1,5 +1,6 @@
 package org.eventServerClient;
 
+import lombok.Setter;
 import org.ConfigManager;
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -10,8 +11,10 @@ import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.EventStateDTO;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientResponseException;
@@ -29,14 +32,27 @@ public class ApiClient {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         restTemplate = new RestTemplate(factory);
+
+        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+
+        interceptors.add((request, body, execution) -> {
+            request.getHeaders().set(HttpHeaders.ACCEPT_LANGUAGE, user.getLang());
+            return execution.execute(request, body);
+        });
+
         if(loginInfo != null){
             String token = (String) loginInfo.get("token");
-            this.restTemplate.setInterceptors(List.of((request, body, execution) -> {
-                request.getHeaders().setBearerAuth(token);
-                request.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-                return execution.execute(request, body);
-            }));
+            interceptors.add(
+                (request, body, execution) ->
+                    {
+                        request.getHeaders().setBearerAuth(token);
+                        request.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+                        return execution.execute(request, body);
+                    }
+            );
         };
+
+        restTemplate.setInterceptors(interceptors);
     }
     public static ApiClient withoutToken(TelegramUser user){
         return new ApiClient(null, user);
