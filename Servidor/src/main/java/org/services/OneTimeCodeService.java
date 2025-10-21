@@ -1,13 +1,13 @@
 package org.services;
 
-import org.exceptions.UserNotFoundException;
+import org.exceptions.AccountNotFoundException;
+import org.exceptions.WrongOneTimeCodeException;
 import org.model.accounts.OneTimeCode;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class OneTimeCodeService {
@@ -24,14 +24,14 @@ public class OneTimeCodeService {
      * Busca un código de un solo uso por nombre de usuario.
      * @param username Nombre de usuario
      * @return El código encontrado
-     * @throws UserNotFoundException si no existe el usuario
+     * @throws AccountNotFoundException si no existe el usuario
      */
     public List<OneTimeCode> findByUsername(String username){
         List<OneTimeCode> codigosDelUsuario = codigos.stream()
                 .filter(oneTimeCode -> Objects.equals(oneTimeCode.getCosaDelLogueo().get("username"), username))
                 .filter(OneTimeCode::isValid).toList();
         if(codigosDelUsuario.isEmpty()){
-            throw new UserNotFoundException("No se encontró un One time code con ese usuario");
+            throw new WrongOneTimeCodeException();
         }
         return codigosDelUsuario;
     }

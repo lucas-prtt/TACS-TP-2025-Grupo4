@@ -21,6 +21,7 @@ public class EventBuilder {
     @Setter private Category category;
     @Setter private List<Tag> tags;
     @Setter private Account organizer;
+    @Setter private String image;
 
     /**
      * Construye y devuelve un objeto Event usando los valores seteados previamente.
@@ -29,7 +30,7 @@ public class EventBuilder {
      * @throws NullPointerException si falta algún campo obligatorio
      */
     public Event build() throws NullPointerException{
-        return new Event(title, description, startDateTime, durationMinutes, location, maxParticipants, minParticipants, price, category, tags, organizer);
+        return new Event(title, description, startDateTime, durationMinutes, location, maxParticipants, minParticipants, price, category, tags, organizer, image);
     }
 
 

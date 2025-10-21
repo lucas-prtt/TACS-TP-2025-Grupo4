@@ -11,7 +11,7 @@ import java.util.Collections;
 
 @EnableScheduling
 @EnableMongoRepositories(basePackages = "org.repositories")
-@ComponentScan(basePackages = {"org.controllers", "org.services", "org.repositories","org.DTOs", "org.model","org.utils"})
+@ComponentScan(basePackages = {"org.controllers", "org.services", "org.repositories","org.DTOs", "org.model","org.utils", "org.middleware"})
 @SpringBootApplication
 public class Servidor {
     public static void main(String[] args) {

@@ -8,9 +8,11 @@ import org.eventServerClient.dtos.event.EventDTO;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.menus.userMenu.UserMenu;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.*;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
+import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
@@ -45,7 +47,7 @@ public class CheckEventMenu extends MenuState {
                 }
             } catch (HttpClientErrorException e) {
                 user.setMenu(new MainMenu(user));
-                return e.getStatusCode().toString() + "\n" + e.getResponseBodyAsString() + "\n\n";
+                return ErrorHandler.getErrorMessage(e, user);
             }catch (ResourceAccessException e) {
                 System.out.println("Servidor no disponible: " + e.getMessage());
                 user.setMenu(new UserMenu(user));

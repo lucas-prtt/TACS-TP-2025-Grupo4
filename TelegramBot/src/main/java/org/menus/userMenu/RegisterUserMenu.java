@@ -31,7 +31,7 @@ public class RegisterUserMenu extends MenuState {
             return user.getLocalizedMessage("successfulRegister", usuarioCreado.getUuid());
         }catch (HttpClientErrorException e){
             user.setMenu(new UserMenu(user));
-            return ErrorHandler.getLocalizedErrorMessage(e, user);
+            return ErrorHandler.getErrorMessage(e, user);
         }catch (ResourceAccessException e) {
             user.setMenu(new UserMenu(user));
             return user.getLocalizedMessage("serverUnavailable");

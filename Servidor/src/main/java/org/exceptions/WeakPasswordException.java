@@ -1,7 +1,16 @@
 package org.exceptions;
 
-public class WeakPasswordException extends RuntimeException {
-  public WeakPasswordException(String message) {
-    super(message);
+import lombok.Getter;
+import org.springframework.http.ResponseEntity;
+import org.utils.HttpErrorResponseBuilder;
+import org.utils.I18nManager;
+
+import java.util.List;
+@Getter
+public class WeakPasswordException extends RuntimeException{
+  List<String> problems;
+  public WeakPasswordException(List<String> problems) {
+    super("Error: Contraseña insegura - " + String.join("; ", problems));
+    this.problems = problems;
   }
 }

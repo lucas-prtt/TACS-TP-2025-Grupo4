@@ -50,17 +50,11 @@ public class EventController {
      * @return ResponseEntity con el evento creado o error
      */
     @PostMapping
-    public ResponseEntity<?> postEvent(@RequestBody EventCreateDTO eventCreateDTO) {
-        if(!eventCreateDTO.isValid()){  // Se fija que los atributos obligatorios no sean null
-            return ResponseEntity.badRequest().body(Map.of("error", "Al menos uno de los campos obligatorios del evento es nulo. Se requiere enviar: \n-String title\n-String description\n-LocalDateTime startDateTime\n-Integer durationMinutes\n-String location\n-Integer maxParticipants\n-BigDecimal price"));
-        }
-        try {
+    public ResponseEntity<?> postEvent(@RequestBody EventCreateDTO eventCreateDTO,  @RequestHeader(name = "Accept-Language", required = false) String lang) {
+            eventCreateDTO.validate(lang);
             UUID id = getCurrentAccountId();
             Event event = eventService.createEvent(eventCreateDTO, id);
             return ResponseEntity.ok(EventDTO.fromEvent(event));
-        } catch (AccountNotFoundException e){
-            return ResponseEntity.badRequest().body(Map.of("error", "Ningún usuario con el id existe"));
-        }
     }
 
     /**
@@ -85,13 +79,9 @@ public class EventController {
      * @return ResponseEntity con el evento o error si no existe
      */
     @GetMapping("/{id}")
-    public ResponseEntity<EventDTO> getEventById(@PathVariable(name = "id") UUID id) {
-        try {
-            EventDTO eventDTO = eventService.getEventDTOById(id);
-            return ResponseEntity.ok(eventDTO);
-        } catch (EventNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?> getEventById(@PathVariable(name = "id") UUID id, @RequestHeader(name = "Accept-Language", required = false) String lang) {
+        EventDTO eventDTO = eventService.getEventDTOById(id);
+        return ResponseEntity.ok(eventDTO);
     }
 
 
@@ -121,17 +111,13 @@ public class EventController {
             @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice,
             @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
             @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "limit", required = false) Integer limit){
+            @RequestParam(name = "limit", required = false) Integer limit) throws BadRequestException {
         page = PageNormalizer.normalizeEventsPageNumber(page);
         limit = PageNormalizer.normalizeEventsPageLimit(limit);
-        try {
-            List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(
-                title, titleContains, maxDate, minDate, category, tags, maxPrice, minPrice, page, limit
-            );
-            return ResponseEntity.ok(eventsDTO);
-        } catch (BadRequestException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(
+            title, titleContains, maxDate, minDate, category, tags, maxPrice, minPrice, page, limit
+        );
+        return ResponseEntity.ok(eventsDTO);
     }
 
     /**
@@ -140,25 +126,14 @@ public class EventController {
      * @param eventId ID del evento
      * @return ResponseEntity con la inscripción realizada o error
      */
-
     @PostMapping("{id}/registrations")
     public ResponseEntity<?> registerUserToEvent(@PathVariable(name = "id") UUID eventId) {
-        try {
-            UUID accountId = getCurrentAccountId();
-            Registration registrationResult = registrationService.registerParticipantToEvent(
-                eventId,
-                accountId
-            );
-            return ResponseEntity.ok(RegistrationDTO.toRegistrationDTO(registrationResult));
-        } catch (EventNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (OrganizerRegisterException e){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-        } catch (AlreadyRegisteredException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        } catch (EventRegistrationsClosedException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        UUID accountId = getCurrentAccountId();
+        Registration registrationResult = registrationService.registerParticipantToEvent(
+            eventId,
+            accountId
+        );
+        return ResponseEntity.ok(RegistrationDTO.toRegistrationDTO(registrationResult));
     }
     /**
      * Actualiza parcialmente los datos de un evento por su ID.
@@ -168,15 +143,8 @@ public class EventController {
      */
     @PatchMapping("/{id}")
     public ResponseEntity<?> patchEvent(@PathVariable(name = "id") String id, @RequestBody EventDTO event) {
-        try {
             EventDTO eventDTO = eventService.patchEvent(id, event);
             return ResponseEntity.ok(eventDTO);
-        } catch (EventNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN)
-                    .body(Map.of("error", e.getMessage()));
-        }
     }
     /**
      * Obtiene la lista de participantes de un evento, con paginación y filtrado por tipo de inscripción.
@@ -191,18 +159,10 @@ public class EventController {
                                              @RequestParam(name = "page", required = false) Integer page,
                                              @RequestParam(name = "limit", required = false) Integer limit,
                                              @RequestParam(name = "registrationType", required = false) RegistrationState registrationState) {
-        try {
             page = PageNormalizer.normalizeRegistrationsPageNumber(page);
             limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
             List<RegistrationDTO> registrationDTOS = registrationService.findByEvent_IdAndRegistrationState(eventId, registrationState, page, limit);
 
             return ResponseEntity.ok(registrationDTOS);
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpServletResponse.SC_FORBIDDEN)
-                    .body(Map.of("error", e.getMessage()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", e.getMessage()));
-        }
     }
 }
