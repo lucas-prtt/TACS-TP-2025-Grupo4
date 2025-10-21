@@ -22,26 +22,26 @@ public class PasswordValidator {
     List<String> errors = new ArrayList<>();
 
     if (password.length() < 8 ) {
-      errors.add("La contraseña debe tener entre 8 caracteres");
+      errors.add("PROBLEM_8_CHARACTERS");
     }
     if (!password.matches(".*[A-Z].*")) {
-      errors.add("Debe contener al menos una letra mayúscula");
+      errors.add("PROBLEM_UPPER");
     }
     if (!password.matches(".*[a-z].*")) {
-      errors.add("Debe contener al menos una letra minúscula");
+      errors.add("PROBLEM_LOWER");
     }
     if (!password.matches(".*\\d.*")) {
-      errors.add("Debe contener al menos un número");
+      errors.add("PROBLEM_NUMBER");
     }
     if (!password.matches(".*[!@#$%^&*()\\-_=+].*")) {
-      errors.add("Debe contener al menos un carácter especial (!@#$%^&*()-_+=)");
+      errors.add("PROBLEM_SPECIAL_CHARACTER");
     }
     if (password.contains(" ")) {
-      errors.add("No debe contener espacios");
+      errors.add("PROBLEM_SPACE");
     }
 
     if (!errors.isEmpty()) {
-      throw new WeakPasswordException(String.join("; ", errors));
+      throw new WeakPasswordException(errors);
     }
   }
 }

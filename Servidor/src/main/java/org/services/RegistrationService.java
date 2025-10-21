@@ -108,10 +108,12 @@ public class RegistrationService {
      * @param registrationId ID de la inscripción
      * @return Optional con el DTO de la inscripción
      */
-    public Optional<RegistrationDTO> findByUserAndRegistrationId(UUID accountId, UUID registrationId) {
-        return registrationRepository.findById(registrationId)
-            .filter(reg -> reg.getUser().getId().equals(accountId))
-            .map(RegistrationDTO::toRegistrationDTO);
+    public RegistrationDTO findByUserAndRegistrationId(UUID accountId, UUID registrationId) {
+        Registration reg = registrationRepository.findById(registrationId).orElseThrow(RegistrationNotFoundException::new);
+        if(reg.getUser().getId().equals(accountId)){
+            return RegistrationDTO.toRegistrationDTO(reg);
+        }
+        throw new RegistrationOfDifferentUserException();
     }
 
     /**
@@ -163,12 +165,12 @@ public class RegistrationService {
         // Verifica que exista registration con ese ID
         Optional<Registration> optReg = registrationRepository.findById(registrationId);
         if (optReg.isEmpty()){
-            throw new RegistrationNotFoundException("No se encontro el registro"); // Ya deberia ser verificado por cancelRegistration, pero lo pongo igual por las dudas
+            throw new RegistrationNotFoundException(); // Ya deberia ser verificado por cancelRegistration, pero lo pongo igual por las dudas
         }
         Registration reg = optReg.get();
         // Verifica que sea una registration del usuario
         if (!reg.getUser().getId().equals(accountId))
-            throw new WrongUserException("El registro no pertenece al usuario dado");
+            throw new RegistrationOfDifferentUserException();
 
         if(registrationDTO.getState() != null
             && registrationDTO.getState() == RegistrationState.CANCELED
@@ -186,16 +188,16 @@ public class RegistrationService {
      * @param accountId ID del usuario
      * @return La inscripción realizada
      * @throws EventNotFoundException si el evento no existe
-     * @throws UserNotFoundException si el usuario no existe
+     * @throws AccountNotFoundException si el usuario no existe
      * @throws OrganizerRegisterException si el organizador intenta inscribirse
      * @throws AlreadyRegisteredException si el usuario ya está inscripto
      * @throws EventRegistrationsClosedException si el evento está cerrado
      */
-    public Registration registerParticipantToEvent(UUID eventId, UUID accountId) throws EventNotFoundException, UserNotFoundException, OrganizerRegisterException, AlreadyRegisteredException, EventRegistrationsClosedException{
+    public Registration registerParticipantToEvent(UUID eventId, UUID accountId) throws EventNotFoundException, OrganizerRegisterException, AlreadyRegisteredException, EventRegistrationsClosedException{
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
         Account account = accountRepository.findById(UUID.fromString(String.valueOf(accountId)))
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+                .orElseThrow(AccountNotFoundException::new);
 
 
         ReentrantLock lock = locksParticipants.computeIfAbsent(eventId, id -> new ReentrantLock());

@@ -46,9 +46,8 @@ public class EventService {
         Event newEvent;
         Optional<Account> author;
         author = accountRepository.findById(organizerId);
-        if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+ organizerId.toString());
-        if(eventDTO.getImage() != null && !Validator.isValidUrlNonLocalhost(eventDTO.getImage()))
-            throw new InvalidEventUrlException("La url de la imagen no es valida.");
+        if(author.isEmpty()) throw new AccountNotFoundException();
+
 
         newEvent = new Event(
             eventDTO.getTitle(),
