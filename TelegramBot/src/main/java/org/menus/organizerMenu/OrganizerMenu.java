@@ -19,7 +19,7 @@ public class OrganizerMenu extends MenuState {
                 user.setMenu(new ManageEventSelectionMenu(user));
                 return null;
             default:
-                return "Error - opcion invalida\n";
+                return user.getLocalizedMessage("wrongOption");
         }
 
     }

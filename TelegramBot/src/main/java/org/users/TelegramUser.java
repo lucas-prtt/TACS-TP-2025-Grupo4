@@ -111,10 +111,10 @@ public class TelegramUser {
     }
 
     public Boolean isAdmin(){
-        return roles.contains("ADMIN");
+        return roles != null && roles.contains("ADMIN");
     }
     public Boolean isUser(){
-        return roles.contains("USER");
+        return roles != null && roles.contains("USER");
     }
 
     public SendMessage getQuestion() {

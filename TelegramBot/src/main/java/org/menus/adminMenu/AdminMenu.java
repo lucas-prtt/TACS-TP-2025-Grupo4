@@ -12,16 +12,26 @@ public class AdminMenu extends MenuState {
 
     @Override
     public String respondTo(String message) {
-        return "NOT IMPLEMENTED";
+        switch (message){
+            case "/stats":
+                user.setMenu(new StatsMenu(user));
+                break;
+            case "/categoryConfig":
+                user.setMenu(new CategoryConfigMenu(user));
+                break;
+            default:
+                return user.getLocalizedMessage("wrongOption");
+        };
+        return null;
     }
 
     @Override
     public String getQuestion() {
-        return "NOT IMPLEMENTED";
+        return user.getLocalizedMessage("adminMenuQuestion", user.getLocalizedMessage("/stats"), user.getLocalizedMessage("/categoryConfig"));
     }
 
     @Override
     public SendMessage questionMessage() {
-        return InlineMenuBuilder.localizedVerticalMenu(user, "NOT IMPLEMENTED");
+        return InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/stats", "/categoryConfig", "/start");
     }
 }

@@ -271,7 +271,7 @@ Página: {1}
 {0}
 
 Page : {1}
-/page <n> --> Accéder à la page n","Risultati della navigazione:
+/page <n> --> Aller à la page n","Risultati della navigazione:
 
 {0}
 
@@ -470,7 +470,7 @@ requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the c
 /filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer des filtres,Applica filtri
 filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
 category,categoria,category,Kategorie,categoria,catégorie,categoria
-tags,tags,tags,Schlagworte,etiquetas,balises,etichette
+tags,tags,tags,Schlagworte,etiquetas,balises,tag
 maxDate,fecha máxima,maximum date,maximales Datum,data máxima,date maximale,data massima
 title,titulo del evento,event title,Veranstaltungstitel,título do evento,titre de l'événement,titolo dell'evento
 titleContains,subcadena del titulo,title substring,Titel-Teilzeichenfolge,substring de título,sous-chaîne de titre,sottostringa del titolo
@@ -506,7 +506,7 @@ errorBackToMainMenu,Hubo un error desconocido. Volviendo al menú principal.,The
 endTagsInput,Finalizada la introduccion de tags,Tag entry complete,Tag-Eintrag abgeschlossen,Entrada de tag concluída,Entrée de balise terminée,Inserimento tag completato
 eventSuccesfullyCreated,Evento creado,Event created,Ereignis erstellt,Evento criado,Événement créé,Evento creato
 cannotGoBackwards,No se puede ir mas atras,You can't go back any further,Weiter geht es nicht mehr,Você não pode voltar mais,Tu ne peux pas revenir plus loin,Non puoi tornare più indietro
-freePrice,Sin costo,Free of charge,Kostenlos,Gratuito,Gratuitement,Gratuito
+freePrice,Sin costo,Free of charge,Kostenlos,Grátis,Gratuitement,Gratuito
 /stop,Finalizar,Finish,Beenden,Terminar,Finition,Fine
 month1,Enero,January,Januar,Janeiro,Janvier,Gennaio
 month2,Febrero,February,Februar,Fevereiro,Février,Febbraio
@@ -521,7 +521,7 @@ month10,octubre,October,Oktober,outubro,Octobre,ottobre
 month11,noviembre,November,November,novembro,Novembre,novembre
 month12,diciembre,December,Dezember,dezembro,Décembre,Dicembre
 filters:,Filtros: ,Filters:,Filter:,Filtros:,Filtres:,Filtri:
-sessionExpired,❌ Tu sesion expiró. Deberas iniciar sesion de nuevo seguir usando el bot.,❌ Your session has expired. You'll need to log in again to continue using the bot.,"❌ Ihre Sitzung ist abgelaufen. Sie müssen sich erneut anmelden, um den Bot weiter verwenden zu können.",❌ Sua sessão expirou. Você precisará fazer login novamente para continuar usando o bot.,❌ Votre session a expiré. Vous devrez vous reconnecter pour continuer à utiliser le bot.,❌ La tua sessione è scaduta. Dovrai effettuare nuovamente l'accesso per continuare a utilizzare il bot.
+sessionExpired,❌ Tu sesion expiró. Deberas iniciar sesion de nuevo seguir usando el bot.,❌ Your session has expired. You'll need to log in again to continue using the bot.,"❌ Ihre Sitzung ist abgelaufen. Sie müssen sich erneut anmelden, um den Bot weiter nutzen zu können.",❌ Sua sessão expirou. Você precisará fazer login novamente para continuar usando o bot.,❌ Votre session a expiré. Vous devrez vous reconnecter pour continuer à utiliser le bot.,❌ La tua sessione è scaduta. Dovrai effettuare nuovamente l'accesso per continuare a utilizzare il bot.
 /logout,🚪 Cerrar sesion,🚪 Log out,🚪 Abmelden,🚪 Sair,🚪 Déconnectez-vous,🚪 Esci
 mainMenuQuestionAdmin,"Menu principal
 
@@ -532,7 +532,7 @@ Elija una opcion
  - {2}: Ver inscripciones
  - {3}: Buscar nuevos eventos
  - {4}: Ver estadisticas y gestionar aplicacion
- - {4}: Cambiar idioma del menu","Main Menu
+ - {5}: Cambiar idioma del menu","Main Menu
 
 Choose an option
 
@@ -541,7 +541,7 @@ Choose an option
 - {2}: View registrations
 - {3}: Search for new events
 - {4}: View statistics and manage the application
-- {4}: Change menu language","Hauptmenü
+- {5}: Change menu language","Hauptmenü
 
 Option auswählen
 
@@ -550,7 +550,7 @@ Option auswählen
 - {2}: Anmeldungen anzeigen
 - {3}: Nach neuen Veranstaltungen suchen
 - {4}: Statistiken anzeigen und Anwendung verwalten
-- {4}: Menüsprache ändern","Menu Principal
+- {5}: Menüsprache ändern","Menu Principal
 
 Escolha uma opção
 
@@ -559,7 +559,7 @@ Escolha uma opção
 - {2}: Visualizar inscrições
 - {3}: Pesquisar novos eventos
 - {4}: Visualizar estatísticas e gerenciar o aplicativo
-- {4}: Alterar o idioma do menu","Menu principal
+- {5}: Alterar o idioma do menu","Menu principal
 
 Choisir une option
 
@@ -568,7 +568,7 @@ Choisir une option
 - {2} : Consulter les inscriptions
 - {3} : Rechercher de nouveaux événements
 - {4} : Consulter les statistiques et gérer l'application
-- {4} : Changer la langue du menu","Menu principale
+- {5} : Changer la langue du menu","Menu principale
 
 Scegli un'opzione
 
@@ -577,6 +577,66 @@ Scegli un'opzione
 - {2}: Visualizza le registrazioni
 - {3}: Cerca nuovi eventi
 - {4}: Visualizza le statistiche e gestisci l'applicazione
-- {4}: Cambia lingua del menu"
-/adminMenu,⚙️ Menu de administrador,⚙️ Admin menu,⚙️ Admin-Menü,⚙️ Menu de administração,⚙️ Menu d'administration,⚙️ Menu di amministrazione
+- {5}: Cambia lingua del menu"
+/adminMenu,⚙️ Menu de administrador,⚙️ Admin menu,⚙️ Admin-Menü,⚙️ Menu de administração,⚙️ Menu administrateur,⚙️ Menu di amministrazione
 mustBeAdmin,Esa opcion solo es valida para administradores,This option is only valid for administrators.,Diese Option ist nur für Administratoren gültig.,Esta opção é válida somente para administradores.,Cette option n'est valable que pour les administrateurs.,Questa opzione è valida solo per gli amministratori.
+/stats,📊 Estadisticas,📊 Statistics,📊 Statistiken,📊 Estatísticas,📊 Statistiques,📊 Statistiche
+/categoryConfig,🧩 Gestionar categorias,🧩 Manage categories,🧩 Kategorien verwalten,🧩 Gerenciar categorias,🧩 Gérer les catégories,🧩 Gestisci categorie
+adminMenuQuestion,"Menu de administrador:
+{0} - Ver distintas estadisticas del sistema
+{1} - Crear o eliminar categorias","Administrator Menu:
+{0} - View various system statistics
+{1} - Create or delete categories","Administratormenü:
+{0} – Verschiedene Systemstatistiken anzeigen
+{1} – Kategorien erstellen oder löschen","Menu do Administrador:
+{0} - Visualizar diversas estatísticas do sistema
+{1} - Criar ou excluir categorias","Menu Administrateur :
+{0} - Afficher diverses statistiques système
+{1} - Créer ou supprimer des catégories","Menu Amministratore:
+{0} - Visualizza varie statistiche di sistema
+{1} - Crea o elimina categorie"
+adminStatsMenuQuestion,"Menu de estadisticas:
+{0} - Ver estaditicas basicas del sistema","Statistics Menu:
+{0} - View basic system statistics","Statistikmenü:
+{0} – Grundlegende Systemstatistiken anzeigen","Menu Estatísticas:
+{0} - Visualizar estatísticas básicas do sistema","Menu Statistiques :
+{0} - Afficher les statistiques système de base","Menu Statistiche:
+{0} - Visualizza le statistiche di base del sistema"
+printBasicStats,"🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
+Estadisticas ({0}) :
+{1} eventos.
+{2} inscripciones.
+{3} promociones de waitlist.
+{4} tasa de conversion de waitlist.
+🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥","🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
+Statistics ({0}):
+{1} events.
+{2} registrations.
+{3} waitlist promotions.
+{4} waitlist conversion rate.
+🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥","🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
+Statistiken ({0}):
+{1} Veranstaltungen.
+{2} Anmeldungen.
+{3} Wartelistenaktionen.
+{4} Wartelisten-Conversion-Rate.
+🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥","🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
+Estatísticas ({0}):
+{1} eventos.
+{2} inscrições.
+{3} promoções em lista de espera.
+{4} taxa de conversão em lista de espera.
+🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥","🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
+Statistiques ({0}) :
+{1} événements.
+{2} inscriptions.
+{3} promotions sur liste d'attente.
+{4} taux de conversion sur liste d'attente.
+🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥","🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
+Statistiche ({0}):
+{1} eventi.
+{2} registrazioni.
+{3} promozioni in lista d'attesa.
+{4} tasso di conversione in lista d'attesa.
+🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥"
+/basicStats,📊 Estadisticas basicas,📊 Basic statistics,📊 Grundlegende Statistiken,📊 Estatísticas básicas,📊 Statistiques de base,📊 Statistiche di base

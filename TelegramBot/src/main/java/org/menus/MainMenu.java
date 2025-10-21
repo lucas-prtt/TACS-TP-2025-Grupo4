@@ -33,7 +33,9 @@ public class MainMenu extends MenuState {
     @Override
     public SendMessage questionMessage() {
         SendMessage message;
-        if(user.getServerAccountUsername() != null){
+        if(user.isAdmin()){
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/userMenu", "/organizerMenu", "/participantMenu", "/browseMenu", "/adminMenu" ,"/languageMenu");
+        }else if(user.isUser()){
             message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/userMenu", "/organizerMenu", "/participantMenu", "/browseMenu", "/languageMenu");
         }else {
             message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/userMenu", "/languageMenu");

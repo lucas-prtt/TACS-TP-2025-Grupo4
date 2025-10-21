@@ -5,10 +5,7 @@ import org.ConfigManager;
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.eventServerClient.dtos.AccountDTO;
-import org.eventServerClient.dtos.LoginRequestDTO;
-import org.eventServerClient.dtos.RegistrationDTO;
-import org.eventServerClient.dtos.RegistrationStateDTO;
+import org.eventServerClient.dtos.*;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.EventStateDTO;
 import org.springframework.http.HttpHeaders;
@@ -235,6 +232,14 @@ public class ApiClient {
         throw e;
     }
     }
-
-
+    public StatsDTO getAdminStats(){
+        try {
+            String url = getBaseUri() + "/admin/stats";
+            return restTemplate.getForObject(url, StatsDTO.class);
+        }catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
+    }
 }
