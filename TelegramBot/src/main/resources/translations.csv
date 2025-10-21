@@ -521,3 +521,5 @@ month10,octubre,October,Oktober,outubro,Octobre,ottobre
 month11,noviembre,November,November,novembro,Novembre,novembre
 month12,diciembre,December,Dezember,dezembro,Décembre,Dicembre
 filters:,Filtros: ,Filters:,Filter:,Filtros:,Filtres:,Filtri:
+sessionExpired,❌ Tu sesion expiró. Deberas iniciar sesion de nuevo seguir usando el bot.,❌ Your session has expired. You'll need to log in again to continue using the bot.,"❌ Ihre Sitzung ist abgelaufen. Sie müssen sich erneut anmelden, um den Bot weiter nutzen zu können.",❌ Sua sessão expirou. Você precisará fazer login novamente para continuar usando o bot.,❌ Votre session a expiré. Vous devrez vous reconnecter pour continuer à utiliser le bot.,❌ La tua sessione è scaduta. Dovrai effettuare nuovamente l'accesso per continuare a utilizzare il bot.
+/logout,🚪 Cerrar sesion,🚪 Log out,🚪 Abmelden,🚪 Sair,🚪 Déconnectez-vous,🚪 Esci

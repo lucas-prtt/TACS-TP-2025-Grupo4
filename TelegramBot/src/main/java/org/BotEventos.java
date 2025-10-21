@@ -13,7 +13,7 @@ import java.util.Optional;
 public class BotEventos extends TelegramLongPollingBot {
 
     private final String BOT_USERNAME;
-    private final TelegramUserRepository telegramUserRepository = new TelegramUserRepository();
+    private final TelegramUserRepository telegramUserRepository = new TelegramUserRepository(this);
 
     public BotEventos(String token, String botUsername) {
         super(token);
@@ -40,7 +40,6 @@ public class BotEventos extends TelegramLongPollingBot {
                 TelegramUser user = telegramUserRepository.addUser(chatId, new TelegramUser(chatId));
                 question = user.getQuestion();
                 question.setChatId(chatId);
-                System.out.println("New user!    id: " + chatId);
             }
             //De lo contrario, muestra respuesta al ultimo menu
             else {
@@ -76,5 +75,13 @@ public class BotEventos extends TelegramLongPollingBot {
     @Override
     public void onRegister() {
         super.onRegister();
+    }
+
+    public void sendMessage(SendMessage message){
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
