@@ -3,25 +3,35 @@ package org.users;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
+import org.BotEventos;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.utils.InlineMenuBuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class TelegramUserRepository {
 
     private final Cache<Long, TelegramUser> users;
 
-    public TelegramUserRepository() {
+    public TelegramUserRepository(BotEventos botEventos) {
         users = Caffeine.newBuilder()
                 .expireAfterAccess(3, TimeUnit.DAYS)
                 .expireAfterWrite(6, TimeUnit.DAYS)
-                .maximumSize(500_000)
+                .maximumSize(250_000) // Max 250.000 sesiones simultaneas
                 .removalListener((Long key, TelegramUser user, RemovalCause cause) -> {
-                    System.out.println("Usuario " + key + " eliminado: " + cause);
+                    SendMessage message = InlineMenuBuilder.localizedMenu(user, user.getLocalizedMessage("sessionExpired"), List.of("/start"));
+                    message.setChatId(key);
+                    botEventos.sendMessage(message);
                 })
                 .build();
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(users::cleanUp, 0, 12, TimeUnit.HOURS);
     }
 
 
