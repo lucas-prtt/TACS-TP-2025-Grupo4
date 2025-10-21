@@ -14,17 +14,22 @@ export const useGetAuth = () => {
   // Función para validar el token
   const validateToken = useCallback(async (token) => {
     try {
-      // Hacer una petición a un endpoint protegido para validar el token
+      // Usar un endpoint que sabemos que existe y está protegido
       const response = await axios({
         method: 'get',
-        url: `${API_URL}/auth/validate`, // Necesitas crear este endpoint
+        url: `${API_URL}/registrations`, // Usar endpoint de registraciones para validar
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       return response.status === 200;
     } catch (err) {
-      return false;
+      // Si es error 403 o 401, el token no es válido
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        return false;
+      }
+      // Para otros errores (500, etc), asumimos que el token es válido pero hay problemas del servidor
+      return true;
     }
   }, []);
 
@@ -39,31 +44,39 @@ export const useGetAuth = () => {
 
   // Verificar autenticación al cargar
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = () => {
       const storedToken = localStorage.getItem(TOKEN_KEY);
       const storedUser = localStorage.getItem(USER_KEY);
       
+      console.log('🔍 Verificando autenticación al cargar:');
+      console.log('  - Token presente:', !!storedToken);
+      console.log('  - Usuario presente:', !!storedUser);
+      
       if (storedToken && storedUser) {
-        // Validar si el token sigue siendo válido
-        const isValid = await validateToken(storedToken);
-        
-        if (isValid) {
-          setUser(JSON.parse(storedUser));
+        try {
+          const userData = JSON.parse(storedUser);
+          console.log('  - Datos de usuario:', userData);
+          
+          setUser(userData);
           setIsAuthenticated(true);
           
           // Configurar axios con el token
           axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-        } else {
-          // Token inválido o expirado
+          
+          console.log('✅ Autenticación restaurada');
+        } catch (err) {
+          console.error('❌ Error al parsear datos de usuario:', err);
           clearAuth();
         }
+      } else {
+        console.log('ℹ️ No hay datos de autenticación almacenados');
       }
       
       setLoading(false);
     };
 
     checkAuth();
-  }, [validateToken, clearAuth]);
+  }, [clearAuth]);
 
   // Interceptor para manejar errores 401 (token expirado)
   useEffect(() => {

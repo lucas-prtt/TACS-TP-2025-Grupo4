@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import axios from 'axios';
 
 const API_URL = 'http://localhost:8080';
@@ -43,7 +43,7 @@ export const useGetEvents = () => {
   };
 
   // Obtener todos los eventos con filtros opcionales
-  const getEvents = async ({
+  const getEvents = useCallback(async ({
     title,
     titleContains,
     maxDate,
@@ -87,10 +87,10 @@ export const useGetEvents = () => {
       setLoading(false);
       throw err;
     }
-  };
+  }, []);
 
   // Obtener un evento específico por ID
-  const getEventById = async (id) => {
+  const getEventById = useCallback(async (id) => {
     if (!id) {
       setError('ID de evento no proporcionado');
       return;
@@ -115,10 +115,10 @@ export const useGetEvents = () => {
       setLoading(false);
       throw err;
     }
-  };
+  }, []);
 
   // Obtener eventos organizados por el usuario autenticado
-  const getOrganizedEvents = async (page, limit) => {
+  const getOrganizedEvents = useCallback(async (page, limit) => {
     setLoading(true);
     setError(null);
     
@@ -143,7 +143,7 @@ export const useGetEvents = () => {
       setLoading(false);
       throw err;
     }
-  };
+  }, []);
 
   // Registrar usuario en un evento
   const registerToEvent = async (eventId) => {
@@ -218,6 +218,59 @@ export const useGetEvents = () => {
     }
   };
 
+  // Obtener inscripciones del usuario autenticado
+  const getUserRegistrations = useCallback(async ({ page, limit, registrationState } = {}) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const params = {};
+      if (page) params.page = page;
+      if (limit) params.limit = limit;
+      if (registrationState) params.registrationState = registrationState;
+
+      const response = await axios({
+        method: 'get',
+        url: `${API_URL}/registrations`,
+        params: params,
+        headers: getAuthHeaders()
+      });
+      
+      setLoading(false);
+      return response.data;
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || 'Error al obtener inscripciones';
+      setError(errorMsg);
+      setLoading(false);
+      throw err;
+    }
+  }, []);
+
+  // Cancelar inscripción del usuario autenticado
+  const cancelRegistration = useCallback(async (registrationId) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await axios({
+        method: 'patch',
+        url: `${API_URL}/registrations/${registrationId}`,
+        data: {
+          state: 'CANCELED'
+        },
+        headers: getAuthHeaders()
+      });
+      
+      setLoading(false);
+      return response.data;
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || 'Error al cancelar inscripción';
+      setError(errorMsg);
+      setLoading(false);
+      throw err;
+    }
+  }, []);
+
   return {
     loading,
     error,
@@ -229,6 +282,8 @@ export const useGetEvents = () => {
     getOrganizedEvents,
     registerToEvent,
     updateEvent,
-    getEventParticipants
+    getEventParticipants,
+    getUserRegistrations,
+    cancelRegistration
   };
 };

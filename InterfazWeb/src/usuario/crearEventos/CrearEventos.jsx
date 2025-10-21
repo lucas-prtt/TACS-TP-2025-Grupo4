@@ -118,7 +118,7 @@ export const CrearEventos = () => {
                 price: parseFloat(formData.price),
                 category: formData.category || null,
                 tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
-                imageUrl: formData.imageUrl.trim() || null
+                image: formData.imageUrl.trim() || null
             };
 
             await createEvent(eventData);

@@ -7,9 +7,7 @@ import { CrearEventos } from "../usuario/crearEventos/CrearEventos"
 import { Configuracion } from "../usuario/configuracion/Configuracion"
 import { Navigate } from "react-router-dom"
 import { VerEvento } from "../usuario/verEvento/VerEvento"
-import { EditarEvento } from "../usuario/editarEvento/editarEvento";
-import { useParams } from "react-router-dom"
-import { datosEventos } from "../usuario/eventos/datosEventos"
+import { EditarEvento } from "../usuario/editarEvento/EditarEvento";
 import { MisIncripciones } from "../usuario/misIncripciones/MisIncripciones"
 import { MisEventos } from "../usuario/misEventos/MisEventos"
 
@@ -19,12 +17,12 @@ export const UsuarioRouter = () => {
         <Routes>
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/eventos" element={<Eventos />} />
-            <Route path="/evento/:id" element={<VerEventoWrapper />} />
+            <Route path="/evento/:id" element={<VerEvento />} />
             <Route path="/analiticas" element={<Analiticas />} />
             <Route path="/calendario" element={<Calendario />} />
             <Route path="/crearEventos" element={<CrearEventos />} />
             <Route path="/configuracion" element={<Configuracion />} />
-            <Route path="/editar-evento/:id" element={<EditarEventoWrapper />} />
+            <Route path="/editar-evento/:id" element={<EditarEvento />} />
             <Route path="/mis-inscripciones" element={<MisIncripciones />} />
             <Route path="/mis-eventos" element={<MisEventos />} />
             <Route path="/*" element={<Navigate to="/dashboard" />} />
@@ -33,21 +31,9 @@ export const UsuarioRouter = () => {
     )
 }
 
-// Wrapper para buscar el evento por id y pasarlo como prop a VerEvento
-const VerEventoWrapper = () => {
-    const { id } = useParams();
-    const evento = datosEventos.find(ev => String(ev.id) === String(id));
-    if (!evento) return <Navigate to="/eventos" />;
-    return <VerEvento evento={evento} />;
-};
 
-// Wrapper para buscar el evento por id y pasarlo como prop a EditarEvento
-const EditarEventoWrapper = () => {
-    const { id } = useParams();
-    const evento = datosEventos.find(ev => String(ev.id) === String(id));
-    if (!evento) return <Navigate to="/eventos" />;
-    return <EditarEvento evento={evento} />;
-};
+
+
 
 
 

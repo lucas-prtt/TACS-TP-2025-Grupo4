@@ -161,6 +161,8 @@ export const NavbarApp = () => {
         onClose={() => setMobileOpen(false)}
         ModalProps={{
           keepMounted: true,
+          disablePortal: false,
+          'aria-hidden': undefined
         }}
         sx={{
           display: { xs: 'block', md: 'none' },

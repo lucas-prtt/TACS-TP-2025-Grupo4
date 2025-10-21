@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -19,14 +19,120 @@ import { ButtonCustom } from '../../components/Button';
 import { useNavigate } from "react-router-dom";
 import { useTheme } from '@mui/material/styles';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import noImagePlaceholder from '../../assets/images/no_image.png';
+import { useAuth } from '../../contexts/AuthContext';
+import { useGetEvents } from '../../hooks/useGetEvents';
 
 export const CardEvento = ({ evento, onVerEvento }) => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { registerToEvent, loading: eventLoading } = useGetEvents();
+  const [imageError, setImageError] = useState(false);
+  const [inscribiendose, setInscribiendose] = useState(false);
+
+  // Resetear estado de error cuando cambia la imagen del evento
+  useEffect(() => {
+    setImageError(false);
+  }, [evento.imagen]);
+
+  // Determinar si el usuario actual es el organizador del evento
+  const isOrganizador = user && evento.organizador_id && (
+    user.username === evento.organizador_id || 
+    user.id === evento.organizador_id ||
+    String(user.id) === String(evento.organizador_id)
+  );
+  const isAdmin = user && user.roles && user.roles.includes('ADMIN');
+  const isUser = !isOrganizador && !isAdmin;
+
+  // Debug log para verificar la lógica
+  console.log(`🔍 CardEvento - ${evento.titulo}:`, {
+    'user.username': user?.username,
+    'user.id': user?.id,
+    'evento.organizador_id': evento.organizador_id,
+    'isOrganizador': isOrganizador,
+    'isAdmin': isAdmin,
+    'isUser': isUser
+  });
+
+  // Funciones para manejar acciones
+  const handleInscribirse = async () => {
+    if (!user) {
+      alert('Debes iniciar sesión para inscribirte');
+      return;
+    }
+    
+    setInscribiendose(true);
+    try {
+      const result = await registerToEvent(evento.id);
+      alert('¡Te has inscrito exitosamente al evento!');
+      console.log('Inscripción exitosa:', result);
+    } catch (error) {
+      console.error('Error al inscribirse:', error);
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data || 
+                          'Error al inscribirse al evento';
+      alert(`Error: ${errorMessage}`);
+    } finally {
+      setInscribiendose(false);
+    }
+  };
+
+  const handleVerEvento = () => {
+    if (onVerEvento) {
+      onVerEvento();
+    } else {
+      navigate(`/evento/${evento.id}`);
+    }
+  };
+
+  const handleEditarEvento = () => {
+    navigate(`/editar-evento/${evento.id}`);
+  };
+
+  const handleEliminarEvento = () => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este evento?')) {
+      // TODO: Implementar lógica de eliminación
+      console.log('Eliminar evento:', evento.id);
+    }
+  };
+  
+  // Manejar error de carga de imagen - simplificado
+  const handleImageError = (e) => {
+    console.log(`❌ Error cargando imagen para ${evento.titulo}:`, evento.imagen);
+    console.log('Error details:', e.type, e.target?.src);
+    setImageError(true);
+  };
+
+  // Determinar qué imagen mostrar - simplificado
+  const getImageSrc = () => {
+    // Si hay error de carga, usar imagen por defecto
+    if (imageError) {
+      console.log(`❌ ${evento.titulo}: Usando fallback por error de carga`);
+      return noImagePlaceholder;
+    }
+    
+    // Si no hay URL de imagen, usar imagen por defecto
+    if (!evento.imagen || evento.imagen.trim() === "") {
+      console.log(`ℹ️ ${evento.titulo}: Sin imagen, usando fallback`);
+      return noImagePlaceholder;
+    }
+    
+    // Usar la imagen original
+    console.log(`🖼️ ${evento.titulo}: Usando imagen ${evento.imagen}`);
+    return evento.imagen;
+  };
+
+  // Log simplificado para debug
+  if (evento.imagen) {
+    console.log(`🖼️ CardEvento renderizando: ${evento.titulo} -> ${evento.imagen}`);
+  } else {
+    console.log(`⚪ CardEvento sin imagen: ${evento.titulo}`);
+  }
+
+
+  
   // Formatear fecha y hora
-  const isOrganizador = true;
-  const isAdmin = false;
-  const isUser = false;
   let fecha = evento.fechaInicio;
   let fechaFormateada = '';
   try {
@@ -98,9 +204,22 @@ export const CardEvento = ({ evento, onVerEvento }) => {
         <CardMedia
           component="img"
           height="170"
-          image={evento.imagen}
+          image={getImageSrc()}
           alt={evento.titulo}
-          sx={{ borderRadius: 2, objectFit: 'cover' }}
+          onError={handleImageError}
+          onLoad={(e) => {
+            console.log(`✅ Imagen cargada: ${evento.titulo}`);
+            console.log(`   URL final: ${e.target.src}`);
+            console.log(`   Dimensiones: ${e.target.naturalWidth}x${e.target.naturalHeight}`);
+          }}
+          onLoadStart={() => {
+            console.log(`🔄 Iniciando carga: ${evento.titulo} -> ${getImageSrc()}`);
+          }}
+          sx={{ 
+            borderRadius: 2, 
+            objectFit: 'cover',
+            backgroundColor: '#f5f5f5' // Color de fondo mientras carga
+          }}
         />
         <Box sx={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 1 }}>
           <Chip
@@ -166,7 +285,7 @@ export const CardEvento = ({ evento, onVerEvento }) => {
               <ButtonCustom
                 variant="outlined"
                 startIcon={<VisibilityIcon />}
-                onClick={onVerEvento}
+                onClick={handleVerEvento}
                 sx={sxVer}
               >
                 Ver
@@ -174,14 +293,14 @@ export const CardEvento = ({ evento, onVerEvento }) => {
               <ButtonCustom
                 variant="outlined"
                 startIcon={<EditIcon />}
-                onClick={() => navigate(`/editar-evento/${evento.id}`)}
+                onClick={handleEditarEvento}
                 sx={sxEditar}
               >
                 Editar
               </ButtonCustom>
               <IconButton
                 size="small"
-                onClick={() => {/* lógica eliminar */}}
+                onClick={handleEliminarEvento}
                 sx={sxEliminar}
               >
                 <DeleteIcon />
@@ -195,15 +314,19 @@ export const CardEvento = ({ evento, onVerEvento }) => {
                 color={theme.palette.primary.contrastText}
                 hoverBgColor={theme.palette.primary.dark}
                 hoverColor={theme.palette.primary.contrastText}
-                onClick={() => {/* lógica inscribirse */}}
+                onClick={handleInscribirse}
                 startIcon={<PersonAddIcon />}
+                disabled={inscribiendose}
+                sx={{
+                  opacity: inscribiendose ? 0.7 : 1
+                }}
               >
-                Inscribirse
+                {inscribiendose ? 'Inscribiendo...' : 'Inscribirse'}
               </ButtonCustom>
               <ButtonCustom
                 variant="outlined"
                 startIcon={<VisibilityIcon />}
-                onClick={onVerEvento}
+                onClick={handleVerEvento}
                 sx={sxVer}
               >
                 Ver

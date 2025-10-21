@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, Typography, Divider, Stack, Button } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Divider, Stack, Button, CircularProgress, Alert } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { TextFieldCustom } from "../../components/TextField";
 import { SelectorCustom } from "../../components/Selector";
@@ -11,31 +11,186 @@ import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import { ButtonTime } from "../../components/ButtonTime";
 import { ButtonCustom } from "../../components/Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useGetEvents } from "../../hooks/useGetEvents";
 
-export const EditarEvento = ({ evento }) => {
+export const EditarEvento = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { getEventById, updateEvent, loading, error: apiError } = useGetEvents();
 
-  // Estados iniciales con los datos del evento recibido
-  const [titulo, setTitulo] = useState(evento?.titulo || "");
-  const [descripcion, setDescripcion] = useState(evento?.descripcion || "");
-  const [categoria, setCategoria] = useState(evento?.categoria || "");
-  const [estado, setEstado] = useState(evento?.estado || "");
-  const [organizador, setOrganizador] = useState(evento?.organizador || "");
-  const [tags, setTags] = useState(evento?.tags?.join(", ") || "");
-  const [fecha, setFecha] = useState(evento?.fechaInicio ? new Date(evento.fechaInicio) : null);
-  const [horaInicio, setHoraInicio] = useState(evento?.fechaInicio ? new Date(evento.fechaInicio) : null);
-  const [horaFin, setHoraFin] = useState(evento?.fechaFin ? new Date(evento.fechaFin) : null);
-  const [lugar, setLugar] = useState(evento?.lugar || "");
-  const [maxParticipantes, setMaxParticipantes] = useState(evento?.max_participantes || "");
-  const [precio, setPrecio] = useState(evento?.precio || "");
+  // Estado del formulario siguiendo la estructura de la API
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    startDateTime: null,
+    durationMinutes: '',
+    location: '',
+    maxParticipants: '',
+    price: '',
+    category: '',
+    tags: '',
+    imageUrl: ''
+  });
 
-  const handleGuardar = () => {
-    // Aquí iría la lógica para guardar los cambios (API o estado global)
-    // Por ahora solo navega hacia atrás
-    navigate(-1);
+  const [fecha, setFecha] = useState(null);
+  const [horaInicio, setHoraInicio] = useState(null);
+  const [localError, setLocalError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loadingEvent, setLoadingEvent] = useState(true);
+
+  // Cargar evento al montar el componente
+  useEffect(() => {
+    const loadEvent = async () => {
+      if (!id) {
+        setLocalError('ID de evento no encontrado');
+        setLoadingEvent(false);
+        return;
+      }
+
+      try {
+        setLoadingEvent(true);
+        const eventData = await getEventById(id);
+        
+        // Mapear los datos del evento al estado del formulario
+        setFormData({
+          title: eventData.title || '',
+          description: eventData.description || '',
+          startDateTime: eventData.startDateTime,
+          durationMinutes: eventData.durationMinutes?.toString() || '',
+          location: eventData.location || '',
+          maxParticipants: eventData.maxParticipants?.toString() || '',
+          price: eventData.price?.toString() || '',
+          category: eventData.category || '',
+          tags: eventData.tags?.join(', ') || '',
+          imageUrl: eventData.imageUrl || ''
+        });
+
+        // Configurar fecha y hora para los componentes de UI
+        if (eventData.startDateTime) {
+          const startDate = new Date(eventData.startDateTime);
+          setFecha(startDate);
+          setHoraInicio(startDate);
+          
+          // Calcular hora de fin basada en la duración
+          if (eventData.durationMinutes) {
+            const endDate = new Date(startDate.getTime() + eventData.durationMinutes * 60000);
+            // No necesitamos horaFin ya que se calcula automáticamente
+          }
+        }
+
+        setLoadingEvent(false);
+      } catch (err) {
+        console.error('Error al cargar el evento:', err);
+        setLocalError('Error al cargar los datos del evento');
+        setLoadingEvent(false);
+      }
+    };
+
+    loadEvent();
+  }, [id, getEventById]);
+
+  // Manejar cambios en los campos
+  const handleChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    // Limpiar errores al modificar
+    if (localError) setLocalError('');
+    if (success) setSuccess('');
+  };
+
+  // Combinar fecha y hora en LocalDateTime
+  const combineDateTime = (date, time) => {
+    if (!date || !time) return null;
+    
+    const combined = new Date(date);
+    combined.setHours(time.getHours());
+    combined.setMinutes(time.getMinutes());
+    combined.setSeconds(0);
+    combined.setMilliseconds(0);
+    
+    // Formato ISO string para el backend
+    return combined.toISOString().slice(0, 19);
+  };
+
+  // Validar formulario
+  const validateForm = () => {
+    if (!formData.title.trim()) {
+      setLocalError('El título es obligatorio');
+      return false;
+    }
+    if (!formData.description.trim()) {
+      setLocalError('La descripción es obligatoria');
+      return false;
+    }
+    if (!fecha) {
+      setLocalError('La fecha es obligatoria');
+      return false;
+    }
+    if (!horaInicio) {
+      setLocalError('La hora de inicio es obligatoria');
+      return false;
+    }
+    if (!formData.location.trim()) {
+      setLocalError('La ubicación es obligatoria');
+      return false;
+    }
+    if (!formData.maxParticipants || formData.maxParticipants <= 0) {
+      setLocalError('El número máximo de participantes debe ser mayor a 0');
+      return false;
+    }
+    if (!formData.price || parseFloat(formData.price) < 0) {
+      setLocalError('El precio debe ser mayor o igual a 0');
+      return false;
+    }
+
+    return true;
+  };
+
+  // Manejar actualización del evento
+  const handleGuardar = async () => {
+    setLocalError('');
+    setSuccess('');
+
+    if (!validateForm()) {
+      return;
+    }
+
+    const startDateTime = combineDateTime(fecha, horaInicio);
+    if (!startDateTime) {
+      setLocalError('Error al combinar fecha y hora');
+      return;
+    }
+
+    const eventData = {
+      title: formData.title.trim(),
+      description: formData.description.trim(),
+      startDateTime: startDateTime,
+      durationMinutes: parseInt(formData.durationMinutes) || 60,
+      location: formData.location.trim(),
+      maxParticipants: parseInt(formData.maxParticipants),
+      price: parseFloat(formData.price),
+      category: formData.category,
+      tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+      imageUrl: formData.imageUrl.trim() || null
+    };
+
+    try {
+      await updateEvent(id, eventData);
+      setSuccess('Evento actualizado exitosamente');
+      
+      // Navegar después de un breve delay para mostrar el mensaje
+      setTimeout(() => {
+        navigate('/usuario/mis-eventos');
+      }, 2000);
+    } catch (err) {
+      console.error('Error al actualizar el evento:', err);
+      // El error ya se maneja en el hook
+    }
   };
 
   return (
@@ -74,12 +229,37 @@ export const EditarEvento = ({ evento }) => {
           >
             Volver
           </Button>
-          <Typography variant="h5" fontWeight={700} mb={0.5}>
-            Editar Evento
-          </Typography>
-          <Typography variant="body1" color="text.secondary" mb={3}>
-            Modificá los datos del evento y guardá los cambios
-          </Typography>
+
+          {/* Estados de carga y error */}
+          {loadingEvent ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+              <CircularProgress />
+              <Typography sx={{ ml: 2 }}>Cargando evento...</Typography>
+            </Box>
+          ) : localError && !formData.title ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+              <Alert severity="error">{localError}</Alert>
+            </Box>
+          ) : (
+            <>
+              {/* Alertas de error y éxito */}
+              {(localError || apiError) && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {localError || apiError}
+                </Alert>
+              )}
+              {success && (
+                <Alert severity="success" sx={{ mb: 2 }}>
+                  {success}
+                </Alert>
+              )}
+
+              <Typography variant="h5" fontWeight={700} mb={0.5}>
+                Editar Evento
+              </Typography>
+              <Typography variant="body1" color="text.secondary" mb={3}>
+                Modificá los datos del evento y guardá los cambios
+              </Typography>
           <Box sx={{
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row' },
@@ -114,8 +294,8 @@ export const EditarEvento = ({ evento }) => {
                     Título del Evento *
                   </Typography>
                   <TextFieldCustom
-                    value={titulo}
-                    onChange={e => setTitulo(e.target.value)}
+                    value={formData.title}
+                    onChange={e => handleChange('title', e.target.value)}
                     placeholder="Ej: Conferencia de Tecnología 2025"
                   />
                 </Box>
@@ -124,8 +304,8 @@ export const EditarEvento = ({ evento }) => {
                     Descripción *
                   </Typography>
                   <TextFieldCustom
-                    value={descripcion}
-                    onChange={e => setDescripcion(e.target.value)}
+                    value={formData.description}
+                    onChange={e => handleChange('description', e.target.value)}
                     placeholder="Describe tu evento..."
                     multiline
                     minRows={3}
@@ -147,33 +327,33 @@ export const EditarEvento = ({ evento }) => {
                     <SelectorCustom
                       placeholder="Selecciona una categoría"
                       opciones={["Tecnología", "Música", "Deporte", "Arte", "Gastronomía"]}
-                      value={categoria}
-                      onChange={e => setCategoria(e.target.value)}
+                      value={formData.category}
+                      onChange={e => handleChange('category', e.target.value)}
                       fullWidth
                     />
                   </Box>
                   <Box sx={{ flex: 1, width: { xs: '100%', sm: 'auto' } }}>
                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                      Estado *
+                      Duración (minutos) *
                     </Typography>
-                    <SelectorCustom
-                      placeholder="Selecciona el estado"
-                      opciones={["Programado", "Activo", "Finalizado"]}
-                      value={estado}
-                      onChange={e => setEstado(e.target.value)}
+                    <TextFieldCustom
+                      value={formData.durationMinutes}
+                      onChange={e => handleChange('durationMinutes', e.target.value)}
+                      placeholder="60"
+                      onlyNumbers={true}
                       fullWidth
                     />
                   </Box>
                 </Box>
-                {/* Organizador */}
+                {/* URL de imagen */}
                 <Box mb={2}>
                   <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                    Organizador *
+                    URL de Imagen (opcional)
                   </Typography>
                   <TextFieldCustom
-                    value={organizador}
-                    onChange={e => setOrganizador(e.target.value)}
-                    placeholder="Nombre del organizador o empresa"
+                    value={formData.imageUrl}
+                    onChange={e => handleChange('imageUrl', e.target.value)}
+                    placeholder="https://ejemplo.com/imagen.jpg"
                   />
                 </Box>
                 {/* Etiquetas */}
@@ -182,8 +362,8 @@ export const EditarEvento = ({ evento }) => {
                     Etiquetas *
                   </Typography>
                   <TextFieldCustom
-                    value={tags}
-                    onChange={e => setTags(e.target.value)}
+                    value={formData.tags}
+                    onChange={e => handleChange('tags', e.target.value)}
                     placeholder="Agregar etiqueta... (separadas por coma)"
                   />
                 </Box>
@@ -222,29 +402,16 @@ export const EditarEvento = ({ evento }) => {
                     onChange={setFecha}
                   />
                 </Box>
-                <Box sx={{ display: 'flex', gap: 1, mb: 1, width: '100%' }}>
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                      Inicio *
-                    </Typography>
-                    <ButtonTime
-                      placeholder="Inicio *"
-                      value={horaInicio}
-                      onChange={setHoraInicio}
-                      fullWidth
-                    />
-                  </Box>
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                      Fin *
-                    </Typography>
-                    <ButtonTime
-                      placeholder="Fin *"
-                      value={horaFin}
-                      onChange={setHoraFin}
-                      fullWidth
-                    />
-                  </Box>
+                <Box mb={1}>
+                  <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
+                    Hora de Inicio *
+                  </Typography>
+                  <ButtonTime
+                    placeholder="Inicio *"
+                    value={horaInicio}
+                    onChange={setHoraInicio}
+                    fullWidth
+                  />
                 </Box>
               </Box>
               {/* Ubicación */}
@@ -267,8 +434,8 @@ export const EditarEvento = ({ evento }) => {
                   Lugar *
                 </Typography>
                 <TextFieldCustom
-                  value={lugar}
-                  onChange={e => setLugar(e.target.value)}
+                  value={formData.location}
+                  onChange={e => handleChange('location', e.target.value)}
                   placeholder="Ej: Centro de Convenciones"
                   fullWidth
                 />
@@ -294,8 +461,8 @@ export const EditarEvento = ({ evento }) => {
                     Capacidad máxima *
                   </Typography>
                   <TextFieldCustom
-                    value={maxParticipantes}
-                    onChange={e => setMaxParticipantes(e.target.value)}
+                    value={formData.maxParticipants}
+                    onChange={e => handleChange('maxParticipants', e.target.value)}
                     placeholder="Número máximo de participantes"
                     fullWidth
                     onlyNumbers={true}
@@ -303,11 +470,11 @@ export const EditarEvento = ({ evento }) => {
                 </Box>
                 <Box>
                   <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                    Precio (opcional) *
+                    Precio *
                   </Typography>
                   <TextFieldCustom
-                    value={precio}
-                    onChange={e => setPrecio(e.target.value)}
+                    value={formData.price}
+                    onChange={e => handleChange('price', e.target.value)}
                     placeholder="$ 0,00"
                     fullWidth
                     onlyNumbers={true}
@@ -317,29 +484,32 @@ export const EditarEvento = ({ evento }) => {
               </Box>
             </Box>
           </Box>
-          {/* Botón Guardar Cambios */}
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <ButtonCustom
-               bgColor={theme.palette.primary.main}
-              color={theme.palette.primary.contrastText}
-              hoverBgColor={theme.palette.primary.dark}
-              hoverColor={theme.palette.primary.contrastText}
-              startIcon={<SaveIcon />}
-              sx={{
-                minWidth: 220,
-                fontSize: 17,
-                fontWeight: 700,
-                borderRadius: 2,
-                py: 1.5,
-                px: 4,
-                boxShadow: 'none',
-                textTransform: 'none'
-              }}
-              onClick={handleGuardar}
-            >
-              Guardar Cambios
-            </ButtonCustom>
-          </Box>
+              {/* Botón Guardar Cambios */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <ButtonCustom
+                  bgColor={theme.palette.primary.main}
+                  color={theme.palette.primary.contrastText}
+                  hoverBgColor={theme.palette.primary.dark}
+                  hoverColor={theme.palette.primary.contrastText}
+                  startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
+                  sx={{
+                    minWidth: 220,
+                    fontSize: 17,
+                    fontWeight: 700,
+                    borderRadius: 2,
+                    py: 1.5,
+                    px: 4,
+                    boxShadow: 'none',
+                    textTransform: 'none'
+                  }}
+                  onClick={handleGuardar}
+                  disabled={loading}
+                >
+                  {loading ? 'Guardando...' : 'Guardar Cambios'}
+                </ButtonCustom>
+              </Box>
+            </>
+          )}
         </Box>
       </Box>
     </Box>
