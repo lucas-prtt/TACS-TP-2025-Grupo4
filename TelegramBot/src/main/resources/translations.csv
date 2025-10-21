@@ -271,7 +271,7 @@ Página: {1}
 {0}
 
 Page : {1}
-/page <n> --> Aller à la page n","Risultati della navigazione:
+/page <n> --> Accéder à la page n","Risultati della navigazione:
 
 {0}
 
@@ -470,7 +470,7 @@ requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the c
 /filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer des filtres,Applica filtri
 filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
 category,categoria,category,Kategorie,categoria,catégorie,categoria
-tags,tags,tags,Schlagworte,etiquetas,balises,tag
+tags,tags,tags,Schlagworte,etiquetas,balises,etichette
 maxDate,fecha máxima,maximum date,maximales Datum,data máxima,date maximale,data massima
 title,titulo del evento,event title,Veranstaltungstitel,título do evento,titre de l'événement,titolo dell'evento
 titleContains,subcadena del titulo,title substring,Titel-Teilzeichenfolge,substring de título,sous-chaîne de titre,sottostringa del titolo
@@ -506,7 +506,7 @@ errorBackToMainMenu,Hubo un error desconocido. Volviendo al menú principal.,The
 endTagsInput,Finalizada la introduccion de tags,Tag entry complete,Tag-Eintrag abgeschlossen,Entrada de tag concluída,Entrée de balise terminée,Inserimento tag completato
 eventSuccesfullyCreated,Evento creado,Event created,Ereignis erstellt,Evento criado,Événement créé,Evento creato
 cannotGoBackwards,No se puede ir mas atras,You can't go back any further,Weiter geht es nicht mehr,Você não pode voltar mais,Tu ne peux pas revenir plus loin,Non puoi tornare più indietro
-freePrice,Sin costo,Free of charge,Kostenlos,Grátis,Gratuitement,Gratuito
+freePrice,Sin costo,Free of charge,Kostenlos,Gratuito,Gratuitement,Gratuito
 /stop,Finalizar,Finish,Beenden,Terminar,Finition,Fine
 month1,Enero,January,Januar,Janeiro,Janvier,Gennaio
 month2,Febrero,February,Februar,Fevereiro,Février,Febbraio
@@ -521,5 +521,62 @@ month10,octubre,October,Oktober,outubro,Octobre,ottobre
 month11,noviembre,November,November,novembro,Novembre,novembre
 month12,diciembre,December,Dezember,dezembro,Décembre,Dicembre
 filters:,Filtros: ,Filters:,Filter:,Filtros:,Filtres:,Filtri:
-sessionExpired,❌ Tu sesion expiró. Deberas iniciar sesion de nuevo seguir usando el bot.,❌ Your session has expired. You'll need to log in again to continue using the bot.,"❌ Ihre Sitzung ist abgelaufen. Sie müssen sich erneut anmelden, um den Bot weiter nutzen zu können.",❌ Sua sessão expirou. Você precisará fazer login novamente para continuar usando o bot.,❌ Votre session a expiré. Vous devrez vous reconnecter pour continuer à utiliser le bot.,❌ La tua sessione è scaduta. Dovrai effettuare nuovamente l'accesso per continuare a utilizzare il bot.
+sessionExpired,❌ Tu sesion expiró. Deberas iniciar sesion de nuevo seguir usando el bot.,❌ Your session has expired. You'll need to log in again to continue using the bot.,"❌ Ihre Sitzung ist abgelaufen. Sie müssen sich erneut anmelden, um den Bot weiter verwenden zu können.",❌ Sua sessão expirou. Você precisará fazer login novamente para continuar usando o bot.,❌ Votre session a expiré. Vous devrez vous reconnecter pour continuer à utiliser le bot.,❌ La tua sessione è scaduta. Dovrai effettuare nuovamente l'accesso per continuare a utilizzare il bot.
 /logout,🚪 Cerrar sesion,🚪 Log out,🚪 Abmelden,🚪 Sair,🚪 Déconnectez-vous,🚪 Esci
+mainMenuQuestionAdmin,"Menu principal
+
+Elija una opcion
+
+ - {0}: Crear y cambiar de cuenta
+ - {1}: Crear y gestionar eventos
+ - {2}: Ver inscripciones
+ - {3}: Buscar nuevos eventos
+ - {4}: Ver estadisticas y gestionar aplicacion
+ - {4}: Cambiar idioma del menu","Main Menu
+
+Choose an option
+
+- {0}: Create and switch accounts
+- {1}: Create and manage events
+- {2}: View registrations
+- {3}: Search for new events
+- {4}: View statistics and manage the application
+- {4}: Change menu language","Hauptmenü
+
+Option auswählen
+
+- {0}: Konten erstellen und wechseln
+- {1}: Veranstaltungen erstellen und verwalten
+- {2}: Anmeldungen anzeigen
+- {3}: Nach neuen Veranstaltungen suchen
+- {4}: Statistiken anzeigen und Anwendung verwalten
+- {4}: Menüsprache ändern","Menu Principal
+
+Escolha uma opção
+
+- {0}: Criar e alternar contas
+- {1}: Criar e gerenciar eventos
+- {2}: Visualizar inscrições
+- {3}: Pesquisar novos eventos
+- {4}: Visualizar estatísticas e gerenciar o aplicativo
+- {4}: Alterar o idioma do menu","Menu principal
+
+Choisir une option
+
+- {0} : Créer et changer de compte
+- {1} : Créer et gérer des événements
+- {2} : Consulter les inscriptions
+- {3} : Rechercher de nouveaux événements
+- {4} : Consulter les statistiques et gérer l'application
+- {4} : Changer la langue du menu","Menu principale
+
+Scegli un'opzione
+
+- {0}: Crea e cambia account
+- {1}: Crea e gestisci eventi
+- {2}: Visualizza le registrazioni
+- {3}: Cerca nuovi eventi
+- {4}: Visualizza le statistiche e gestisci l'applicazione
+- {4}: Cambia lingua del menu"
+/adminMenu,⚙️ Menu de administrador,⚙️ Admin menu,⚙️ Admin-Menü,⚙️ Menu de administração,⚙️ Menu d'administration,⚙️ Menu di amministrazione
+mustBeAdmin,Esa opcion solo es valida para administradores,This option is only valid for administrators.,Diese Option ist nur für Administratoren gültig.,Esta opção é válida somente para administradores.,Cette option n'est valable que pour les administrateurs.,Questa opzione è valida solo per gli amministratori.

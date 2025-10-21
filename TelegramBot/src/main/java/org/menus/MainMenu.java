@@ -1,5 +1,6 @@
 package org.menus;
 
+import org.menus.adminMenu.AdminMenu;
 import org.menus.browseMenu.BrowseMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -23,8 +24,10 @@ public class MainMenu extends MenuState {
     public String getQuestion() {
         if(user.getServerAccountUsername() == null)
             return user.getLocalizedMessage("mainMenuQuestionLoggedOut", user.getLocalizedMessage("/userMenu"), user.getLocalizedMessage("/languageMenu"));
-        else
+        else if(!user.isAdmin())
             return user.getLocalizedMessage("mainMenuQuestionLoggedIn", user.getLocalizedMessage("/userMenu"), user.getLocalizedMessage("/organizerMenu"), user.getLocalizedMessage("/participantMenu"), user.getLocalizedMessage("/browseMenu"), user.getLocalizedMessage("/languageMenu"));
+        else
+            return user.getLocalizedMessage("mainMenuQuestionAdmin", user.getLocalizedMessage("/userMenu"), user.getLocalizedMessage("/organizerMenu"), user.getLocalizedMessage("/participantMenu"), user.getLocalizedMessage("/browseMenu"), user.getLocalizedMessage("/adminMenu"), user.getLocalizedMessage("/languageMenu"));
     }
 
     @Override
@@ -48,7 +51,8 @@ public class MainMenu extends MenuState {
                         )
         )
             return user.getLocalizedMessage("mustLoginBeforeMenu");
-
+        if(!user.isAdmin() && Objects.equals(message, "/adminMenu"))
+            return user.getLocalizedMessage("mustBeAdmin");
         switch (message){
             case "/userMenu":
                 user.setMenu(new UserMenu(user));
@@ -64,6 +68,9 @@ public class MainMenu extends MenuState {
                 return null;
             case "/languageMenu":
                 user.setMenu(new LanguageMenu(user));
+                return null;
+            case "/adminMenu":
+                user.setMenu(new AdminMenu(user));
                 return null;
             default:
                 return user.getLocalizedMessage("wrongOption");
