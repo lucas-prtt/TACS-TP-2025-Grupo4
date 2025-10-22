@@ -147,12 +147,14 @@ public class Event {
     /**
      * Promueve al primer participante de la lista de espera a confirmado si hay cupos disponibles.
      */
-    public void promoteFromWaitlist() {
+    public Registration promoteFromWaitlist() {
+        Registration next = null;
         if (participants.size() < maxParticipants && !waitList.isEmpty()) {
-            Registration next = waitList.stream().findFirst().get();
+            next = waitList.removeFirst();
             next.setState(RegistrationState.CONFIRMED);
             participants.add(next);
         }
+        return next;
     }
 
     /**
