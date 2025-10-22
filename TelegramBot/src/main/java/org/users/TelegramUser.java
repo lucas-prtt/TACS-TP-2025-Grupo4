@@ -38,6 +38,8 @@ public class TelegramUser {
     private String lang = "en";
     @Setter
     private Locale userLocale = Locale.US;
+    @Setter
+    private List<String> roles;
 
     public TelegramUser(Long chatId){
         this.chatId = chatId;
@@ -100,7 +102,19 @@ public class TelegramUser {
         this.token = (String) infoLogin.get("token");
         this.serverAccountUsername = ((String) infoLogin.get("username"));
         this.serverAccountId = ((String) infoLogin.get("id"));
+        try {
+            setRoles((List<String>) infoLogin.get("roles"));
+        }catch (Exception e){
+            setRoles(List.of("USER"));
+        }
         setMenu(new MainMenu(this));
+    }
+
+    public Boolean isAdmin(){
+        return roles != null && roles.contains("ADMIN");
+    }
+    public Boolean isUser(){
+        return roles != null && roles.contains("USER");
     }
 
     public SendMessage getQuestion() {
@@ -127,6 +141,7 @@ public class TelegramUser {
         this.serverAccountId = null;
         this.serverAccountUsername = null;
         this.token = null;
+        this.roles = null;
         this.menu = new UserMenu(this);
     }
 
