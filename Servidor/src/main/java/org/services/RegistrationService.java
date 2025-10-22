@@ -111,7 +111,7 @@ public class RegistrationService {
     public RegistrationDTO findByUserAndRegistrationId(UUID accountId, UUID registrationId) {
         Registration reg = registrationRepository.findById(registrationId).orElseThrow(RegistrationNotFoundException::new);
         if(reg.getUser().getId().equals(accountId)){
-            return RegistrationDTO.toRegistrationDTO(reg);
+            return toRegistrationDTO(reg);
         }
         throw new RegistrationOfDifferentUserException();
     }
@@ -123,13 +123,12 @@ public class RegistrationService {
      * @throws AlreadyCanceledException si ya está cancelada
      */
     public Registration cancelRegistration(Registration registration) {
-
         if(registration.getCurrentState() == RegistrationState.CANCELED)
             throw new AlreadyCanceledException("El registro ya esta cancelado");
 
         Event event = registration.getEvent();
         UUID eventId = event.getId();
-
+        Registration promotedRegistration = null;
         ReentrantLock lock = locksParticipants.computeIfAbsent(eventId, id -> new ReentrantLock());
         lock.lock();
         try {
@@ -137,13 +136,16 @@ public class RegistrationService {
                 // Eliminar de participantes
                 event.getParticipants().remove(registration);
                 // Promocionar a alguien de la waitlist si corresponde
-                event.promoteFromWaitlist();
+                promotedRegistration = event.promoteFromWaitlist();
             }else {
                 event.getWaitList().remove(registration);
             }
             registration.setState(RegistrationState.CANCELED);
             registrationRepository.save(registration);
             eventRepository.save(event);
+            if(promotedRegistration != null){
+                registrationRepository.save(promotedRegistration);
+            }
         }finally {
             lock.unlock();
             if (!lock.hasQueuedThreads()) {
