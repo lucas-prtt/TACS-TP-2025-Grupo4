@@ -10,11 +10,13 @@ import { NavbarApp } from "../../components/NavbarApp";
 import { Mapa } from "./Mapa";
 import { useGetEvents } from "../../hooks/useGetEvents";
 import { useGetAuth } from "../../hooks/useGetAuth";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 
 export const VerEvento = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { getEventById, registerToEvent, loading, error: apiError } = useGetEvents();
+  const { getEventById, registerToEvent, getUserRegistrations, cancelRegistration, loading, error: apiError } = useGetEvents();
   const { user } = useGetAuth();
   
   const [evento, setEvento] = useState(null);
@@ -22,6 +24,59 @@ export const VerEvento = () => {
   const [localError, setLocalError] = useState('');
   const [success, setSuccess] = useState('');
   const [registering, setRegistering] = useState(false);
+  const [cancelando, setCancelando] = useState(false);
+  const [estaInscrito, setEstaInscrito] = useState(false);
+  const [registrationId, setRegistrationId] = useState(null);
+
+  // Función para verificar inscripción del usuario
+  const verificarInscripcion = useCallback(async () => {
+    if (!user || !id) {
+      console.log(`🔍 No verificando inscripción - Usuario: ${!!user}, EventoID: ${id}`);
+      return;
+    }
+    
+    console.log(`🔍 INICIANDO verificación de inscripción para evento ${id}`);
+    
+    try {
+      const registrations = await getUserRegistrations();
+      console.log(`📋 Inscripciones del usuario (${registrations?.length || 0}):`, registrations);
+      
+      const inscripcionActiva = registrations.find(reg => {
+        const tieneEventoId = reg.eventId;
+        const esEsteEvento = tieneEventoId && (reg.eventId == id);
+        const noEstaCancelada = reg.state !== 'CANCELED';
+        
+        console.log(`  🔍 Verificando inscripción ${reg.registrationId}:`, {
+          tieneEventoId,
+          esEsteEvento,
+          noEstaCancelada,
+          regEventId: reg.eventId,
+          eventoId: id,
+          state: reg.state,
+          MATCH: esEsteEvento && noEstaCancelada
+        });
+        
+        return esEsteEvento && noEstaCancelada;
+      });
+      
+      if (inscripcionActiva) {
+        console.log(`✅ ENCONTRADA inscripción activa:`, inscripcionActiva);
+        setEstaInscrito(true);
+        setRegistrationId(inscripcionActiva.registrationId);
+      } else {
+        console.log(`❌ NO hay inscripción activa para evento ${id}`);
+        setEstaInscrito(false);
+        setRegistrationId(null);
+      }
+      
+      console.log(`🎯 RESULTADO FINAL: estaInscrito=${inscripcionActiva ? true : false}`);
+      
+    } catch (error) {
+      console.error('❌ Error al verificar inscripción:', error);
+      setEstaInscrito(false);
+      setRegistrationId(null);
+    }
+  }, [user?.id, id, getUserRegistrations]);
 
   // Función para cargar evento - memoizada para evitar recreaciones
   const loadEvent = useCallback(async () => {
@@ -64,6 +119,14 @@ export const VerEvento = () => {
     loadEvent();
   }, [loadEvent]);
 
+  // Verificar si el usuario está inscrito al evento
+  useEffect(() => {
+    if (user?.id && id) {
+      console.log(`⚡ useEffect disparado para verificar inscripción: userId=${user.id}, eventoId=${id}`);
+      verificarInscripcion();
+    }
+  }, [user?.id, id, verificarInscripcion]);
+
   React.useEffect(() => {
     document.body.style.overflow = "auto";
     return () => { document.body.style.overflow = "auto"; };
@@ -71,20 +134,60 @@ export const VerEvento = () => {
 
   // Manejar inscripción al evento
   const handleInscribirse = async () => {
-    if (!user || !evento) return;
+    if (!user || !evento) {
+      setLocalError('Debes iniciar sesión para inscribirte');
+      return;
+    }
 
     try {
       setRegistering(true);
       setLocalError('');
       setSuccess('');
       
-      await registerToEvent(evento.id);
+      const result = await registerToEvent(evento.id);
       setSuccess('¡Te has inscrito exitosamente al evento!');
+      console.log('Inscripción exitosa:', result);
+      // Volver a verificar el estado de inscripción desde el servidor
+      await verificarInscripcion();
     } catch (err) {
       console.error('Error al inscribirse:', err);
-      setLocalError(apiError || 'Error al inscribirse al evento');
+      const errorMessage = err.response?.data?.error || 
+                          err.response?.data || 
+                          apiError || 
+                          'Error al inscribirse al evento';
+      setLocalError(`Error: ${errorMessage}`);
     } finally {
       setRegistering(false);
+    }
+  };
+
+  // Manejar cancelación de inscripción
+  const handleCancelarInscripcion = async () => {
+    if (!user || !registrationId) {
+      setLocalError('No se puede cancelar la inscripción');
+      return;
+    }
+
+    const confirmar = window.confirm('¿Estás seguro de que quieres cancelar tu inscripción a este evento?');
+    if (!confirmar) return;
+    
+    try {
+      setCancelando(true);
+      setLocalError('');
+      setSuccess('');
+      
+      await cancelRegistration(registrationId);
+      setSuccess('Has cancelado tu inscripción exitosamente');
+      // Volver a verificar el estado de inscripción desde el servidor
+      await verificarInscripcion();
+    } catch (err) {
+      console.error('Error al cancelar inscripción:', err);
+      const errorMessage = err.response?.data?.error || 
+                          err.response?.data || 
+                          'Error al cancelar la inscripción';
+      setLocalError(`Error: ${errorMessage}`);
+    } finally {
+      setCancelando(false);
     }
   };
 
@@ -234,6 +337,91 @@ export const VerEvento = () => {
               <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
                 {String(evento.description || 'Sin descripción')}
               </Typography>
+              
+              {/* Tags con scroll horizontal - después de la descripción */}
+              {evento.tags && Array.isArray(evento.tags) && evento.tags.length > 0 && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
+                    Etiquetas
+                  </Typography>
+                  <Box 
+                    sx={{ 
+                      position: 'relative'
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        overflowX: 'auto',
+                        overflowY: 'hidden',
+                        pb: 1,
+                        '&::-webkit-scrollbar': {
+                          height: '6px',
+                        },
+                        '&::-webkit-scrollbar-track': {
+                          backgroundColor: 'transparent',
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                          backgroundColor: '#ccc',
+                          borderRadius: '3px',
+                          '&:hover': {
+                            backgroundColor: '#999',
+                          }
+                        },
+                        '&::-webkit-scrollbar-thumb:active': {
+                          backgroundColor: '#666',
+                        }
+                      }}
+                    >
+                      {evento.tags.map((tag, index) => (
+                        <Chip 
+                          key={index} 
+                          label={(
+                            typeof tag === 'object' 
+                              ? (tag?.nombre || tag?.name || `Tag ${index + 1}`)
+                              : String(tag || `Tag ${index + 1}`)
+                          ).toLowerCase()} 
+                          variant="outlined"
+                          sx={{
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            borderColor: '#666',
+                            color: '#333',
+                            backgroundColor: 'transparent',
+                            minWidth: 'fit-content',
+                            flexShrink: 0,
+                            '&:hover': {
+                              backgroundColor: '#f5f5f5',
+                              borderColor: '#333',
+                              color: '#000',
+                              transform: 'translateY(-1px)',
+                              boxShadow: '0 2px 4px rgba(0,0,0,0.15)'
+                            },
+                            transition: 'all 0.2s ease-in-out'
+                          }}
+                        />
+                      ))}
+                    </Box>
+                    {/* Indicador visual de que hay más contenido */}
+                    {evento.tags.length > 4 && (
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          right: 0,
+                          top: 0,
+                          bottom: 8,
+                          width: '20px',
+                          background: 'linear-gradient(to right, transparent, #fff)',
+                          pointerEvents: 'none',
+                          borderRadius: '0 4px 4px 0'
+                        }}
+                      />
+                    )}
+                  </Box>
+                </Box>
+              )}
+              
               <Divider sx={{ mb: 2 }} />
               {/* Precio */}
               <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
@@ -290,42 +478,66 @@ export const VerEvento = () => {
               </Stack>
               {/* Mapa */}
               <Mapa direccion={String(evento.location || 'Sin ubicación')} />
-              {/* Tags */}
-              <Stack direction="row" spacing={1} sx={{ my: 2 }}>
-                {evento.tags && Array.isArray(evento.tags) && evento.tags.map((tag, index) => (
-                  <Chip 
-                    key={index} 
-                    label={
-                      typeof tag === 'object' 
-                        ? tag?.name || `Tag ${index + 1}` 
-                        : String(tag || `Tag ${index + 1}`)
-                    } 
-                    variant="outlined" 
-                  />
-                ))}
-              </Stack>
-              {/* Botón inscribirse */}
-              <ButtonCustom
-                bgColor="#181828"
-                color="#fff"
-                hoverBgColor="#23234a"
-                hoverColor="#fff"
-                sx={{ 
-                  alignSelf: "center", 
-                  minWidth: 180, 
-                  fontWeight: 700, 
-                  fontSize: 16, 
-                  mt: 1 
-                }}
-                onClick={handleInscribirse}
-                disabled={registering || !user}
-              >
-                {registering ? (
-                  <CircularProgress size={20} color="inherit" />
+              
+              {/* Botones de inscripción dinámicos */}
+              <Stack direction="row" spacing={2} sx={{ alignSelf: "center", mt: 2 }}>
+                {!estaInscrito ? (
+                  <ButtonCustom
+                    bgColor="#181828"
+                    color="#fff"
+                    hoverBgColor="#23234a"
+                    hoverColor="#fff"
+                    startIcon={<PersonAddIcon />}
+                    sx={{ 
+                      minWidth: 200, 
+                      fontWeight: 700, 
+                      fontSize: 16,
+                      opacity: registering ? 0.7 : 1
+                    }}
+                    onClick={handleInscribirse}
+                    disabled={registering || !user}
+                  >
+                    {registering ? (
+                      <>
+                        <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
+                        Inscribiendo...
+                      </>
+                    ) : (
+                      'Inscribirse'
+                    )}
+                  </ButtonCustom>
                 ) : (
-                  'Inscribirse'
+                  <ButtonCustom
+                    variant="outlined"
+                    startIcon={<PersonRemoveIcon />}
+                    onClick={handleCancelarInscripcion}
+                    disabled={cancelando}
+                    sx={{
+                      minWidth: 200,
+                      fontWeight: 700,
+                      fontSize: 16,
+                      border: '2px solid #DC2626',
+                      color: '#DC2626',
+                      backgroundColor: '#fff',
+                      opacity: cancelando ? 0.7 : 1,
+                      '&:hover': {
+                        backgroundColor: '#FEE2E2',
+                        color: '#B91C1C',
+                        borderColor: '#B91C1C'
+                      }
+                    }}
+                  >
+                    {cancelando ? (
+                      <>
+                        <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
+                        Cancelando...
+                      </>
+                    ) : (
+                      'Cancelar Inscripción'
+                    )}
+                  </ButtonCustom>
                 )}
-              </ButtonCustom>
+              </Stack>
             </>
           ) : null}
         </Box>

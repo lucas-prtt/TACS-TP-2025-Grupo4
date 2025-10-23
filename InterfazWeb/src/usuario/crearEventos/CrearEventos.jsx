@@ -27,6 +27,7 @@ export const CrearEventos = () => {
         durationMinutes: '',
         location: '',
         maxParticipants: '',
+        minParticipants: '',
         price: '',
         category: '',
         tags: '',
@@ -89,6 +90,14 @@ export const CrearEventos = () => {
             setLocalError('La capacidad máxima debe ser mayor a 0');
             return false;
         }
+        if (!formData.minParticipants || formData.minParticipants <= 0) {
+            setLocalError('La capacidad mínima debe ser mayor a 0');
+            return false;
+        }
+        if (parseInt(formData.minParticipants) > parseInt(formData.maxParticipants)) {
+            setLocalError('La capacidad mínima no puede ser mayor a la máxima');
+            return false;
+        }
         if (formData.price === '' || formData.price < 0) {
             setLocalError('El precio debe ser mayor o igual a 0');
             return false;
@@ -108,6 +117,9 @@ export const CrearEventos = () => {
         try {
             const startDateTime = combineDateTime(fecha, horaInicio);
             
+            // Procesar tags -> enviar como { nombre: '...' } para que el backend los mapee a org.model.events.Tag
+            const processedTags = formData.tags ? formData.tags.split(',').map(tag => ({ nombre: tag.trim() })).filter(tag => tag.nombre) : [];
+            
             const eventData = {
                 title: formData.title.trim(),
                 description: formData.description.trim(),
@@ -115,12 +127,16 @@ export const CrearEventos = () => {
                 durationMinutes: parseInt(formData.durationMinutes),
                 location: formData.location.trim(),
                 maxParticipants: parseInt(formData.maxParticipants),
+                minParticipants: parseInt(formData.minParticipants),
                 price: parseFloat(formData.price),
-                category: formData.category || null,
-                tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+                category: formData.category ? { name: formData.category } : null,
+                tags: processedTags,
                 image: formData.imageUrl.trim() || null
             };
 
+            console.log('🏷️ Tags originales:', formData.tags);
+            console.log('🏷️ Tags procesadas (enviadas al backend):', processedTags);
+            console.log('🚀 Enviando datos del evento al backend:', eventData);
             await createEvent(eventData);
             setSuccess('¡Evento creado exitosamente!');
             
@@ -261,9 +277,10 @@ export const CrearEventos = () => {
                                         Etiquetas (Opcional)
                                     </Typography>
                                     <TextFieldCustom
-                                        placeholder="Separadas por comas: tech, innovación, startup"
+                                        placeholder="Ej: tecnología, innovación, startup"
                                         value={formData.tags}
                                         onChange={(e) => handleChange('tags', e.target.value)}
+                                        helperText="Separar múltiples etiquetas con comas"
                                     />
                                 </Box>
 
@@ -387,6 +404,20 @@ export const CrearEventos = () => {
                                         Detalles Adicionales
                                     </Typography>
                                     <PeopleAltOutlinedIcon sx={{ color: theme.palette.text.primary, fontSize: 24 }} />
+                                </Box>
+
+                                {/* Capacidad mínima */}
+                                <Box mb={1}>
+                                    <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
+                                        Capacidad Mínima *
+                                    </Typography>
+                                    <TextFieldCustom
+                                        placeholder="Número mínimo de participantes"
+                                        fullWidth
+                                        onlyNumbers={true}
+                                        value={formData.minParticipants}
+                                        onChange={(e) => handleChange('minParticipants', e.target.value)}
+                                    />
                                 </Box>
 
                                 {/* Capacidad máxima */}

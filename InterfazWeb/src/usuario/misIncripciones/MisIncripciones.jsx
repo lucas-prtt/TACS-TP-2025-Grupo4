@@ -3,6 +3,8 @@ import { Box, Typography, Card, CardContent, CardMedia, Stack, Chip, CircularPro
 import { useTheme } from "@mui/material/styles";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import LogoutIcon from "@mui/icons-material/Logout";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import { ButtonCustom } from "../../components/Button";
 import { NavbarApp } from "../../components/NavbarApp";
 import { useNavigate } from "react-router-dom";
@@ -153,9 +155,23 @@ export const MisIncripciones = () => {
       const isValid = item !== null;
       console.log('🔍 FILTRO - Item válido:', isValid, item);
       return isValid;
+    }).sort((a, b) => {
+      // Ordenar por fecha de inscripción (más reciente primero)
+      const fechaA = new Date(a.fechaInscripcion || 0);
+      const fechaB = new Date(b.fechaInscripcion || 0);
+      
+      console.log('📅 ORDENANDO:', {
+        eventoA: a.titulo,
+        fechaA: a.fechaInscripcion,
+        eventoB: b.titulo,
+        fechaB: b.fechaInscripcion,
+        resultado: fechaB.getTime() - fechaA.getTime()
+      });
+      
+      return fechaB.getTime() - fechaA.getTime(); // Más reciente primero
     });
     
-    console.log('📊 RESULTADO FINAL MAPEADO:', mapped);
+    console.log('📊 RESULTADO FINAL ORDENADO:', mapped);
     console.log('📊 CANTIDAD FINAL:', mapped.length);
     
     return mapped;
@@ -186,6 +202,36 @@ export const MisIncripciones = () => {
       alert(`Error: ${errorMessage}`);
     } finally {
       setCancelandoId(null);
+    }
+  };
+
+  // Función para obtener el estilo y configuración según el estado
+  const getEstadoConfig = (estado) => {
+    const estadoUpper = estado?.toUpperCase() || 'ACTIVE';
+    
+    switch (estadoUpper) {
+      case 'CANCELED':
+      case 'CANCELLED':
+        return {
+          texto: 'Cancelada',
+          color: 'error',
+          icon: <CancelIcon fontSize="small" />,
+          bgColor: '#ffebee',
+          textColor: '#c62828',
+          borderColor: '#ef5350'
+        };
+      case 'ACTIVE':
+      case 'CONFIRMED':
+      case 'REGISTERED':
+      default:
+        return {
+          texto: 'Activa',
+          color: 'success',
+          icon: <CheckCircleIcon fontSize="small" />,
+          bgColor: '#e8f5e8',
+          textColor: '#2e7d32',
+          borderColor: '#66bb6a'
+        };
     }
   };
 
@@ -298,30 +344,59 @@ export const MisIncripciones = () => {
                   </Typography>
                 </>
               ) : (
-                inscripcionesFormateadas.map((inscripcion) => (
-                  <Card
-                    key={inscripcion.registrationId}
-                    sx={{
-                      display: "flex",
-                      flexDirection: { xs: "column", sm: "row" },
-                      alignItems: { xs: "stretch", sm: "center" },
-                      borderRadius: 3,
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
-                      border: "1px solid #e0e0e0",
-                      bgcolor: theme.palette.background.paper,
-                      overflow: "hidden",
-                    }}
-                  >
-                    <CardMedia
-                      component="img"
-                      image={inscripcion.imagen}
-                      alt={inscripcion.titulo}
+                inscripcionesFormateadas.map((inscripcion) => {
+                  const estadoConfig = getEstadoConfig(inscripcion.estadoInscripcion);
+                  const esCancelada = inscripcion.estadoInscripcion?.toUpperCase() === 'CANCELED';
+                  
+                  return (
+                    <Card
+                      key={inscripcion.registrationId}
                       sx={{
-                        width: { xs: "100%", sm: 160 },
-                        height: { xs: 160, sm: 140 },
-                        objectFit: "cover"
+                        display: "flex",
+                        flexDirection: { xs: "column", sm: "row" },
+                        alignItems: { xs: "stretch", sm: "center" },
+                        borderRadius: 3,
+                        boxShadow: esCancelada ? "0 1px 4px rgba(0,0,0,0.1)" : "0 2px 8px rgba(0,0,0,0.12)",
+                        border: `2px solid ${estadoConfig.borderColor}`,
+                        bgcolor: esCancelada ? "#f5f5f5" : theme.palette.background.paper,
+                        overflow: "hidden",
+                        opacity: esCancelada ? 0.75 : 1,
+                        position: 'relative'
                       }}
-                    />
+                    >
+                    <Box sx={{ position: 'relative' }}>
+                      <CardMedia
+                        component="img"
+                        image={inscripcion.imagen}
+                        alt={inscripcion.titulo}
+                        sx={{
+                          width: { xs: "100%", sm: 160 },
+                          height: { xs: 160, sm: 140 },
+                          objectFit: "cover",
+                          filter: esCancelada ? 'grayscale(50%)' : 'none'
+                        }}
+                      />
+                      {esCancelada && (
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                            bgcolor: 'rgba(239, 83, 80, 0.9)',
+                            color: 'white',
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 1,
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            textTransform: 'uppercase',
+                            letterSpacing: 0.5
+                          }}
+                        >
+                          Cancelada
+                        </Box>
+                      )}
+                    </Box>
                     <CardContent sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                       <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
                         <Chip
@@ -334,10 +409,18 @@ export const MisIncripciones = () => {
                           }}
                         />
                         <Chip
-                          label={inscripcion.estadoInscripcion}
+                          icon={estadoConfig.icon}
+                          label={estadoConfig.texto}
                           size="small"
-                          color="primary"
-                          sx={{ fontWeight: 500 }}
+                          sx={{ 
+                            fontWeight: 600,
+                            bgcolor: estadoConfig.bgColor,
+                            color: estadoConfig.textColor,
+                            border: `1px solid ${estadoConfig.borderColor}`,
+                            '& .MuiChip-icon': {
+                              color: estadoConfig.textColor
+                            }
+                          }}
                         />
                       </Stack>
                       <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>
@@ -387,35 +470,51 @@ export const MisIncripciones = () => {
                         >
                           Ver
                         </ButtonCustom>
-                        <ButtonCustom
-                          variant="outlined"
-                          startIcon={<LogoutIcon />}
-                          disabled={cancelandoId === inscripcion.registrationId}
-                          sx={{
-                            border: '2px solid #DC2626',
-                            color: '#DC2626',
-                            backgroundColor: '#fff',
-                            fontWeight: 700,
-                            borderRadius: '10px',
-                            px: 2,
-                            minHeight: { xs: 34, md: 44 },
-                            py: { xs: 0.5, md: 1 },
-                            fontSize: { xs: 15, md: 16 },
-                            opacity: cancelandoId === inscripcion.registrationId ? 0.7 : 1,
-                            '&:hover': {
-                              backgroundColor: '#FEE2E2',
-                              color: '#B91C1C',
-                              borderColor: '#B91C1C'
-                            }
-                          }}
-                          onClick={() => handleBaja(inscripcion.registrationId, inscripcion.titulo)}
-                        >
-                          {cancelandoId === inscripcion.registrationId ? 'Cancelando...' : 'Darse de baja'}
-                        </ButtonCustom>
+                        {!esCancelada ? (
+                          <ButtonCustom
+                            variant="outlined"
+                            startIcon={<LogoutIcon />}
+                            disabled={cancelandoId === inscripcion.registrationId}
+                            sx={{
+                              border: '2px solid #DC2626',
+                              color: '#DC2626',
+                              backgroundColor: '#fff',
+                              fontWeight: 700,
+                              borderRadius: '10px',
+                              px: 2,
+                              minHeight: { xs: 34, md: 44 },
+                              py: { xs: 0.5, md: 1 },
+                              fontSize: { xs: 15, md: 16 },
+                              opacity: cancelandoId === inscripcion.registrationId ? 0.7 : 1,
+                              '&:hover': {
+                                backgroundColor: '#FEE2E2',
+                                color: '#B91C1C',
+                                borderColor: '#B91C1C'
+                              }
+                            }}
+                            onClick={() => handleBaja(inscripcion.registrationId, inscripcion.titulo)}
+                          >
+                            {cancelandoId === inscripcion.registrationId ? 'Cancelando...' : 'Darse de baja'}
+                          </ButtonCustom>
+                        ) : (
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              color: '#666',
+                              fontStyle: 'italic',
+                              display: 'flex',
+                              alignItems: 'center',
+                              mt: 1
+                            }}
+                          >
+                            Inscripción cancelada
+                          </Typography>
+                        )}
                       </Stack>
                     </CardContent>
                   </Card>
-                ))
+                );
+                })
               )}
             </Stack>
           </>

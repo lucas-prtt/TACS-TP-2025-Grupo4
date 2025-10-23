@@ -104,11 +104,22 @@ export const Eventos = () => {
         const tags = evento.tags ? evento.tags.map(tag => {
             if (typeof tag === 'string') {
                 return tag;
-            } else if (tag && typeof tag === 'object' && tag.name) {
-                return tag.name;
+            } else if (tag && typeof tag === 'object') {
+                // El backend usa 'nombre' en la clase Tag
+                return tag.nombre || tag.name || '';
             }
             return '';
         }).filter(tag => tag) : [];
+
+        // Debug específico para tags
+        if (evento.tags && evento.tags.length > 0) {
+            console.log(`🏷️ PROCESANDO TAGS en Eventos.jsx para "${evento.title}":`, {
+                tagsOriginales: evento.tags,
+                tagsProcesadas: tags,
+                cantidadOriginal: evento.tags.length,
+                cantidadProcesada: tags.length
+            });
+        }
 
         // Manejar estado (EventState enum)
         let estado = "activo";

@@ -73,6 +73,17 @@ export const MisEventos = () => {
       }
     }
 
+    // Manejar tags (List<Tag> en EventDTO)
+    const tags = evento.tags ? evento.tags.map(tag => {
+      if (typeof tag === 'string') {
+        return tag;
+      } else if (tag && typeof tag === 'object') {
+        // El backend usa 'nombre' en la clase Tag
+        return tag.nombre || tag.name || '';
+      }
+      return '';
+    }).filter(tag => tag) : [];
+
     return {
       id: evento.id,
       titulo: evento.title || "Sin título",
@@ -84,6 +95,7 @@ export const MisEventos = () => {
       max_participantes: evento.maxParticipants || 0,
       min_participantes: evento.minParticipants || 0,
       precio: evento.price || 0,
+      tags: tags,
       estado: estado,
       categoria: categoria,
       imagen: evento.image || noImagePlaceholder
@@ -100,6 +112,33 @@ export const MisEventos = () => {
 
   const handleEliminar = (id) => {
     // Lógica para eliminar evento
+  };
+
+  // Función para traducir el estado del evento al español
+  const getEstadoTraducido = (estado) => {
+    if (!estado) return '';
+    
+    const estadoUpper = estado.toUpperCase();
+    switch (estadoUpper) {
+      case 'EVENT_OPEN':
+        return 'Abierto';
+      case 'EVENT_CLOSED':
+        return 'Cerrado';
+      case 'EVENT_PAUSED':
+        return 'Pausado';
+      default:
+        // Si viene solo el estado sin el prefijo EVENT_, también lo manejamos
+        switch (estadoUpper) {
+          case 'OPEN':
+            return 'Abierto';
+          case 'CLOSED':
+            return 'Cerrado';
+          case 'PAUSED':
+            return 'Pausado';
+          default:
+            return estado; // Devolver el estado original si no coincide
+        }
+    }
   };
 
   // Estilos de botones igual que en CardEvento
@@ -255,7 +294,7 @@ export const MisEventos = () => {
                         }}
                       />
                       <Chip
-                        label={evento.estado}
+                        label={getEstadoTraducido(evento.estado)}
                         size="small"
                         color="primary"
                         sx={{ fontWeight: 500 }}
