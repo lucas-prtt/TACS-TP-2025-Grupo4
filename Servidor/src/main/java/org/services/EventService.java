@@ -7,8 +7,10 @@ import org.exceptions.*;
 import org.model.events.Event;
 import org.model.accounts.Account;
 import org.repositories.AccountRepository;
+import org.repositories.CategoryRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
+import org.springframework.http.ResponseEntity;
 import org.utils.PageSplitter;
 import java.util.UUID;
 import java.math.BigDecimal;
@@ -24,10 +26,12 @@ import org.springframework.stereotype.Service;
 public class EventService {
     private final EventRepository eventRepository;
     private final AccountRepository accountRepository;
+    private final CategoryRepository categoryRepository;
 
-    public EventService(EventRepository eventRepository, AccountRepository accountRepository, RegistrationRepository registrationRepository) {
+    public EventService(EventRepository eventRepository, AccountRepository accountRepository, RegistrationRepository registrationRepository, CategoryRepository categoryRepository) {
         this.eventRepository = eventRepository;
         this.accountRepository = accountRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException, BadRequestException {
@@ -39,6 +43,8 @@ public class EventService {
             throw new BadRequestException();
         }
         if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+ organizerId.toString());
+        if (!categoryRepository.existsById(String.valueOf(eventDTO.getCategory().getId())))
+            throw new CategoryNotFoundException("Categoria invalida");
         try {
         // Crear evento
         newEvent = new Event(

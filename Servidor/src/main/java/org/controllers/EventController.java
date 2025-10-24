@@ -58,6 +58,8 @@ public class EventController {
             return ResponseEntity.badRequest().body("Al menos uno de los campos obligatorios del evento es nulo. Se requiere enviar: \n-String title\n-String description\n-LocalDateTime startDateTime\n-Integer durationMinutes\n-String location\n-Integer maxParticipants\n-BigDecimal price\n-UUID organizerId");
         } catch (AccountNotFoundException e){
             return ResponseEntity.badRequest().body("Ningún usuario con el id existe");
+        } catch (CategoryNotFoundException e){
+            return ResponseEntity.badRequest().body("Categoría inválida");
         }
     }
 

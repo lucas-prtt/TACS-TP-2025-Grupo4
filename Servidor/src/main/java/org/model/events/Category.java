@@ -14,7 +14,11 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class Category {
+    // Getters y setters
     @Id
     private UUID id;
-    String title;
+    private String title;
+
+    public String getName() { return title; }
+    public void setName(String title) { this.title = title; }
 }
