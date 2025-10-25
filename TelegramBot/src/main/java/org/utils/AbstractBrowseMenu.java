@@ -25,9 +25,8 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
     // Devuelve el string corto del ítem
     protected abstract String toShortString(T item);
 
-    // Genera el nuevo menú al seleccionar un ítem
-    protected abstract MenuState itemSelectedMenu(T item);
-
+    // Lo que hace al elegir un item
+    protected abstract void onItemSelected(T item);
     // Menu al que volver con "/back"
     protected abstract MenuState getBackMenu();
 
@@ -61,7 +60,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
                     int numero = Integer.parseInt(message);
                     int index = (numero - (page) * limit) - 1;
                     if (index >= 0 && index < items.size()) {
-                        user.setMenu(itemSelectedMenu(items.get(index)));
+                        onItemSelected(items.get(index));
                         return user.getLocalizedMessage("itemSelected", numero);
                     }
                 } catch (Exception ignored) {}
@@ -81,11 +80,16 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
+        List<String> optionsList = optionsList();
+        return InlineMenuBuilder.localizedMenu(user, getQuestion(), List.of("/prev", "/next"), optionsList, List.of( "/back", "/start"));
+    }
+
+    public List<String> optionsList(){
         items = fetchItems(page, limit);
         List<String> optionsList = new ArrayList<>();
         for(int i = 0; i<items.size(); i++){
             optionsList.add(String.valueOf((i+1) + (page * limit)));
         }
-        return InlineMenuBuilder.localizedMenu(user, getQuestion(), List.of("/prev", "/next"), optionsList, List.of( "/back", "/start"));
+        return optionsList;
     }
 }

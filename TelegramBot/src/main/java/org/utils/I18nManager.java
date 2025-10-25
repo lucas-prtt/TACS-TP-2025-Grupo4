@@ -64,5 +64,7 @@ public class I18nManager {
             default -> Locale.US;
         };
     }
-
+    public static String capitalize(String s) {
+        return (s == null || s.isEmpty()) ? s : s.substring(0,1).toUpperCase() + s.substring(1);
+    }
 }

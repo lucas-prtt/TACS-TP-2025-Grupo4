@@ -5,7 +5,6 @@ import org.menus.MenuState;
 import org.users.TelegramUser;
 import org.utils.AbstractBrowseMenu;
 
-import java.util.List;
 
 public abstract class AbstractRegistrationBrowseMenu extends AbstractBrowseMenu<RegistrationDTO> {
 
@@ -19,8 +18,8 @@ public abstract class AbstractRegistrationBrowseMenu extends AbstractBrowseMenu<
     }
 
     @Override
-    protected MenuState itemSelectedMenu(RegistrationDTO item) {
-        return new CheckRegistrationMenu(user, item);
+    protected void onItemSelected(RegistrationDTO item) {
+        user.setMenu(new CheckRegistrationMenu(user, item));
     }
 
     @Override

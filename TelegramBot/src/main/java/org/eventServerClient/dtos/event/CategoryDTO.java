@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.users.TelegramUser;
 
 @NoArgsConstructor
 @Setter
@@ -11,4 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CategoryDTO {
     String title;
+
+    public String toShortString(){
+        return title;
+    }
+
 }

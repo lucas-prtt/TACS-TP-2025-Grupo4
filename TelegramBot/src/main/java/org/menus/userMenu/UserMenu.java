@@ -28,6 +28,9 @@ public class UserMenu extends MenuState {
             case "/login":
                 user.deleteCurrentAccount();
                 return null;
+            case "/logout":
+                user.deleteCurrentAccount();
+                return user.getLocalizedMessage("logoutConfirmed");
 
             default:
                 return user.getLocalizedMessage("wrongOption");
@@ -40,7 +43,7 @@ public class UserMenu extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.localizedMenu(user, getQuestion(), List.of("/oneTimeCode"), List.of("/registerUser", "/loginUser"), List.of("/logout"), List.of("/back"));
+        SendMessage message = InlineMenuBuilder.localizedMenu(user, getQuestion(), List.of("/oneTimeCode"), List.of("/registerUser", "/loginUser"), user.getServerAccountId() == null ? List.of() : List.of("/logout"), List.of("/back"));
         return message;
     }
 

@@ -470,7 +470,7 @@ requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the c
 /filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer des filtres,Applica filtri
 filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
 category,categoria,category,Kategorie,categoria,catégorie,categoria
-tags,tags,tags,Schlagworte,etiquetas,balises,tag
+tags,tags,tags,Schlagworte,etiquetas,balises,etichette
 maxDate,fecha máxima,maximum date,maximales Datum,data máxima,date maximale,data massima
 title,titulo del evento,event title,Veranstaltungstitel,título do evento,titre de l'événement,titolo dell'evento
 titleContains,subcadena del titulo,title substring,Titel-Teilzeichenfolge,substring de título,sous-chaîne de titre,sottostringa del titolo
@@ -578,7 +578,7 @@ Scegli un'opzione
 - {3}: Cerca nuovi eventi
 - {4}: Visualizza le statistiche e gestisci l'applicazione
 - {5}: Cambia lingua del menu"
-/adminMenu,⚙️ Menu de administrador,⚙️ Admin menu,⚙️ Admin-Menü,⚙️ Menu de administração,⚙️ Menu administrateur,⚙️ Menu di amministrazione
+/adminMenu,⚙️ Menu de administrador,⚙️ Admin menu,⚙️ Admin-Menü,⚙️ Menu de administração,⚙️ Menu d'administration,⚙️ Menu di amministrazione
 mustBeAdmin,Esa opcion solo es valida para administradores,This option is only valid for administrators.,Diese Option ist nur für Administratoren gültig.,Esta opção é válida somente para administradores.,Cette option n'est valable que pour les administrateurs.,Questa opzione è valida solo per gli amministratori.
 /stats,📊 Estadisticas,📊 Statistics,📊 Statistiken,📊 Estatísticas,📊 Statistiques,📊 Statistiche
 /categoryConfig,🧩 Gestionar categorias,🧩 Manage categories,🧩 Kategorien verwalten,🧩 Gerenciar categorias,🧩 Gérer les catégories,🧩 Gestisci categorie
@@ -640,3 +640,7 @@ Statistiche ({0}):
 {4} tasso di conversione in lista d'attesa.
 🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥"
 /basicStats,📊 Estadisticas basicas,📊 Basic statistics,📊 Grundlegende Statistiken,📊 Estatísticas básicas,📊 Statistiques de base,📊 Statistiche di base
+writeCategoryToFilter,Puede escribir el incio de la categoria para filtrar los resultados,You can type the start of the category to filter the results.,"Sie können den Anfang der Kategorie eingeben, um die Ergebnisse zu filtern.",Você pode digitar o início da categoria para filtrar os resultados.,Vous pouvez taper le début de la catégorie pour filtrer les résultats.,Puoi digitare l'inizio della categoria per filtrare i risultati.
+invalidOption,Opcion invalida,Invalid option,Ungültige Option,Opção inválida,Option invalide,Opzione non valida
+logoutConfirmed,Cerraste la sesion!,You have logged out!,Sie haben sich abgemeldet!,Você saiu!,Vous êtes déconnecté !,Hai effettuato il logout!
+/eraseStartsWith,Eliminar Filtro,Remove Filter,Filter entfernen,Remover filtro,Supprimer le filtre,Rimuovi filtro
