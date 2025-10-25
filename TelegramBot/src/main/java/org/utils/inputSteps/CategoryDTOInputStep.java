@@ -44,7 +44,7 @@ public class CategoryDTOInputStep implements EventInputStep{
             if(finished){
                 Field field = eventDTO.getClass().getDeclaredField(fieldName);
                 field.setAccessible(true);
-                field.set(eventDTO, new CategoryDTO(message));
+                field.set(eventDTO, new CategoryDTO(category));
             }
             return finished;
         } catch (Exception e) {
