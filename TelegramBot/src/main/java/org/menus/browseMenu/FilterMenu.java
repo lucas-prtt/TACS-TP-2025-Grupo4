@@ -2,8 +2,10 @@ package org.menus.browseMenu;
 
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.users.QueryFilter;
 import org.users.TelegramUser;
 import org.utils.InlineMenuBuilder;
+import org.utils.SelectCategoryMenu;
 
 public class FilterMenu extends MenuState {
     public FilterMenu(TelegramUser user) {
@@ -14,7 +16,11 @@ public class FilterMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/filterByCategory":
-                user.setMenu(new FilterByMenu(user, "category"));
+                user.setMenu(new SelectCategoryMenu(user, (categoryDTO) -> {
+                    user.addFilter(new QueryFilter("category", categoryDTO.getTitle()));
+                    user.setMenu(new FilterMenu(user));
+                },
+                () -> new FilterMenu(user)));
                 return null;
             case "/filterByTags":
                 user.setMenu(new FilterByMenu(user, "tags"));
