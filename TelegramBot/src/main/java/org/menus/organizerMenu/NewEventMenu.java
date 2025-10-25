@@ -36,7 +36,7 @@ public class NewEventMenu extends MenuState {
         inputs.add(new IntegerInputStep("maxParticipants", user.getLocalizedMessage("maxParticipants"), List.of(10, 20, 50, 100, 500, 1000)));
         inputs.add(new IntegerInputStep("minParticipants", user.getLocalizedMessage("minParticipants"), List.of(0, 10, 20, 50, 100)));
         inputs.add(new BigDecimalInputStep("price", user.getLocalizedMessage("price"), "freePrice"));
-        inputs.add(new CategoryDTOInputStep("category", user.getLocalizedMessage("category")));
+        inputs.add(new CategoryDTOInputStep("category", user.getLocalizedMessage("category"), user));
         inputs.add(new TagsInputStep("tags", user.getLocalizedMessage("tags")));
         currentStep = inputs.poll();
     }

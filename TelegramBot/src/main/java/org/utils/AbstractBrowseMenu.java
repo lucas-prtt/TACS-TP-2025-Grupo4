@@ -80,11 +80,16 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
+        List<String> optionsList = optionsList();
+        return InlineMenuBuilder.localizedMenu(user, getQuestion(), List.of("/prev", "/next"), optionsList, List.of( "/back", "/start"));
+    }
+
+    public List<String> optionsList(){
         items = fetchItems(page, limit);
         List<String> optionsList = new ArrayList<>();
         for(int i = 0; i<items.size(); i++){
             optionsList.add(String.valueOf((i+1) + (page * limit)));
         }
-        return InlineMenuBuilder.localizedMenu(user, getQuestion(), List.of("/prev", "/next"), optionsList, List.of( "/back", "/start"));
+        return optionsList;
     }
 }
