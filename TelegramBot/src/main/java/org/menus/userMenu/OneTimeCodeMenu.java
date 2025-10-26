@@ -14,8 +14,8 @@ import java.util.Map;
 
 public class OneTimeCodeMenu extends MenuState {
     String username;
-    public OneTimeCodeMenu(TelegramUser user) {
-        super(user);
+    public OneTimeCodeMenu() {
+        super();
     }
 
     @Override
@@ -28,13 +28,13 @@ public class OneTimeCodeMenu extends MenuState {
 
             Map<String, Object> response = user.getApiClient().loginOneTimeCode(message, username);
             user.updateUser(response);
-            user.setMenu(new MainMenu(user));
+            user.setMenu(new MainMenu());
             return user.getLocalizedMessage("successfulLogin", user.getServerAccountId(), user.getServerAccountUsername());
         }catch (HttpClientErrorException e){
-            user.setMenu(new UserMenu(user));
+            user.setMenu(new UserMenu());
             return ErrorHandler.getErrorMessage(e, user);
         }catch (ResourceAccessException e) {
-            user.setMenu(new UserMenu(user));
+            user.setMenu(new UserMenu());
             return user.getLocalizedMessage("serverUnavailable");
         }
         catch (Exception e){

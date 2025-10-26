@@ -25,7 +25,7 @@ public class LookUpEventByUUIDMenu extends MenuState {
             return user.getLocalizedMessage("invalidUUID");
         }
         try {
-            user.setMenu(new CheckEventMenu(user, eventDTO));
+            user.setMenu(new CheckEventMenu(eventDTO));
             return user.getLocalizedMessage("eventFound");
         }catch (HttpClientErrorException e){
             return ErrorHandler.getErrorMessage(e, user);
@@ -37,8 +37,8 @@ public class LookUpEventByUUIDMenu extends MenuState {
         return user.getLocalizedMessage("requestInputEventID");
     }
 
-    public LookUpEventByUUIDMenu(TelegramUser user) {
-        super(user);
+    public LookUpEventByUUIDMenu() {
+        super();
     }
     @Override
     public SendMessage questionMessage() {

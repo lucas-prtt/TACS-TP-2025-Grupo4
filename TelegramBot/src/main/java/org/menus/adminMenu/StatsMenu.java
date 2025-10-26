@@ -20,7 +20,7 @@ public class StatsMenu extends MenuState {
             case "/basicStats":
                 return user.getLocalizedMessage("printBasicStats", user.localizeDate(LocalDateTime.now()), statsDTO.getEventsCount(), statsDTO.getRegistrationsCount(), statsDTO.getWaitlistPromotions(), statsDTO.getWaitlistConversionRate());
             case "/back":
-                user.setMenu(new AdminMenu(user));
+                user.setMenu(new AdminMenu());
                 return null;
             default:
                 return user.getLocalizedMessage("wrongOption");
@@ -38,7 +38,7 @@ public class StatsMenu extends MenuState {
         return InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/basicStats", "/back", "/start");
     }
 
-    public StatsMenu(TelegramUser user) {
-        super(user);
+    public StatsMenu() {
+        super();
     }
 }

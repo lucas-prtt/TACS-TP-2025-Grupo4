@@ -7,14 +7,11 @@ import org.menus.userMenu.UserMenu;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.utils.I18nManager;
 
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -31,7 +28,6 @@ public class TelegramUser {
     private String serverAccountUsername;
     @Setter
     private String token;
-    @Setter
     private MenuState menu;
     private final List<QueryFilter> filtros = new ArrayList();
     @Setter
@@ -43,7 +39,12 @@ public class TelegramUser {
 
     public TelegramUser(Long chatId){
         this.chatId = chatId;
-        menu = new MainMenu(this);
+        this.setMenu(new MainMenu());
+    }
+
+    public void setMenu(MenuState menu){
+        this.menu = menu;
+        menu.setUser(this);
     }
 
     // Responde al menu en el que se encuentra y actualiza al siguiente menu si corresponde
@@ -51,7 +52,7 @@ public class TelegramUser {
         try {
             if (update.hasMessage()){
                 if(update.getMessage().getText().equals("/start")){ // start manda al menu inicial no importa donde estes
-                    this.menu = new MainMenu(this);
+                    setMenu(new MainMenu());
                     return null;
                 }else{
                     return menu.responseMessage(update.getMessage());
@@ -59,7 +60,7 @@ public class TelegramUser {
             }
             else if (update.hasCallbackQuery()){
                 if(update.getCallbackQuery().getData().equals("/start")){ // start manda al menu inicial no importa donde estes
-                    this.menu = new MainMenu(this);
+                   setMenu(new MainMenu());
                     return null;
                 }else{
                     return menu.responseMessage(update.getCallbackQuery());
@@ -82,11 +83,11 @@ public class TelegramUser {
         return null;
     }
     public String setMenuAndRespond(MenuState menu){
-        this.menu = menu;
+        this.setMenu(menu);
         return menu.getQuestion();
     }
     public String setMainMenuAndRespond(){
-        return setMenuAndRespond(new MainMenu(this));
+        return setMenuAndRespond(new MainMenu());
     }
     public void addFilter(QueryFilter filter){
         filtros.add(filter);
@@ -107,7 +108,7 @@ public class TelegramUser {
         }catch (Exception e){
             setRoles(List.of("USER"));
         }
-        setMenu(new MainMenu(this));
+        setMenu(new MainMenu());
     }
 
     public Boolean isAdmin(){
@@ -142,7 +143,7 @@ public class TelegramUser {
         this.serverAccountUsername = null;
         this.token = null;
         this.roles = null;
-        this.menu = new UserMenu(this);
+        setMenu(new UserMenu());
     }
 
     public String getLocalizedMessage(String key, Object... args) {

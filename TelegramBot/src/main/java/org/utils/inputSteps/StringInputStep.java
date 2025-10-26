@@ -9,17 +9,15 @@ import java.lang.reflect.Field;
 public class StringInputStep implements EventInputStep{
 
     private final String fieldName;
-    private final String label;
 
-    public StringInputStep(String fieldName, String label) {
+    public StringInputStep(String fieldName) {
         this.fieldName = fieldName;
-        this.label = label;
     }
 
     @Override
     public SendMessage getQuestion(TelegramUser user) {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(user.getLocalizedMessage("inputGeneric", label));
+        sendMessage.setText(user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage(fieldName)));
         return sendMessage;
     }
 

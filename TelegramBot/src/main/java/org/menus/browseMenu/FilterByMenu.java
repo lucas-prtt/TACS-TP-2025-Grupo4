@@ -11,8 +11,8 @@ import java.util.List;
 public class FilterByMenu extends MenuState {
     QueryFilter filter;
 
-    public FilterByMenu(TelegramUser user, String filterParameter) {
-        super(user);
+    public FilterByMenu(String filterParameter) {
+        super();
         this.filter = new QueryFilter(filterParameter);
     }
 
@@ -21,7 +21,7 @@ public class FilterByMenu extends MenuState {
     public String respondTo(String message) {
         filter.setValue(message);
         user.addFilter(filter);
-        user.setMenu(new FilterMenu(user));
+        user.setMenu(new FilterMenu());
         return user.getLocalizedMessage("configuredFilter", filter.getTypeLocalized(user), message);
     }
 

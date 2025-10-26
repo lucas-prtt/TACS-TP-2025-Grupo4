@@ -14,8 +14,8 @@ import java.util.List;
 
 public class ManageEventMenu extends MenuState {
     EventDTO event;
-    public ManageEventMenu(TelegramUser user, EventDTO item) {
-        super(user);
+    public ManageEventMenu(EventDTO item) {
+        super();
         this.event = item;
     }
 
@@ -35,7 +35,7 @@ public class ManageEventMenu extends MenuState {
                 user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_CLOSED);
                 return user.getLocalizedMessage("successfulClose");
             case "/back":
-                user.setMenu(new ManageEventSelectionMenu(user));
+                user.setMenu(new ManageEventSelectionMenu());
                 return null;
             default:
                 return user.getLocalizedMessage("wrongOption");

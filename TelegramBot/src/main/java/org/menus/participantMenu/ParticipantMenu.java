@@ -14,16 +14,16 @@ public class ParticipantMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/getSuccesfulRegistrations":
-                user.setMenu(new SelectSuccesfulRegistrationsMenu(user));
+                user.setMenu(new SelectSuccesfulRegistrationsMenu());
                 return null;
             case "/getWaitlistedRegistrations":
-                user.setMenu(new SelectWaitlistedRegistrationsMenu(user));
+                user.setMenu(new SelectWaitlistedRegistrationsMenu());
                 return null;
             case "/getCanceledRegistrations":
-                user.setMenu(new SelectCanceledRegistrationsMenu(user));
+                user.setMenu(new SelectCanceledRegistrationsMenu());
                 return null;
             case "/getAllRegistrations":
-                user.setMenu(new SelectAllRegistrationsMenu(user));
+                user.setMenu(new SelectAllRegistrationsMenu());
                 return null;
             default:
                 return "Error - opcion invalida\n";
@@ -41,8 +41,8 @@ public class ParticipantMenu extends MenuState {
         );
     }
 
-    public ParticipantMenu(TelegramUser user) {
-        super(user);
+    public ParticipantMenu() {
+        super();
     }
     @Override
     public SendMessage questionMessage() {

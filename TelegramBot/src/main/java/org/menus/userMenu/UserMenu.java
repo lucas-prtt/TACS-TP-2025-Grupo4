@@ -14,16 +14,16 @@ public class UserMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/oneTimeCode":
-                user.setMenu(new OneTimeCodeMenu(user));
+                user.setMenu(new OneTimeCodeMenu());
                 return null;
             case "/loginUser":
-                user.setMenu(new LoginUserMenu(user));
+                user.setMenu(new LoginUserMenu());
                 return null;
             case "/registerUser":
-                user.setMenu(new RegisterUserMenu(user));
+                user.setMenu(new RegisterUserMenu());
                 return null;
             case "/back":
-                user.setMenu(new MainMenu(user));
+                user.setMenu(new MainMenu());
                 return null;
             case "/login":
                 user.deleteCurrentAccount();
@@ -47,7 +47,7 @@ public class UserMenu extends MenuState {
         return message;
     }
 
-    public UserMenu(TelegramUser user) {
-        super(user);
+    public UserMenu() {
+        super();
     }
 }

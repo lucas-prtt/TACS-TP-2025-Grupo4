@@ -1,5 +1,6 @@
 package org.menus;
 
+import lombok.Setter;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -15,10 +16,9 @@ public abstract class MenuState {
         return sendMessageText(respondTo(message.getData()));
     };
     abstract public SendMessage questionMessage();
+    @Setter
     protected TelegramUser user;
-    public MenuState(TelegramUser user){
-        this.user = user;
-    }
+    public MenuState(){}
     protected SendMessage sendMessageTemplate(){
         return new SendMessage();
     }

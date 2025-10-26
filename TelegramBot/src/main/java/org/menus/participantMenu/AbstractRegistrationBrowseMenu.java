@@ -8,8 +8,8 @@ import org.utils.AbstractBrowseMenu;
 
 public abstract class AbstractRegistrationBrowseMenu extends AbstractBrowseMenu<RegistrationDTO> {
 
-    public AbstractRegistrationBrowseMenu(TelegramUser user) {
-        super(user);
+    public AbstractRegistrationBrowseMenu() {
+        super();
     }
 
     @Override
@@ -19,11 +19,11 @@ public abstract class AbstractRegistrationBrowseMenu extends AbstractBrowseMenu<
 
     @Override
     protected void onItemSelected(RegistrationDTO item) {
-        user.setMenu(new CheckRegistrationMenu(user, item));
+        user.setMenu(new CheckRegistrationMenu(item));
     }
 
     @Override
     protected MenuState getBackMenu() {
-        return new ParticipantMenu(user);
+        return new ParticipantMenu();
     }
 }

@@ -1,32 +1,28 @@
-package org.utils;
+package org.utils.categorySelectionMenus;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.eventServerClient.dtos.event.CategoryDTO;
-import org.glassfish.jersey.internal.util.Producer;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
+import org.utils.AbstractBrowseMenu;
+import org.utils.InlineMenuBuilder;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class SelectCategoryMenu extends AbstractBrowseMenu<CategoryDTO>{
-    private final Producer<MenuState> onBack;
-    private final Consumer<CategoryDTO> onSelection;
+public abstract class SelectCategoryMenu extends AbstractBrowseMenu<CategoryDTO> {
+    protected abstract MenuState onBack();
+    protected abstract void onSelection(CategoryDTO selected);
     @Getter
     @Setter
     @NotNull
     private String startsWith = "";
-    public SelectCategoryMenu(TelegramUser user, Consumer<CategoryDTO> onSelection, Producer<MenuState> onBack) {
-        super(user);
-        this.onSelection = onSelection;
-        this.onBack = onBack;
+    public SelectCategoryMenu() {
+        super();
     }
     @Override
     public String respondTo(String message){
@@ -68,13 +64,13 @@ public class SelectCategoryMenu extends AbstractBrowseMenu<CategoryDTO>{
 
     @Override
     protected void onItemSelected(CategoryDTO item) {
-        onSelection.accept(item);
+        onSelection(item);
     }
 
 
     @Override
     protected MenuState getBackMenu() {
-        return onBack.call();
+        return onBack();
     }
     private boolean isLetter(String character) {
         return character != null

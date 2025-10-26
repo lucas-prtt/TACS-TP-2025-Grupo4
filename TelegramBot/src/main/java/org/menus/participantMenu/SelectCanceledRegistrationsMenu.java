@@ -15,7 +15,7 @@ public class SelectCanceledRegistrationsMenu extends AbstractRegistrationBrowseM
         return user.getApiClient().getCanceledRegistrations(page, limit);
     }
 
-    public SelectCanceledRegistrationsMenu(TelegramUser user) {
-        super(user);
+    public SelectCanceledRegistrationsMenu() {
+        super();
     }
 }

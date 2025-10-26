@@ -15,8 +15,8 @@ import java.util.UUID;
 
 public class CheckRegistrationMenu extends MenuState {
     RegistrationDTO registrationDTO;
-    public CheckRegistrationMenu(TelegramUser user, RegistrationDTO registrationDTO) {
-        super(user);
+    public CheckRegistrationMenu(RegistrationDTO registrationDTO) {
+        super();
         this.registrationDTO = registrationDTO;
     }
 
@@ -24,12 +24,12 @@ public class CheckRegistrationMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/back":
-                user.setMenu(new ParticipantMenu(user));
+                user.setMenu(new ParticipantMenu());
                 return null;
             case "/cancel":
                 try {
                     user.getApiClient().cancelRegistration(registrationDTO.getRegistrationId());
-                    user.setMenu(new ParticipantMenu(user));
+                    user.setMenu(new ParticipantMenu());
                     return null;
                 }catch (RestClientException e){
                     return e.getMessage() + "\n";

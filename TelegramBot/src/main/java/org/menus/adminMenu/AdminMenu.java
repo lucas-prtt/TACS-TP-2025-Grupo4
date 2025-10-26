@@ -6,18 +6,18 @@ import org.users.TelegramUser;
 import org.utils.InlineMenuBuilder;
 
 public class AdminMenu extends MenuState {
-    public AdminMenu(TelegramUser user) {
-        super(user);
+    public AdminMenu() {
+        super();
     }
 
     @Override
     public String respondTo(String message) {
         switch (message){
             case "/stats":
-                user.setMenu(new StatsMenu(user));
+                user.setMenu(new StatsMenu());
                 break;
             case "/categoryConfig":
-                user.setMenu(new CategoryConfigMenu(user));
+                user.setMenu(new CategoryConfigMenu());
                 break;
             default:
                 return user.getLocalizedMessage("wrongOption");

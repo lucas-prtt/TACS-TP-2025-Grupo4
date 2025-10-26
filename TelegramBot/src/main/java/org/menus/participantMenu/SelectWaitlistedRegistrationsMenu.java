@@ -15,7 +15,7 @@ public class SelectWaitlistedRegistrationsMenu extends AbstractRegistrationBrows
         return user.getApiClient().getWaitlistRegistrations(page, limit);
     }
 
-    public SelectWaitlistedRegistrationsMenu(TelegramUser user) {
-        super(user);
+    public SelectWaitlistedRegistrationsMenu() {
+        super();
     }
 }

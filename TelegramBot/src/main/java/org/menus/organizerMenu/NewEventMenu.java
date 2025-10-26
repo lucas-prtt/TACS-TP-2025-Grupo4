@@ -22,23 +22,22 @@ import java.util.*;
 
 public class NewEventMenu extends MenuState {
     EventDTO eventDTO;
-    Queue<EventInputStep> inputs = new LinkedList<>();
+    List<EventInputStep> inputs = new LinkedList<>();
     private EventInputStep currentStep;
-    public NewEventMenu(TelegramUser user) {
-        super(user);
+    public NewEventMenu() {
+        super();
         eventDTO = new EventDTO();
-        eventDTO.setUsernameOrganizer(user.getServerAccountUsername());
-        inputs.add(new StringInputStep("title", user.getLocalizedMessage("title")));
-        inputs.add(new StringInputStep("description", user.getLocalizedMessage("description")));
-        inputs.add(new DateTimeInputStep("startDateTime", user));
-        inputs.add(new IntegerInputStep("durationMinutes", user.getLocalizedMessage("durationMinutes"), List.of(15, 30, 60, 120, 180)));
-        inputs.add(new StringInputStep("location", user.getLocalizedMessage("location")));
-        inputs.add(new IntegerInputStep("maxParticipants", user.getLocalizedMessage("maxParticipants"), List.of(10, 20, 50, 100, 500, 1000)));
-        inputs.add(new IntegerInputStep("minParticipants", user.getLocalizedMessage("minParticipants"), List.of(0, 10, 20, 50, 100)));
-        inputs.add(new BigDecimalInputStep("price", user.getLocalizedMessage("price"), "freePrice"));
-        inputs.add(new CategoryDTOInputStep("category", user));
-        inputs.add(new TagsInputStep("tags", user.getLocalizedMessage("tags")));
-        currentStep = inputs.poll();
+        inputs.add(new StringInputStep("title"));
+        inputs.add(new StringInputStep("description"));
+        inputs.add(new DateTimeInputStep("startDateTime"));
+        inputs.add(new IntegerInputStep("durationMinutes", List.of(15, 30, 60, 120, 180)));
+        inputs.add(new StringInputStep("location"));
+        inputs.add(new IntegerInputStep("maxParticipants", List.of(10, 20, 50, 100, 500, 1000)));
+        inputs.add(new IntegerInputStep("minParticipants", List.of(0, 10, 20, 50, 100)));
+        inputs.add(new BigDecimalInputStep("price", "freePrice"));
+        inputs.add(new CategoryDTOInputStep("category"));
+        inputs.add(new TagsInputStep("tags"));
+        currentStep = inputs.removeFirst();
     }
 
     @Override
@@ -47,12 +46,12 @@ public class NewEventMenu extends MenuState {
 
         boolean handled = currentStep.handleInput(message, eventDTO, user);
         if (handled) {
-            currentStep = inputs.poll();
-            if (currentStep == null) {
+            if (inputs.isEmpty()) {
                 user.getApiClient().postEvent(eventDTO);
-                user.setMenu(new MainMenu(user));
+                user.setMenu(new MainMenu());
                 return user.getLocalizedMessage("eventSuccesfullyCreated");
             }
+            currentStep = inputs.removeFirst();
         }
         return null;
     }

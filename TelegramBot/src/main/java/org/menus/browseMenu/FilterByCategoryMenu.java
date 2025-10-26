@@ -7,8 +7,8 @@ import org.users.TelegramUser;
 import java.awt.*;
 
 public class FilterByCategoryMenu extends MenuState {
-    public FilterByCategoryMenu(TelegramUser user) {
-        super(user);
+    public FilterByCategoryMenu() {
+        super();
     }
 
     @Override
