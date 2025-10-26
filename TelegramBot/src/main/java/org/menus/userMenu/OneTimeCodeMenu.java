@@ -11,8 +11,11 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
 import org.utils.ErrorHandler;
+import org.utils.InlineMenuBuilder;
 
 import java.util.Map;
+import java.util.Objects;
+
 @Getter
 @Setter
 public class OneTimeCodeMenu extends MenuState {
@@ -23,6 +26,10 @@ public class OneTimeCodeMenu extends MenuState {
 
     @Override
     public String respondTo(String message) {
+        if(Objects.equals(message, "/back"))
+        {
+            user.setMenu(new UserMenu());
+        }
         try {
             if(username == null){
                 username = message;
@@ -47,7 +54,7 @@ public class OneTimeCodeMenu extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = sendMessageText(getQuestion());
+        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back");
         return message;
     }
 

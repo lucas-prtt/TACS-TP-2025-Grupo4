@@ -14,8 +14,11 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
 import org.utils.ErrorHandler;
+import org.utils.InlineMenuBuilder;
 
 import java.util.Map;
+import java.util.Objects;
+
 @Getter
 @Setter
 public class RegisterUserMenu extends MenuState {
@@ -23,6 +26,10 @@ public class RegisterUserMenu extends MenuState {
     @Override
     // Recibe el nombre del usuario y lo intenta crear. Si no puede devuelve un error. Si lo crea lo establece como el usado
     public String respondTo(String message) {
+        if(Objects.equals(message, "/back"))
+        {
+            user.setMenu(new UserMenu());
+        }
         try {
             if(newUser.getUsername() == null){
                 newUser.setUsername(message);
@@ -57,7 +64,7 @@ public class RegisterUserMenu extends MenuState {
 
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = sendMessageText(getQuestion());
+        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back");
         return message;
     }
 
