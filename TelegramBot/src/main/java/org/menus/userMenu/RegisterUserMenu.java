@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.AccountDTO;
+import org.eventServerClient.dtos.LoginRequestDTO;
 import org.menus.MainMenu;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
@@ -38,6 +39,8 @@ public class RegisterUserMenu extends MenuState {
             newUser.setPassword(message);
             AccountDTO usuarioCreado = user.getApiClient().postAccount(newUser.getUsername(), newUser.getPassword());
             user.setMenu(new MainMenu());
+            Map<String, Object> res = user.getApiClient().loginUserAndPassword(new LoginRequestDTO(newUser.getUsername(), newUser.getPassword()));
+            user.updateUser(res);
             return user.getLocalizedMessage("successfulRegister", usuarioCreado.getUuid());
         }catch (HttpClientErrorException e){
             user.setMenu(new UserMenu());
