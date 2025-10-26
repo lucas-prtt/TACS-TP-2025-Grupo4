@@ -77,6 +77,9 @@ public class NewEventMenu extends MenuState {
             return null;
         }
         boolean handled = inputs.get(index).handleInput(message, eventDTO, user);
+        if(inputs.get(index) instanceof IntegerInputStep step && Objects.equals(step.getFieldName(), "minParticipants") && eventDTO.getMinParticipants() > eventDTO.getMaxParticipants()){
+            return user.getLocalizedMessage("minParticipantsTooHigh");
+        }
         if (handled) {
             index++;
             if (index == inputs.size()) {
