@@ -13,10 +13,10 @@ public class BrowseMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/browse":
-                user.setMenu(new BrowseEventsMenu(user));
+                user.setMenu(new BrowseEventsMenu());
                 return null;
             case "/filter":
-                user.setMenu(new FilterMenu(user));
+                user.setMenu(new FilterMenu());
                 return null;
             case "/showFilters":
                 return user.getLocalizedMessage("filters:") + " \n" + String.join("\n   ",user.getFiltros().stream().map(queryFilter -> queryFilter.toLocalizedString(user)).toList());
@@ -24,7 +24,7 @@ public class BrowseMenu extends MenuState {
                 user.clearFilters();
                 return user.getLocalizedMessage("filtersCleared");
             case "/lookupUUID":
-                user.setMenu(new LookUpEventByUUIDMenu(user));
+                user.setMenu(new LookUpEventByUUIDMenu());
                 return null;
             default:
                 return user.getLocalizedMessage("wrongOption");
@@ -47,7 +47,7 @@ public class BrowseMenu extends MenuState {
         return message;
     }
 
-    public BrowseMenu(TelegramUser user) {
-        super(user);
+    public BrowseMenu() {
+        super();
     }
 }

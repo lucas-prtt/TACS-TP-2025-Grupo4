@@ -12,17 +12,15 @@ import java.util.Map;
 
 public class BigDecimalInputStep implements EventInputStep{
     private final String fieldName;
-    private final String label;
     private final String ceroValue;
-    public BigDecimalInputStep(String fieldName, String label, String ceroValue) {
+    public BigDecimalInputStep(String fieldName, String ceroValue) {
         this.fieldName = fieldName;
-        this.label = label;
         this.ceroValue = ceroValue;
     }
 
     @Override
     public SendMessage getQuestion(TelegramUser user) {
-        return InlineMenuBuilder.menu(user.getLocalizedMessage("inputGeneric", label), Map.of(user.getLocalizedMessage(ceroValue), "0"));
+        return InlineMenuBuilder.menu(user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage(fieldName)), Map.of(user.getLocalizedMessage(ceroValue), "0"));
     }
 
     @Override

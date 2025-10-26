@@ -13,20 +13,20 @@ public class GenericDateTimeInputStep {
     private final DateInputHelper helper;
 
 
-    public GenericDateTimeInputStep(String fieldName, TelegramUser user) {
+    public GenericDateTimeInputStep(String fieldName) {
         this.fieldName = fieldName;
-        this.helper = new DateInputHelper(user);
+        this.helper = new DateInputHelper();
     }
 
 
     public SendMessage getQuestion(TelegramUser user) {
-        return helper.questionMessage();
+        return helper.questionMessage(user);
     }
 
     public boolean handleInput(String input, Object thing, TelegramUser user) {
         try {
 
-            if (!helper.respondTo(input)) {
+            if (!helper.respondTo(input, user)) {
                 // Aún se está procesando la fecha, no pasar al siguiente paso
                 return false;
             }

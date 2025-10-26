@@ -16,8 +16,8 @@ import java.util.Objects;
 
 public class MainMenu extends MenuState {
 
-    public MainMenu(TelegramUser user) {
-        super(user);
+    public MainMenu() {
+        super();
     }
 
     @Override
@@ -57,22 +57,22 @@ public class MainMenu extends MenuState {
             return user.getLocalizedMessage("mustBeAdmin");
         switch (message){
             case "/userMenu":
-                user.setMenu(new UserMenu(user));
+                user.setMenu(new UserMenu());
                 return null;
             case "/organizerMenu":
-                user.setMenu(new OrganizerMenu(user));
+                user.setMenu(new OrganizerMenu());
                 return null;
             case "/participantMenu":
-                user.setMenu(new ParticipantMenu(user));
+                user.setMenu(new ParticipantMenu());
                 return null;
             case "/browseMenu":
-                user.setMenu(new BrowseMenu(user));
+                user.setMenu(new BrowseMenu());
                 return null;
             case "/languageMenu":
-                user.setMenu(new LanguageMenu(user));
+                user.setMenu(new LanguageMenu());
                 return null;
             case "/adminMenu":
-                user.setMenu(new AdminMenu(user));
+                user.setMenu(new AdminMenu());
                 return null;
             default:
                 return user.getLocalizedMessage("wrongOption");

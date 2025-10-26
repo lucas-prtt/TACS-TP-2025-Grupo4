@@ -30,8 +30,8 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
     // Menu al que volver con "/back"
     protected abstract MenuState getBackMenu();
 
-    public AbstractBrowseMenu(TelegramUser user) {
-        super(user);
+    public AbstractBrowseMenu() {
+        super();
     }
 
     @Override

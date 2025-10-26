@@ -13,10 +13,10 @@ public class OrganizerMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/newEvent":
-                user.setMenu(new NewEventMenu(user));
+                user.setMenu(new NewEventMenu());
                 return null;
             case "/manageEvents":
-                user.setMenu(new ManageEventSelectionMenu(user));
+                user.setMenu(new ManageEventSelectionMenu());
                 return null;
             default:
                 return user.getLocalizedMessage("wrongOption");
@@ -29,8 +29,8 @@ public class OrganizerMenu extends MenuState {
         return user.getLocalizedMessage("organizerMenuQuestion", user.getLocalizedMessage("/newEvent"), user.getLocalizedMessage("/manageEvents"), user.getLocalizedMessage("/start"));
     }
 
-    public OrganizerMenu(TelegramUser user) {
-        super(user);
+    public OrganizerMenu() {
+        super();
     }
     @Override
     public SendMessage questionMessage() {

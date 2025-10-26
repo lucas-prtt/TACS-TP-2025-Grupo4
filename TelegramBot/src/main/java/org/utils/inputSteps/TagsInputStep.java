@@ -12,17 +12,15 @@ import java.util.Objects;
 public class TagsInputStep implements EventInputStep{
 
     private final String fieldName;
-    private final String label;
 
-    public TagsInputStep(String fieldName, String label) {
+    public TagsInputStep(String fieldName) {
         this.fieldName = fieldName;
-        this.label = label;
     }
 
     @Override
     public SendMessage getQuestion(TelegramUser user) {
 
-        return InlineMenuBuilder.localizedMenu(user, user.getLocalizedMessage("inputGeneric", label), List.of("/stop"));
+        return InlineMenuBuilder.localizedMenu(user, user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage(fieldName)), List.of("/stop"));
     }
 
     @Override

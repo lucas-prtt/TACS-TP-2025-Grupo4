@@ -29,15 +29,15 @@ public class LoginUserMenu extends MenuState {
             }
         catch (HttpClientErrorException e)
         {
-            user.setMenu(new UserMenu(user));
+            user.setMenu(new UserMenu());
             return ErrorHandler.getErrorMessage(e, user);
         }
         catch (ResourceAccessException e) {
-            user.setMenu(new UserMenu(user));
+            user.setMenu(new UserMenu());
             return user.getLocalizedMessage("serverUnavailable");
         }catch (Exception e){
             System.err.println(e.getMessage());
-            user.setMenu(new UserMenu(user));
+            user.setMenu(new UserMenu());
             return user.getLocalizedMessage("internalBotError");
         }
     }
@@ -55,7 +55,7 @@ public class LoginUserMenu extends MenuState {
         return user.setMainMenuAndRespond();
     }
 
-    public LoginUserMenu(TelegramUser user) {
-        super(user);
+    public LoginUserMenu() {
+        super();
     }
 }

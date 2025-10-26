@@ -10,8 +10,8 @@ import java.util.List;
 
 public class BrowseEventsMenu extends AbstractBrowseMenu<EventDTO> {
 
-    public BrowseEventsMenu(TelegramUser user) {
-        super(user);
+    public BrowseEventsMenu() {
+        super();
     }
 
     @Override
@@ -26,11 +26,11 @@ public class BrowseEventsMenu extends AbstractBrowseMenu<EventDTO> {
 
     @Override
     protected void onItemSelected(EventDTO item) {
-        user.setMenu(new CheckEventMenu(user, item));
+        user.setMenu(new CheckEventMenu(item));
     }
 
     @Override
     protected MenuState getBackMenu() {
-        return new BrowseMenu(user);
+        return new BrowseMenu();
     }
 }

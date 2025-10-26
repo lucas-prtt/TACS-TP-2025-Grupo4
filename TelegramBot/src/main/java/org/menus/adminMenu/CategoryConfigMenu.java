@@ -1,35 +1,28 @@
 package org.menus.adminMenu;
 
-import org.eventServerClient.ApiClient;
 import org.menus.MainMenu;
 import org.menus.MenuState;
-import org.menus.userMenu.UserMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.utils.InlineMenuBuilder;
-import org.utils.SelectCategoryMenu;
+import org.utils.categorySelectionMenus.DeleteCategoryMenu;
+import org.utils.categorySelectionMenus.SelectCategoryMenu;
 
 public class CategoryConfigMenu extends MenuState {
-    public CategoryConfigMenu(TelegramUser user) {
-        super(user);
+    public CategoryConfigMenu() {
+        super();
     }
 
     @Override
     public String respondTo(String message) {
         switch (message){
             case "/createCategory":
-                user.setMenu(new CreateCategoryMenu(user));
+                user.setMenu(new CreateCategoryMenu());
                 return null;
             case "/deleteCategory":
-                user.setMenu(new SelectCategoryMenu(user, (categoryDTO) -> {
-                    user.getApiClient().deleteCategory(categoryDTO);
-                    user.setMenu(new MainMenu(user));
-                },
-                        () -> this
-                ));
+                user.setMenu(new DeleteCategoryMenu());
                 return null;
             case "/back":
-                user.setMenu(new AdminMenu(user));
+                user.setMenu(new AdminMenu());
                 return null;
             default:
                 return user.getLocalizedMessage("wrongOption");

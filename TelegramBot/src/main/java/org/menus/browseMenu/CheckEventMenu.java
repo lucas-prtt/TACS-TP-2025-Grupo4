@@ -20,8 +20,8 @@ import java.util.UUID;
 
 public class CheckEventMenu extends MenuState {
     EventDTO evento;
-    public CheckEventMenu(TelegramUser user, EventDTO eventDTO) {
-        super(user);
+    public CheckEventMenu(EventDTO eventDTO) {
+        super();
         evento = eventDTO;
     }
 
@@ -29,31 +29,31 @@ public class CheckEventMenu extends MenuState {
     public String respondTo(String message) {
         if (message.equals("/register")) {
             if (user.getServerAccountId() == null) {
-                user.setMenu(new UserMenu(user));
+                user.setMenu(new UserMenu());
                 return "Primero debe registarse" ;
             }
             try {
                 RegistrationDTO response = user.getApiClient().postRegistration(evento.getId());
 
                 if (response.getState().equals(RegistrationStateDTO.CONFIRMED)) {
-                    user.setMenu(new MainMenu(user));
+                    user.setMenu(new MainMenu());
                     return "Inscripcion confirmada a la lista de participantes\n\n";
                 } else if (response.getState().equals(RegistrationStateDTO.WAITLIST)) {
-                    user.setMenu(new MainMenu(user));
+                    user.setMenu(new MainMenu());
                     return "Inscripcion confirmada a la Waitlist\n\n";
                 } else {
-                    user.setMenu(new MainMenu(user));
+                    user.setMenu(new MainMenu());
                     return "ERROR DESCONOCIDO - Estado " + response + " no reconocido\n\n";
                 }
             } catch (HttpClientErrorException e) {
-                user.setMenu(new MainMenu(user));
+                user.setMenu(new MainMenu());
                 return ErrorHandler.getErrorMessage(e, user);
             }catch (ResourceAccessException e) {
                 System.out.println("Servidor no disponible: " + e.getMessage());
-                user.setMenu(new UserMenu(user));
+                user.setMenu(new UserMenu());
                 return "Error: el servidor no está disponible. Intente más tarde.";
             }catch (Exception e){
-                user.setMenu(new MainMenu(user));
+                user.setMenu(new MainMenu());
                 return "Error desconocido";
             }
         }

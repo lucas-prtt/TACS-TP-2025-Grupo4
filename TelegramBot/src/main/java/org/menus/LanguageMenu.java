@@ -11,7 +11,7 @@ public class LanguageMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         if(message.equals("/back")){
-            user.setMenu(new MainMenu(user));
+            user.setMenu(new MainMenu());
             return null;
         }
         if(message.charAt(0) != '/'){
@@ -21,7 +21,7 @@ public class LanguageMenu extends MenuState {
         if(I18nManager.getLanguageKeys().contains(languageCode)){
             user.setLang(languageCode);
             user.setUserLocale(I18nManager.getLocaleForLanguage(languageCode));
-            user.setMenu(new MainMenu(user));
+            user.setMenu(new MainMenu());
             return user.getLocalizedMessage("languageSelected", user.getLocalizedMessage("language"));
         }else{
             return user.getLocalizedMessage("wrongOption");
@@ -45,7 +45,7 @@ public class LanguageMenu extends MenuState {
         return InlineMenuBuilder.menu(getQuestion(), botones.toArray(new Map[0]));
     }
 
-    public LanguageMenu(TelegramUser user) {
-        super(user);
+    public LanguageMenu() {
+        super();
     }
 }

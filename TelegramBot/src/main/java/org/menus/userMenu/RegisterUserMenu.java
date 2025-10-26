@@ -27,18 +27,18 @@ public class RegisterUserMenu extends MenuState {
             }
             newUser.setPassword(message);
             AccountDTO usuarioCreado = user.getApiClient().postAccount(newUser.getUsername(), newUser.getPassword());
-            user.setMenu(new MainMenu(user));
+            user.setMenu(new MainMenu());
             return user.getLocalizedMessage("successfulRegister", usuarioCreado.getUuid());
         }catch (HttpClientErrorException e){
-            user.setMenu(new UserMenu(user));
+            user.setMenu(new UserMenu());
             return ErrorHandler.getErrorMessage(e, user);
         }catch (ResourceAccessException e) {
-            user.setMenu(new UserMenu(user));
+            user.setMenu(new UserMenu());
             return user.getLocalizedMessage("serverUnavailable");
         }
         catch (Exception e){
             System.err.println(e.getMessage());
-            user.setMenu(new UserMenu(user));
+            user.setMenu(new UserMenu());
             return user.getLocalizedMessage("internalBotError");
         }
     }
@@ -58,7 +58,7 @@ public class RegisterUserMenu extends MenuState {
         return message;
     }
 
-    public RegisterUserMenu(TelegramUser user) {
-        super(user);
+    public RegisterUserMenu() {
+        super();
     }
 }

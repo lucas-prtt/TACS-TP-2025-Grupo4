@@ -13,22 +13,22 @@ public class DateTimeInputStep implements EventInputStep {
     private final DateInputHelper helper;
 
 
-    public DateTimeInputStep(String fieldName, TelegramUser user) {
+    public DateTimeInputStep(String fieldName) {
         this.fieldName = fieldName;
-        this.helper = new DateInputHelper(user);
+        this.helper = new DateInputHelper();
     }
 
 
     @Override
     public SendMessage getQuestion(TelegramUser user) {
-        return helper.questionMessage();
+        return helper.questionMessage(user);
     }
 
     @Override
     public boolean handleInput(String input, EventDTO event, TelegramUser user) {
         try {
 
-            if (!helper.respondTo(input)) {
+            if (!helper.respondTo(input, user)) {
                 // Aún se está procesando la fecha, no pasar al siguiente paso
                 return false;
             }

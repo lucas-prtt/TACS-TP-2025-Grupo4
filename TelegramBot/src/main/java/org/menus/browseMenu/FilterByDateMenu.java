@@ -9,10 +9,10 @@ import org.utils.inputSteps.GenericDateTimeInputStep;
 public class FilterByDateMenu extends MenuState {
     QueryFilter filter;
     GenericDateTimeInputStep input;
-    public FilterByDateMenu(TelegramUser user, String filterParameter) {
-        super(user);
+    public FilterByDateMenu(String filterParameter) {
+        super();
         this.filter = new QueryFilter(filterParameter);
-        input = new GenericDateTimeInputStep("value", user);
+        input = new GenericDateTimeInputStep("value");
     }
 
 
@@ -21,7 +21,7 @@ public class FilterByDateMenu extends MenuState {
         if(!input.handleInput(message, filter, user))
             return null;
         user.addFilter(filter);
-        user.setMenu(new FilterMenu(user));
+        user.setMenu(new FilterMenu());
         return user.getLocalizedMessage("configuredFilter", filter.getTypeLocalized(user), filter.getValue());
     }
 

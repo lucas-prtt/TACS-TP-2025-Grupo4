@@ -13,11 +13,11 @@ public class CreateCategoryMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         if(Objects.equals(message, "/back")){
-            user.setMenu(new CategoryConfigMenu(user));
+            user.setMenu(new CategoryConfigMenu());
             return null;
         }
         user.getApiClient().postCategory(new CategoryDTO(message));
-        user.setMenu(new MainMenu(user));
+        user.setMenu(new MainMenu());
         return null;
     }
 
@@ -31,7 +31,7 @@ public class CreateCategoryMenu extends MenuState {
         return InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back");
     }
 
-    public CreateCategoryMenu(TelegramUser user) {
-        super(user);
+    public CreateCategoryMenu() {
+        super();
     }
 }

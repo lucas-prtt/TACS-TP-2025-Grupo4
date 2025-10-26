@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public class ManageEventSelectionMenu extends AbstractBrowseMenu<EventDTO>{
 
-    public ManageEventSelectionMenu(TelegramUser user) {
-        super(user);
+    public ManageEventSelectionMenu() {
+        super();
     }
 
     @Override
@@ -27,11 +27,11 @@ public class ManageEventSelectionMenu extends AbstractBrowseMenu<EventDTO>{
 
     @Override
     protected void onItemSelected(EventDTO item) {
-        user.setMenu(new ManageEventMenu(user, item));
+        user.setMenu(new ManageEventMenu(item));
     }
 
     @Override
     protected MenuState getBackMenu() {
-        return new OrganizerMenu(user);
+        return new OrganizerMenu();
     }
 }
