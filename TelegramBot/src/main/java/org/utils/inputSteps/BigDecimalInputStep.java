@@ -25,7 +25,7 @@ public class BigDecimalInputStep implements EventInputStep{
 
     @Override
     public SendMessage getQuestion(TelegramUser user) {
-        return InlineMenuBuilder.menu(user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage(fieldName)), Map.of(user.getLocalizedMessage(ceroValue), "0"));
+        return InlineMenuBuilder.menu(user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage("the" + fieldName)), Map.of(user.getLocalizedMessage(ceroValue), "0"));
     }
 
     @Override

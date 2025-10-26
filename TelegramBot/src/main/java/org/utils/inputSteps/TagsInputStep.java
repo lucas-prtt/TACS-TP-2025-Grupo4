@@ -25,7 +25,7 @@ public class TagsInputStep implements EventInputStep{
     @Override
     public SendMessage getQuestion(TelegramUser user) {
 
-        return InlineMenuBuilder.localizedMenu(user, user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage(fieldName)), List.of("/stop"));
+        return InlineMenuBuilder.localizedMenu(user, user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage("the" + fieldName)), List.of("/stop"));
     }
 
     @Override
