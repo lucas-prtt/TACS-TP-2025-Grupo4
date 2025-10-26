@@ -58,26 +58,7 @@ public class SelectCategoryMenu extends AbstractBrowseMenu<CategoryDTO>{
 
     @Override
     protected List<CategoryDTO> fetchItems(int page, int limit) {
-        // TODO: Llamar API get categorias, usando page, limit y startsWith
-        List<CategoryDTO> mockCategories = Stream.of(
-                "Concierto", "Venta", "Curso", "Deporte", "Ceremonia",
-                "Arte", "Ciencia", "Competencia", "Teatro", "Taller",
-                "Exposición", "Seminario", "Conferencia", "Festival", "Viaje",
-                "Campamento", "Deporte Extremo", "Música", "Danza", "Literatura",
-                "Fotografía", "Cine", "Cultura", "Educación", "Medicina",
-                "Tecnología", "Gastronomía", "Networking", "Voluntariado", "Negocios",
-                "Religión", "Yoga", "Meditación", "Idiomas", "Programación",
-                "Historia", "Filosofía", "Astronomía", "Robótica", "Ecología",
-                "Moda", "Belleza", "Fitness", "Marketing", "Psicología",
-                "Arquitectura", "Diseño", "Videojuegos", "Viajes de Aventura", "Emprendimiento"
-        ).map(CategoryDTO::new).toList();
-        mockCategories = mockCategories.stream().filter(c -> c.getTitle().toLowerCase().startsWith(startsWith.toLowerCase())).toList();
-        int fromIndex = (page) * limit;
-        int toIndex = Math.min(fromIndex + limit, mockCategories.size());
-        if (fromIndex >= mockCategories.size()) {
-            return List.of();
-        }
-        return mockCategories.subList(fromIndex, toIndex);
+        return user.getApiClient().getCategories(page, limit, startsWith);
     }
 
     @Override
