@@ -1,9 +1,11 @@
 package org;
 
+import lombok.Setter;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.users.CacheTelegramUserRepository;
 import org.users.TelegramUser;
 import org.users.TelegramUserRepository;
 
@@ -13,7 +15,8 @@ import java.util.Optional;
 public class BotEventos extends TelegramLongPollingBot {
 
     private final String BOT_USERNAME;
-    private final TelegramUserRepository telegramUserRepository = new TelegramUserRepository(this);
+    @Setter
+    protected TelegramUserRepository telegramUserRepository;
 
     public BotEventos(String token, String botUsername) {
         super(token);
@@ -21,12 +24,13 @@ public class BotEventos extends TelegramLongPollingBot {
     }
 
 
+
     @Override
     public void onUpdateReceived(Update update) {
         Long chatId = -1L;
         SendMessage response = null;
         SendMessage question = null;
-
+        TelegramUser user;
         if (update.hasMessage() && update.getMessage().hasText()) {
             chatId = update.getMessage().getChatId();
         }else if (update.hasCallbackQuery()){
@@ -37,20 +41,21 @@ public class BotEventos extends TelegramLongPollingBot {
             Optional<TelegramUser> senderOpt = telegramUserRepository.getUser(chatId);
             //Si es nuevo, dice bienvenido y muestra el menu principal
             if(senderOpt.isEmpty()){
-                TelegramUser user = telegramUserRepository.addUser(chatId, new TelegramUser(chatId));
+                user = telegramUserRepository.addUser(chatId, new TelegramUser(chatId));
                 question = user.getQuestion();
                 question.setChatId(chatId);
             }
             //De lo contrario, muestra respuesta al ultimo menu
             else {
-                response = senderOpt.get().respondTo(update);
-                question = senderOpt.get().getQuestion();
+                user = senderOpt.get();
+                response = user.respondTo(update);
+                question = user.getQuestion();
                 if (response != null) {
                     response.setChatId(chatId);
                 }
                 question.setChatId(chatId);
             }
-
+            telegramUserRepository.update(user);
             try {   if(response != null) {
                     execute(response);
                     }

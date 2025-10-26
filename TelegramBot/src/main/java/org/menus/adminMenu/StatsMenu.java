@@ -1,5 +1,7 @@
 package org.menus.adminMenu;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.StatsDTO;
 import org.menus.MenuState;
@@ -10,7 +12,8 @@ import org.utils.InlineMenuBuilder;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
-
+@Getter
+@Setter
 public class StatsMenu extends MenuState {
     StatsDTO statsDTO;
     @Override

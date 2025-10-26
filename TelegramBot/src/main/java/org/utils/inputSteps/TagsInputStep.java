@@ -1,5 +1,8 @@
 package org.utils.inputSteps;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
@@ -8,10 +11,12 @@ import org.utils.InlineMenuBuilder;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class TagsInputStep implements EventInputStep{
 
-    private final String fieldName;
+    private String fieldName;
 
     public TagsInputStep(String fieldName) {
         this.fieldName = fieldName;

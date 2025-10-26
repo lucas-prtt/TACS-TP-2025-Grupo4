@@ -1,6 +1,8 @@
 package org.utils;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.ConfigManager;
 import org.exceptions.DateAlreadySetException;
 import org.menus.MenuState;
@@ -15,7 +17,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class DateInputHelper{
     private Integer year;
     private Integer month;
@@ -24,10 +28,7 @@ public class DateInputHelper{
     private Integer minute;
     private Integer step = 0;
     private Integer yearSelectPage = 0;
-    @Getter
     private LocalDateTime date;
-    public DateInputHelper() {
-    }
 
     public boolean respondTo(String message, TelegramUser user) {
         switch (step){

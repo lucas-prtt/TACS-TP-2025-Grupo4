@@ -1,5 +1,8 @@
 package org.utils.inputSteps;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.exceptions.DateAlreadySetException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -7,10 +10,12 @@ import org.users.TelegramUser;
 import org.utils.DateInputHelper;
 
 import java.lang.reflect.Field;
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class DateTimeInputStep implements EventInputStep {
-    private final String fieldName;
-    private final DateInputHelper helper;
+    private String fieldName;
+    private DateInputHelper helper;
 
 
     public DateTimeInputStep(String fieldName) {

@@ -2,6 +2,7 @@ package org.utils.categorySelectionMenus;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.eventServerClient.dtos.event.CategoryDTO;
 import org.menus.MenuState;
@@ -13,12 +14,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+@Setter
+@Getter
 public abstract class SelectCategoryMenu extends AbstractBrowseMenu<CategoryDTO> {
     protected abstract MenuState onBack();
     protected abstract void onSelection(CategoryDTO selected);
-    @Getter
-    @Setter
     @NotNull
     private String startsWith = "";
     public SelectCategoryMenu() {

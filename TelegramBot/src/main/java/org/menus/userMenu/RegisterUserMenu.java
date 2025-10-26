@@ -3,6 +3,8 @@ package org.menus.userMenu;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.AccountDTO;
 import org.menus.MainMenu;
@@ -14,7 +16,8 @@ import org.menus.MenuState;
 import org.utils.ErrorHandler;
 
 import java.util.Map;
-
+@Getter
+@Setter
 public class RegisterUserMenu extends MenuState {
     AccountDTO newUser = new AccountDTO();
     @Override

@@ -1,5 +1,7 @@
 package org.utils;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.ConfigManager;
 import org.menus.MenuState;
 import org.menus.userMenu.UserMenu;
@@ -12,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
+@Getter
+@Setter
 public abstract class AbstractBrowseMenu<T> extends MenuState {
     protected Integer page = 0;
     protected Integer limit = ConfigManager.getInstance().getOptionalInteger("view.page.limit").orElse(5);

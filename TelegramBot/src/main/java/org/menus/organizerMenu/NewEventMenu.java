@@ -1,5 +1,7 @@
 package org.menus.organizerMenu;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.CategoryDTO;
 import org.eventServerClient.dtos.event.EventDTO;
@@ -19,7 +21,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-
+@Getter
+@Setter
 public class NewEventMenu extends MenuState {
     EventDTO eventDTO;
     List<EventInputStep> inputs = new LinkedList<>();

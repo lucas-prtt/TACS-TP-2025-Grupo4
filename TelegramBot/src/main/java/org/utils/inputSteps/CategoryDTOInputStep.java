@@ -1,5 +1,8 @@
 package org.utils.inputSteps;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.dtos.event.CategoryDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -8,11 +11,13 @@ import org.utils.categorySelectionMenus.EventBuildStepCategoryMenu;
 import org.utils.categorySelectionMenus.SelectCategoryMenu;
 
 import java.lang.reflect.Field;
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class CategoryDTOInputStep implements EventInputStep{
 
-    private final String fieldName;
-    private final EventBuildStepCategoryMenu selectMenu;
+    private String fieldName;
+    private EventBuildStepCategoryMenu selectMenu;
 
 
     public CategoryDTOInputStep(String fieldName) {
@@ -29,6 +34,7 @@ public class CategoryDTOInputStep implements EventInputStep{
     @Override
     public boolean handleInput(String message, EventDTO eventDTO, TelegramUser user) {
         try {
+            selectMenu.setUser(user);
             selectMenu.respondTo(message);
             if(selectMenu.isFinished()){
                 Field field = eventDTO.getClass().getDeclaredField(fieldName);

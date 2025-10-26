@@ -1,6 +1,8 @@
 package org.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.menus.userMenu.UserMenu;
@@ -17,24 +19,18 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
 
-
+@NoArgsConstructor
+@Setter
 @Getter
 public class TelegramUser {
-    @Getter
-    private final Long chatId;
-    @Setter
+    private Long chatId;
     private String serverAccountId;
-    @Setter
     private String serverAccountUsername;
-    @Setter
     private String token;
     private MenuState menu;
-    private final List<QueryFilter> filtros = new ArrayList();
-    @Setter
+    private List<QueryFilter> filtros = new ArrayList<>();
     private String lang = "en";
-    @Setter
     private Locale userLocale = Locale.US;
-    @Setter
     private List<String> roles;
 
     public TelegramUser(Long chatId){
@@ -95,6 +91,7 @@ public class TelegramUser {
     public void clearFilters(){
         filtros.clear();
     }
+    @JsonIgnore
     public String getAllFiltersAsQueryParams(){
         return "?" + String.join("&", filtros.stream().map(Object::toString).toList());
     }
@@ -110,14 +107,15 @@ public class TelegramUser {
         }
         setMenu(new MainMenu());
     }
-
+    @JsonIgnore
     public Boolean isAdmin(){
         return roles != null && roles.contains("ADMIN");
     }
+    @JsonIgnore
     public Boolean isUser(){
         return roles != null && roles.contains("USER");
     }
-
+    @JsonIgnore
     public SendMessage getQuestion() {
         try{
             return menu.questionMessage();
@@ -145,6 +143,7 @@ public class TelegramUser {
         this.roles = null;
         setMenu(new UserMenu());
     }
+    @JsonIgnore
 
     public String getLocalizedMessage(String key, Object... args) {
         return I18nManager.get(key, this.lang, args);
@@ -154,6 +153,8 @@ public class TelegramUser {
                 .withLocale(userLocale);
         return date.format(formatter);
     }
+    @JsonIgnore
+
     public ApiClient getApiClient(){
         return new ApiClient(token, this);
     }
