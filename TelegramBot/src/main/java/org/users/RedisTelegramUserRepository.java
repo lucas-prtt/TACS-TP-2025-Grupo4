@@ -17,11 +17,9 @@ public class RedisTelegramUserRepository implements TelegramUserRepository {
     public TelegramUser addUser(Long chatId, TelegramUser user) {
         try {
             String json = objectMapper.writeValueAsString(user);
-            System.out.println("adduser: " + json);
             jedis.set(chatId.toString(), json);
             return user;
         } catch (Exception e) {
-            e.printStackTrace(System.err);
             throw new RuntimeException("Error al serializar el usuario", e);
         }
     }
@@ -29,12 +27,10 @@ public class RedisTelegramUserRepository implements TelegramUserRepository {
     public Optional<TelegramUser> getUser(Long chatId) {
         try {
             String json = jedis.get(chatId.toString());
-            System.out.println("getUser: " + json);
             if (json == null) return Optional.empty();
             TelegramUser user = objectMapper.readValue(json, TelegramUser.class);
             return Optional.of(user);
         } catch (Exception e) {
-            e.printStackTrace(System.err);
             throw new RuntimeException("Error al deserializar el usuario", e);
         }
     }
