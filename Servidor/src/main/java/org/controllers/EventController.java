@@ -21,6 +21,7 @@ import org.services.EventService;
 import org.services.OrganizerService;
 import org.services.RegistrationService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,13 +65,13 @@ public class EventController {
      * @return ResponseEntity con la lista de eventos organizados
      */
     @GetMapping("/organized-events")
-    public ResponseEntity<List<EventDTO>> getOrganizedEvents(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
+    public ResponseEntity<PagedModel<EventDTO>> getOrganizedEvents(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "limit", required = false) Integer limit) {
         page = PageNormalizer.normalizeEventsPageNumber(page);
         limit = PageNormalizer.normalizeEventsPageLimit(limit);
         UUID id = getCurrentAccountId();
-        List<EventDTO> events;
+        Page<EventDTO> events;
         events = eventService.getEventsByOrganizer(id, page, limit);
-        return ResponseEntity.ok(events);
+        return ResponseEntity.ok(new PagedModel<>(events));
     }
 
     /**
@@ -101,7 +102,7 @@ public class EventController {
      * @return ResponseEntity con la lista de eventos filtrados
      */
     @GetMapping
-    public ResponseEntity<List<EventDTO>> getEventsByParams(
+    public ResponseEntity<PagedModel<EventDTO>> getEventsByParams(
             @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "titleContains", required = false) String titleContains,
             @RequestParam(name = "maxDate", required = false) LocalDateTime maxDate,
@@ -114,10 +115,11 @@ public class EventController {
             @RequestParam(name = "limit", required = false) Integer limit) throws BadRequestException {
         page = PageNormalizer.normalizeEventsPageNumber(page);
         limit = PageNormalizer.normalizeEventsPageLimit(limit);
-        List<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(
+        Page<EventDTO> eventsDTO = eventService.getEventDTOsByQuery(
             title, titleContains, maxDate, minDate, category, tags, maxPrice, minPrice, page, limit
         );
-        return ResponseEntity.ok(eventsDTO);
+
+        return ResponseEntity.ok(new PagedModel<>(eventsDTO));
     }
 
     /**
@@ -155,14 +157,14 @@ public class EventController {
      * @return ResponseEntity con la lista de inscripciones o error
      */
     @GetMapping("/{eventId}/registrations")
-    public ResponseEntity<?> getParticipants(@PathVariable("eventId") UUID eventId,
+    public ResponseEntity<PagedModel<RegistrationDTO>> getParticipants(@PathVariable("eventId") UUID eventId,
                                              @RequestParam(name = "page", required = false) Integer page,
                                              @RequestParam(name = "limit", required = false) Integer limit,
                                              @RequestParam(name = "registrationType", required = false) RegistrationState registrationState) {
             page = PageNormalizer.normalizeRegistrationsPageNumber(page);
             limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-            List<RegistrationDTO> registrationDTOS = registrationService.findByEvent_IdAndRegistrationState(eventId, registrationState, page, limit);
+            Page<RegistrationDTO> registrationDTOS = registrationService.findByEvent_IdAndRegistrationState(eventId, registrationState, page, limit);
 
-            return ResponseEntity.ok(registrationDTOS);
+            return ResponseEntity.ok(new PagedModel<>(registrationDTOS));
     }
 }
