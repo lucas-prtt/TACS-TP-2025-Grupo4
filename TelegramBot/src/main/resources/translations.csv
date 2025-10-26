@@ -504,10 +504,10 @@ unsuccessfullDateInput,Error: Fecha invalida,Error: Invalid date,Fehler: Ungült
 doNotPressThoseButtons,No presione esos botones,Don't press those buttons,Drücken Sie diese Tasten nicht,Não aperte esses botões,N'appuie pas sur ces boutons,Non premere quei pulsanti
 errorBackToMainMenu,Hubo un error desconocido. Volviendo al menú principal.,There was an unknown error. Returning to the main menu.,Es ist ein unbekannter Fehler aufgetreten. Zurück zum Hauptmenü.,Ocorreu um erro desconhecido. Retornando ao menu principal.,Une erreur inconnue s'est produite. Retour au menu principal.,Si è verificato un errore sconosciuto. Ritorno al menu principale.
 endTagsInput,Finalizada la introduccion de tags,Tag entry complete,Tag-Eintrag abgeschlossen,Entrada de tag concluída,Entrée de balise terminée,Inserimento tag completato
-eventSuccesfullyCreated,Evento creado,Event created,Ereignis erstellt,Evento criado,Événement créé,Evento creato
+eventSuccesfullyCreated,🌟 Evento creado,🌟 Event created,🌟 Ereignis erstellt,🌟 Evento criado,🌟 Événement créé,🌟 Evento creato
 cannotGoBackwards,No se puede ir mas atras,You can't go back any further,Weiter geht es nicht mehr,Você não pode voltar mais,Tu ne peux pas revenir plus loin,Non puoi tornare più indietro
 freePrice,Sin costo,Free of charge,Kostenlos,Grátis,Gratuitement,Gratuito
-/stop,Finalizar,Finish,Beenden,Terminar,Finition,Fine
+/stop,✅ Terminar,✅ Finish,✅ Fertig,✅ Acabamento,✅ Terminer,✅ Finitura
 month1,Enero,January,Januar,Janeiro,Janvier,Gennaio
 month2,Febrero,February,Februar,Fevereiro,Février,Febbraio
 month3,Marzo ,March ,März,Marchar ,Mars ,Marzo 
@@ -663,3 +663,5 @@ requestInputNewCategory,Ingrese el nombre de la categoria a crear,Enter the name
 /confirm,✅ Confirmar,✅ Confirm,✅ Bestätigen,✅ Confirm,✅ Confirm,✅ Conferma
 /cancel,❌ Cancelar,❌ Cancel,❌ Abbrechen,❌ Cancel,❌ Annuler,❌ Annulla
 requestLogoutConfirmation,🚪 Esta seguro que desea cerrar la sesion?,🚪 Are you sure you want to log out?,🚪 Möchten Sie sich wirklich abmelden?,🚪 Tem certeza de que deseja sair?,🚪 Êtes-vous sûr de vouloir vous déconnecter ?,🚪 Sei sicuro di voler effettuare il logout?
+currentTags,Tags actuales: {0},Current tags: {0},Aktuelle Tags: {0},Tags atuais: {0},Balises actuelles : {0},Tag correnti: {0}
+requestEventCreationConfirmation,Esta seguro que desea crear el evento?,Are you sure you want to create the event?,Möchten Sie das Ereignis wirklich erstellen?,Tem certeza de que deseja criar o evento?,Etes-vous sûr de vouloir créer l'événement ?,Sei sicuro di voler creare l'evento?
