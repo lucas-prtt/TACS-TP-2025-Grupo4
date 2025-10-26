@@ -96,4 +96,30 @@ public class InlineMenuBuilder {
         markup.setKeyboard(keyboard);
         return markup;
     }
+
+    public static void addExtraLocalizedOptions(TelegramUser user, SendMessage message, String... options) {
+        InlineKeyboardMarkup existingMarkup = (InlineKeyboardMarkup) message.getReplyMarkup();
+        List<List<InlineKeyboardButton>> keyboard;
+        if (existingMarkup != null && existingMarkup.getKeyboard() != null) {
+            keyboard = new ArrayList<>(existingMarkup.getKeyboard());
+        } else {
+            keyboard = new ArrayList<>();
+        }
+        List<InlineKeyboardButton> extraRow = new ArrayList<>();
+
+        for (String option : options) {
+            InlineKeyboardButton btn = new InlineKeyboardButton();
+            btn.setText(user.getLocalizedMessage(option));
+            btn.setCallbackData(option);
+            extraRow.add(btn);
+        }
+        if (!extraRow.isEmpty()) {
+            keyboard.add(extraRow);
+        }
+
+        InlineKeyboardMarkup newMarkup = new InlineKeyboardMarkup();
+        newMarkup.setKeyboard(keyboard);
+
+        message.setReplyMarkup(newMarkup);
+    }
 }

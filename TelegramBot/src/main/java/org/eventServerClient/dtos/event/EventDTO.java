@@ -12,12 +12,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalUnit;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
-@NoArgsConstructor
 @Setter
 @Getter
 @AllArgsConstructor
@@ -37,6 +33,10 @@ public class EventDTO {
         EventStateDTO state;
         Integer registered;
         Integer waitlisted;
+        public EventDTO (){
+                tags = new ArrayList<>();
+        }
+
         public String asShortString(TelegramUser user){
                 return " - " + ( title != null ? title : user.getLocalizedMessage("nullTitle")) + "\n" + ( description != null ? (description.length()<1000 ? description : description.substring(0, 996).concat("...")): user.getLocalizedMessage("nullDescription"));
         }

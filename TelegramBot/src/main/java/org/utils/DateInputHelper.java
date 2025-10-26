@@ -30,6 +30,13 @@ public class DateInputHelper{
     private Integer yearSelectPage = 0;
     private LocalDateTime date;
 
+    public void goBackOneStep(){
+        if(step > 0)
+            step--;
+        else
+            throw new RuntimeException("No se puede retroceder mas");
+    }
+
     public boolean respondTo(String message, TelegramUser user) {
         switch (step){
             case 0:

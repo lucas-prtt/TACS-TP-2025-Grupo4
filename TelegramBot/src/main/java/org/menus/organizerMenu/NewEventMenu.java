@@ -12,6 +12,7 @@ import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.utils.DateInputHelper;
+import org.utils.InlineMenuBuilder;
 import org.utils.inputSteps.*;
 import org.yaml.snakeyaml.util.Tuple;
 
@@ -26,7 +27,7 @@ import java.util.*;
 public class NewEventMenu extends MenuState {
     EventDTO eventDTO;
     List<EventInputStep> inputs = new LinkedList<>();
-    private EventInputStep currentStep;
+    Integer index = 0;
     public NewEventMenu() {
         super();
         eventDTO = new EventDTO();
@@ -40,21 +41,55 @@ public class NewEventMenu extends MenuState {
         inputs.add(new BigDecimalInputStep("price", "freePrice"));
         inputs.add(new CategoryDTOInputStep("category"));
         inputs.add(new TagsInputStep("tags"));
-        currentStep = inputs.removeFirst();
+        inputs.add(new ConfirmCreationStep());
     }
 
     @Override
     public String respondTo(String message) {
-        if (currentStep == null) return null;
+        if(Objects.equals(message, "/back")){
+            if(inputs.get(index) instanceof DateTimeInputStep dateTimeInputStep){
+                try {
+                    dateTimeInputStep.getHelper().goBackOneStep();
+                    return null;
+                }catch (Exception ignored){}
+                // Si no se puede, vuelve a descripcion
+            }
+            if(inputs.get(index) instanceof TagsInputStep tagsInputStep){
+                if(eventDTO.getTags().isEmpty()){
+                    index--;
+                }else
+                    eventDTO.getTags().removeLast();
+                return user.getLocalizedMessage("currentTags", String.join(", ", eventDTO.getTags().stream().map(TagDTO::getNombre).toList()));
+            }
+            index--;
+            if(inputs.get(index) instanceof DateTimeInputStep dateTimeInputStep){
+                try {
+                    dateTimeInputStep.getHelper().goBackOneStep();
+                    return null;
+                }catch (Exception ignored){}
+                // No deberia pasar nunca
+            }
 
-        boolean handled = currentStep.handleInput(message, eventDTO, user);
+            if(index < 0 || inputs.size() <= index){
+                user.setMenu(new OrganizerMenu());
+                return null;
+            }
+            return null;
+        }
+        boolean handled = inputs.get(index).handleInput(message, eventDTO, user);
+        if(inputs.get(index) instanceof IntegerInputStep step && Objects.equals(step.getFieldName(), "minParticipants") && eventDTO.getMinParticipants() > eventDTO.getMaxParticipants()){
+            return user.getLocalizedMessage("minParticipantsTooHigh");
+        }
         if (handled) {
-            if (inputs.isEmpty()) {
+            index++;
+            if (index == inputs.size()) {
                 user.getApiClient().postEvent(eventDTO);
                 user.setMenu(new MainMenu());
                 return user.getLocalizedMessage("eventSuccesfullyCreated");
             }
-            currentStep = inputs.removeFirst();
+        }
+        if(inputs.get(index) instanceof TagsInputStep tagsInputStep){
+            return eventDTO.getTags().isEmpty() ? null : user.getLocalizedMessage("currentTags", String.join(", ", eventDTO.getTags().stream().map(TagDTO::getNombre).toList()));
         }
         return null;
     }
@@ -65,8 +100,9 @@ public class NewEventMenu extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
-        if (currentStep == null) return user.getQuestion();
-        return currentStep.getQuestion(user);
+        SendMessage msg = inputs.get(index).getQuestion(user);
+        InlineMenuBuilder.addExtraLocalizedOptions(user,  msg, "/back", "/start");
+        return msg;
     }
 }
 

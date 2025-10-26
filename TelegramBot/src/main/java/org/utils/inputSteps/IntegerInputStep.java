@@ -23,7 +23,7 @@ public class IntegerInputStep implements EventInputStep{
 
     @Override
     public SendMessage getQuestion(TelegramUser user) {
-        return InlineMenuBuilder.menu(user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage(fieldName)), defaultOptions.stream().map(Object::toString).toList());
+        return InlineMenuBuilder.menu(user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage("the" + fieldName)), defaultOptions.stream().map(Object::toString).toList());
     }
 
     @Override

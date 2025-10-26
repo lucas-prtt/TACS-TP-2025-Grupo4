@@ -23,7 +23,7 @@ public class StringInputStep implements EventInputStep{
     @Override
     public SendMessage getQuestion(TelegramUser user) {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage(fieldName)));
+        sendMessage.setText(user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage("the" + fieldName)));
         return sendMessage;
     }
 
