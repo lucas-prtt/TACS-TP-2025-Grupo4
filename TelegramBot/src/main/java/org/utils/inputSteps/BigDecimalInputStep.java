@@ -1,5 +1,8 @@
 package org.utils.inputSteps;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
@@ -9,10 +12,12 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class BigDecimalInputStep implements EventInputStep{
-    private final String fieldName;
-    private final String ceroValue;
+    private String fieldName;
+    private String ceroValue;
     public BigDecimalInputStep(String fieldName, String ceroValue) {
         this.fieldName = fieldName;
         this.ceroValue = ceroValue;

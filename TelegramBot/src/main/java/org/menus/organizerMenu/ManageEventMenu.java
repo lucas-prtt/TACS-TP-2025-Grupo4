@@ -1,5 +1,8 @@
 package org.menus.organizerMenu;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.EventStateDTO;
@@ -11,7 +14,9 @@ import org.utils.InlineMenuBuilder;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class ManageEventMenu extends MenuState {
     EventDTO event;
     public ManageEventMenu(EventDTO item) {

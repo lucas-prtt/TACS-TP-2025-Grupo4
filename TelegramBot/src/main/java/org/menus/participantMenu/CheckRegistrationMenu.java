@@ -1,5 +1,8 @@
 package org.menus.participantMenu;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
@@ -12,7 +15,9 @@ import org.utils.InlineMenuBuilder;
 
 import java.util.List;
 import java.util.UUID;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class CheckRegistrationMenu extends MenuState {
     RegistrationDTO registrationDTO;
     public CheckRegistrationMenu(RegistrationDTO registrationDTO) {

@@ -1,5 +1,6 @@
 package org.menus;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.menus.adminMenu.AdminMenu;
 import org.menus.browseMenu.BrowseMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -19,7 +20,7 @@ public class MainMenu extends MenuState {
     public MainMenu() {
         super();
     }
-
+    @JsonIgnore
     @Override
     public String getQuestion() {
         if(user.getServerAccountUsername() == null)

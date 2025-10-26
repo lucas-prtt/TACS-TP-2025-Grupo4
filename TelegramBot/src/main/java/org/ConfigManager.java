@@ -57,4 +57,18 @@ public class ConfigManager {
             return Optional.empty();
         }
     }
+    public Boolean getBool(String key){
+        String opt = get(key);
+        if(opt == null)
+            throw new RuntimeException("Bool " + key + " does not exist in config.properties");
+        return Boolean.parseBoolean(opt);
+    }
+    public Optional<Boolean> getOptionalBool(String key){
+        try{
+            return Optional.of(getBool(key));
+        }
+        catch (Exception e){
+            return Optional.empty();
+        }
+    }
 }

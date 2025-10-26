@@ -1,14 +1,20 @@
 package org.utils.inputSteps;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 
 import java.lang.reflect.Field;
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class StringInputStep implements EventInputStep{
 
-    private final String fieldName;
+    private String fieldName;
 
     public StringInputStep(String fieldName) {
         this.fieldName = fieldName;

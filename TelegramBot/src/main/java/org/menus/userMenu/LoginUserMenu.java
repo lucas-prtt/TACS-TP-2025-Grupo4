@@ -1,6 +1,8 @@
 package org.menus.userMenu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
 import org.eventServerClient.dtos.AccountDTO;
 import org.eventServerClient.dtos.LoginRequestDTO;
 import org.springframework.web.client.HttpClientErrorException;
@@ -11,7 +13,8 @@ import org.menus.MenuState;
 import org.utils.ErrorHandler;
 
 import java.util.Map;
-
+@Getter
+@Setter
 public class LoginUserMenu extends MenuState {
     LoginRequestDTO newUser = new LoginRequestDTO();
     @Override

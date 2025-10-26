@@ -2,13 +2,10 @@ package org.menus.userMenu;
 
 import org.menus.MainMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.menus.MenuState;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
-import java.util.Map;
-
 public class UserMenu extends MenuState {
     @Override
     public String respondTo(String message) {

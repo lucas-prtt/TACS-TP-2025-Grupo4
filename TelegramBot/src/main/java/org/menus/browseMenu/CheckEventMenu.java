@@ -1,6 +1,9 @@
 package org.menus.browseMenu;
 
 import com.sun.tools.javac.Main;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
@@ -17,7 +20,9 @@ import org.utils.InlineMenuBuilder;
 
 import java.util.List;
 import java.util.UUID;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class CheckEventMenu extends MenuState {
     EventDTO evento;
     public CheckEventMenu(EventDTO eventDTO) {

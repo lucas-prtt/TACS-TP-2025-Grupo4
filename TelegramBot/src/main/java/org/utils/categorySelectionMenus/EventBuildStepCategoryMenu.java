@@ -1,13 +1,15 @@
 package org.utils.categorySelectionMenus;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.dtos.event.CategoryDTO;
 import org.menus.MenuState;
-
+@NoArgsConstructor
+@Setter
+@Getter
 public class EventBuildStepCategoryMenu extends SelectCategoryMenu{
-    @Getter
     boolean finished = false;
-    @Getter
     String category = "";
 
     @Override
