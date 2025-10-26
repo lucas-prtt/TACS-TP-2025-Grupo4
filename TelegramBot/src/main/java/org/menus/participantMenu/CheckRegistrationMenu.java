@@ -31,7 +31,7 @@ public class CheckRegistrationMenu extends MenuState {
             case "/back":
                 user.setMenu(new ParticipantMenu());
                 return null;
-            case "/cancel":
+            case "/cancelRegistration":
                 try {
                     user.getApiClient().cancelRegistration(registrationDTO.getRegistrationId());
                     user.setMenu(new ParticipantMenu());
@@ -55,7 +55,7 @@ public class CheckRegistrationMenu extends MenuState {
             message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back", "/start");
         }
         else{
-            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/cancel", "/back", "/start");
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/cancelRegistration", "/back", "/start");
         }
         return message;
     }

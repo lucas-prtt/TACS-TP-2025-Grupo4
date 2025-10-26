@@ -22,12 +22,9 @@ public class UserMenu extends MenuState {
             case "/back":
                 user.setMenu(new MainMenu());
                 return null;
-            case "/login":
-                user.deleteCurrentAccount();
-                return null;
             case "/logout":
-                user.deleteCurrentAccount();
-                return user.getLocalizedMessage("logoutConfirmed");
+                user.setMenu(new LogoutMenu());
+                return null;
 
             default:
                 return user.getLocalizedMessage("wrongOption");

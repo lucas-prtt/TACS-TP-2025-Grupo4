@@ -344,7 +344,7 @@ organizerMenuQuestion,"Menu de organizador:
 - Visualizza e modifica lo stato dei tuoi eventi
 {2}
 - Torna al menu principale"
-/cancel,❌ Cancelar inscripcion,❌ Cancel registration,❌ Registrierung stornieren,❌ Cancelar inscrição,❌ Annuler l'inscription,❌ Annulla registrazione
+/cancelRegistration,❌ Cancelar inscripcion,❌ Cancel registration,❌ Registrierung stornieren,❌ Cancelar inscrição,❌ Annuler l'inscription,❌ Annulla registrazione
 registrationAsDetailedString,"Estado: {0}
 Evento: {1}
 Descripcion:{2}
@@ -660,3 +660,6 @@ CategoryConfigMenuQuestion,"Elija una opcion:
 /createCategory,🔷 Crear categoria,🔷 Create category,🔷 Kategorie erstellen,🔷 Criar categoria,🔷 Créer une catégorie,🔷 Crea categoria
 /deleteCategory,❌ Eliminar categoria,❌ Delete category,❌ Kategorie löschen,❌ Excluir categoria,❌ Supprimer la catégorie,❌ Elimina categoria
 requestInputNewCategory,Ingrese el nombre de la categoria a crear,Enter the name of the category to create,Geben Sie den Namen der zu erstellenden Kategorie ein,Digite o nome da categoria a ser criada,Entrez le nom de la catégorie à créer,Inserisci il nome della categoria da creare
+/confirm,✅ Confirmar,✅ Confirm,✅ Bestätigen,✅ Confirm,✅ Confirm,✅ Conferma
+/cancel,❌ Cancelar,❌ Cancel,❌ Abbrechen,❌ Cancel,❌ Annuler,❌ Annulla
+requestLogoutConfirmation,🚪 Esta seguro que desea cerrar la sesion?,🚪 Are you sure you want to log out?,🚪 Möchten Sie sich wirklich abmelden?,🚪 Tem certeza de que deseja sair?,🚪 Êtes-vous sûr de vouloir vous déconnecter ?,🚪 Sei sicuro di voler effettuare il logout?
