@@ -10,6 +10,8 @@ import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -106,7 +108,7 @@ public class EventService {
      * @return Lista paginada de eventos
      * @throws BadRequestException si los filtros son inválidos
      */
-    public List<EventDTO> getEventDTOsByQuery(
+    public Page<EventDTO> getEventDTOsByQuery(
             String title, String titleContains,
             LocalDateTime maxDate, LocalDateTime minDate,
             String category, List<String> tags,
@@ -157,13 +159,15 @@ public class EventService {
             query.addCriteria(new Criteria().andOperator(criteriaList.toArray(new Criteria[0])));
         }
 
-        query.with(PageRequest.of(page, limit));
+        PageRequest pageable = PageRequest.of(page, limit);
+        query.with(pageable);
 
         List<Event> events = mongoTemplate.find(query, Event.class);
+        long total = mongoTemplate.count(query.skip(-1).limit(-1), Event.class);
 
-        return events.stream()
+        return new PageImpl<>(events.stream()
                 .map(EventDTO::fromEvent)
-                .toList();
+                .toList(), pageable, total);
     }
 
     /**
@@ -182,12 +186,11 @@ public class EventService {
      * @param limit Cantidad de elementos por página (opcional)
      * @return Lista paginada de eventos organizados
      */
-    public List<EventDTO> getEventsByOrganizer(UUID organizerId, Integer page, Integer limit) {
+    public Page<EventDTO> getEventsByOrganizer(UUID organizerId, Integer page, Integer limit) {
         if(page == null || limit == null){
             throw new NullPageInfoException();
         }
-        List<Event> organizerEvents =  eventRepository.findByOrganizerId(organizerId, PageRequest.of(page, limit)).getContent();
-        return organizerEvents.stream().map(EventDTO::fromEvent).toList();
+        return eventRepository.findByOrganizerId(organizerId, PageRequest.of(page, limit)).map(EventDTO::fromEvent);
     }
 
     /**

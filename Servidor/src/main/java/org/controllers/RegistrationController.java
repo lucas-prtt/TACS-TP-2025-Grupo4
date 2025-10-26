@@ -12,6 +12,8 @@ import org.model.enums.RegistrationState;
 import org.model.events.Registration;
 import org.services.AccountService;
 import org.services.RegistrationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -38,15 +40,15 @@ public class RegistrationController {
    * @return ResponseEntity con la lista de inscripciones
    */
   @GetMapping
-  public ResponseEntity<List<RegistrationDTO>> getRegistrations(@RequestParam(name = "page", required = false) Integer page,
-                                                                @RequestParam(name = "limit", required = false) Integer limit,
-                                                                @RequestParam(name = "registrationState", required = false) RegistrationState registrationState) {
+  public ResponseEntity<PagedModel<RegistrationDTO>> getRegistrations(@RequestParam(name = "page", required = false) Integer page,
+                                                                      @RequestParam(name = "limit", required = false) Integer limit,
+                                                                      @RequestParam(name = "registrationState", required = false) RegistrationState registrationState) {
     UUID accountId = getCurrentAccountId();
 
     page = PageNormalizer.normalizeRegistrationsPageNumber(page);
     limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-    List<RegistrationDTO> registrations = registrationService.findByUser_IdAndRegistrationState(accountId, registrationState, page, limit);
-    return ResponseEntity.ok(registrations);
+    Page<RegistrationDTO> registrations = registrationService.findByUser_IdAndRegistrationState(accountId, registrationState, page, limit);
+    return ResponseEntity.ok(new PagedModel<>(registrations));
   }
 
   /**
