@@ -137,11 +137,11 @@ public class EventService {
         }
 
         if (category != null) {
-            criteriaList.add(Criteria.where("category").is(category));
+            criteriaList.add(Criteria.where("category.title").is(category));
         }
 
         if (tags != null && !tags.isEmpty()) {
-            criteriaList.add(Criteria.where("tags").all(tags));
+            criteriaList.add(Criteria.where("tags.title").all(tags));
         }
 
         if (minPrice != null) {
