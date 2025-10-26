@@ -581,7 +581,7 @@ Scegli un'opzione
 /adminMenu,⚙️ Menu de administrador,⚙️ Admin menu,⚙️ Admin-Menü,⚙️ Menu de administração,⚙️ Menu d'administration,⚙️ Menu di amministrazione
 mustBeAdmin,Esa opcion solo es valida para administradores,This option is only valid for administrators.,Diese Option ist nur für Administratoren gültig.,Esta opção é válida somente para administradores.,Cette option n'est valable que pour les administrateurs.,Questa opzione è valida solo per gli amministratori.
 /stats,📊 Estadisticas,📊 Statistics,📊 Statistiken,📊 Estatísticas,📊 Statistiques,📊 Statistiche
-/categoryConfig,🧩 Gestionar categorias,🧩 Manage categories,🧩 Kategorien verwalten,🧩 Gerenciar categorias,🧩 Gérer les catégories,🧩 Gestisci categorie
+/categoryConfig,🛠️ Gestionar categorias,🛠️ Manage categories,🛠️ Kategorien verwalten,🛠️ Gerenciar categorias,🛠️ Gérer les catégories,🛠️ Gestisci le categorie
 adminMenuQuestion,"Menu de administrador:
 {0} - Ver distintas estadisticas del sistema
 {1} - Crear o eliminar categorias","Administrator Menu:
@@ -642,5 +642,21 @@ Statistiche ({0}):
 /basicStats,📊 Estadisticas basicas,📊 Basic statistics,📊 Grundlegende Statistiken,📊 Estatísticas básicas,📊 Statistiques de base,📊 Statistiche di base
 writeCategoryToFilter,Puede escribir el incio de la categoria para filtrar los resultados,You can type the start of the category to filter the results.,"Sie können den Anfang der Kategorie eingeben, um die Ergebnisse zu filtern.",Você pode digitar o início da categoria para filtrar os resultados.,Vous pouvez taper le début de la catégorie pour filtrer les résultats.,Puoi digitare l'inizio della categoria per filtrare i risultati.
 invalidOption,Opcion invalida,Invalid option,Ungültige Option,Opção inválida,Option invalide,Opzione non valida
-logoutConfirmed,Cerraste la sesion!,You have logged out!,Sie haben sich abgemeldet!,Você saiu!,Vous êtes déconnecté !,Hai effettuato il logout!
+logoutConfirmed,Cerraste la sesion!,You've logged out!,Sie haben sich abgemeldet!,Você saiu!,Vous êtes déconnecté !,Hai effettuato il logout!
 /eraseStartsWith,Eliminar Filtro,Remove Filter,Filter entfernen,Remover filtro,Supprimer le filtre,Rimuovi filtro
+CategoryConfigMenuQuestion,"Elija una opcion:
+{0} : Eliminar una categoria existente
+{1} : Crear una nueva categoria","Choose an option:
+{0}: Delete an existing category
+{1}: Create a new category","Wählen Sie eine Option:
+{0}: Vorhandene Kategorie löschen
+{1}: Neue Kategorie erstellen","Selecione uma opção:
+{0}: Excluir uma categoria existente
+{1}: Criar uma nova categoria","Choisissez une option :
+{0} : Supprimer une catégorie existante
+{1} : Créer une nouvelle catégorie","Scegli un'opzione:
+{0}: Elimina una categoria esistente
+{1}: Crea una nuova categoria"
+/createCategory,🔷 Crear categoria,🔷 Create category,🔷 Kategorie erstellen,🔷 Criar categoria,🔷 Créer une catégorie,🔷 Crea categoria
+/deleteCategory,❌ Eliminar categoria,❌ Delete category,❌ Kategorie löschen,❌ Excluir categoria,❌ Supprimer la catégorie,❌ Elimina categoria
+requestInputNewCategory,Ingrese el nombre de la categoria a crear,Enter the name of the category to create,Geben Sie den Namen der zu erstellenden Kategorie ein,Digite o nome da categoria a ser criada,Entrez le nom de la catégorie à créer,Inserisci il nome della categoria da creare

@@ -6,6 +6,7 @@ import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.eventServerClient.dtos.*;
+import org.eventServerClient.dtos.event.CategoryDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.EventStateDTO;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.users.TelegramUser;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class ApiClient {
 
@@ -242,4 +244,54 @@ public class ApiClient {
             throw e;
         }
     }
+
+    public List<CategoryDTO> getCategories(Integer page, Integer limit, String startsWith){
+        try {
+                List<CategoryDTO> mockCategories = Stream.of(
+                    "Concierto", "Venta", "Curso", "Deporte", "Ceremonia",
+                    "Arte", "Ciencia", "Competencia", "Teatro", "Taller",
+                    "Exposición", "Seminario", "Conferencia", "Festival", "Viaje",
+                    "Campamento", "Deporte Extremo", "Música", "Danza", "Literatura",
+                    "Fotografía", "Cine", "Cultura", "Educación", "Medicina",
+                    "Tecnología", "Gastronomía", "Networking", "Voluntariado", "Negocios",
+                    "Religión", "Yoga", "Meditación", "Idiomas", "Programación",
+                    "Historia", "Filosofía", "Astronomía", "Robótica", "Ecología",
+                    "Moda", "Belleza", "Fitness", "Marketing", "Psicología",
+                    "Arquitectura", "Diseño", "Videojuegos", "Viajes de Aventura", "Emprendimiento"
+            ).map(CategoryDTO::new).toList();
+            mockCategories = mockCategories.stream().filter(c -> c.getTitle().toLowerCase().startsWith(startsWith.toLowerCase())).toList();
+            int fromIndex = (page) * limit;
+            int toIndex = Math.min(fromIndex + limit, mockCategories.size());
+            if (fromIndex >= mockCategories.size()) {
+                return List.of();
+            }
+            return mockCategories.subList(fromIndex, toIndex);
+        }catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
+    }
+    public CategoryDTO postCategory(CategoryDTO categoryDTO){
+        try {
+        CategoryDTO mockCategory = new CategoryDTO("NuevaCategoria");
+        return mockCategory;
+        }catch (HttpClientErrorException e){
+        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+            user.deleteCurrentAccount();
+            throw e;
+        }
+    }
+
+    public void deleteCategory(CategoryDTO categoryDTO){
+        try {
+        CategoryDTO mockCategory = new CategoryDTO("NuevaCategoria");
+        return;
+        }catch (HttpClientErrorException e){
+        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+            user.deleteCurrentAccount();
+        throw e;
+        }
+    }
+
 }
