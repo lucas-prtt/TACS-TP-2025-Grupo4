@@ -9,6 +9,7 @@ import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.AccountDTO;
 import org.eventServerClient.dtos.LoginRequestDTO;
 import org.menus.MainMenu;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -29,10 +30,20 @@ public class RegisterUserMenu extends MenuState {
     public String respondTo(String message) {
         if(Objects.equals(message, "/back"))
         {
-            user.setMenu(new UserMenu());
+            if(newUser.getUsername() == null){
+                user.setMenu(new UserMenu());
+                return null;
+            }
+            else {
+                newUser.setUsername(null);
+                return null;
+            }
         }
         try {
             if(newUser.getUsername() == null){
+                if(user.getApiClient().userExists(message)){
+                    return user.getLocalizedMessage("usernameAlreadyUsed");
+                }
                 newUser.setUsername(message);
                 return null;
             }
@@ -43,7 +54,15 @@ public class RegisterUserMenu extends MenuState {
             user.updateUser(res);
             return user.getLocalizedMessage("successfulRegister", usuarioCreado.getUuid());
         }catch (HttpClientErrorException e){
-            user.setMenu(new UserMenu());
+            String errorCode = ErrorHandler.getErrorCode(e);
+            if(Objects.equals(errorCode, "ERROR_WEAK_PASSWORD")){
+                newUser.setPassword(null);
+            }else if(Objects.equals(errorCode, "ERROR_USER_ALREADY_EXISTS")){
+                newUser.setPassword(null);
+                newUser.setUsername(null);
+            }else {
+                user.setMenu(new UserMenu());
+            }
             return ErrorHandler.getErrorMessage(e, user);
         }catch (ResourceAccessException e) {
             user.setMenu(new UserMenu());
