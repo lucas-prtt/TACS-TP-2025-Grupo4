@@ -294,4 +294,18 @@ public class ApiClient {
         }
     }
 
+    public boolean userExists(String username){
+        try {
+            String url = getBaseUri() + "/auth/checkUser?username=" + username;
+            restTemplate.getForObject(url, String.class);
+            return true;
+        }catch (HttpClientErrorException e){
+            if(e.getStatusCode() == HttpStatus.NOT_FOUND)
+                return false;
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
+    }
+
 }

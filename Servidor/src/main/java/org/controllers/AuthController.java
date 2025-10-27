@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.DTOs.accounts.LoginRequestDTO;
 import org.DTOs.accounts.RegisterRequestDTO;
+import org.exceptions.AccountNotFoundException;
 import org.exceptions.WrongOneTimeCodeException;
 import org.model.accounts.Account;
 import org.model.accounts.OneTimeCode;
@@ -77,6 +78,15 @@ public class AuthController {
           "token", token
       ));
   }
+    @GetMapping("/checkUser")
+    public ResponseEntity<?> checkUser(@RequestParam(value = "username", required = true) String username, @RequestHeader(name = "Accept-Language", required = false) String lang) {
+        try{
+            Account account = accountService.getAccountByUsername(username);
+            return ResponseEntity.ok(account.getId());
+        }catch (AccountNotFoundException ex){
+            return ResponseEntity.notFound().build();
+        }
+    }
 
   /**
    * Genera un código de un solo uso (OneTimeCode) para el usuario autenticado.

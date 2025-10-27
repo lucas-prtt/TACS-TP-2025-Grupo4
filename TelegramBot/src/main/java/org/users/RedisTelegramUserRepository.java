@@ -15,18 +15,19 @@ public class RedisTelegramUserRepository implements TelegramUserRepository {
         objectMapper.registerModule(new JavaTimeModule());
     }
     public TelegramUser addUser(Long chatId, TelegramUser user) {
+        String json;
         try {
-            String json = objectMapper.writeValueAsString(user);
-            jedis.set(chatId.toString(), json);
-            return user;
+            json = objectMapper.writeValueAsString(user);
         } catch (Exception e) {
             throw new RuntimeException("Error al serializar el usuario", e);
         }
+        jedis.set(chatId.toString(), json);
+        return user;
     }
 
     public Optional<TelegramUser> getUser(Long chatId) {
+        String json = jedis.get(chatId.toString());
         try {
-            String json = jedis.get(chatId.toString());
             if (json == null) return Optional.empty();
             TelegramUser user = objectMapper.readValue(json, TelegramUser.class);
             return Optional.of(user);

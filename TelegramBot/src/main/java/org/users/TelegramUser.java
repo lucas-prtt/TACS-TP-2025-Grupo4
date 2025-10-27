@@ -100,6 +100,7 @@ public class TelegramUser {
         this.token = (String) infoLogin.get("token");
         this.serverAccountUsername = ((String) infoLogin.get("username"));
         this.serverAccountId = ((String) infoLogin.get("id"));
+        this.setFiltros(new ArrayList<>());
         try {
             setRoles((List<String>) infoLogin.get("roles"));
         }catch (Exception e){

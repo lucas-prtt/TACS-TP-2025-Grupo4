@@ -19,62 +19,67 @@ import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
 public class CheckEventMenu extends MenuState {
     EventDTO evento;
-    public CheckEventMenu(EventDTO eventDTO) {
+    MenuState backMenu;
+    public CheckEventMenu(EventDTO eventDTO, MenuState backMenu) {
         super();
         evento = eventDTO;
+        this.backMenu = backMenu;
     }
 
     @Override
     public String respondTo(String message) {
-        if (message.equals("/register")) {
+        if(message.equals("/back")){
+            user.setMenu(backMenu);
+            return null;
+        }
+        if (message.equals("/registerUser")) {
             if (user.getServerAccountId() == null) {
                 user.setMenu(new UserMenu());
-                return "Primero debe registarse" ;
+                return user.getLocalizedMessage("mustLoginFirst") ;
             }
             try {
                 RegistrationDTO response = user.getApiClient().postRegistration(evento.getId());
 
                 if (response.getState().equals(RegistrationStateDTO.CONFIRMED)) {
                     user.setMenu(new MainMenu());
-                    return "Inscripcion confirmada a la lista de participantes\n\n";
+                    return user.getLocalizedMessage("registrationConfirmedParticipant");
                 } else if (response.getState().equals(RegistrationStateDTO.WAITLIST)) {
                     user.setMenu(new MainMenu());
-                    return "Inscripcion confirmada a la Waitlist\n\n";
+                    return user.getLocalizedMessage("registrationConfirmedWaitlist");
                 } else {
                     user.setMenu(new MainMenu());
-                    return "ERROR DESCONOCIDO - Estado " + response + " no reconocido\n\n";
+                    return user.getLocalizedMessage("unknownErrorInServer");
                 }
             } catch (HttpClientErrorException e) {
-                user.setMenu(new MainMenu());
                 return ErrorHandler.getErrorMessage(e, user);
             }catch (ResourceAccessException e) {
                 System.out.println("Servidor no disponible: " + e.getMessage());
                 user.setMenu(new UserMenu());
-                return "Error: el servidor no está disponible. Intente más tarde.";
+                return user.getLocalizedMessage("unknownErrorInServer");
             }catch (Exception e){
                 user.setMenu(new MainMenu());
                 return "Error desconocido";
             }
         }
-        return "Respuesta invalida \n\n" + getQuestion();
+        return user.getLocalizedMessage("wrongOption");
     }
 
     @Override
     public String getQuestion() {
         return evento.asDetailedString(user) +
                 "\n\n"+
-                (evento.getMaxParticipants() == evento.getRegistered() ? "/register --> Registrarse a la waitlist\n" : "/register --> Registrarse al evento\n")+
-                "/start    --> volver al menu inicial";
+                user.getLocalizedMessage("/registerUser") + "  -->  " + (Objects.equals(evento.getMaxParticipants(), evento.getRegistered()) ?  user.getLocalizedMessage("registerToWaitlist") : user.getLocalizedMessage("registerToParticipants"));
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/register", "/start"));
+        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/registerUser", "/back", "/start");
         return message;
     }
 
