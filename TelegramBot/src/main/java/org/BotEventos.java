@@ -53,6 +53,8 @@ public class BotEventos extends TelegramLongPollingBot {
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
+            }catch (Exception e){
+                senderOpt = Optional.empty();
             }
             //Si es nuevo, dice bienvenido y muestra el menu principal
             if(senderOpt.isEmpty()){

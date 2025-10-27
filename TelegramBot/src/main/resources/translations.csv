@@ -371,20 +371,14 @@ Descrizione: {2}
 ID: {3}
 Data di inizio: {4}"
 registrationAsShortString,"Estado: {0}
-Evento: {1}
-ID: {2}","Status: {0}
-Event: {1}
-ID: {2}","Status: {0}
-Ereignis: {1}
-ID: {2}","Status: {0}
-Evento: {1}
-ID: {2}","Statut : {0}
-Événement : {1}
-ID : {2}","Stato: {0}
-Evento: {1}
-ID: {2}"
+Evento: {1}","State: {0}
+Event: {1}","Status: {0}
+Ereignis: {1}","Estado: {0}
+Evento: {1}","État : {0}
+Événement : {1}","Stato: {0}
+Evento: {1}"
 CONFIRMED,✅ Confirmada,✅ Confirmed,✅ Bestätigt,✅ Confirmado,✅ Confirmé,✅ Confermato
-WAITLIST,⏳ En lista de espera,⏳ On the waiting list,⏳ Auf der Warteliste,⏳ Na lista de espera,⏳ Sur la liste d'attente,⏳ In lista d'attesa
+WAITLIST,⏳ Lista de espera,⏳ Waiting list,⏳ Warteliste,⏳ Lista de espera,⏳ Liste d'attente,⏳ Lista d'attesa
 CANCELED,❌ Cancelada,❌ Cancelled,❌ Abgesagt,❌ Cancelado,❌ Annulé,❌ Annullato
 participantMenuQuestion,"Menu de participante:
 
@@ -667,3 +661,6 @@ currentTags,Tags actuales: {0},Current tags: {0},Aktuelle Tags: {0},Tags atuais:
 requestEventCreationConfirmation,Esta seguro que desea crear el evento?,Are you sure you want to create the event?,Möchten Sie das Ereignis wirklich erstellen?,Tem certeza de que deseja criar o evento?,Etes-vous sûr de vouloir créer l'événement ?,Sei sicuro di voler creare l'evento?
 minParticipantsTooHigh,⚠️ La cantidad minima de participantes debe ser mas baja que la cantidad maxima,⚠️ The minimum number of participants must be lower than the maximum number,⚠️ Die Mindestteilnehmerzahl muss niedriger sein als die Höchstteilnehmerzahl,⚠️ O número mínimo de participantes deve ser inferior ao número máximo,⚠️ Le nombre minimum de participants doit être inférieur au nombre maximum,⚠️ Il numero minimo di partecipanti deve essere inferiore al numero massimo
 usernameAlreadyUsed,🚫 Ese usuario ya existe,🚫 That user already exists,🚫 Dieser Benutzer existiert bereits,🚫 Esse usuário já existe,🚫 Cet utilisateur existe déjà,🚫 Quell'utente esiste già
+/checkEvent,👀 Ir al evento,👀 Go to the event,👀 Zur Veranstaltung,👀 Vá ao evento,👀 Aller à l'événement,👀 Vai all'evento
+registrationConfirmedParticipant,✅ Inscripcion confirmada,✅ Registration confirmed,✅ Registrierung bestätigt,✅ Inscrição confirmada,✅ Inscription confirmée,✅ Registrazione confermata
+registrationConfirmedWaitlist,🕒 Inscripcion añadida a la Waitlist,🕒 Registration added to the Waitlist,🕒 Registrierung zur Warteliste hinzugefügt,🕒 Inscrição adicionada à lista de espera,🕒 Inscription ajoutée à la liste d'attente,🕒 Registrazione aggiunta alla lista d'attesa

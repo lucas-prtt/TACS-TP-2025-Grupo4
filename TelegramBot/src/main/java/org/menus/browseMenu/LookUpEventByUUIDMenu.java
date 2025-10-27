@@ -13,11 +13,15 @@ import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class LookUpEventByUUIDMenu extends MenuState {
     @Override
     public String respondTo(String message) {
+        if(Objects.equals(message, "/back")){
+            user.setMenu(new BrowseEventsMenu());
+        }
         EventDTO eventDTO;
         try {
              eventDTO = user.getApiClient().getEvent(UUID.fromString(message));
@@ -25,7 +29,7 @@ public class LookUpEventByUUIDMenu extends MenuState {
             return user.getLocalizedMessage("invalidUUID");
         }
         try {
-            user.setMenu(new CheckEventMenu(eventDTO));
+            user.setMenu(new CheckEventMenu(eventDTO, this));
             return user.getLocalizedMessage("eventFound");
         }catch (HttpClientErrorException e){
             return ErrorHandler.getErrorMessage(e, user);
@@ -42,7 +46,7 @@ public class LookUpEventByUUIDMenu extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = sendMessageText(getQuestion());
+        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back");
         return message;
     }
 }

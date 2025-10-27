@@ -6,11 +6,16 @@ import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
+import org.eventServerClient.dtos.event.EventDTO;
 import org.menus.MenuState;
+import org.menus.browseMenu.CheckEventMenu;
 import org.menus.userMenu.UserMenu;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
+import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
@@ -28,6 +33,19 @@ public class CheckRegistrationMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         switch (message){
+            case "/checkEvent":
+                EventDTO eventDTO;
+                try {
+                    eventDTO = user.getApiClient().getEvent(registrationDTO.getEventId());
+                }catch (HttpClientErrorException e){
+                    return ErrorHandler.getErrorMessage(e, user);
+                }
+                try {
+                    user.setMenu(new CheckEventMenu(eventDTO, this));
+                    return null;
+                }catch (HttpClientErrorException e){
+                    return ErrorHandler.getErrorMessage(e, user);
+                }
             case "/back":
                 user.setMenu(new ParticipantMenu());
                 return null;
@@ -36,8 +54,8 @@ public class CheckRegistrationMenu extends MenuState {
                     user.getApiClient().cancelRegistration(registrationDTO.getRegistrationId());
                     user.setMenu(new ParticipantMenu());
                     return null;
-                }catch (RestClientException e){
-                    return e.getMessage() + "\n";
+                }catch (HttpClientErrorException e){
+                    return ErrorHandler.getErrorMessage(e, user);
                 }
             default:
                 return user.getLocalizedMessage("wrongOption");
@@ -52,10 +70,10 @@ public class CheckRegistrationMenu extends MenuState {
     public SendMessage questionMessage() {
         SendMessage message;
         if (registrationDTO.getState() == RegistrationStateDTO.CANCELED){
-            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back", "/start");
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/checkEvent","/back", "/start");
         }
         else{
-            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/cancelRegistration", "/back", "/start");
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/checkEvent","/cancelRegistration", "/back", "/start");
         }
         return message;
     }
