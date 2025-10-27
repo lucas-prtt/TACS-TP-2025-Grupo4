@@ -1,6 +1,7 @@
 package org.menus.browseMenu;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -9,6 +10,7 @@ import org.users.TelegramUser;
 import org.utils.inputSteps.GenericDateTimeInputStep;
 @Getter
 @Setter
+@NoArgsConstructor
 public class FilterByDateMenu extends MenuState {
     QueryFilter filter;
     GenericDateTimeInputStep input;

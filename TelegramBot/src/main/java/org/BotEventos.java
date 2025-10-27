@@ -8,8 +8,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.users.CacheTelegramUserRepository;
 import org.users.TelegramUser;
 import org.users.TelegramUserRepository;
+import org.utils.InlineMenuBuilder;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class BotEventos extends TelegramLongPollingBot {
@@ -31,6 +34,7 @@ public class BotEventos extends TelegramLongPollingBot {
         SendMessage response = null;
         SendMessage question = null;
         TelegramUser user;
+        Optional<TelegramUser> senderOpt;
         if (update.hasMessage() && update.getMessage().hasText()) {
             chatId = update.getMessage().getChatId();
         }else if (update.hasCallbackQuery()){
@@ -38,7 +42,18 @@ public class BotEventos extends TelegramLongPollingBot {
         }
 
             //Busca el usuario en el repo
-            Optional<TelegramUser> senderOpt = telegramUserRepository.getUser(chatId);
+            try {
+                senderOpt = telegramUserRepository.getUser(chatId);
+            }catch (JedisConnectionException ex){
+                SendMessage msg = InlineMenuBuilder.menu("⚠️ Our database is offline.\n\n⏳ Please wait", Map.of("\uD83D\uDD04 Retry", "/start"));
+                msg.setChatId(chatId);
+                try {
+                    execute(msg);
+                    return;
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             //Si es nuevo, dice bienvenido y muestra el menu principal
             if(senderOpt.isEmpty()){
                 user = telegramUserRepository.addUser(chatId, new TelegramUser(chatId));

@@ -1,6 +1,7 @@
 package org.menus.browseMenu;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -11,6 +12,7 @@ import org.utils.InlineMenuBuilder;
 import java.util.List;
 @Getter
 @Setter
+@NoArgsConstructor
 public class FilterByMenu extends MenuState {
     QueryFilter filter;
 
