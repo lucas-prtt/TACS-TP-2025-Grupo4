@@ -53,7 +53,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
                 if (message.startsWith("/page")) {
                     try {
                         int numero = Integer.parseInt(message.substring(6));
-                        page = Math.max(numero, 1);
+                        page = Math.max(numero, 1) - 1;
                         return null;
                     } catch (Exception e) {
                         return user.getLocalizedMessage("unidentifiablePage") + "\n\n";
