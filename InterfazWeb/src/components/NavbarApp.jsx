@@ -11,7 +11,9 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import SettingsIcon from '@mui/icons-material/SettingsOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const drawerWidth = 250;
 
@@ -80,7 +82,7 @@ const NAV_ITEMS = [
   
 ];
 
-const NavbarContent = ({ navigate, theme, onClick, showMenuButton }) => (
+const NavbarContent = ({ navigate, theme, onClick, showMenuButton, user, handleLogout }) => (
   <Box
     sx={{
       width: drawerWidth,
@@ -116,7 +118,9 @@ const NavbarContent = ({ navigate, theme, onClick, showMenuButton }) => (
       </Box>
     </Box>
     <Divider sx={{ mb: 2, borderColor: theme.palette.primary.contrastText, opacity: 0.2 }} />
-    <List>
+    
+    {/* Lista de navegación principal */}
+    <List sx={{ flex: 1 }}>
       {NAV_ITEMS.filter(item => item.show).map(item => (
         <ListItem
           button
@@ -138,20 +142,73 @@ const NavbarContent = ({ navigate, theme, onClick, showMenuButton }) => (
             primaryTypographyProps={{
               sx: {
                 color: theme.palette.primary.contrastText,
-                fontWeight: 700 // <-- Texto en bold
+                fontWeight: 700
               }
             }}
           />
         </ListItem>
       ))}
     </List>
+
+    {/* Sección de usuario y logout */}
+    {user && (
+      <Box sx={{ mt: 'auto' }}>
+        <Divider sx={{ mb: 2, borderColor: theme.palette.primary.contrastText, opacity: 0.2 }} />
+        
+        {/* Información del usuario */}
+        <Box sx={{ px: 2, py: 1, mb: 1 }}>
+          <Typography variant="body2" sx={{ color: theme.palette.primary.contrastText, opacity: 0.8 }}>
+            Conectado como:
+          </Typography>
+          <Typography variant="body1" sx={{ color: theme.palette.primary.contrastText, fontWeight: 600 }}>
+            {user.username || user.email || 'Usuario'}
+          </Typography>
+        </Box>
+
+        {/* Botón de logout */}
+        <ListItem
+          button
+          onClick={() => { handleLogout(); onClick && onClick(); }}
+          sx={{
+            borderRadius: "10px",
+            transition: "background 0.2s",
+            '&:hover': {
+              bgcolor: 'rgba(255, 255, 255, 0.1)',
+            }
+          }}
+        >
+          <ListItemIcon>
+            <LogoutIcon sx={{ color: theme.palette.primary.contrastText }} />
+          </ListItemIcon>
+          <ListItemText
+            primary="Cerrar Sesión"
+            primaryTypographyProps={{
+              sx: {
+                color: theme.palette.primary.contrastText,
+                fontWeight: 700
+              }
+            }}
+          />
+        </ListItem>
+      </Box>
+    )}
   </Box>
 );
 
 export const NavbarApp = () => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  // Función para manejar el logout
+  const handleLogout = () => {
+    const confirmed = window.confirm('¿Estás seguro de que quieres cerrar sesión?');
+    if (confirmed) {
+      logout();
+      navigate('/login');
+    }
+  };
 
   return (
     <>
@@ -161,6 +218,8 @@ export const NavbarApp = () => {
         onClose={() => setMobileOpen(false)}
         ModalProps={{
           keepMounted: true,
+          disablePortal: false,
+          'aria-hidden': undefined
         }}
         sx={{
           display: { xs: 'block', md: 'none' },
@@ -172,6 +231,8 @@ export const NavbarApp = () => {
           theme={theme}
           onClick={() => setMobileOpen(false)}
           showMenuButton={true}
+          user={user}
+          handleLogout={handleLogout}
         />
       </Drawer>
 
@@ -187,7 +248,13 @@ export const NavbarApp = () => {
           zIndex: 1200, 
         }}
       >
-        <NavbarContent navigate={navigate} theme={theme} showMenuButton={false} />
+        <NavbarContent 
+          navigate={navigate} 
+          theme={theme} 
+          showMenuButton={false}
+          user={user}
+          handleLogout={handleLogout}
+        />
       </Box>
       <Box
         sx={{

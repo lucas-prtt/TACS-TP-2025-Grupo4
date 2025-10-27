@@ -33,6 +33,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/events")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"}, allowCredentials = "true")
 public class EventController {
 
     private final EventService eventService;
