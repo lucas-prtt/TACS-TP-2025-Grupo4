@@ -19,6 +19,7 @@ import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 @Getter
 @Setter
@@ -74,7 +75,7 @@ public class CheckEventMenu extends MenuState {
     public String getQuestion() {
         return evento.asDetailedString(user) +
                 "\n\n"+
-                user.getLocalizedMessage("/registerUser") + "  -->  " + (evento.getMaxParticipants() == evento.getRegistered() ?  "Registrarse a la waitlist\n" : "Registrarse al evento\n");
+                user.getLocalizedMessage("/registerUser") + "  -->  " + (Objects.equals(evento.getMaxParticipants(), evento.getRegistered()) ?  user.getLocalizedMessage("registerToWaitlist") : user.getLocalizedMessage("registerToParticipants"));
     }
     @Override
     public SendMessage questionMessage() {

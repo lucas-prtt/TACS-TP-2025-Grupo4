@@ -664,3 +664,5 @@ usernameAlreadyUsed,🚫 Ese usuario ya existe,🚫 That user already exists,�
 /checkEvent,👀 Ir al evento,👀 Go to the event,👀 Zur Veranstaltung,👀 Vá ao evento,👀 Aller à l'événement,👀 Vai all'evento
 registrationConfirmedParticipant,✅ Inscripcion confirmada,✅ Registration confirmed,✅ Registrierung bestätigt,✅ Inscrição confirmada,✅ Inscription confirmée,✅ Registrazione confermata
 registrationConfirmedWaitlist,🕒 Inscripcion añadida a la Waitlist,🕒 Registration added to the Waitlist,🕒 Registrierung zur Warteliste hinzugefügt,🕒 Inscrição adicionada à lista de espera,🕒 Inscription ajoutée à la liste d'attente,🕒 Registrazione aggiunta alla lista d'attesa
+registerToWaitlist,Registrarse en la lista de espera,Register on the waiting list,Tragen Sie sich in die Warteliste ein,Inscreva-se na lista de espera,Inscrivez-vous sur la liste d'attente,Registrati nella lista d'attesa
+registerToParticipants,Registrarse al evento,Register for the event,Registrieren Sie sich für die Veranstaltung,Inscreva-se no evento,Inscrivez-vous à l'événement,Registrati all'evento
