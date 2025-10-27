@@ -36,6 +36,8 @@ public class FilterMenu extends MenuState {
             case "/filterByMaxPrice":
                 user.setMenu(new FilterByMenu( "maxPrice"));
                 return null;
+            case "/showFilters":
+                return user.getLocalizedMessage("filters:") + " \n" + String.join("\n   ",user.getFiltros().stream().map(queryFilter -> queryFilter.toLocalizedString(user)).toList());
             case "/back":
                 user.setMenu(new BrowseMenu());
                 return null;
@@ -51,6 +53,6 @@ public class FilterMenu extends MenuState {
 
     @Override
     public SendMessage questionMessage() {
-        return InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(),"/filterByTitleContains", "/filterByTitle", "/filterByCategory",  "/filterByTags", "/filterByDate", "/filterByMinPrice", "/filterByMaxPrice", "/back");
+        return InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(),"/filterByTitleContains", "/filterByTitle", "/filterByCategory",  "/filterByTags", "/filterByDate", "/filterByMinPrice", "/filterByMaxPrice", "/showFilters", "/back");
     }
 }
