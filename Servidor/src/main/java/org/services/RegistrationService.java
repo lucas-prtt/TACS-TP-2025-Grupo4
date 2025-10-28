@@ -5,11 +5,10 @@ import static org.DTOs.registrations.RegistrationDTO.toRegistrationDTO;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import org.DTOs.registrations.RegistrationDTO;
 import org.exceptions.*;
+import org.model.enums.EventState;
 import org.model.events.Event;
 import org.model.events.Registration;
 import org.model.enums.RegistrationState;
@@ -17,8 +16,18 @@ import org.model.accounts.Account;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
 import org.repositories.RegistrationRepository;
+import org.springframework.dao.TransientDataAccessException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Update;
+import com.mongodb.client.result.UpdateResult;
+import org.springframework.dao.DuplicateKeyException;
 
 
 @Service
@@ -26,13 +35,13 @@ public class RegistrationService {
     private final RegistrationRepository registrationRepository;
     private final EventRepository eventRepository;
     private final AccountRepository accountRepository;
+    private final MongoTemplate mongoTemplate;
 
-    ConcurrentHashMap<UUID, ReentrantLock> locksParticipants= new ConcurrentHashMap<>();
-
-    public RegistrationService(RegistrationRepository registrationRepository, EventRepository eventRepository, AccountRepository accountRepository) {
+    public RegistrationService(RegistrationRepository registrationRepository, EventRepository eventRepository, AccountRepository accountRepository,MongoTemplate mongoTemplate) {
         this.registrationRepository = registrationRepository;
         this.eventRepository = eventRepository;
         this.accountRepository = accountRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     /**
@@ -118,42 +127,81 @@ public class RegistrationService {
 
     /**
      * Cancela una inscripción, solo si pertenece al usuario.
-     * @param registration inscripción a cancelar
+     * @param registrationId UUID de inscripción a cancelar
      * @return La inscripción cancelada
      * @throws AlreadyCanceledException si ya está cancelada
      */
-    public Registration cancelRegistration(Registration registration) {
-        if(registration.getCurrentState() == RegistrationState.CANCELED)
+    @Retryable(retryFor = { TransientDataAccessException.class })
+    @Transactional // ✅ 1. Garantía de Consistencia
+    public Registration cancelRegistration(UUID registrationId) {
+        // 1. RELEER DENTRO DE LA TRANSACCIÓN
+        Registration registration = registrationRepository.findById(registrationId)
+            .orElseThrow(RegistrationNotFoundException::new);
+        if (registration.getCurrentState() == RegistrationState.CANCELED) {
             throw new AlreadyCanceledException("El registro ya esta cancelado");
-
-        Event event = registration.getEvent();
-        UUID eventId = event.getId();
-        Registration promotedRegistration = null;
-        ReentrantLock lock = locksParticipants.computeIfAbsent(eventId, id -> new ReentrantLock());
-        lock.lock();
-        try {
-            if(registration.getCurrentState() == RegistrationState.CONFIRMED){
-                // Eliminar de participantes
-                event.getParticipants().remove(registration);
-                // Promocionar a alguien de la waitlist si corresponde
-                promotedRegistration = event.promoteFromWaitlist();
-            }else {
-                event.getWaitList().remove(registration);
-            }
-            registration.setState(RegistrationState.CANCELED);
-            registrationRepository.save(registration);
-            eventRepository.save(event);
-            if(promotedRegistration != null){
-                registrationRepository.save(promotedRegistration);
-            }
-        }finally {
-            lock.unlock();
-            if (!lock.hasQueuedThreads()) {
-                locksParticipants.remove(eventId, lock);
-            }
         }
+
+        UUID eventId = registration.getEvent().getId();
+        RegistrationState oldState = registration.getCurrentState();
+
+        // --- 2. MARCAR INSCRIPCIÓN COMO CANCELADA ---
+        // Esta es la primera escritura en la transacción.
+        registration.setState(RegistrationState.CANCELED);
+        registrationRepository.save(registration);
+
+        Query eventQuery = new Query(Criteria.where("_id").is(eventId));
+
+        if (oldState == RegistrationState.CONFIRMED) {
+            // --- 3. ESTABA CONFIRMADO (AFECTA CUPOS) ---
+            // 3a. Intentamos 'pop' atómico de la waitlist.
+            // Esta es la operación que bloquea a otras cancelaciones concurrentes.
+            Update popFromWaitlist = new Update().pop("waitList", Update.Position.FIRST); // Saca el primero
+
+            Event eventBeforePop = mongoTemplate.findAndModify(
+                eventQuery,
+                popFromWaitlist,
+                new FindAndModifyOptions().returnNew(false), // Devuelve el doc ANTIGUO
+                Event.class
+            );
+
+
+            if (eventBeforePop != null && !eventBeforePop.getWaitList().isEmpty()) {
+                // --- 3b. ÉXITO: Había alguien en la waitlist ---
+                Registration promotedReg = eventBeforePop.getWaitList().getFirst();
+
+                // Actualizamos la inscripción del promovido
+                promotedReg.setState(RegistrationState.CONFIRMED);
+                registrationRepository.save(promotedReg);
+
+                // ✅ --- CORRECCIÓN: Separar $pull y $push ---
+                // Paso 1: Atómicamente quitar al que canceló
+                Update pullCancelling = new Update().pull("participants", registration);
+                mongoTemplate.updateFirst(eventQuery, pullCancelling, Event.class);
+
+                // Paso 2: Atómicamente añadir al promovido
+                Update pushPromoted = new Update().push("participants", promotedReg);
+                mongoTemplate.updateFirst(eventQuery, pushPromoted, Event.class);
+
+            } else {
+                // --- 3c. FRACASO: La waitlist estaba vacía ---
+                // Liberamos un cupo Y quitamos al participante atómicamente.
+                Update freeUpSeat = new Update()
+                    .inc("availableSeats", 1)
+                    .pull("participants", registration);
+                mongoTemplate.updateFirst(eventQuery, freeUpSeat, Event.class);
+            }
+
+        } else {
+            // --- 4. ESTABA EN WAITLIST  ---
+            // Solo lo quitamos de la lista, no afecta cupos.
+            System.out.println("DEBUG: Cancelando WAITLIST - Thread: " + Thread.currentThread().getName());
+            Update pullFromWaitlist = new Update().pull("waitList", registration);
+            mongoTemplate.updateFirst(eventQuery, pullFromWaitlist, Event.class);
+        }
+
         return registration;
     }
+
 
     /**
      * Actualiza parcialmente una inscripción, permitiendo cancelarla.
@@ -178,7 +226,7 @@ public class RegistrationService {
             && registrationDTO.getState() == RegistrationState.CANCELED
             && reg.getCurrentState() != RegistrationState.CANCELED)
         {
-                cancelRegistration(reg); // Ya hace save
+                cancelRegistration(registrationId); // Ya hace save
         }
 
         return reg;
@@ -195,47 +243,86 @@ public class RegistrationService {
      * @throws AlreadyRegisteredException si el usuario ya está inscripto
      * @throws EventRegistrationsClosedException si el evento está cerrado
      */
-    public Registration registerParticipantToEvent(UUID eventId, UUID accountId) throws EventNotFoundException, OrganizerRegisterException, AlreadyRegisteredException, EventRegistrationsClosedException{
+
+    /**
+     * @Retryable: Si la transacción falla con un error transitorio
+     * (un choque de concurrencia), vuelve a intentarlo
+     * automáticamente (hasta 3 veces por defecto).
+     */
+    @Retryable(retryFor = { TransientDataAccessException.class })
+    @Transactional // Garantía de Consistencia
+    public Registration registerParticipantToEvent(UUID eventId, UUID accountId)
+        throws EventNotFoundException, OrganizerRegisterException, AlreadyRegisteredException,
+        AlreadyInWaitlistException, EventRegistrationsClosedException, AccountNotFoundException {
+
+        // --- 1. LECTURAS Y VALIDACIONES PREVIAS ---
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
-        Account account = accountRepository.findById(UUID.fromString(String.valueOf(accountId)))
-                .orElseThrow(AccountNotFoundException::new);
+            .orElseThrow(() -> new EventNotFoundException("Evento no encontrado"));
+        Account account = accountRepository.findById(accountId)
+            .orElseThrow(AccountNotFoundException::new);
 
+        // Validaciones de lógica de negocio (no tocan la BD)
 
-        ReentrantLock lock = locksParticipants.computeIfAbsent(eventId, id -> new ReentrantLock());
-        Registration registration;
-        lock.lock();
-        try {
-        // Verificar si el organizador intenta inscribirse a su propio evento
+        // VALIDACIÓN DE TIEMPO (Debe ir al inicio)
+        if (!event.isRegistrationsOpen()) {
+            throw new EventRegistrationsClosedException("El evento se encuentra en estado:" + event.getEventState().toString());
+        }
+
         if (event.getOrganizer().getId().equals(accountId)) {
-          throw new OrganizerRegisterException("No se puede escribir a su propio evento");
+            throw new OrganizerRegisterException("No se puede escribir a su propio evento");
         }
 
-        //  Verificar si ya está inscripto
+        // Chequeos optimistas (tus 'if').
+        // Son vulnerables a race conditions, pero la red de seguridad (paso 2) nos protege.
         if (event.getParticipants().stream().anyMatch(reg -> reg.getUser().getId().equals(accountId))) {
-          throw new AlreadyParticipantException("Ya esta inscripto");
+            throw new AlreadyParticipantException("Ya esta inscripto");
         }
-
-        //  Verificar si ya está en waitlist
         if (event.getWaitList().stream().anyMatch(acc -> acc.getUser().getId().equals(accountId))) {
-          throw new AlreadyInWaitlistException("Ya esta en la waitlist");
+            throw new AlreadyInWaitlistException("Ya esta en la waitlist");
         }
-        registration = new Registration();
-        registration.setEvent(event);
-        registration.setUser(account);
 
-            event.registerParticipant(registration);
+        // --- 2. "RESERVA" ATÓMICA (La Red de Seguridad) ---
+        // Creamos la inscripción con estado nulo y la guardamos primero.
+        // Si falla (DuplicateKeyException), el Índice Único nos salvó de un doble clic.
+        Registration registration = new Registration(event, account, null); // Estado se define luego
+
+        try {
             registrationRepository.save(registration);
-            eventRepository.save(event);
-            accountRepository.save(account);        // Se le agrega la registration en event.registerParticipant(registration)
-        }
-        finally {
-            lock.unlock();
-            if (!lock.hasQueuedThreads()) {
-                locksParticipants.remove(eventId, lock);
-            }
+        } catch (DuplicateKeyException e) {
+            // ¡La red de seguridad funcionó! (Doble clic o race condition)
+            // @Transactional hará ROLLBACK de esta transacción vacía.
+            throw new AlreadyRegisteredException("El usuario ya está inscripto");
         }
 
+        // --- 3. LÓGICA DE CUPO ATÓMICA (El "Lock" de Cupo) ---
+        // Intentamos tomar un cupo Y añadir el participante en un solo paso.
+        Query queryCupo = new Query(Criteria.where("_id").is(eventId).and("availableSeats").gt(0));
+        Update updateConCupo = new Update()
+            .inc("availableSeats", -1)               // Descuenta 1 cupo
+            .push("participants", registration);    // Añade la inscripción a la lista
+
+        UpdateResult result = mongoTemplate.updateFirst(queryCupo, updateConCupo, Event.class);
+
+        if (result.getModifiedCount() > 0) {
+            // --- 4a. ÉXITO: Había cupo y se tomó ---
+            registration.setState(RegistrationState.CONFIRMED);
+        } else {
+            // --- 4b. FALLO: No había cupo (availableSeats era 0) ---
+            // Añadimos a la waitlist atómicamente.
+            Query queryWaitlist = new Query(Criteria.where("_id").is(eventId));
+            Update updateWaitlist = new Update().push("waitList", registration);
+
+            mongoTemplate.updateFirst(queryWaitlist, updateWaitlist, Event.class);
+            registration.setState(RegistrationState.WAITLIST);
+        }
+
+        // --- 5. GUARDAR ESTADO FINAL ---
+        registrationRepository.save(registration); // Guarda el estado (CONFIRMED o WAITLIST)
+
+        account.addRegistration(registration);
+        accountRepository.save(account);
+
+        // Al salir, @Transactional hace COMMIT de todo.
         return registration;
     }
 
