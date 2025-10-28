@@ -46,7 +46,7 @@ public class SecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth -> auth
             // Endpoints públicos de autenticación
-            .requestMatchers("/auth/register", "/auth/login", "/auth/validate").permitAll()
+            .requestMatchers("/auth/register", "/auth/login", "/auth/validate", "/auth/checkUser").permitAll()
             .requestMatchers(HttpMethod.GET, "/auth/oneTimeCode").permitAll()
             
             // Endpoints de eventos - permitir a usuarios autenticados
