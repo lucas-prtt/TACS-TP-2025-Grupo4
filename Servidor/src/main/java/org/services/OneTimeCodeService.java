@@ -17,7 +17,6 @@ public class OneTimeCodeService {
     @Scheduled(fixedRate = 900_000, initialDelay = 900_000) // Cada 15 minutos borra los codigos expirados
     public void removeExpiredCodes() {
         codigos.removeIf(OneTimeCode::isExpired);
-        System.out.println("Se llevo a cabo la limpiza de codigos expirados  -  " + LocalDateTime.now());
     }
 
     /**

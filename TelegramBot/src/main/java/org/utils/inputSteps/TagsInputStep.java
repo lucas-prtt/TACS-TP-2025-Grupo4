@@ -1,6 +1,10 @@
 package org.utils.inputSteps;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.dtos.event.EventDTO;
+import org.eventServerClient.dtos.event.TagDTO;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.utils.InlineMenuBuilder;
@@ -8,21 +12,21 @@ import org.utils.InlineMenuBuilder;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class TagsInputStep implements EventInputStep{
 
-    private final String fieldName;
-    private final String label;
+    private String fieldName;
 
-    public TagsInputStep(String fieldName, String label) {
+    public TagsInputStep(String fieldName) {
         this.fieldName = fieldName;
-        this.label = label;
     }
 
     @Override
     public SendMessage getQuestion(TelegramUser user) {
 
-        return InlineMenuBuilder.localizedMenu(user, user.getLocalizedMessage("inputGeneric", label), List.of("/stop"));
+        return InlineMenuBuilder.localizedMenu(user, user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage("the" + fieldName)), List.of("/stop"));
     }
 
     @Override
@@ -30,9 +34,7 @@ public class TagsInputStep implements EventInputStep{
         try {
             if(Objects.equals(message, "/stop"))
                 return true;
-            Field field = eventDTO.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(eventDTO, message);
+            eventDTO.getTags().add(new TagDTO(message));
             return false;
         } catch (Exception e) {
             return false;

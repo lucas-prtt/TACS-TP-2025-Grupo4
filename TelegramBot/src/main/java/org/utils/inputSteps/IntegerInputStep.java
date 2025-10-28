@@ -1,5 +1,8 @@
 package org.utils.inputSteps;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
@@ -7,20 +10,20 @@ import org.utils.InlineMenuBuilder;
 
 import java.lang.reflect.Field;
 import java.util.List;
-
+@NoArgsConstructor
+@Getter
+@Setter
 public class IntegerInputStep implements EventInputStep{
-    private final String fieldName;
-    private final String label;
+    private String fieldName;
     private List<Integer> defaultOptions;
-    public IntegerInputStep(String fieldName, String label, List<Integer> defaultOptions) {
+    public IntegerInputStep(String fieldName, List<Integer> defaultOptions) {
         this.fieldName = fieldName;
-        this.label = label;
         this.defaultOptions = defaultOptions;
     }
 
     @Override
     public SendMessage getQuestion(TelegramUser user) {
-        return InlineMenuBuilder.menu(user.getLocalizedMessage("inputGeneric", label), defaultOptions.stream().map(Object::toString).toList());
+        return InlineMenuBuilder.menu(user.getLocalizedMessage("inputGeneric", user.getLocalizedMessage("the" + fieldName)), defaultOptions.stream().map(Object::toString).toList());
     }
 
     @Override

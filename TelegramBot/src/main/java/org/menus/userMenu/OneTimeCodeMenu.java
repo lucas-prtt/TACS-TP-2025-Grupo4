@@ -1,5 +1,7 @@
 package org.menus.userMenu;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.AccountDTO;
 import org.menus.MainMenu;
@@ -9,17 +11,25 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
 import org.utils.ErrorHandler;
+import org.utils.InlineMenuBuilder;
 
 import java.util.Map;
+import java.util.Objects;
 
+@Getter
+@Setter
 public class OneTimeCodeMenu extends MenuState {
     String username;
-    public OneTimeCodeMenu(TelegramUser user) {
-        super(user);
+    public OneTimeCodeMenu() {
+        super();
     }
 
     @Override
     public String respondTo(String message) {
+        if(Objects.equals(message, "/back"))
+        {
+            user.setMenu(new UserMenu());
+        }
         try {
             if(username == null){
                 username = message;
@@ -28,13 +38,13 @@ public class OneTimeCodeMenu extends MenuState {
 
             Map<String, Object> response = user.getApiClient().loginOneTimeCode(message, username);
             user.updateUser(response);
-            user.setMenu(new MainMenu(user));
+            user.setMenu(new MainMenu());
             return user.getLocalizedMessage("successfulLogin", user.getServerAccountId(), user.getServerAccountUsername());
         }catch (HttpClientErrorException e){
-            user.setMenu(new UserMenu(user));
+            user.setMenu(new UserMenu());
             return ErrorHandler.getErrorMessage(e, user);
         }catch (ResourceAccessException e) {
-            user.setMenu(new UserMenu(user));
+            user.setMenu(new UserMenu());
             return user.getLocalizedMessage("serverUnavailable");
         }
         catch (Exception e){
@@ -44,7 +54,7 @@ public class OneTimeCodeMenu extends MenuState {
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = sendMessageText(getQuestion());
+        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back");
         return message;
     }
 

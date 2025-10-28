@@ -1,18 +1,23 @@
 package org.menus.browseMenu;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.QueryFilter;
 import org.users.TelegramUser;
 import org.utils.inputSteps.GenericDateTimeInputStep;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class FilterByDateMenu extends MenuState {
     QueryFilter filter;
     GenericDateTimeInputStep input;
-    public FilterByDateMenu(TelegramUser user, String filterParameter) {
-        super(user);
+    public FilterByDateMenu(String filterParameter) {
+        super();
         this.filter = new QueryFilter(filterParameter);
-        input = new GenericDateTimeInputStep("value", user);
+        input = new GenericDateTimeInputStep("value");
     }
 
 
@@ -21,7 +26,7 @@ public class FilterByDateMenu extends MenuState {
         if(!input.handleInput(message, filter, user))
             return null;
         user.addFilter(filter);
-        user.setMenu(new FilterMenu(user));
+        user.setMenu(new FilterMenu());
         return user.getLocalizedMessage("configuredFilter", filter.getTypeLocalized(user), filter.getValue());
     }
 

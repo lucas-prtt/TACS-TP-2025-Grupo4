@@ -1,5 +1,6 @@
 package org.eventServerClient.dtos.event;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,12 +13,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalUnit;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
-@NoArgsConstructor
 @Setter
 @Getter
 @AllArgsConstructor
@@ -37,6 +34,10 @@ public class EventDTO {
         EventStateDTO state;
         Integer registered;
         Integer waitlisted;
+        public EventDTO (){
+                tags = new ArrayList<>();
+        }
+
         public String asShortString(TelegramUser user){
                 return " - " + ( title != null ? title : user.getLocalizedMessage("nullTitle")) + "\n" + ( description != null ? (description.length()<1000 ? description : description.substring(0, 996).concat("...")): user.getLocalizedMessage("nullDescription"));
         }
@@ -49,7 +50,7 @@ public class EventDTO {
                         (price != null ? price.toString() :  user.getLocalizedMessage("nullPrice")),
                         (category != null && category.getTitle() != null ? category.getTitle() :  user.getLocalizedMessage("nullCategory")),
                         (tags != null ? String.join(", ", tags.stream().filter(Objects::nonNull).map(TagDTO::getNombre).toList()) :  user.getLocalizedMessage("nullTags")),
-                        (state != null ? user.getLocalizedMessage(state.toString()) :  user.getLocalizedMessage("nullState")),
+                        (user.getLocalizedMessage(getStateAsString())),
                         (durationMinutes != null ? Duration.ofMinutes(durationMinutes).toHours() + "h " + Duration.ofMinutes(durationMinutes).toMinutesPart() + "m" :  user.getLocalizedMessage("nullDuration")),
                         registered,
                         maxParticipants,
@@ -57,7 +58,30 @@ public class EventDTO {
                 );
 
         }
+        @JsonIgnore
+        public boolean isPastDate(){
+                return startDateTime != null && LocalDateTime.now().isAfter(startDateTime);
+        }
+        @JsonIgnore
+        public boolean isOpen(){
+                return state == EventStateDTO.EVENT_OPEN && !isPastDate();
+        }
+        @JsonIgnore
+        public String getStateAsString() {
+                if (state == null) {
+                        return "nullState";
+                }
 
+                if (state == EventStateDTO.EVENT_CLOSED) {
+                        return state.toString();
+                }
+
+                if (isPastDate()) {
+                        return "EVENT_FINISHED";
+                }
+
+                return state.toString(); // EVENT_OPEN o EVENT_PAUSED (event pause deprecado)
+        }
 
 
 }

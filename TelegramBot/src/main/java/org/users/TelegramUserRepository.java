@@ -15,42 +15,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class TelegramUserRepository {
+public interface TelegramUserRepository {
 
-    private final Cache<Long, TelegramUser> users;
+    public TelegramUser addUser(Long chatId, TelegramUser user);
 
-    public TelegramUserRepository(BotEventos botEventos) {
-        users = Caffeine.newBuilder()
-                .expireAfterAccess(3, TimeUnit.DAYS)
-                .expireAfterWrite(6, TimeUnit.DAYS)
-                .maximumSize(250_000) // Max 250.000 sesiones simultaneas
-                .removalListener((Long key, TelegramUser user, RemovalCause cause) -> {
-                    SendMessage message = InlineMenuBuilder.localizedMenu(user, user.getLocalizedMessage("sessionExpired"), List.of("/start"));
-                    message.setChatId(key);
-                    botEventos.sendMessage(message);
-                })
-                .build();
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(users::cleanUp, 0, 12, TimeUnit.HOURS);
-    }
+    public Optional<TelegramUser> getUser(Long chatId);
 
-
-
-    public TelegramUser addUser(Long chatId, TelegramUser user) {
-        users.put(chatId, user);
-        return user;
-    }
-
-    public Optional<TelegramUser> getUser(Long chatId) {
-        return Optional.ofNullable(users.getIfPresent(chatId));
-    }
-
-    public void removeUser(Long chatId) {
-        users.invalidate(chatId);
-    }
-
-    public long getActiveUserCount() {
-        return users.estimatedSize();
-    }
-
+    public void update(TelegramUser user);
 }

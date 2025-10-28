@@ -13,10 +13,12 @@ import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
 import org.exceptions.*;
 import org.model.enums.RegistrationState;
+import org.model.events.Category;
 import org.model.events.Registration;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
 import org.model.events.Event;
+import org.services.CategoryService;
 import org.services.EventService;
 import org.services.OrganizerService;
 import org.services.RegistrationService;
@@ -33,14 +35,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/events")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"}, allowCredentials = "true")
 public class EventController {
 
     private final EventService eventService;
     private final RegistrationService registrationService;
-
-    public EventController(EventService eventService, OrganizerService organizerService, RegistrationService registrationService) {
+    private final CategoryService categoryService;
+    public EventController(EventService eventService, OrganizerService organizerService, RegistrationService registrationService, CategoryService categoryService) {
         this.eventService = eventService;
         this.registrationService = registrationService;
+        this.categoryService = categoryService;
     }
 
     /**
@@ -51,6 +55,7 @@ public class EventController {
     @PostMapping
     public ResponseEntity<?> postEvent(@RequestBody EventCreateDTO eventCreateDTO,  @RequestHeader(name = "Accept-Language", required = false) String lang) {
             eventCreateDTO.validate(lang);
+            categoryService.findCategory(eventCreateDTO.getCategory()); // Si no la encuentra, lanza excepcion
             UUID id = getCurrentAccountId();
             Event event = eventService.createEvent(eventCreateDTO, id);
             return ResponseEntity.ok(EventDTO.fromEvent(event));
@@ -163,5 +168,11 @@ public class EventController {
             List<RegistrationDTO> registrationDTOS = registrationService.findByEvent_IdAndRegistrationState(eventId, registrationState, page, limit);
 
             return ResponseEntity.ok(registrationDTOS);
+    }
+    @GetMapping("/categories")
+    public ResponseEntity<List<Category>> getCategories(@RequestParam(name = "page") Integer page, @RequestParam(name = "limit") Integer limit, @RequestParam(name="startsWith", required = false) String startsWith){
+        page = PageNormalizer.normalizeRegistrationsPageNumber(page);
+        limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
+        return ResponseEntity.ok(categoryService.getCategories(page, limit, startsWith).getContent());
     }
 }

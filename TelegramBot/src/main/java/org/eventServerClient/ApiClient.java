@@ -6,6 +6,7 @@ import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.eventServerClient.dtos.*;
+import org.eventServerClient.dtos.event.CategoryDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.EventStateDTO;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.users.TelegramUser;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class ApiClient {
 
@@ -242,4 +244,52 @@ public class ApiClient {
             throw e;
         }
     }
+
+    public List<CategoryDTO> getCategories(Integer page, Integer limit, String startsWith){
+        try {
+            String url = getBaseUri() + "/events/categories?page=" + page + "&limit=" + limit + "&startsWith=" + startsWith;
+            return List.of(Objects.requireNonNull(restTemplate.getForObject(url, CategoryDTO[].class)));
+        }catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
+    }
+    public CategoryDTO postCategory(CategoryDTO categoryDTO){
+        try {
+            String url = getBaseUri() + "/admin/categories";
+            return restTemplate.postForObject(url, categoryDTO, CategoryDTO.class);
+        }catch (HttpClientErrorException e){
+        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+            user.deleteCurrentAccount();
+        throw e;
+        }
+    }
+
+    public void deleteCategory(CategoryDTO categoryDTO){
+        try {
+            String url = getBaseUri() + "/admin/categories/" + categoryDTO.getTitle();
+            restTemplate.delete(url);
+            return;
+        }catch (HttpClientErrorException e){
+        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+            user.deleteCurrentAccount();
+        throw e;
+        }
+    }
+
+    public boolean userExists(String username){
+        try {
+            String url = getBaseUri() + "/auth/checkUser?username=" + username;
+            restTemplate.getForObject(url, String.class);
+            return true;
+        }catch (HttpClientErrorException e){
+            if(e.getStatusCode() == HttpStatus.NOT_FOUND)
+                return false;
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
+    }
+
 }

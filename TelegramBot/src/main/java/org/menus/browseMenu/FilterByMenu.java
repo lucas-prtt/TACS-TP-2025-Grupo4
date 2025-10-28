@@ -1,5 +1,8 @@
 package org.menus.browseMenu;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.QueryFilter;
@@ -7,12 +10,14 @@ import org.users.TelegramUser;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class FilterByMenu extends MenuState {
     QueryFilter filter;
 
-    public FilterByMenu(TelegramUser user, String filterParameter) {
-        super(user);
+    public FilterByMenu(String filterParameter) {
+        super();
         this.filter = new QueryFilter(filterParameter);
     }
 
@@ -21,7 +26,7 @@ public class FilterByMenu extends MenuState {
     public String respondTo(String message) {
         filter.setValue(message);
         user.addFilter(filter);
-        user.setMenu(new FilterMenu(user));
+        user.setMenu(new FilterMenu());
         return user.getLocalizedMessage("configuredFilter", filter.getTypeLocalized(user), message);
     }
 

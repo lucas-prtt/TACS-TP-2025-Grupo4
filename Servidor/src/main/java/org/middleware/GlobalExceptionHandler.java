@@ -4,6 +4,7 @@ import org.exceptions.*;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -13,7 +14,7 @@ import org.utils.I18nManager;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     public ResponseEntity<?> basicResponse(String lang, String key, HttpStatus status) {
-        return HttpErrorResponseBuilder.simpleError(I18nManager.get(key, lang), status);
+        return HttpErrorResponseBuilder.simpleError(I18nManager.get(key, lang), key, status);
     }
 
     public String getLanguage() {
@@ -38,7 +39,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EventWithNullFieldsException.class)
     public ResponseEntity<?> handleEventWithNullFields(EventWithNullFieldsException ex, WebRequest request) {
-        return HttpErrorResponseBuilder.simpleBadRequest(I18nManager.get("ERROR_EVENT_NULL_FIELDS", getLanguage(), String.join(", ", ex.getProblems().stream().map(p -> I18nManager.get(p, getLanguage())).toList())));
+        return HttpErrorResponseBuilder.simpleBadRequest(I18nManager.get("ERROR_EVENT_NULL_FIELDS", getLanguage(),  String.join(", ", ex.getProblems().stream().map(p -> I18nManager.get(p, getLanguage())).toList())), "ERROR_EVENT_NULL_FIELDS");
     }
 
     @ExceptionHandler(InvalidEventUrlException.class)
@@ -58,7 +59,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(WeakPasswordException.class)
     public ResponseEntity<?> handleWeakPassword(WeakPasswordException ex, WebRequest request) {
-        return HttpErrorResponseBuilder.simpleBadRequest(I18nManager.get("ERROR_WEAK_PASSWORD", getLanguage(), String.join("; ", ex.getProblems().stream().map(prob -> I18nManager.get(prob, getLanguage())).toList())));
+        return HttpErrorResponseBuilder.simpleBadRequest(I18nManager.get("ERROR_WEAK_PASSWORD", getLanguage(), String.join("; ", ex.getProblems().stream().map(prob -> I18nManager.get(prob, getLanguage())).toList())), "ERROR_WEAK_PASSWORD");
     }
 
     @ExceptionHandler(EventNotFoundException.class)
@@ -114,5 +115,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WrongOneTimeCodeException.class)
     public ResponseEntity<?> handleWrongOneTimeCode(WrongOneTimeCodeException ex, WebRequest request) {
         return basicResponse(getLanguage(), "ERROR_INVALID_ONE_TIME_CODE", HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<?> handleMissingParameter(MissingServletRequestParameterException ex, WebRequest request) {
+        return basicResponse(getLanguage(), "ERROR_MISSING_PARAMETER", HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<?> handleCategoriaNotFound(CategoryNotFoundException ex, WebRequest request) {
+        return basicResponse(getLanguage(), "ERROR_CATEGORY_NOT_FOUND", HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(CategoryAlreadyExistsException.class)
+    public ResponseEntity<?> handleCategoriaAlreadyExists(CategoryAlreadyExistsException ex, WebRequest request) {
+        return basicResponse(getLanguage(), "ERROR_CATEGORY_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,6 +1,8 @@
 package org.utils;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.ConfigManager;
 import org.exceptions.DateAlreadySetException;
 import org.menus.MenuState;
@@ -15,7 +17,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class DateInputHelper{
     private Integer year;
     private Integer month;
@@ -24,14 +28,16 @@ public class DateInputHelper{
     private Integer minute;
     private Integer step = 0;
     private Integer yearSelectPage = 0;
-    private TelegramUser user;
-    @Getter
     private LocalDateTime date;
-    public DateInputHelper(TelegramUser user) {
-        this.user = user;
+
+    public void goBackOneStep(){
+        if(step > 0)
+            step--;
+        else
+            throw new RuntimeException("No se puede retroceder mas");
     }
 
-    public boolean respondTo(String message) {
+    public boolean respondTo(String message, TelegramUser user) {
         switch (step){
             case 0:
                 if(Objects.equals(message, "/next")){
@@ -85,7 +91,7 @@ public class DateInputHelper{
 
 
 
-    public String getQuestion() {
+    public String getQuestion(TelegramUser user) {
         switch (step){
             case 0:
                 return user.getLocalizedMessage("requestInputYear");
@@ -104,35 +110,35 @@ public class DateInputHelper{
         return user.getLocalizedMessage("unsuccessfullDateInput");
     }
 
-    public SendMessage questionMessage() {
+    public SendMessage questionMessage(TelegramUser user) {
         switch (step){
             case 0:
-                return yearSelectMenu(yearSelectPage);
+                return yearSelectMenu(yearSelectPage, user);
             case 1:
-                return monthSelectMenu();
+                return monthSelectMenu(user);
             case 2:
-                return daySelectMenu();
+                return daySelectMenu(user);
             case 3:
-                return hourSelectMenu();
+                return hourSelectMenu(user);
             case 4:
-                return minuteSelectMenu();
+                return minuteSelectMenu(user);
         }
         throw new DateAlreadySetException("Date already set");
     }
 
-    private SendMessage yearSelectMenu(Integer page){
+    private SendMessage yearSelectMenu(Integer page, TelegramUser user){
         int start = LocalDate.now().getYear() + page * ConfigManager.getInstance().getOptionalInteger("input.date.year.limit").orElse(3);
         int finish = start + ConfigManager.getInstance().getOptionalInteger("input.date.year.limit").orElse(3);
         List<String> displayedYears = IntStream.rangeClosed(start, finish-1).mapToObj(String::valueOf)
                 .collect(Collectors.toList());
-        return InlineMenuBuilder.localizedMenu(user, getQuestion(),List.of("/prev", "/next"), displayedYears);
+        return InlineMenuBuilder.localizedMenu(user, getQuestion(user),List.of("/prev", "/next"), displayedYears);
     }
-    private SendMessage monthSelectMenu(){
+    private SendMessage monthSelectMenu(TelegramUser user){
         List<String> displayedMonths = IntStream.rangeClosed(1, 12).mapToObj(n -> "month" + n)
                 .collect(Collectors.toList());
-        return InlineMenuBuilder.localizedMenu(user, getQuestion(), displayedMonths.subList(0, 3),displayedMonths.subList(3, 6), displayedMonths.subList(6, 9), displayedMonths.subList(9, 12));
+        return InlineMenuBuilder.localizedMenu(user, getQuestion(user), displayedMonths.subList(0, 3),displayedMonths.subList(3, 6), displayedMonths.subList(6, 9), displayedMonths.subList(9, 12));
     }
-    private SendMessage daySelectMenu(){
+    private SendMessage daySelectMenu(TelegramUser user){
         assert this.month != null;
         assert this.year != null;
         List<String> calendarDays = new ArrayList<>();
@@ -164,16 +170,16 @@ public class DateInputHelper{
         for (int i = 0; i < weeks * 7; i += 7) {
             rows.add(calendarDays.subList(i, i + 7));
         }
-        return InlineMenuBuilder.menu(getQuestion(), rows.toArray(new List[0]));
+        return InlineMenuBuilder.menu(getQuestion(user), rows.toArray(new List[0]));
     }
-    private SendMessage hourSelectMenu(){
+    private SendMessage hourSelectMenu(TelegramUser user){
         List<String> displayedHours = IntStream.rangeClosed(1, 24).mapToObj(String::valueOf)
                 .collect(Collectors.toList());
-        return InlineMenuBuilder.menu(getQuestion(), displayedHours.subList(0, 8),displayedHours.subList(8, 16), displayedHours.subList(16, 24));
+        return InlineMenuBuilder.menu(getQuestion(user), displayedHours.subList(0, 8),displayedHours.subList(8, 16), displayedHours.subList(16, 24));
     }
-    private SendMessage minuteSelectMenu(){
+    private SendMessage minuteSelectMenu(TelegramUser user){
         List<String> displayedMinutes = IntStream.rangeClosed(0, 3).mapToObj(n -> String.valueOf(hour) + ":" +(n==0? "00": String.valueOf(n * 15)))
                 .collect(Collectors.toList());
-        return InlineMenuBuilder.menu(getQuestion(), displayedMinutes);
+        return InlineMenuBuilder.menu(getQuestion(user), displayedMinutes);
     }
 }

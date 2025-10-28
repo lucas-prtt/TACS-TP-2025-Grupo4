@@ -20,6 +20,7 @@ import org.utils.PageNormalizer;
 
 @RestController
 @RequestMapping("/registrations")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"}, allowCredentials = "true")
 public class RegistrationController {
 
   private final RegistrationService registrationService;

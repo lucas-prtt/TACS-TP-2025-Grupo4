@@ -2,35 +2,29 @@ package org.menus.userMenu;
 
 import org.menus.MainMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.menus.MenuState;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
-import java.util.Map;
-
 public class UserMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         switch (message){
             case "/oneTimeCode":
-                user.setMenu(new OneTimeCodeMenu(user));
+                user.setMenu(new OneTimeCodeMenu());
                 return null;
             case "/loginUser":
-                user.setMenu(new LoginUserMenu(user));
+                user.setMenu(new LoginUserMenu());
                 return null;
             case "/registerUser":
-                user.setMenu(new RegisterUserMenu(user));
+                user.setMenu(new RegisterUserMenu());
                 return null;
             case "/back":
-                user.setMenu(new MainMenu(user));
-                return null;
-            case "/login":
-                user.deleteCurrentAccount();
+                user.setMenu(new MainMenu());
                 return null;
             case "/logout":
-                user.deleteCurrentAccount();
-                return user.getLocalizedMessage("logoutConfirmed");
+                user.setMenu(new LogoutMenu());
+                return null;
 
             default:
                 return user.getLocalizedMessage("wrongOption");
@@ -47,7 +41,7 @@ public class UserMenu extends MenuState {
         return message;
     }
 
-    public UserMenu(TelegramUser user) {
-        super(user);
+    public UserMenu() {
+        super();
     }
 }

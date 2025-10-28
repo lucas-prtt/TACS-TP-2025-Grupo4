@@ -6,15 +6,15 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 
 public class HttpErrorResponseBuilder {
-    public static ResponseEntity<?> simpleError(String message, HttpStatus status){
+    public static ResponseEntity<?> simpleError(String message, String errorCode, HttpStatus status){
         return ResponseEntity
                 .status(status)
-                .body(Map.of("error", message));
+                .body(Map.of("error", message, "error-code", errorCode));
     }
-    public static ResponseEntity<?> simpleBadRequest(String message){
-        return simpleError(message, HttpStatus.BAD_REQUEST);
+    public static ResponseEntity<?> simpleBadRequest(String message, String errorCode){
+        return simpleError(message, errorCode, HttpStatus.BAD_REQUEST);
     }
-    public static ResponseEntity<?> simpleUnauthorized(String message){
-        return simpleError(message, HttpStatus.UNAUTHORIZED);
+    public static ResponseEntity<?> simpleUnauthorized(String message, String errorCode){
+        return simpleError(message, errorCode, HttpStatus.UNAUTHORIZED);
     }
 }

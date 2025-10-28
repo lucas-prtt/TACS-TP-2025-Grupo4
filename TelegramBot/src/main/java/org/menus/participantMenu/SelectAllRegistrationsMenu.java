@@ -15,7 +15,7 @@ public class SelectAllRegistrationsMenu extends AbstractRegistrationBrowseMenu {
         return user.getApiClient().getAllRegistrations(page, limit);
     }
 
-    public SelectAllRegistrationsMenu(TelegramUser user) {
-        super(user);
+    public SelectAllRegistrationsMenu() {
+        super();
     }
 }

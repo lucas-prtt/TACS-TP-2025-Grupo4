@@ -1,5 +1,7 @@
 package org.utils;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.ConfigManager;
 import org.menus.MenuState;
 import org.menus.userMenu.UserMenu;
@@ -12,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
+@Getter
+@Setter
 public abstract class AbstractBrowseMenu<T> extends MenuState {
     protected Integer page = 0;
     protected Integer limit = ConfigManager.getInstance().getOptionalInteger("view.page.limit").orElse(5);
@@ -30,8 +33,8 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
     // Menu al que volver con "/back"
     protected abstract MenuState getBackMenu();
 
-    public AbstractBrowseMenu(TelegramUser user) {
-        super(user);
+    public AbstractBrowseMenu() {
+        super();
     }
 
     @Override
@@ -50,7 +53,7 @@ public abstract class AbstractBrowseMenu<T> extends MenuState {
                 if (message.startsWith("/page")) {
                     try {
                         int numero = Integer.parseInt(message.substring(6));
-                        page = Math.max(numero, 1);
+                        page = Math.max(numero, 1) - 1;
                         return null;
                     } catch (Exception e) {
                         return user.getLocalizedMessage("unidentifiablePage") + "\n\n";

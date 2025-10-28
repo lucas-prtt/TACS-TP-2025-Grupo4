@@ -7,8 +7,10 @@ import static org.utils.SecurityUtils.getCurrentAccountId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.PostConstruct;
 import org.DTOs.accounts.LoginRequestDTO;
 import org.DTOs.accounts.RegisterRequestDTO;
+import org.exceptions.AccountNotFoundException;
 import org.exceptions.WrongOneTimeCodeException;
 import org.model.accounts.Account;
 import org.model.accounts.OneTimeCode;
@@ -21,6 +23,7 @@ import org.utils.JwtUtil;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"}, allowCredentials = "true")
 public class AuthController {
 
   private final AccountService accountService;
@@ -77,6 +80,15 @@ public class AuthController {
           "token", token
       ));
   }
+    @GetMapping("/checkUser")
+    public ResponseEntity<?> checkUser(@RequestParam(value = "username", required = true) String username, @RequestHeader(name = "Accept-Language", required = false) String lang) {
+        try{
+            Account account = accountService.getAccountByUsername(username);
+            return ResponseEntity.ok(account.getId());
+        }catch (AccountNotFoundException ex){
+            return ResponseEntity.notFound().build();
+        }
+    }
 
   /**
    * Genera un código de un solo uso (OneTimeCode) para el usuario autenticado.
