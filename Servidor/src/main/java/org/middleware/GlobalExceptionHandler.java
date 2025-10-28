@@ -120,4 +120,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleMissingParameter(MissingServletRequestParameterException ex, WebRequest request) {
         return basicResponse(getLanguage(), "ERROR_MISSING_PARAMETER", HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<?> handleCategoriaNotFound(CategoryNotFoundException ex, WebRequest request) {
+        return basicResponse(getLanguage(), "ERROR_CATEGORY_NOT_FOUND", HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(CategoryAlreadyExistsException.class)
+    public ResponseEntity<?> handleCategoriaAlreadyExists(CategoryAlreadyExistsException ex, WebRequest request) {
+        return basicResponse(getLanguage(), "ERROR_CATEGORY_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);
+    }
 }
