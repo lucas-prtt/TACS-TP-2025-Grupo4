@@ -348,28 +348,22 @@ organizerMenuQuestion,"Menu de organizador:
 registrationAsDetailedString,"Estado: {0}
 Evento: {1}
 Descripcion:{2}
-ID: {3}
-Fecha de inicio: {4}","Status: {0}
+Fecha de inscripcion: {3}","Status: {0}
 Event: {1}
 Description: {2}
-ID: {3}
-Start Date: {4}","Status: {0}
-Ereignis: {1}
+Registration Date: {3}","Status: {0}
+Veranstaltung: {1}
 Beschreibung: {2}
-ID: {3}
-Startdatum: {4}","Status: {0}
+Anmeldedatum: {3}","Status: {0}
 Evento: {1}
 Descrição: {2}
-ID: {3}
-Data de início: {4}","Statut : {0}
+Data de Inscrição: {3}","Statut : {0}
 Événement : {1}
 Description : {2}
-ID : {3}
-Date de début : {4}","Stato: {0}
+Date d’inscription : {3}","Stato: {0}
 Evento: {1}
 Descrizione: {2}
-ID: {3}
-Data di inizio: {4}"
+Data di registrazione: {3}"
 registrationAsShortString,"Estado: {0}
 Evento: {1}","State: {0}
 Event: {1}","Status: {0}
