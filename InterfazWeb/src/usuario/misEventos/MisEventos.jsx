@@ -94,6 +94,7 @@ export const MisEventos = () => {
       lugar: evento.location || "Sin ubicación",
       max_participantes: evento.maxParticipants || 0,
       min_participantes: evento.minParticipants || 0,
+      participantes_registrados: evento.registered || 0,
       precio: evento.price || 0,
       tags: tags,
       estado: estado,

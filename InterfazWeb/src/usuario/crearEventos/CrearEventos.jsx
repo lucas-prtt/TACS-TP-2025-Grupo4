@@ -90,11 +90,13 @@ export const CrearEventos = () => {
             setLocalError('La capacidad máxima debe ser mayor a 0');
             return false;
         }
-        if (!formData.minParticipants || formData.minParticipants <= 0) {
-            setLocalError('La capacidad mínima debe ser mayor a 0');
+        // minParticipants es opcional, pero si se proporciona debe ser >= 1
+        if (formData.minParticipants !== '' && (formData.minParticipants < 1)) {
+            setLocalError('La capacidad mínima debe ser 1 o mayor');
             return false;
         }
-        if (parseInt(formData.minParticipants) > parseInt(formData.maxParticipants)) {
+        // Solo validar que minParticipants no sea mayor a maxParticipants si se proporciona
+        if (formData.minParticipants !== '' && parseInt(formData.minParticipants) > parseInt(formData.maxParticipants)) {
             setLocalError('La capacidad mínima no puede ser mayor a la máxima');
             return false;
         }
@@ -127,7 +129,7 @@ export const CrearEventos = () => {
                 durationMinutes: parseInt(formData.durationMinutes),
                 location: formData.location.trim(),
                 maxParticipants: parseInt(formData.maxParticipants),
-                minParticipants: parseInt(formData.minParticipants),
+                minParticipants: formData.minParticipants !== '' ? parseInt(formData.minParticipants) : null,
                 price: parseFloat(formData.price),
                 category: formData.category ? { name: formData.category } : null,
                 tags: processedTags,
@@ -409,7 +411,7 @@ export const CrearEventos = () => {
                                 {/* Capacidad mínima */}
                                 <Box mb={1}>
                                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                        Capacidad Mínima *
+                                        Capacidad Mínima (Opcional)
                                     </Typography>
                                     <TextFieldCustom
                                         placeholder="Número mínimo de participantes"

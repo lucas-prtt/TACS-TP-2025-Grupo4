@@ -437,7 +437,7 @@ export const CardEvento = ({ evento, onVerEvento }) => {
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
           <PeopleIcon fontSize="small" color="action" />
           <Typography variant="body2" color="text.secondary">
-            {evento.min_participantes} / {evento.max_participantes} asistentes
+            {evento.participantes_registrados} / {evento.max_participantes} asistentes
           </Typography>
         </Stack>
         {/* Tags del evento con scroll horizontal */}
