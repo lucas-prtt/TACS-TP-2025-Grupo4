@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { UsuarioRouter } from "./UsuarioRouter";
-import Login from "../usuario/login/login";
+import Login from "../usuario/login/Login";
 import { useAuth } from "../contexts/AuthContext";
 
 export const AppRouter = () => {
