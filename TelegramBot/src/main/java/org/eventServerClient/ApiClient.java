@@ -247,25 +247,8 @@ public class ApiClient {
 
     public List<CategoryDTO> getCategories(Integer page, Integer limit, String startsWith){
         try {
-                List<CategoryDTO> mockCategories = Stream.of(
-                    "Concierto", "Venta", "Curso", "Deporte", "Ceremonia",
-                    "Arte", "Ciencia", "Competencia", "Teatro", "Taller",
-                    "Exposición", "Seminario", "Conferencia", "Festival", "Viaje",
-                    "Campamento", "Deporte Extremo", "Música", "Danza", "Literatura",
-                    "Fotografía", "Cine", "Cultura", "Educación", "Medicina",
-                    "Tecnología", "Gastronomía", "Networking", "Voluntariado", "Negocios",
-                    "Religión", "Yoga", "Meditación", "Idiomas", "Programación",
-                    "Historia", "Filosofía", "Astronomía", "Robótica", "Ecología",
-                    "Moda", "Belleza", "Fitness", "Marketing", "Psicología",
-                    "Arquitectura", "Diseño", "Videojuegos", "Viajes de Aventura", "Emprendimiento"
-            ).map(CategoryDTO::new).toList();
-            mockCategories = mockCategories.stream().filter(c -> c.getTitle().toLowerCase().startsWith(startsWith.toLowerCase())).toList();
-            int fromIndex = (page) * limit;
-            int toIndex = Math.min(fromIndex + limit, mockCategories.size());
-            if (fromIndex >= mockCategories.size()) {
-                return List.of();
-            }
-            return mockCategories.subList(fromIndex, toIndex);
+            String url = getBaseUri() + "/events/categories?page=" + page + "&limit=" + limit + "&startsWith=" + startsWith;
+            return List.of(Objects.requireNonNull(restTemplate.getForObject(url, CategoryDTO[].class)));
         }catch (HttpClientErrorException e){
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
                 user.deleteCurrentAccount();
@@ -274,19 +257,20 @@ public class ApiClient {
     }
     public CategoryDTO postCategory(CategoryDTO categoryDTO){
         try {
-        CategoryDTO mockCategory = new CategoryDTO("NuevaCategoria");
-        return mockCategory;
+            String url = getBaseUri() + "/admin/categories";
+            return restTemplate.postForObject(url, categoryDTO, CategoryDTO.class);
         }catch (HttpClientErrorException e){
         if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
             user.deleteCurrentAccount();
-            throw e;
+        throw e;
         }
     }
 
     public void deleteCategory(CategoryDTO categoryDTO){
         try {
-        CategoryDTO mockCategory = new CategoryDTO("NuevaCategoria");
-        return;
+            String url = getBaseUri() + "/admin/categories/" + categoryDTO.getTitle();
+            restTemplate.delete(url);
+            return;
         }catch (HttpClientErrorException e){
         if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
             user.deleteCurrentAccount();

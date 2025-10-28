@@ -7,6 +7,7 @@ import static org.utils.SecurityUtils.getCurrentAccountId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.PostConstruct;
 import org.DTOs.accounts.LoginRequestDTO;
 import org.DTOs.accounts.RegisterRequestDTO;
 import org.exceptions.AccountNotFoundException;

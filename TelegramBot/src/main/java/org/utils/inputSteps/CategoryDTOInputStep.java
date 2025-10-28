@@ -28,6 +28,7 @@ public class CategoryDTOInputStep implements EventInputStep{
     @Override
     public SendMessage getQuestion(TelegramUser user) {
         selectMenu.setUser(user);
+        selectMenu.setFinished(false);
         return selectMenu.questionMessageWithoutBackAndStart();
     }
 
