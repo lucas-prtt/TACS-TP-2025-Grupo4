@@ -464,7 +464,7 @@ requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the c
 /filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer des filtres,Applica filtri
 filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
 category,categoria,category,Kategorie,categoria,catégorie,categoria
-tags,tags,tags,Schlagworte,etiquetas,balises,etichette
+tags,tags,tags,Schlagworte,etiquetas,balises,tag
 maxDate,fecha máxima,maximum date,maximales Datum,data máxima,date maximale,data massima
 title,titulo del evento,event title,Veranstaltungstitel,título do evento,titre de l'événement,titolo dell'evento
 titleContains,subcadena del titulo,title substring,Titel-Teilzeichenfolge,substring de título,sous-chaîne de titre,sottostringa del titolo
@@ -666,3 +666,4 @@ registrationConfirmedParticipant,✅ Inscripcion confirmada,✅ Registration con
 registrationConfirmedWaitlist,🕒 Inscripcion añadida a la Waitlist,🕒 Registration added to the Waitlist,🕒 Registrierung zur Warteliste hinzugefügt,🕒 Inscrição adicionada à lista de espera,🕒 Inscription ajoutée à la liste d'attente,🕒 Registrazione aggiunta alla lista d'attesa
 registerToWaitlist,Registrarse en la lista de espera,Register on the waiting list,Tragen Sie sich in die Warteliste ein,Inscreva-se na lista de espera,Inscrivez-vous sur la liste d'attente,Registrati nella lista d'attesa
 registerToParticipants,Registrarse al evento,Register for the event,Registrieren Sie sich für die Veranstaltung,Inscreva-se no evento,Inscrivez-vous à l'événement,Registrati all'evento
+EVENT_FINISHED,🗓️ Evento finalizado,🗓️ Event ended,🗓️ Veranstaltung beendet,🗓️ Evento encerrado,🗓️ Événement terminé,🗓️ Evento terminato

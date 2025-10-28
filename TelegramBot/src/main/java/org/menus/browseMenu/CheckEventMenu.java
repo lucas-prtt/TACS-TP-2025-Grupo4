@@ -8,6 +8,7 @@ import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
 import org.eventServerClient.dtos.event.EventDTO;
+import org.eventServerClient.dtos.event.EventStateDTO;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.menus.userMenu.UserMenu;
@@ -75,12 +76,12 @@ public class CheckEventMenu extends MenuState {
     public String getQuestion() {
         return evento.asDetailedString(user) +
                 "\n\n"+
-                user.getLocalizedMessage("/registerUser") + "  -->  " + (Objects.equals(evento.getMaxParticipants(), evento.getRegistered()) ?  user.getLocalizedMessage("registerToWaitlist") : user.getLocalizedMessage("registerToParticipants"));
+                (evento.isOpen() ? user.getLocalizedMessage("/registerUser") + "  -->  " + (Objects.equals(evento.getMaxParticipants(), evento.getRegistered()) ?  user.getLocalizedMessage("registerToWaitlist") : user.getLocalizedMessage("registerToParticipants")) : "");
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/registerUser", "/back", "/start");
-        return message;
+
+        return evento.isOpen() ? InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/registerUser", "/back", "/start") : InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back", "/start");
     }
 
 }

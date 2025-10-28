@@ -27,18 +27,29 @@ public class ManageEventMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         switch (message){
+            /*
             case "/pause":
                 event.setState(EventStateDTO.EVENT_PAUSED);
                 user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_PAUSED);
                 return user.getLocalizedMessage("successfulPause");
+                */
             case "/open":
-                event.setState(EventStateDTO.EVENT_OPEN);
-                user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_OPEN);
-                return user.getLocalizedMessage("successfulOpen");
+                if(event.getState() != EventStateDTO.EVENT_OPEN && !event.isPastDate())
+                {
+                    event.setState(EventStateDTO.EVENT_OPEN);
+                    user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_OPEN);
+                    return user.getLocalizedMessage("successfulOpen");
+                }
+                return user.getLocalizedMessage("wrongOption");
             case "/close":
-                event.setState(EventStateDTO.EVENT_CLOSED);
-                user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_CLOSED);
+                if(
+                    event.getState() != EventStateDTO.EVENT_CLOSED && !event.isPastDate())
+                {
+                    event.setState(EventStateDTO.EVENT_CLOSED);
+                    user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_CLOSED);
                 return user.getLocalizedMessage("successfulClose");
+                }
+                return user.getLocalizedMessage("wrongOption");
             case "/back":
                 user.setMenu(new ManageEventSelectionMenu());
                 return null;
@@ -54,9 +65,9 @@ public class ManageEventMenu extends MenuState {
     @Override
     public SendMessage questionMessage() {
         List<String> opciones = new ArrayList<>();
-        if(event.getState() != EventStateDTO.EVENT_PAUSED){opciones.add("/pause");}
-        if(event.getState() != EventStateDTO.EVENT_OPEN){opciones.add("/open");}
-        if(event.getState() != EventStateDTO.EVENT_CLOSED){opciones.add("/close");}
+        /*if(event.getState() != EventStateDTO.EVENT_PAUSED){opciones.add("/pause");}*/
+        if(event.getState() != EventStateDTO.EVENT_OPEN && !event.isPastDate()){opciones.add("/open");}
+        if(event.getState() != EventStateDTO.EVENT_CLOSED && !event.isPastDate()){opciones.add("/close");}
         opciones.add("/back");
         opciones.add("/start");
         return InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), opciones.toArray(new String[0]));
