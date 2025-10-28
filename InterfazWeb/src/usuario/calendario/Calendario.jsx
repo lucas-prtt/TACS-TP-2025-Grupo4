@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Box, Typography, IconButton, Divider } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, IconButton, Divider, CircularProgress } from "@mui/material";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import es from "date-fns/locale/es";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from "date-fns";
-import { datosEventos } from "../eventos/datosEventos";
+import { useGetEvents } from "../../hooks/useGetEvents";
 import { NavbarApp } from "../../components/NavbarApp"; // Importa la Navbar
 
 const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
@@ -13,11 +13,28 @@ const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 export const Calendario = () => {
   const [fechaActual, setFechaActual] = useState(new Date());
   const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
+  const { getEvents, loading, error } = useGetEvents();
+  const [eventos, setEventos] = useState([]);
+
+  // Cargar eventos desde la base de datos
+  useEffect(() => {
+    const loadEvents = async () => {
+      try {
+        const eventosFromDB = await getEvents();
+        setEventos(eventosFromDB);
+      } catch (err) {
+        console.error('Error al cargar eventos:', err);
+      }
+    };
+
+    loadEvents();
+  }, [getEvents]);
 
   // Eventos agrupados por fecha (YYYY-MM-DD)
   const eventosPorFecha = {};
-  datosEventos.forEach(ev => {
-    const fecha = ev.fechaInicio.split("T")[0];
+  eventos.forEach(ev => {
+    // Usar startDateTime del evento de la base de datos
+    const fecha = ev.startDateTime.split("T")[0];
     if (!eventosPorFecha[fecha]) eventosPorFecha[fecha] = [];
     eventosPorFecha[fecha].push(ev);
   });
@@ -195,7 +212,17 @@ export const Calendario = () => {
               Eventos del {format(fechaSeleccionada, "d 'de' MMMM", { locale: es })}
             </Typography>
             <Divider sx={{ width: "100%", mb: 2 }} />
-            {eventosHoy.length === 0 ? (
+            {loading ? (
+              <Box sx={{ textAlign: "center", mt: 6 }}>
+                <CircularProgress />
+                <Typography sx={{ mt: 2 }}>Cargando eventos...</Typography>
+              </Box>
+            ) : error ? (
+              <Box sx={{ textAlign: "center", color: "#d32f2f", mt: 6 }}>
+                <Typography>Error al cargar eventos</Typography>
+                <Typography variant="body2">{error}</Typography>
+              </Box>
+            ) : eventosHoy.length === 0 ? (
               <Box sx={{ textAlign: "center", color: "#888", mt: 6 }}>
                 <CalendarMonthOutlinedIcon sx={{ fontSize: 48, mb: 1 }} />
                 <Typography>No hay eventos programados<br />para esta fecha</Typography>
@@ -203,17 +230,17 @@ export const Calendario = () => {
             ) : (
               <Box sx={{ width: "100%" }}>
                 {eventosHoy.map(ev => (
-                  <Box key={ev.titulo} sx={{
+                  <Box key={ev.id} sx={{
                     mb: 2,
                     p: 2,
                     borderRadius: 2,
                     bgcolor: "#f6f6fa",
                     border: "1px solid #ececec"
                   }}>
-                    <Typography fontWeight={600}>{ev.titulo}</Typography>
-                    <Typography variant="body2" color="text.secondary">{ev.descripcion}</Typography>
+                    <Typography fontWeight={600}>{ev.title}</Typography>
+                    <Typography variant="body2" color="text.secondary">{ev.description}</Typography>
                     <Typography variant="caption" color="text.secondary">
-                      {format(new Date(ev.fechaInicio), "HH:mm", { locale: es })} hs · {ev.lugar}
+                      {format(new Date(ev.startDateTime), "HH:mm", { locale: es })} hs · {ev.location}
                     </Typography>
                   </Box>
                 ))}

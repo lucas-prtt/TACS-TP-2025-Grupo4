@@ -11,10 +11,12 @@ import org.model.accounts.Account;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "registrations")
+@CompoundIndex(name = "event_user_unique", def = "{'event._id' : 1, 'user._id' : 1}", unique = true)
 @Setter
 @Getter
 @AllArgsConstructor
@@ -26,7 +28,6 @@ public class Registration {
     @DBRef(lazy = true)
     private Account user;
     private RegistrationState currentState;
-    @DBRef(lazy = true)
     private List<RegistrationStateChange> history = new ArrayList<>();
     private LocalDateTime dateTime;
 
@@ -65,9 +66,13 @@ public class Registration {
      * @param newState Nuevo estado de la inscripción
      */
     public void setState(RegistrationState newState) {
-        RegistrationStateChange change = new RegistrationStateChange(this, this.currentState, newState, LocalDateTime.now());
+        RegistrationStateChange change = new RegistrationStateChange(this.currentState, newState, LocalDateTime.now());
         history.add(change);
         this.currentState = newState;
+    }
+
+    public String toString(){
+        return "(" + id + " - " + event.getTitle() + " - " + user.getUsername() + " - " + currentState + " - " + history.size() + ")";
     }
 
 

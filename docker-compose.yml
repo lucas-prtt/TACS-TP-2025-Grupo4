@@ -1,17 +1,92 @@
 services:
-  mongo:
+  # NODO PRIMARIO (Servidor A)
+  mongo1:
     image: mongo:7
-    container_name: eventos-mongo
+    container_name: eventos-mongo1
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - mongo_data1:/data/db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  # NODO SECUNDARIO (Servidor B)
+  mongo2:
+    image: mongo:7
+    container_name: eventos-mongo2
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data2:/data/db
+    depends_on: [mongo1]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  # NODO SECUNDARIO (Servidor C)
+  mongo3:
+    image: mongo:7
+    container_name: eventos-mongo3
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo_data3:/data/db
+    depends_on: [mongo1]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+
+  # INICIALIZADOR DEL REPLICA SET
+  mongo-init-replica:
+    image: mongo:7
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+    entrypoint: >
+      bash -c "
+      echo 'Esperando que todos los nodos estén listos...'
+      sleep 15
+      until mongosh --host mongo1:27017 --eval 'rs.status()' | grep '\"ok\" : 1'; do
+        echo 'Esperando PRIMARY...'
+        sleep 2
+      done
+      echo 'Inicializando replica set rs0...'
+      mongosh --host mongo1:27017 --eval '
+        rs.initiate({
+          _id: \"rs0\",
+          members: [
+            { _id: 0, host: \"mongo1:27017\" },
+            { _id: 1, host: \"mongo2:27017\" },
+            { _id: 2, host: \"mongo3:27017\" }
+          ]
+        })
+      ' || echo 'Replica set ya inicializado'
+      "
+    restart: "no"
+
+  # INTERFAZ WEB
   interfazweb:
     build:
       context: ./InterfazWeb
       dockerfile: Dockerfile
     ports:
       - "3000:80"
+
+  # SERVIDOR
   server:
     build:
       context: .
@@ -19,12 +94,15 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mongo
+      - mongo1
+      - mongo2
+      - mongo3
+      - mongo-init-replica
     environment:
-      SPRING_DATA_MONGODB_HOST: mongo
-      SPRING_DATA_MONGODB_PORT: 27017
-      SPRING_DATA_MONGODB_DATABASE: eventos
+      SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017,mongo2:27017,mongo3:27017/eventos?replicaSet=rs0
       EVENTOS_SERVER_SECRET_KEY: ${EVENTOS_SERVER_SECRET_KEY}
+
+  # TELEGRAM BOT
   telegrambot:
     build:
       context: .
@@ -34,4 +112,6 @@ services:
       EVENTOS_TELEGRAM_BOT_USERNAME: ${EVENTOS_TELEGRAM_BOT_USERNAME}
 
 volumes:
-  mongo_data:
+  mongo_data1:
+  mongo_data2:
+  mongo_data3:

@@ -15,7 +15,7 @@ public class SelectSuccesfulRegistrationsMenu extends AbstractRegistrationBrowse
         return user.getApiClient().getRegisteredRegistrations(page, limit);
     }
 
-    public SelectSuccesfulRegistrationsMenu(TelegramUser user) {
-        super(user);
+    public SelectSuccesfulRegistrationsMenu() {
+        super();
     }
 }

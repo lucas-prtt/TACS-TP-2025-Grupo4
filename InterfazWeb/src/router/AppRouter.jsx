@@ -1,9 +1,21 @@
-import { Route, Routes } from "react-router-dom"
-import { UsuarioRouter } from "./UsuarioRouter"
+import { Navigate, Route, Routes } from "react-router-dom";
+import { UsuarioRouter } from "./UsuarioRouter";
+import Login from "../usuario/login/Login";
+import { useAuth } from "../contexts/AuthContext";
+
 export const AppRouter = () => {
-    return (
-        <Routes>
-            <Route path="/*" element={<UsuarioRouter />} />
-        </Routes>
-    )
-}
+  const { isAuthenticated } = useAuth();
+
+  return (
+    <Routes>
+      <Route 
+        path="/login" 
+        element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login />} 
+      />
+      <Route 
+        path="/*" 
+        element={isAuthenticated ? <UsuarioRouter /> : <Navigate to="/login" />} 
+      />
+    </Routes>
+  );
+};

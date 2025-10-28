@@ -4,30 +4,42 @@ import org.DTOs.events.EventCreateDTO;
 import org.DTOs.events.EventDTO;
 import org.apache.coyote.BadRequestException;
 import org.exceptions.*;
+import org.model.enums.EventState;
+import org.model.enums.RegistrationState;
 import org.model.events.Event;
 import org.model.accounts.Account;
+import org.model.events.Registration;
 import org.repositories.AccountRepository;
 import org.repositories.EventRepository;
-import org.repositories.RegistrationRepository;
-import org.utils.PageSplitter;
-import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.TransientDataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
+import java.util.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.NoSuchElementException;
+import java.util.regex.Pattern;
+
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+ 
 
 @Service
 public class EventService {
     private final EventRepository eventRepository;
     private final AccountRepository accountRepository;
+    private final MongoTemplate mongoTemplate;
 
-    public EventService(EventRepository eventRepository, AccountRepository accountRepository, RegistrationRepository registrationRepository) {
+    @Autowired
+    public EventService(EventRepository eventRepository,AccountRepository accountRepository, MongoTemplate mongoTemplate) {
         this.eventRepository = eventRepository;
         this.accountRepository = accountRepository;
+        this.mongoTemplate = mongoTemplate;
     }
 
     /**
@@ -36,19 +48,15 @@ public class EventService {
      * @param organizerId ID del organizador
      * @return El evento creado
      * @throws AccountNotFoundException si el organizador no existe
-     * @throws BadRequestException si los datos son inválidos
+     * @throws InvalidEventUrlException si los datos son inválidos
      */
-    public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException, BadRequestException {
+    public Event createEvent(EventCreateDTO eventDTO, UUID organizerId) throws AccountNotFoundException, InvalidEventUrlException{
         Event newEvent;
         Optional<Account> author;
-        try {
-            author = accountRepository.findById(organizerId);
-        }catch (Exception e){
-            throw new BadRequestException();
-        }
-        if(author.isEmpty()) throw new AccountNotFoundException("No se encontro el autor con id "+ organizerId.toString());
-        try {
-        // Crear evento
+        author = accountRepository.findById(organizerId);
+        if(author.isEmpty()) throw new AccountNotFoundException();
+
+
         newEvent = new Event(
             eventDTO.getTitle(),
             eventDTO.getDescription(),
@@ -60,12 +68,10 @@ public class EventService {
             eventDTO.getPrice(),
             eventDTO.getCategory(),
             eventDTO.getTags(),
-            author.get()
+            author.get(),
+            eventDTO.getImage()
         );
         eventRepository.save(newEvent);
-        } catch (Exception e) {
-        throw new BadRequestException();
-        }
         return newEvent;
     }
 
@@ -77,7 +83,7 @@ public class EventService {
      */
     public Event getEvent(UUID eventId) {
         return eventRepository.findById(eventId).
-                orElseThrow(() -> new NoSuchElementException("Evento no encontrado con ID: " + eventId));
+                orElseThrow(() -> new NoSuchElementException("Evento no encontrado con ID dada"));
     }
 
     /**
@@ -108,68 +114,64 @@ public class EventService {
      * @return Lista paginada de eventos
      * @throws BadRequestException si los filtros son inválidos
      */
-    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice, Integer page, Integer limit) throws BadRequestException {
-        List<Event> events = getEventsByTitleOrContains(title, titleContains);
-        List<EventDTO> processedEvents = events.stream()
-                .filter(event -> isValidEvent(event, maxDate, minDate, category, tags, maxPrice, minPrice))
-                .map(EventDTO::fromEvent)
-                .toList();
-        return PageSplitter.getPageList(processedEvents, page, limit);
-    }
+    public List<EventDTO> getEventDTOsByQuery(
+            String title, String titleContains,
+            LocalDateTime maxDate, LocalDateTime minDate,
+            String category, List<String> tags,
+            BigDecimal maxPrice, BigDecimal minPrice,
+            Integer page, Integer limit) throws BadRequestException {
 
-    /**
-     * Variante de búsqueda de eventos sin paginación.
-     * @param title Título exacto (opcional)
-     * @param titleContains Subcadena en el título (opcional)
-     * @param maxDate Fecha máxima (opcional)
-     * @param minDate Fecha mínima (opcional)
-     * @param category Categoría (opcional)
-     * @param tags Lista de tags (opcional)
-     * @param maxPrice Precio máximo (opcional)
-     * @param minPrice Precio mínimo (opcional)
-     * @return Lista de eventos filtrados
-     * @throws BadRequestException si los filtros son inválidos
-     */
-    public List<EventDTO> getEventDTOsByQuery(String title, String titleContains, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) throws BadRequestException {
-        return getEventDTOsByQuery( title,  titleContains,  maxDate,  minDate,  category,  tags,  maxPrice,  minPrice);
-    }
+        if(page == null || limit == null){
+            throw  new NullPageInfoException();
+        }
 
-    /**
-     * Devuelve eventos filtrando por título exacto o por subcadena en el título.
-     * @param title Título exacto (opcional)
-     * @param titleContains Subcadena en el título (opcional)
-     * @return Lista de eventos filtrados
-     * @throws BadRequestException si ambos filtros están presentes
-     */
-    private List<Event> getEventsByTitleOrContains(String title, String titleContains) throws BadRequestException {
+        List<Criteria> criteriaList = new ArrayList<>();
+
         if (title != null && titleContains != null) {
             throw new BadRequestException("No puede haber titleContains y title simultáneamente");
         }
+
         if (title != null) {
-            return getEventsByTitle(title);
+            criteriaList.add(Criteria.where("title").is(title));
         } else if (titleContains != null) {
-            return getEventsByTitleContains(titleContains);
-        } else {
-            return getAllEvents();
+            criteriaList.add(Criteria.where("title").regex(".*" + Pattern.quote(titleContains) + ".*", "i"));
         }
-    }
 
-    /**
-     * Devuelve eventos que coinciden exactamente con el título.
-     * @param title Título exacto
-     * @return Lista de eventos
-     */
-    public List<Event> getEventsByTitle(String title) {
-        return eventRepository.findByTitle(title);
-    }
+        if (minDate != null) {
+            criteriaList.add(Criteria.where("startDate").gte(minDate));
+        }
+        if (maxDate != null) {
+            criteriaList.add(Criteria.where("startDate").lte(maxDate));
+        }
 
-    /**
-     * Devuelve eventos cuyo título contiene la subcadena dada.
-     * @param titleContains Subcadena a buscar en el título
-     * @return Lista de eventos
-     */
-    public List<Event> getEventsByTitleContains(String titleContains) {
-        return eventRepository.findByTitleContains(titleContains);
+        if (category != null) {
+            criteriaList.add(Criteria.where("category.title").is(category));
+        }
+
+        if (tags != null && !tags.isEmpty()) {
+            criteriaList.add(Criteria.where("tags.title").all(tags));
+        }
+
+        if (minPrice != null) {
+            criteriaList.add(Criteria.where("price").gte(minPrice));
+        }
+        if (maxPrice != null) {
+            criteriaList.add(Criteria.where("price").lte(maxPrice));
+        }
+
+        Query query = new Query();
+
+        if (!criteriaList.isEmpty()) {
+            query.addCriteria(new Criteria().andOperator(criteriaList.toArray(new Criteria[0])));
+        }
+
+        query.with(PageRequest.of(page, limit));
+
+        List<Event> events = mongoTemplate.find(query, Event.class);
+
+        return events.stream()
+                .map(EventDTO::fromEvent)
+                .toList();
     }
 
     /**
@@ -180,33 +182,6 @@ public class EventService {
         return eventRepository.findAll();
     }
 
-    /**
-     * Verifica si un evento cumple con los filtros dados.
-     * @param event Evento a validar
-     * @param maxDate Fecha máxima (opcional)
-     * @param minDate Fecha mínima (opcional)
-     * @param category Categoría (opcional)
-     * @param tags Lista de tags (opcional)
-     * @param maxPrice Precio máximo (opcional)
-     * @param minPrice Precio mínimo (opcional)
-     * @return true si el evento cumple los filtros, false si no
-     */
-    public Boolean isValidEvent(Event event, LocalDateTime maxDate, LocalDateTime minDate, String category, List<String> tags, BigDecimal maxPrice, BigDecimal minPrice) {
-        return (
-                (maxDate == null || event.getStartDateTime().isBefore(maxDate)) &&
-                        (minDate == null || event.getStartDateTime().isAfter(minDate)) &&
-                        (category == null || (event.getCategory() != null && Objects.equals(event.getCategory().getTitle(), category))) &&
-                        ((tags == null || tags.isEmpty()) ||
-                                tags.stream().allMatch(comparedTagAsString ->
-                                        event.getTags().stream().anyMatch(tag -> Objects.equals(tag.getNombre(), comparedTagAsString))
-                                )
-                        ) &&
-                        (maxPrice == null || event.getPrice().compareTo(maxPrice) <= 0) &&
-                        (minPrice == null || event.getPrice().compareTo(minPrice) >= 0)
-        );
-    }
-
-
 
     /**
      * Obtiene los eventos organizados por el usuario dado, con paginación.
@@ -216,42 +191,150 @@ public class EventService {
      * @return Lista paginada de eventos organizados
      */
     public List<EventDTO> getEventsByOrganizer(UUID organizerId, Integer page, Integer limit) {
-        List<EventDTO> processedEvents =  eventRepository.findAll().stream()
-                .filter(event -> event.getOrganizer() != null && event.getOrganizer().getId().equals(organizerId))
-                .map(EventDTO::fromEvent)
-                .collect(Collectors.toList());
-        return PageSplitter.getPageList(processedEvents, page, limit);
-    }
-    /**
-     * Variante sin paginación para obtener eventos organizados por el usuario.
-     * @param organizerId ID del organizador
-     * @return Lista de eventos organizados
-     */
-    public List<EventDTO> getEventsByOrganizer(UUID organizerId) {
-        return getEventsByOrganizer(organizerId, null, null);
+        if(page == null || limit == null){
+            throw new NullPageInfoException();
+        }
+        List<Event> organizerEvents =  eventRepository.findByOrganizerId(organizerId, PageRequest.of(page, limit)).getContent();
+        return organizerEvents.stream().map(EventDTO::fromEvent).toList();
     }
 
     /**
      * Actualiza parcialmente los datos de un evento por su ID.
-     * @param id ID del evento
+     * @param eventUuid ID del evento
      * @param eventPatch DTO con los datos a actualizar
      * @return DTO del evento actualizado
      * @throws EventNotFoundException si no existe el evento
      */
-    public EventDTO patchEvent(String id, EventDTO eventPatch) {
-        Optional<Event> eventOptional = eventRepository.findById(UUID.fromString(id));
-        if(eventOptional.isEmpty())
-            throw new EventNotFoundException("No se encontro un evento con ese id");
+    @Retryable(retryFor = { TransientDataAccessException.class })
+    @Transactional // Garantiza la atomicidad
+    public EventDTO patchEvent(UUID eventUuid, EventDTO eventPatch) throws BadRequestException {
 
+        Optional<Event> eventOptional = eventRepository.findById(eventUuid);
+        if(eventOptional.isEmpty()) throw new EventNotFoundException("No se encontro un evento con ese id");
         Event event = eventOptional.get();
-        // Validar que el usuario autenticado sea el organizador
+
         UUID currentUserId = org.utils.SecurityUtils.getCurrentAccountId();
-        if (event.getOrganizer() == null || event.getOrganizer().getId() == null || !event.getOrganizer().getId().equals(currentUserId)) {
+        if (event.getOrganizer() == null || !event.getOrganizer().getId().equals(currentUserId)) {
             throw new SecurityException("Solo el organizador puede modificar este evento");
         }
 
+        if (isEventTimePassed(event)) {
+            throw new BadRequestException("El evento ha finalizado y no puede ser modificado.");
+        }
+
+        EventState originalState = event.getEventState();
+        EventState newState = eventPatch.getState();
+
+        // 2. Aplicar el patch al objeto Event en memoria
         event.patch(eventPatch);
+
+        // 3. LÓGICA DE TRANSICIÓN Y ACCIONES NECESARIAS
+        if (newState != null && newState != originalState) {
+            // validar transición
+            if (!isValidTransition(originalState, newState)) {
+                throw new BadRequestException("Transición de estado no permitida: " + originalState + " -> " + newState);
+            }
+
+            if (newState == EventState.EVENT_CLOSED) {
+                handleCloseEvent(event); // Cierra waitlist
+            } else if (newState == EventState.EVENT_CANCELLED) {
+                handleCancelEvent(event); // Cancela Todo
+            } else if (newState == EventState.EVENT_OPEN && originalState == EventState.EVENT_CLOSED) {
+                handleReopenEvent(event); // Reabre el evento
+            }
+        }
+
+        // 4. Guardar el objeto Event modificado
         eventRepository.save(event);
         return EventDTO.fromEvent(event);
     }
+
+
+
+    // --- MÉTODOS PRIVADOS DE LÓGICA DE ESTADO Y CONCURRENCIA ---
+
+    /**
+     * Valida si la hora actual es posterior a la hora de finalización del evento.
+     */
+    private boolean isEventTimePassed(Event event) {
+        if (event.getStartDateTime() == null || event.getDurationMinutes() == null) {
+            return false;
+        }
+        LocalDateTime eventEndTime = event.getStartDateTime().plusMinutes(event.getDurationMinutes());
+        return LocalDateTime.now().isAfter(eventEndTime);
+    }
+
+    /**
+     * Marca todas las inscripciones activas como CANCELADAS y limpia las listas.
+     */
+    private void handleCancelEvent(Event event) {
+        UUID eventId = event.getId();
+
+        // 1. Operación masiva en la colección 'registrations' (Alto Rendimiento)
+        // Busca CONFIRMED y WAITLIST para asegurar que se cancelen.
+        Query queryAllActiveRegs = new Query(Criteria.where("event.$id").is(eventId)
+            .orOperator(
+                Criteria.where("currentState").is(RegistrationState.CONFIRMED),
+                Criteria.where("currentState").is(RegistrationState.WAITLIST)
+            )
+        );
+        Update updateState = new Update().set("currentState", RegistrationState.CANCELED);
+        this.mongoTemplate.updateMulti(queryAllActiveRegs, updateState, Registration.class); // APLICA A TODOS
+
+        // 2. Mutar el objeto Event en memoria para el save final (consistencia)
+        event.setParticipants(new ArrayList<>());
+        event.setWaitList(new ArrayList<>());
+        event.setAvailableSeats(event.getMaxParticipants()); // Restablecer cupo
+        event.setEventState(EventState.EVENT_CANCELLED);
+    }
+
+    /**
+     * Lógica para EVENT_CLOSED (Cierre de Inscripción).
+     * Solo cancela la WAITLIST.
+     */
+    private void handleCloseEvent(Event event) {
+        UUID eventId = event.getId();
+
+        // 1. Marcar solo la WAITLIST como CANCELLED (Alto Rendimiento)
+        Query queryWaitlistRegs = new Query(
+            Criteria.where("event.$id").is(eventId)
+                .and("currentState").is(RegistrationState.WAITLIST)
+        );
+        Update updateState = new Update().set("currentState", RegistrationState.CANCELED);
+        this.mongoTemplate.updateMulti(queryWaitlistRegs, updateState, Registration.class);
+
+        // 2. Mutar el objeto Event en memoria: limpiar waitList y setear estado CLOSED.
+        event.setWaitList(new ArrayList<>());
+        event.setEventState(EventState.EVENT_CLOSED);
+    }
+
+    /**
+     * Reabre un evento que estaba cerrado.
+     * Recalcula availableSeats y pone el estado a EVENT_OPEN.
+     */
+    private void handleReopenEvent(Event event) {
+        // Recalcular el cupo disponible basado en la lista de participantes sincronizada
+        int confirmed = (event.getParticipants() == null) ? 0 : event.getParticipants().size();
+        int maxParticipants = (event.getMaxParticipants() == null) ? 0 : event.getMaxParticipants();
+        event.setAvailableSeats(Math.max(0, maxParticipants - confirmed));
+        event.setEventState(EventState.EVENT_OPEN);
+    }
+
+    /**
+     * Valida si una transición de estados es permitida según reglas de negocio.
+     */
+    private boolean isValidTransition(EventState from, EventState to) {
+        if (from == null || to == null) return false;
+        if (from == to) return false;
+        // Una vez cancelado, no se permite volver a otro estado
+        if (from == EventState.EVENT_CANCELLED) return false;
+
+        return switch (from) {
+            case EVENT_OPEN -> to == EventState.EVENT_CLOSED || to == EventState.EVENT_CANCELLED;
+            case EVENT_CLOSED -> to == EventState.EVENT_OPEN || to == EventState.EVENT_CANCELLED;
+            default -> false;
+        };
+    }
+
+
 }

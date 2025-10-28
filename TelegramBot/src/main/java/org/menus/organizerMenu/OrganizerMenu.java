@@ -13,38 +13,28 @@ public class OrganizerMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/newEvent":
-                user.setMenu(new NewEventMenu(user));
+                user.setMenu(new NewEventMenu());
                 return null;
             case "/manageEvents":
-                user.setMenu(new ManageEventSelectionMenu(user));
+                user.setMenu(new ManageEventSelectionMenu());
                 return null;
             default:
-                return "Error - opcion invalida\n";
+                return user.getLocalizedMessage("wrongOption");
         }
 
     }
 
     @Override
     public String getQuestion() {
-        return """
-                Menu de organizador:
-                
-                Nuevo evento
-                    - Crear y publicar un nuevo evento
-                Gestionar eventos
-                    - Ver y modificar estado de sus eventos
-                Volver al inicio
-                    - Volver al menú principal
-                
-                """;
+        return user.getLocalizedMessage("organizerMenuQuestion", user.getLocalizedMessage("/newEvent"), user.getLocalizedMessage("/manageEvents"), user.getLocalizedMessage("/start"));
     }
 
-    public OrganizerMenu(TelegramUser user) {
-        super(user);
+    public OrganizerMenu() {
+        super();
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of("Nuevo evento", "/newEvent", "Gestionar eventos", "/manageEvents", "Volver al inicio", "/start"));
+        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(),"/newEvent", "/manageEvents", "/start");
         return message;
     }
 }

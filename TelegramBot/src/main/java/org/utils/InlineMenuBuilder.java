@@ -3,6 +3,7 @@ package org.utils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.users.TelegramUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,11 +12,34 @@ import java.util.Map;
 
 public class InlineMenuBuilder {
 
+    public static SendMessage localizedMenu(TelegramUser user, String text, List<String>... lines) {
+        List<List<Button>> layout = new ArrayList<>();
+        for (List<String> line: lines) {
+            List<Button> row = new ArrayList<>();
+            for (String option : line) {
+                row.add(new Button(user.getLocalizedMessage(option), option)); // texto, comando
+            }
+            layout.add(row);
+        }
+        return menu(text, layout);
+    }
+    public static SendMessage localizedVerticalMenu(TelegramUser user, String text, String... lines) {
+        List<List<Button>> layout = new ArrayList<>();
+        for (String line: lines) {
+            List<Button> row = new ArrayList<>();
+            row.add(new Button(user.getLocalizedMessage(line), line));
+            layout.add(row);
+        }
+        return menu(text, layout);
+    }
+
 
     public static SendMessage menu(String text, List<String>... lines) {
         List<List<Button>> layout = new ArrayList<>();
 
         for (List<String> line : lines) {
+            if(line == null)
+                continue;
             List<Button> row = new ArrayList<>();
             for (String option : line) {
                 row.add(new Button(option, option)); // texto = callback_data
@@ -71,5 +95,31 @@ public class InlineMenuBuilder {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(keyboard);
         return markup;
+    }
+
+    public static void addExtraLocalizedOptions(TelegramUser user, SendMessage message, String... options) {
+        InlineKeyboardMarkup existingMarkup = (InlineKeyboardMarkup) message.getReplyMarkup();
+        List<List<InlineKeyboardButton>> keyboard;
+        if (existingMarkup != null && existingMarkup.getKeyboard() != null) {
+            keyboard = new ArrayList<>(existingMarkup.getKeyboard());
+        } else {
+            keyboard = new ArrayList<>();
+        }
+        List<InlineKeyboardButton> extraRow = new ArrayList<>();
+
+        for (String option : options) {
+            InlineKeyboardButton btn = new InlineKeyboardButton();
+            btn.setText(user.getLocalizedMessage(option));
+            btn.setCallbackData(option);
+            extraRow.add(btn);
+        }
+        if (!extraRow.isEmpty()) {
+            keyboard.add(extraRow);
+        }
+
+        InlineKeyboardMarkup newMarkup = new InlineKeyboardMarkup();
+        newMarkup.setKeyboard(keyboard);
+
+        message.setReplyMarkup(newMarkup);
     }
 }

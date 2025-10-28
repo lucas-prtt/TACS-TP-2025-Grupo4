@@ -1,5 +1,7 @@
 package org.menus;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.menus.adminMenu.AdminMenu;
 import org.menus.browseMenu.BrowseMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -15,27 +17,29 @@ import java.util.Objects;
 
 public class MainMenu extends MenuState {
 
-    public MainMenu(TelegramUser user) {
-        super(user);
+    public MainMenu() {
+        super();
     }
-
+    @JsonIgnore
     @Override
     public String getQuestion() {
-        return "Menu principal: \n " +
-                "/userMenu: Menu de gestion de usuario\n " +
-                (user.getServerAccountUsername() != null ?
-                "/organizerMenu. Menu de gestion de eventos organizados\n " +
-                "/participantMenu. Menu de gestion de eventos a los que participa\n" +
-                "/browseMenu. Menu para buscar nuevos eventos a los que participar" : "");
+        if(user.getServerAccountUsername() == null)
+            return user.getLocalizedMessage("mainMenuQuestionLoggedOut", user.getLocalizedMessage("/userMenu"), user.getLocalizedMessage("/languageMenu"));
+        else if(!user.isAdmin())
+            return user.getLocalizedMessage("mainMenuQuestionLoggedIn", user.getLocalizedMessage("/userMenu"), user.getLocalizedMessage("/organizerMenu"), user.getLocalizedMessage("/participantMenu"), user.getLocalizedMessage("/browseMenu"), user.getLocalizedMessage("/languageMenu"));
+        else
+            return user.getLocalizedMessage("mainMenuQuestionAdmin", user.getLocalizedMessage("/userMenu"), user.getLocalizedMessage("/organizerMenu"), user.getLocalizedMessage("/participantMenu"), user.getLocalizedMessage("/browseMenu"), user.getLocalizedMessage("/adminMenu"), user.getLocalizedMessage("/languageMenu"));
     }
 
     @Override
     public SendMessage questionMessage() {
         SendMessage message;
-        if(user.getServerAccountUsername() != null){
-            message = InlineMenuBuilder.menu(getQuestion(), List.of("/userMenu"), List.of( "/organizerMenu"), List.of( "/participantMenu"), List.of( "/browseMenu"));
+        if(user.isAdmin()){
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/userMenu", "/organizerMenu", "/participantMenu", "/browseMenu", "/adminMenu" ,"/languageMenu");
+        }else if(user.isUser()){
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/userMenu", "/organizerMenu", "/participantMenu", "/browseMenu", "/languageMenu");
         }else {
-            message = InlineMenuBuilder.menu(getQuestion(), List.of("/userMenu"));
+            message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/userMenu", "/languageMenu");
         }
         return message;
     }
@@ -49,23 +53,30 @@ public class MainMenu extends MenuState {
                         Objects.equals(message, "/browseMenu")
                         )
         )
-            return "Inicia sesion antes de entrar a estos menus";
-
+            return user.getLocalizedMessage("mustLoginBeforeMenu");
+        if(!user.isAdmin() && Objects.equals(message, "/adminMenu"))
+            return user.getLocalizedMessage("mustBeAdmin");
         switch (message){
             case "/userMenu":
-                user.setMenu(new UserMenu(user));
+                user.setMenu(new UserMenu());
                 return null;
             case "/organizerMenu":
-                user.setMenu(new OrganizerMenu(user));
+                user.setMenu(new OrganizerMenu());
                 return null;
             case "/participantMenu":
-                user.setMenu(new ParticipantMenu(user));
+                user.setMenu(new ParticipantMenu());
                 return null;
             case "/browseMenu":
-                user.setMenu(new BrowseMenu(user));
+                user.setMenu(new BrowseMenu());
+                return null;
+            case "/languageMenu":
+                user.setMenu(new LanguageMenu());
+                return null;
+            case "/adminMenu":
+                user.setMenu(new AdminMenu());
                 return null;
             default:
-                return "Error - opcion invalida\n";
+                return user.getLocalizedMessage("wrongOption");
         }
 
     }

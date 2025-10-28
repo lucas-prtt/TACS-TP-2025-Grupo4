@@ -6,6 +6,8 @@ import org.telegram.telegrambots.meta.api.methods.updates.GetWebhookInfo;
 import org.telegram.telegrambots.meta.api.objects.WebhookInfo;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+import org.users.CacheTelegramUserRepository;
+import org.users.RedisTelegramUserRepository;
 
 public class TelegramBotMain {
     public static void main(String[] args) {
@@ -23,13 +25,15 @@ public class TelegramBotMain {
             System.err.println("La variable de entorno EVENTOS_TELEGRAM_BOT_TOKEN no está definida");
             return;
         }
-
+        String REDIS_IP = ConfigManager.getInstance().getOptional("redis.ip").orElse("localhost");
+        Integer REDIS_PORT = ConfigManager.getInstance().getOptionalInteger("redis.port").orElse(8080);
+        Boolean REDIS_ENABLED = ConfigManager.getInstance().getOptionalBool("redis.enabled").orElse(false);
 
 
         try {
             System.out.println("\nCargando bot...");
             BotEventos bot = new BotEventos(TOKEN, NAME);
-
+            bot.setTelegramUserRepository(REDIS_ENABLED? new RedisTelegramUserRepository() : new CacheTelegramUserRepository(bot));
             WebhookInfo webhookInfo = bot.execute(new GetWebhookInfo());
             if (webhookInfo.getUrl() == null || webhookInfo.getUrl().isEmpty()) {
                 System.out.println("No hay webhook configurado.");

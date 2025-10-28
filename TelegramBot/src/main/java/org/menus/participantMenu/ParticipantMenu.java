@@ -14,16 +14,16 @@ public class ParticipantMenu extends MenuState {
     public String respondTo(String message) {
         switch (message){
             case "/getSuccesfulRegistrations":
-                user.setMenu(new SelectSuccesfulRegistrationsMenu(user));
+                user.setMenu(new SelectSuccesfulRegistrationsMenu());
                 return null;
             case "/getWaitlistedRegistrations":
-                user.setMenu(new SelectWaitlistedRegistrationsMenu(user));
+                user.setMenu(new SelectWaitlistedRegistrationsMenu());
                 return null;
             case "/getCanceledRegistrations":
-                user.setMenu(new SelectCanceledRegistrationsMenu(user));
+                user.setMenu(new SelectCanceledRegistrationsMenu());
                 return null;
             case "/getAllRegistrations":
-                user.setMenu(new SelectAllRegistrationsMenu(user));
+                user.setMenu(new SelectAllRegistrationsMenu());
                 return null;
             default:
                 return "Error - opcion invalida\n";
@@ -32,28 +32,21 @@ public class ParticipantMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return """
-                Menu de participante:
-                
-                Confirmadas
-                    - Ver inscripciones confirmadas
-                Waitlist
-                    - Ver inscripciones a eventos en waitlist
-                Canceladas
-                    - Ver inscripciones canceladas
-                Todas
-                    - Ver todas las inscripciones
-                Inicio
-                    - Volver al menú principal
-                """;
+        return user.getLocalizedMessage("participantMenuQuestion",
+                user.getLocalizedMessage("/getSuccesfulRegistrations"),
+                user.getLocalizedMessage("/getWaitlistedRegistrations"),
+                user.getLocalizedMessage("/getCanceledRegistrations"),
+                user.getLocalizedMessage("/getAllRegistrations"),
+                user.getLocalizedMessage("/start")
+        );
     }
 
-    public ParticipantMenu(TelegramUser user) {
-        super(user);
+    public ParticipantMenu() {
+        super();
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), Map.of("Confirmadas","/getSuccesfulRegistrations","Waitlist", "/getWaitlistedRegistrations","Canceladas", "/getCanceledRegistrations"), Map.of("Todas","/getAllRegistrations", "Inicio","/start"));
+        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/getSuccesfulRegistrations", "/getWaitlistedRegistrations", "/getCanceledRegistrations", "/getAllRegistrations", "/start");
         return message;
     }
 }

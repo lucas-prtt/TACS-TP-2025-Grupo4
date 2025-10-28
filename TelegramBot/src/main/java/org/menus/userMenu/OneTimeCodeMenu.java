@@ -1,5 +1,7 @@
 package org.menus.userMenu;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.AccountDTO;
 import org.menus.MainMenu;
@@ -8,17 +10,26 @@ import org.springframework.web.client.ResourceAccessException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.menus.MenuState;
+import org.utils.ErrorHandler;
+import org.utils.InlineMenuBuilder;
 
 import java.util.Map;
+import java.util.Objects;
 
+@Getter
+@Setter
 public class OneTimeCodeMenu extends MenuState {
     String username;
-    public OneTimeCodeMenu(TelegramUser user) {
-        super(user);
+    public OneTimeCodeMenu() {
+        super();
     }
 
     @Override
     public String respondTo(String message) {
+        if(Objects.equals(message, "/back"))
+        {
+            user.setMenu(new UserMenu());
+        }
         try {
             if(username == null){
                 username = message;
@@ -27,41 +38,31 @@ public class OneTimeCodeMenu extends MenuState {
 
             Map<String, Object> response = user.getApiClient().loginOneTimeCode(message, username);
             user.updateUser(response);
-            user.setMenu(new MainMenu(user));
-            return "Cuenta establecida:\n" +
-                    "  Usuario: "+ user.getServerAccountUsername() +
-                    "\n  Uuid: " + user.getServerAccountId()  + "\n\n";
+            user.setMenu(new MainMenu());
+            return user.getLocalizedMessage("successfulLogin", user.getServerAccountId(), user.getServerAccountUsername());
         }catch (HttpClientErrorException e){
-            System.out.println(e.getMessage());
-            try {
-                Map<String, String> errorMap = new ObjectMapper().readValue(e.getResponseBodyAsString(), Map.class);
-                return e.getStatusCode().toString()+"\n" + errorMap.getOrDefault("error", "Error desconocido") + "\n\n";
-            } catch (Exception e2) {
-                System.out.println(e2.getMessage());
-                user.setMenu(new UserMenu(user));
-                return "Error desconocido en el servidor.";
-            }
+            user.setMenu(new UserMenu());
+            return ErrorHandler.getErrorMessage(e, user);
         }catch (ResourceAccessException e) {
-            System.out.println("Servidor no disponible: " + e.getMessage());
-            user.setMenu(new UserMenu(user));
-            return "Error: el servidor no está disponible. Intente más tarde.";
+            user.setMenu(new UserMenu());
+            return user.getLocalizedMessage("serverUnavailable");
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
-            return "Error desconocido al asignar el usuario. Vuelva a intentar o escriba /start para volver al inicio\n\n";
+            System.err.println(e.getMessage());
+            return user.getLocalizedMessage("internalBotError");
         }
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = sendMessageText(getQuestion());
+        SendMessage message = InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back");
         return message;
     }
 
     @Override
     public String getQuestion() {
         if(username == null){
-            return "Ingrese el nombre de usuario";
+            return user.getLocalizedMessage("requestInputUsername");
         }
-        return "Ingrese el one Time Code";
+        return user.getLocalizedMessage("requestInputOneTimeCode");
     }
 }

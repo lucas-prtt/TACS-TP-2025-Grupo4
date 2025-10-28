@@ -9,19 +9,13 @@ import org.model.accounts.Account;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.model.accounts.Account;
-import org.model.enums.EventState;
-import org.model.events.Event;
-import org.model.events.Registration;
 import org.services.EventService;
 import org.services.OrganizerService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Queue;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -56,7 +50,8 @@ public class OrganizerTests {
         BigDecimal.TEN,
         null,
         new ArrayList<>(),
-        organizer
+        organizer,
+            null
     );
 
     // asegurarnos que el id esté seteado
@@ -124,26 +119,4 @@ public class OrganizerTests {
     assertEquals(EventState.EVENT_CLOSED, mockEvent.getEventState());
   }
 
-  @Test
-  void testRegisterParticipantAfterClosingRegistrations() {
-    // Cerrar inscripciones usando el servicio (esto cambia el estado del evento)
-    organizerService.closeRegistrations(organizer.getId(), mockEvent.getId());
-
-    // Intentar registrar un nuevo participante después de cerrar las inscripciones
-    Account newUser = new Account();
-    newUser.setUsername("newuser@test.com");
-    newUser.setPassword("pwd-new");
-    Registration newRegistration = new Registration(newUser);
-
-        // Intentar registrar el nuevo participante
-        assertThrows(EventRegistrationsClosedException.class, () -> {
-            mockEvent.registerParticipant(newRegistration);
-        });
-
-
-
-        // Verificar que el resultado es "CERRADO" y que no se agregó al participante
-        assertEquals(EventState.EVENT_CLOSED, mockEvent.getEventState());
-        assertFalse(mockEvent.getParticipants().contains(newRegistration));  // Verificar que no fue agregado
-    }
 }

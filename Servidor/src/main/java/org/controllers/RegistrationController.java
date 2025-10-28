@@ -4,12 +4,10 @@ package org.controllers;
 import static org.utils.SecurityUtils.getCurrentAccountId;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.DTOs.registrations.RegistrationDTO;
 import org.exceptions.RegistrationNotFoundException;
-import org.exceptions.WrongUserException;
 import org.model.enums.RegistrationState;
 import org.model.events.Registration;
 import org.services.AccountService;
@@ -22,14 +20,13 @@ import org.utils.PageNormalizer;
 
 @RestController
 @RequestMapping("/registrations")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"}, allowCredentials = "true")
 public class RegistrationController {
 
   private final RegistrationService registrationService;
-  private final AccountService accountService;
 
   public RegistrationController(RegistrationService registrationService, AccountService accountService) {
     this.registrationService = registrationService;
-    this.accountService = accountService;
   }
 
   /**
@@ -47,7 +44,7 @@ public class RegistrationController {
 
     page = PageNormalizer.normalizeRegistrationsPageNumber(page);
     limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
-    List<RegistrationDTO> registrations = accountService.getRegistrations(accountId, page, limit, registrationState);
+    List<RegistrationDTO> registrations = registrationService.findByUser_IdAndRegistrationState(accountId, registrationState, page, limit);
     return ResponseEntity.ok(registrations);
   }
 
@@ -59,10 +56,7 @@ public class RegistrationController {
   @GetMapping("/{registrationId}")
   public ResponseEntity<?> getRegistrationByUserAndById(@PathVariable("registrationId") UUID registrationId) {
     UUID accountId = getCurrentAccountId();
-    return registrationService.findByUserAndRegistrationId(accountId, registrationId)
-        .<ResponseEntity<?>>map(ResponseEntity::ok)
-        .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(Map.of("error", "La inscripción no existe o no pertenece al usuario")));
+    return ResponseEntity.ok(registrationService.findByUserAndRegistrationId(accountId, registrationId));
   }
 
 
@@ -74,16 +68,9 @@ public class RegistrationController {
    */
   @PatchMapping("/{registrationId}")
   public ResponseEntity<?> cancelar(@PathVariable("registrationId") UUID registrationId, @RequestBody RegistrationDTO registrationDTO) {
-    try {
-      UUID accountId = getCurrentAccountId();
-      Registration registration = registrationService.patchRegistration(registrationId, accountId, registrationDTO);
-    }catch (WrongUserException e){
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ErrorResponse.create(e, HttpStatus.FORBIDDEN, e.getMessage()));
-    }catch (RegistrationNotFoundException e){
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.create(e, HttpStatus.NOT_FOUND, e.getMessage()));
-    }
+    UUID accountId = getCurrentAccountId();
+    Registration registration = registrationService.patchRegistration(registrationId, accountId, registrationDTO);
     return ResponseEntity.noContent().build();
   }
-
 }
 

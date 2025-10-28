@@ -1,13 +1,19 @@
 package org.menus.organizerMenu;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.CategoryDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.TagDTO;
+import org.exceptions.DateAlreadySetException;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
+import org.utils.DateInputHelper;
+import org.utils.InlineMenuBuilder;
+import org.utils.inputSteps.*;
 import org.yaml.snakeyaml.util.Tuple;
 
 import java.lang.reflect.Field;
@@ -15,115 +21,88 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
+import java.util.*;
+@Getter
+@Setter
 public class NewEventMenu extends MenuState {
     EventDTO eventDTO;
-    List<Tuple<Field, String>> fields;
-    public NewEventMenu(TelegramUser user) {
-        super(user);
+    List<EventInputStep> inputs = new LinkedList<>();
+    Integer index = 0;
+    public NewEventMenu() {
+        super();
         eventDTO = new EventDTO();
-        eventDTO.setUsernameOrganizer(user.getServerAccountUsername());
-        try {
-            fields = new ArrayList<Tuple<Field, String>>(List.of(
-                    new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("title"), "titulo"),
-                    new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("description"), "descripcion"),
-                    new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("startDateTime"), "fecha de inicio"),
-                    new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("durationMinutes"), "duracion del evento en minutos"),
-                    new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("location"), "ubicacion"),
-                    new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("maxParticipants"), "maxima cantidad de participantes"),
-                    new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("minParticipants"), "minima cantidad de participantes"),
-                    new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("price"), "precio de entrada"),
-                    new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("category"), "categoria"),
-                    new Tuple<Field, String>(eventDTO.getClass().getDeclaredField("tags"), "etiquetas. ingrese /stop para finalizar")
-            ));
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
+        inputs.add(new StringInputStep("title"));
+        inputs.add(new StringInputStep("description"));
+        inputs.add(new DateTimeInputStep("startDateTime"));
+        inputs.add(new IntegerInputStep("durationMinutes", List.of(15, 30, 60, 120, 180)));
+        inputs.add(new StringInputStep("location"));
+        inputs.add(new IntegerInputStep("maxParticipants", List.of(10, 20, 50, 100, 500, 1000)));
+        inputs.add(new IntegerInputStep("minParticipants", List.of(0, 10, 20, 50, 100)));
+        inputs.add(new BigDecimalInputStep("price", "freePrice"));
+        inputs.add(new CategoryDTOInputStep("category"));
+        inputs.add(new TagsInputStep("tags"));
+        inputs.add(new ConfirmCreationStep());
     }
 
     @Override
     public String respondTo(String message) {
-        Field field = fields.getFirst()._1();
-        field.setAccessible(true);
-        Class<?> fieldType = field.getType();
-
-        try {
-            switch (fieldType.getSimpleName()) {
-                case "String":
-                    field.set(eventDTO, message);
-                    fields.removeFirst();
-                    break;
-
-                case "LocalDateTime":
-                    try {
-                        field.set(eventDTO, LocalDateTime.parse(message));
-                        fields.removeFirst();
-                    } catch (DateTimeParseException e) {
-                        return "Formato de fecha y hora inválido.\n Use el formato ISO: yyyy-MM-ddTHH:mm:ss";
-                    }
-                    break;
-
-                case "BigDecimal":
-                    try {
-                        field.set(eventDTO, new BigDecimal(message));
-                        fields.removeFirst();
-                        break;
-                    }catch (Exception e){
-                        return "Introdujo mal el campo. (Utilice el siguiente formato 123.45)";
-                    }
-
-                case "Integer":
-                    try {
-                        field.set(eventDTO, Integer.valueOf(message));
-                        fields.removeFirst();
-                        break;
-                    }catch (Exception e){
-                        return "Introduzca un numero entero\n";
-                    }
-
-                case "CategoryDTO":
-                    field.set(eventDTO, new CategoryDTO(message));
-                    fields.removeFirst();
-                    break;
-
-                case "List":
-                    if (Objects.equals(message, "/stop")) {
-                        fields.removeFirst();
-                        return getQuestion();
-                    }
-                    List<TagDTO> tags = (List<TagDTO>) field.get(eventDTO);
-                    if (tags == null)
-                        tags = new ArrayList<>();
-                    tags.add(new TagDTO(message));
-                    field.set(eventDTO, tags);
-                    break;
-
-                default:
-                    return "ERROR: Campo no soportado."; // No debería ocurrir nunca, al menos mientras no se abstraiga este menu
+        if(Objects.equals(message, "/back")){
+            if(inputs.get(index) instanceof DateTimeInputStep dateTimeInputStep){
+                try {
+                    dateTimeInputStep.getHelper().goBackOneStep();
+                    return null;
+                }catch (Exception ignored){}
+                // Si no se puede, vuelve a descripcion
             }
-        } catch (IllegalAccessException e) {
-            return "Error al ingresar el valor, vuelva a intentar.";
-        }
+            if(inputs.get(index) instanceof TagsInputStep tagsInputStep){
+                if(eventDTO.getTags().isEmpty()){
+                    index--;
+                }else
+                    eventDTO.getTags().removeLast();
+                return user.getLocalizedMessage("currentTags", String.join(", ", eventDTO.getTags().stream().map(TagDTO::getNombre).toList()));
+            }
+            index--;
+            if(index >= 0 && inputs.get(index) instanceof DateTimeInputStep dateTimeInputStep){
+                try {
+                    dateTimeInputStep.getHelper().goBackOneStep();
+                    return null;
+                }catch (Exception ignored){}
+                // No deberia pasar nunca
+            }
 
+            if(index < 0 || inputs.size() <= index){
+                user.setMenu(new OrganizerMenu());
+                return null;
+            }
+            return null;
+        }
+        boolean handled = inputs.get(index).handleInput(message, eventDTO, user);
+        if(inputs.get(index) instanceof IntegerInputStep step && Objects.equals(step.getFieldName(), "minParticipants") && eventDTO.getMinParticipants() > eventDTO.getMaxParticipants()){
+            return user.getLocalizedMessage("minParticipantsTooHigh");
+        }
+        if (handled) {
+            index++;
+            if (index == inputs.size()) {
+                user.getApiClient().postEvent(eventDTO);
+                user.setMenu(new MainMenu());
+                return user.getLocalizedMessage("eventSuccesfullyCreated");
+            }
+        }
+        if(inputs.get(index) instanceof TagsInputStep tagsInputStep){
+            return eventDTO.getTags().isEmpty() ? null : user.getLocalizedMessage("currentTags", String.join(", ", eventDTO.getTags().stream().map(TagDTO::getNombre).toList()));
+        }
         return null;
     }
 
     @Override
     public String getQuestion() {
-        if(fields.isEmpty()){
-            user.getApiClient().postEvent(eventDTO);
-            user.setMenu(new MainMenu(user));
-            return null;
-        }
-        return "Ingrese " + fields.getFirst()._2() + ":";
+        return " - ";
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = sendMessageText(getQuestion());
-        return message;
+        SendMessage msg = inputs.get(index).getQuestion(user);
+        InlineMenuBuilder.addExtraLocalizedOptions(user,  msg, "/back", "/start");
+        return msg;
     }
 }
+

@@ -1,17 +1,18 @@
 package org.eventServerClient;
 
+import lombok.Setter;
 import org.ConfigManager;
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.eventServerClient.dtos.AccountDTO;
-import org.eventServerClient.dtos.LoginRequestDTO;
-import org.eventServerClient.dtos.RegistrationDTO;
-import org.eventServerClient.dtos.RegistrationStateDTO;
+import org.eventServerClient.dtos.*;
+import org.eventServerClient.dtos.event.CategoryDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.EventStateDTO;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientResponseException;
@@ -19,32 +20,43 @@ import org.springframework.web.client.RestTemplate;
 import org.users.TelegramUser;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class ApiClient {
 
     private final RestTemplate restTemplate;
     private final TelegramUser user;
-    public ApiClient(Map<String, Object> loginInfo, TelegramUser user) {
+    public ApiClient(String token, TelegramUser user) {
         this.user = user;
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory(httpClient);
         restTemplate = new RestTemplate(factory);
-        if(loginInfo != null){
-            String token = (String) loginInfo.get("token");
-            this.restTemplate.setInterceptors(List.of((request, body, execution) -> {
-                request.getHeaders().setBearerAuth(token);
-                request.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-                return execution.execute(request, body);
-            }));
+
+        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+
+        interceptors.add((request, body, execution) -> {
+            request.getHeaders().set(HttpHeaders.ACCEPT_LANGUAGE, user.getLang());
+            return execution.execute(request, body);
+        });
+
+        if(token != null){
+            interceptors.add(
+                (request, body, execution) ->
+                    {
+                        request.getHeaders().setBearerAuth(token);
+                        request.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+                        return execution.execute(request, body);
+                    }
+            );
         };
+
+        restTemplate.setInterceptors(interceptors);
     }
     public static ApiClient withoutToken(TelegramUser user){
         return new ApiClient(null, user);
     }
     public static ApiClient fromToken(String token, TelegramUser user) {
-        Map<String, Object> loginInfo = new HashMap<>();
-        loginInfo.put("token", token);
-        return new ApiClient(loginInfo, user);
+        return new ApiClient(token, user);
     }
 
     public String getBaseUri(){
@@ -222,6 +234,62 @@ public class ApiClient {
         throw e;
     }
     }
+    public StatsDTO getAdminStats(){
+        try {
+            String url = getBaseUri() + "/admin/stats";
+            return restTemplate.getForObject(url, StatsDTO.class);
+        }catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
+    }
 
+    public List<CategoryDTO> getCategories(Integer page, Integer limit, String startsWith){
+        try {
+            String url = getBaseUri() + "/events/categories?page=" + page + "&limit=" + limit + "&startsWith=" + startsWith;
+            return List.of(Objects.requireNonNull(restTemplate.getForObject(url, CategoryDTO[].class)));
+        }catch (HttpClientErrorException e){
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
+    }
+    public CategoryDTO postCategory(CategoryDTO categoryDTO){
+        try {
+            String url = getBaseUri() + "/admin/categories";
+            return restTemplate.postForObject(url, categoryDTO, CategoryDTO.class);
+        }catch (HttpClientErrorException e){
+        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+            user.deleteCurrentAccount();
+        throw e;
+        }
+    }
+
+    public void deleteCategory(CategoryDTO categoryDTO){
+        try {
+            String url = getBaseUri() + "/admin/categories/" + categoryDTO.getTitle();
+            restTemplate.delete(url);
+            return;
+        }catch (HttpClientErrorException e){
+        if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+            user.deleteCurrentAccount();
+        throw e;
+        }
+    }
+
+    public boolean userExists(String username){
+        try {
+            String url = getBaseUri() + "/auth/checkUser?username=" + username;
+            restTemplate.getForObject(url, String.class);
+            return true;
+        }catch (HttpClientErrorException e){
+            if(e.getStatusCode() == HttpStatus.NOT_FOUND)
+                return false;
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED)
+                user.deleteCurrentAccount();
+            throw e;
+        }
+    }
 
 }

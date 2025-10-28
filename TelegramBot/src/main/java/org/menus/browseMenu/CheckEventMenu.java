@@ -1,74 +1,87 @@
 package org.menus.browseMenu;
 
 import com.sun.tools.javac.Main;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
 import org.eventServerClient.dtos.event.EventDTO;
+import org.eventServerClient.dtos.event.EventStateDTO;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.menus.userMenu.UserMenu;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.*;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
+import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
-
+@Getter
+@Setter
+@NoArgsConstructor
 public class CheckEventMenu extends MenuState {
     EventDTO evento;
-    public CheckEventMenu(TelegramUser user, EventDTO eventDTO) {
-        super(user);
+    MenuState backMenu;
+    public CheckEventMenu(EventDTO eventDTO, MenuState backMenu) {
+        super();
         evento = eventDTO;
+        this.backMenu = backMenu;
     }
 
     @Override
     public String respondTo(String message) {
-        if (message.equals("/register")) {
+        if(message.equals("/back")){
+            user.setMenu(backMenu);
+            return null;
+        }
+        if (message.equals("/registerUser")) {
             if (user.getServerAccountId() == null) {
-                user.setMenu(new UserMenu(user));
-                return "Primero debe registarse" ;
+                user.setMenu(new UserMenu());
+                return user.getLocalizedMessage("mustLoginFirst") ;
             }
             try {
                 RegistrationDTO response = user.getApiClient().postRegistration(evento.getId());
 
                 if (response.getState().equals(RegistrationStateDTO.CONFIRMED)) {
-                    user.setMenu(new MainMenu(user));
-                    return "Inscripcion confirmada a la lista de participantes\n\n";
+                    user.setMenu(new MainMenu());
+                    return user.getLocalizedMessage("registrationConfirmedParticipant");
                 } else if (response.getState().equals(RegistrationStateDTO.WAITLIST)) {
-                    user.setMenu(new MainMenu(user));
-                    return "Inscripcion confirmada a la Waitlist\n\n";
+                    user.setMenu(new MainMenu());
+                    return user.getLocalizedMessage("registrationConfirmedWaitlist");
                 } else {
-                    user.setMenu(new MainMenu(user));
-                    return "ERROR DESCONOCIDO - Estado " + response + " no reconocido\n\n";
+                    user.setMenu(new MainMenu());
+                    return user.getLocalizedMessage("unknownErrorInServer");
                 }
             } catch (HttpClientErrorException e) {
-                user.setMenu(new MainMenu(user));
-                return e.getStatusCode().toString() + "\n" + e.getResponseBodyAsString() + "\n\n";
+                return ErrorHandler.getErrorMessage(e, user);
             }catch (ResourceAccessException e) {
                 System.out.println("Servidor no disponible: " + e.getMessage());
-                user.setMenu(new UserMenu(user));
-                return "Error: el servidor no está disponible. Intente más tarde.";
+                user.setMenu(new UserMenu());
+                return user.getLocalizedMessage("unknownErrorInServer");
             }catch (Exception e){
-                user.setMenu(new MainMenu(user));
+                user.setMenu(new MainMenu());
                 return "Error desconocido";
             }
         }
-        return "Respuesta invalida \n\n" + getQuestion();
+        return user.getLocalizedMessage("wrongOption");
     }
 
     @Override
     public String getQuestion() {
-        return evento.asDetailedString() +
+        return evento.asDetailedString(user) +
                 "\n\n"+
-                (evento.getMaxParticipants() == evento.getRegistered() ? "/register --> Registrarse a la waitlist\n" : "/register --> Registrarse al evento\n")+
-                "/start    --> volver al menu inicial";
+                (evento.isOpen() ? user.getLocalizedMessage("/registerUser") + "  -->  " + (Objects.equals(evento.getMaxParticipants(), evento.getRegistered()) ?  user.getLocalizedMessage("registerToWaitlist") : user.getLocalizedMessage("registerToParticipants")) : "");
     }
     @Override
     public SendMessage questionMessage() {
-        SendMessage message = InlineMenuBuilder.menu(getQuestion(), List.of("/register", "/start"));
-        return message;
+
+        return evento.isOpen() ? InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/registerUser", "/back", "/start") : InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), "/back", "/start");
     }
 
 }
