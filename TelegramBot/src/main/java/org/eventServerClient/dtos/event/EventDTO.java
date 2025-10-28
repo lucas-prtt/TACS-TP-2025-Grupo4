@@ -1,5 +1,6 @@
 package org.eventServerClient.dtos.event;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,7 +50,7 @@ public class EventDTO {
                         (price != null ? price.toString() :  user.getLocalizedMessage("nullPrice")),
                         (category != null && category.getTitle() != null ? category.getTitle() :  user.getLocalizedMessage("nullCategory")),
                         (tags != null ? String.join(", ", tags.stream().filter(Objects::nonNull).map(TagDTO::getNombre).toList()) :  user.getLocalizedMessage("nullTags")),
-                        (state != null ? user.getLocalizedMessage(state.toString()) :  user.getLocalizedMessage("nullState")),
+                        (user.getLocalizedMessage(getStateAsString())),
                         (durationMinutes != null ? Duration.ofMinutes(durationMinutes).toHours() + "h " + Duration.ofMinutes(durationMinutes).toMinutesPart() + "m" :  user.getLocalizedMessage("nullDuration")),
                         registered,
                         maxParticipants,
@@ -57,7 +58,30 @@ public class EventDTO {
                 );
 
         }
+        @JsonIgnore
+        public boolean isPastDate(){
+                return startDateTime != null && LocalDateTime.now().isAfter(startDateTime);
+        }
+        @JsonIgnore
+        public boolean isOpen(){
+                return state == EventStateDTO.EVENT_OPEN && !isPastDate();
+        }
+        @JsonIgnore
+        public String getStateAsString() {
+                if (state == null) {
+                        return "nullState";
+                }
 
+                if (state == EventStateDTO.EVENT_CLOSED) {
+                        return state.toString();
+                }
+
+                if (isPastDate()) {
+                        return "EVENT_FINISHED";
+                }
+
+                return state.toString(); // EVENT_OPEN o EVENT_PAUSED (event pause deprecado)
+        }
 
 
 }

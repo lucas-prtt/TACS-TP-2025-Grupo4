@@ -348,28 +348,22 @@ organizerMenuQuestion,"Menu de organizador:
 registrationAsDetailedString,"Estado: {0}
 Evento: {1}
 Descripcion:{2}
-ID: {3}
-Fecha de inicio: {4}","Status: {0}
+Fecha de inscripcion: {3}","Status: {0}
 Event: {1}
 Description: {2}
-ID: {3}
-Start Date: {4}","Status: {0}
-Ereignis: {1}
+Registration Date: {3}","Status: {0}
+Veranstaltung: {1}
 Beschreibung: {2}
-ID: {3}
-Startdatum: {4}","Status: {0}
+Anmeldedatum: {3}","Status: {0}
 Evento: {1}
 Descrição: {2}
-ID: {3}
-Data de início: {4}","Statut : {0}
+Data de Inscrição: {3}","Statut : {0}
 Événement : {1}
 Description : {2}
-ID : {3}
-Date de début : {4}","Stato: {0}
+Date d’inscription : {3}","Stato: {0}
 Evento: {1}
 Descrizione: {2}
-ID: {3}
-Data di inizio: {4}"
+Data di registrazione: {3}"
 registrationAsShortString,"Estado: {0}
 Evento: {1}","State: {0}
 Event: {1}","Status: {0}
@@ -464,7 +458,7 @@ requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the c
 /filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer des filtres,Applica filtri
 filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
 category,categoria,category,Kategorie,categoria,catégorie,categoria
-tags,tags,tags,Schlagworte,etiquetas,balises,etichette
+tags,tags,tags,Schlagworte,etiquetas,balises,tag
 maxDate,fecha máxima,maximum date,maximales Datum,data máxima,date maximale,data massima
 title,titulo del evento,event title,Veranstaltungstitel,título do evento,titre de l'événement,titolo dell'evento
 titleContains,subcadena del titulo,title substring,Titel-Teilzeichenfolge,substring de título,sous-chaîne de titre,sottostringa del titolo
@@ -666,3 +660,4 @@ registrationConfirmedParticipant,✅ Inscripcion confirmada,✅ Registration con
 registrationConfirmedWaitlist,🕒 Inscripcion añadida a la Waitlist,🕒 Registration added to the Waitlist,🕒 Registrierung zur Warteliste hinzugefügt,🕒 Inscrição adicionada à lista de espera,🕒 Inscription ajoutée à la liste d'attente,🕒 Registrazione aggiunta alla lista d'attesa
 registerToWaitlist,Registrarse en la lista de espera,Register on the waiting list,Tragen Sie sich in die Warteliste ein,Inscreva-se na lista de espera,Inscrivez-vous sur la liste d'attente,Registrati nella lista d'attesa
 registerToParticipants,Registrarse al evento,Register for the event,Registrieren Sie sich für die Veranstaltung,Inscreva-se no evento,Inscrivez-vous à l'événement,Registrati all'evento
+EVENT_FINISHED,🗓️ Evento finalizado,🗓️ Event ended,🗓️ Veranstaltung beendet,🗓️ Evento encerrado,🗓️ Événement terminé,🗓️ Evento terminato
