@@ -23,11 +23,9 @@ import org.utils.PageNormalizer;
 public class RegistrationController {
 
   private final RegistrationService registrationService;
-  private final AccountService accountService;
 
   public RegistrationController(RegistrationService registrationService, AccountService accountService) {
     this.registrationService = registrationService;
-    this.accountService = accountService;
   }
 
   /**

@@ -11,10 +11,12 @@ import org.model.accounts.Account;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "registrations")
+@CompoundIndex(name = "event_user_unique", def = "{'event._id' : 1, 'user._id' : 1}", unique = true)
 @Setter
 @Getter
 @AllArgsConstructor

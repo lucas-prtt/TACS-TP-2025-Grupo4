@@ -36,11 +36,10 @@ import java.util.List;
 public class EventController {
 
     private final EventService eventService;
-    private final OrganizerService organizerService;
     private final RegistrationService registrationService;
+
     public EventController(EventService eventService, OrganizerService organizerService, RegistrationService registrationService) {
         this.eventService = eventService;
-        this.organizerService = organizerService;
         this.registrationService = registrationService;
     }
 
@@ -142,7 +141,7 @@ public class EventController {
      * @return ResponseEntity con el evento actualizado o error si no existe
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> patchEvent(@PathVariable(name = "id") String id, @RequestBody EventDTO event) {
+    public ResponseEntity<?> patchEvent(@PathVariable(name = "id") UUID id, @RequestBody EventDTO event) throws BadRequestException {
             EventDTO eventDTO = eventService.patchEvent(id, event);
             return ResponseEntity.ok(eventDTO);
     }
