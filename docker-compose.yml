@@ -48,34 +48,46 @@ services:
       interval: 5s
       timeout: 2s
       retries: 5
-
-  # INICIALIZADOR DEL REPLICA SET
   mongo-init-replica:
     image: mongo:7
     depends_on:
       - mongo1
       - mongo2
       - mongo3
-    entrypoint: >
-      bash -c "
-      echo 'Esperando que todos los nodos estén listos...'
-      sleep 15
-      until mongosh --host mongo1:27017 --eval 'rs.status()' | grep '\"ok\" : 1'; do
-        echo 'Esperando PRIMARY...'
+    entrypoint:
+      - bash
+      - -c
+      - |
+        echo "Esperando que los nodos estén listos..."
+        sleep 10
+
+        echo "Intentando inicializar replica set..."
+        mongosh --host mongo1:27017 --quiet --eval '
+          try {
+            rs.initiate({
+              _id: "rs0",
+              members: [
+                { _id: 0, host: "mongo1:27017" },
+                { _id: 1, host: "mongo2:27017" },
+                { _id: 2, host: "mongo3:27017" }
+              ]
+            })
+          } catch (e) {
+            print("Replica set ya inicializado o error:", e)
+          }
+        '
+
+        echo "Esperando que el PRIMARY esté disponible..."
+        until mongosh --host mongo1:27017 --quiet --eval '
+        const status = rs.status();
+        const primary = status.members.find(m => m.stateStr === "PRIMARY");
+        print(primary ? "true" : "false");
+        ' | grep true > /dev/null; do
+        echo "Esperando PRIMARY..."
         sleep 2
-      done
-      echo 'Inicializando replica set rs0...'
-      mongosh --host mongo1:27017 --eval '
-        rs.initiate({
-          _id: \"rs0\",
-          members: [
-            { _id: 0, host: \"mongo1:27017\" },
-            { _id: 1, host: \"mongo2:27017\" },
-            { _id: 2, host: \"mongo3:27017\" }
-          ]
-        })
-      ' || echo 'Replica set ya inicializado'
-      "
+        done
+
+        echo "Replica set inicializado correctamente."
     restart: "no"
 
   # INTERFAZ WEB
@@ -107,6 +119,8 @@ services:
     build:
       context: .
       dockerfile: TelegramBot/Dockerfile
+    depends_on:
+      - server
     environment:
       EVENTOS_TELEGRAM_BOT_TOKEN: ${EVENTOS_TELEGRAM_BOT_TOKEN}
       EVENTOS_TELEGRAM_BOT_USERNAME: ${EVENTOS_TELEGRAM_BOT_USERNAME}
