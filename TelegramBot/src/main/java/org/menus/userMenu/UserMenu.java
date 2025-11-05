@@ -33,7 +33,7 @@ public class UserMenu extends MenuState {
 
     @Override
     public String getQuestion() {
-        return user.getLocalizedMessage("userMenuQuestion");
+        return  (user.getServerAccountUsername() == null ? user.getLocalizedMessage("noUser") : user.getLocalizedMessage("userDetail", user.getServerAccountUsername()) )+ "\n\n"+ user.getLocalizedMessage("userMenuQuestion");
     }
     @Override
     public SendMessage questionMessage() {

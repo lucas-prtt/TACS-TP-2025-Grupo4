@@ -29,6 +29,7 @@ public class TelegramBotMain {
         Integer REDIS_PORT = ConfigManager.getInstance().getOptionalInteger("redis.port").orElse(8080);
         Boolean REDIS_ENABLED = ConfigManager.getInstance().getOptionalBool("redis.enabled").orElse(false);
 
+        System.out.println("REDIS enabled: " + REDIS_ENABLED);
 
         try {
             System.out.println("\nCargando bot...");

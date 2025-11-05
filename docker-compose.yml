@@ -129,7 +129,26 @@ services:
       EVENTOS_TELEGRAM_BOT_TOKEN: ${EVENTOS_TELEGRAM_BOT_TOKEN}
       EVENTOS_TELEGRAM_BOT_USERNAME: ${EVENTOS_TELEGRAM_BOT_USERNAME}
 
+  redis-telegram:
+    image: redis:8.2.3
+    container_name: redis-telegram-eventos
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: [
+      "redis-server",
+      "--appendonly", "yes",
+      "--appendfsync", "everysec",
+      "--auto-aof-rewrite-percentage", "100",
+      "--auto-aof-rewrite-min-size", "64mb",
+      "--maxmemory", "200mb",
+      "--maxmemory-policy", "allkeys-lru",
+      "--dir", "/data",
+      "--loglevel", "notice"
+    ]
+
 volumes:
   mongo_data1:
   mongo_data2:
   mongo_data3:
+  redis_data:
