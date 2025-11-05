@@ -8,7 +8,7 @@ RUN mvn clean package
 
 # RUN
 
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk-noble
 WORKDIR /app
 COPY --from=builder /app/TelegramBot/target/*.jar TelegramBot.jar
 ENTRYPOINT ["java", "-jar", "TelegramBot.jar"]
