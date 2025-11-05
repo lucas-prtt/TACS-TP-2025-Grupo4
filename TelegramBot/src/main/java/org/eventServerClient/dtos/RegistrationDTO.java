@@ -24,7 +24,7 @@ public class RegistrationDTO {
         return user.getLocalizedMessage("registrationAsShortString", user.getLocalizedMessage(state.toString()), title);
     }
     public String toDetailedString(TelegramUser user){
-        return user.getLocalizedMessage("registrationAsDetailedString", user.getLocalizedMessage(state.toString()), title, (description.length()<1000 ? description : description.substring(0, 996).concat("...")), registrationId, user.localizeDate(dateTime));
+        return user.getLocalizedMessage("registrationAsDetailedString", user.getLocalizedMessage(state.toString()), title, (description.length()<1000 ? description : description.substring(0, 996).concat("...")), user.localizeDate(dateTime));
     }
 
 }

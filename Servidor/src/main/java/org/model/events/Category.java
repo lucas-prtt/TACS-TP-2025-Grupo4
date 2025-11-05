@@ -16,10 +16,8 @@ import java.util.UUID;
 public class Category {
     /**
      * Representa una categoría de evento.
-     * @param id Identificador único
      * @param title Título de la categoría
      */
     @Id
-    private UUID id;
     String title;
 }

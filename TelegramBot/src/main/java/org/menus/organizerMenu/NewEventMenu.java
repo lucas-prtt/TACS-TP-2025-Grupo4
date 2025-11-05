@@ -62,7 +62,7 @@ public class NewEventMenu extends MenuState {
                 return user.getLocalizedMessage("currentTags", String.join(", ", eventDTO.getTags().stream().map(TagDTO::getNombre).toList()));
             }
             index--;
-            if(inputs.get(index) instanceof DateTimeInputStep dateTimeInputStep){
+            if(index >= 0 && inputs.get(index) instanceof DateTimeInputStep dateTimeInputStep){
                 try {
                     dateTimeInputStep.getHelper().goBackOneStep();
                     return null;

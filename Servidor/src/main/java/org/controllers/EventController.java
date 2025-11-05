@@ -13,10 +13,12 @@ import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
 import org.exceptions.*;
 import org.model.enums.RegistrationState;
+import org.model.events.Category;
 import org.model.events.Registration;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.EventNotFoundException;
 import org.model.events.Event;
+import org.services.CategoryService;
 import org.services.EventService;
 import org.services.OrganizerService;
 import org.services.RegistrationService;
@@ -37,12 +39,12 @@ import java.util.List;
 public class EventController {
 
     private final EventService eventService;
-    private final OrganizerService organizerService;
     private final RegistrationService registrationService;
-    public EventController(EventService eventService, OrganizerService organizerService, RegistrationService registrationService) {
+    private final CategoryService categoryService;
+    public EventController(EventService eventService, OrganizerService organizerService, RegistrationService registrationService, CategoryService categoryService) {
         this.eventService = eventService;
-        this.organizerService = organizerService;
         this.registrationService = registrationService;
+        this.categoryService = categoryService;
     }
 
     /**
@@ -53,6 +55,7 @@ public class EventController {
     @PostMapping
     public ResponseEntity<?> postEvent(@RequestBody EventCreateDTO eventCreateDTO,  @RequestHeader(name = "Accept-Language", required = false) String lang) {
             eventCreateDTO.validate(lang);
+            categoryService.findCategory(eventCreateDTO.getCategory()); // Si no la encuentra, lanza excepcion
             UUID id = getCurrentAccountId();
             Event event = eventService.createEvent(eventCreateDTO, id);
             return ResponseEntity.ok(EventDTO.fromEvent(event));
@@ -143,7 +146,7 @@ public class EventController {
      * @return ResponseEntity con el evento actualizado o error si no existe
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<?> patchEvent(@PathVariable(name = "id") String id, @RequestBody EventDTO event) {
+    public ResponseEntity<?> patchEvent(@PathVariable(name = "id") UUID id, @RequestBody EventDTO event) throws BadRequestException {
             EventDTO eventDTO = eventService.patchEvent(id, event);
             return ResponseEntity.ok(eventDTO);
     }
@@ -165,5 +168,11 @@ public class EventController {
             List<RegistrationDTO> registrationDTOS = registrationService.findByEvent_IdAndRegistrationState(eventId, registrationState, page, limit);
 
             return ResponseEntity.ok(registrationDTOS);
+    }
+    @GetMapping("/categories")
+    public ResponseEntity<List<Category>> getCategories(@RequestParam(name = "page") Integer page, @RequestParam(name = "limit") Integer limit, @RequestParam(name="startsWith", required = false) String startsWith){
+        page = PageNormalizer.normalizeRegistrationsPageNumber(page);
+        limit = PageNormalizer.normalizeRegistrationsPageLimit(limit);
+        return ResponseEntity.ok(categoryService.getCategories(page, limit, startsWith).getContent());
     }
 }
