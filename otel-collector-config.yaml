@@ -6,16 +6,26 @@ receivers:
       http:
         endpoint: 0.0.0.0:4318
 
+processors:
+  batch:
+    send_batch_size: 512
+    timeout: 5s
+  memory_limiter:
+    limit_mib: 512
+    spike_limit_mib: 256
+    check_interval: 1s
+
 exporters:
   otlp/jaeger:
     endpoint: jaeger:4317
     tls:
       insecure: true
-  debug:
-    verbosity: basic
+ # debug:
+  #  verbosity: basic
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [otlp/jaeger, debug]
+      processors: [memory_limiter, batch]
+      exporters: [otlp/jaeger]  # Se puede poner ,debug para que muesre lgs por consola
