@@ -119,7 +119,8 @@ services:
       EVENTOS_SERVER_SECRET_KEY: ${EVENTOS_SERVER_SECRET_KEY}
       # Variables de OpenTelemetry
       OTEL_SERVICE_NAME: servidor
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
       OTEL_TRACES_EXPORTER: otlp
       OTEL_METRICS_EXPORTER: none
       OTEL_LOGS_EXPORTER: none
@@ -142,6 +143,8 @@ services:
     ports:
       - "16686:16686"  # UI de Jaeger
       - "4317"         # Puerto para OTLP gRPC (collector)
+    environment:
+      LOG_LEVEL: error
 
 
   # TELEGRAM BOT
