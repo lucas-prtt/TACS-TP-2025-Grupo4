@@ -145,6 +145,14 @@ services:
       - "4317"         # Puerto para OTLP gRPC (collector)
     environment:
       LOG_LEVEL: error
+      SPAN_STORAGE_TYPE: badger
+      BADGER_DIRECTORY: /jaeger-data
+      BADGER_SPAN_STORE_TTL: 72h
+      BADGER_MAINTENANCE_INTERVAL: 1h
+
+    volumes:
+      - jaeger-data:/jaeger-data
+
 
 
   # TELEGRAM BOT
@@ -181,3 +189,4 @@ volumes:
   mongo_data2:
   mongo_data3:
   redis_data:
+  jaeger-data:
