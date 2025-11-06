@@ -127,7 +127,7 @@ services:
 
   # OpenTelemetry Collector
   otel-collector:
-    image: otel/opentelemetry-collector:0.139.0
+    image: otel/opentelemetry-collector-contrib:0.139.0
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
@@ -184,9 +184,45 @@ services:
       "--loglevel", "notice"
     ]
 
+  prometheus:
+    image: prom/prometheus:v3.7.3
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--storage.tsdb.retention.time=1d'
+      - '--web.enable-lifecycle'
+      - '--log.level=error'
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  grafana:
+    image: grafana/grafana:12.3.0-19020365962
+    container_name: grafana
+    ports:
+      - "3002:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_LOG_LEVEL=error
+      - GF_LOG_CONSOLE_LEVEL=error
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+
 volumes:
   mongo_data1:
   mongo_data2:
   mongo_data3:
   redis_data:
   jaeger-data:
+  prometheus-data:
+  grafana-data:
