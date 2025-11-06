@@ -117,6 +117,43 @@ services:
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017,mongo2:27017,mongo3:27017/eventos?replicaSet=rs0
       EVENTOS_SERVER_SECRET_KEY: ${EVENTOS_SERVER_SECRET_KEY}
+      # Variables de OpenTelemetry
+      OTEL_SERVICE_NAME: servidor
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+
+  # OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector:0.139.0
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    depends_on:
+      - jaeger
+
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.74.0
+    ports:
+      - "16686:16686"  # UI de Jaeger
+      - "4317"         # Puerto para OTLP gRPC (collector)
+    environment:
+      LOG_LEVEL: error
+      SPAN_STORAGE_TYPE: badger
+      BADGER_DIRECTORY: /jaeger-data
+      BADGER_SPAN_STORE_TTL: 72h
+      BADGER_MAINTENANCE_INTERVAL: 1h
+
+    volumes:
+      - jaeger-data:/jaeger-data
+
+
 
   # TELEGRAM BOT
   telegrambot:
@@ -152,3 +189,4 @@ volumes:
   mongo_data2:
   mongo_data3:
   redis_data:
+  jaeger-data:
