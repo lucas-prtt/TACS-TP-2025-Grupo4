@@ -278,7 +278,7 @@ export const VerEvento = () => {
                 <Chip 
                   label={
                     typeof evento.category === 'object' 
-                      ? evento.category?.name || 'Sin categoría'
+                      ? evento.category?.title || 'Sin categoría'
                       : evento.category || 'Sin categoría'
                   } 
                   color="primary" 

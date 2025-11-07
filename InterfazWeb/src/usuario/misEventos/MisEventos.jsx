@@ -56,10 +56,11 @@ export const MisEventos = () => {
     // Manejar categoria de forma segura
     let categoria = "";
     if (evento.category) {
-      if (typeof evento.category === 'object' && evento.category.name) {
-        categoria = evento.category.name.toLowerCase();
+      // category es un objeto Category con propiedad 'title'
+      if (typeof evento.category === 'object' && evento.category.title) {
+        categoria = evento.category.title;
       } else if (typeof evento.category === 'string') {
-        categoria = evento.category.toLowerCase();
+        categoria = evento.category;
       }
     }
 

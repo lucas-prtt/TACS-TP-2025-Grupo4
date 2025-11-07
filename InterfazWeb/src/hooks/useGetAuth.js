@@ -131,6 +131,33 @@ export const useGetAuth = () => {
     }
   };
 
+  const registerAdmin = async (username, password) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await axios({
+        method: 'post',
+        url: `${API_URL}/auth/register-admin`,
+        data: {
+          username: username,
+          password: password
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      setLoading(false);
+      return response.data;
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || 'Error al registrar administrador';
+      setError(errorMsg);
+      setLoading(false);
+      throw err;
+    }
+  };
+
   const login = async (username, password) => {
     setLoading(true);
     setError(null);
@@ -237,6 +264,7 @@ export const useGetAuth = () => {
     user,
     isAuthenticated,
     register,
+    registerAdmin,
     login,
     logout,
     getToken,

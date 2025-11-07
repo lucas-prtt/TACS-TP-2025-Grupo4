@@ -89,14 +89,14 @@ export const Eventos = () => {
     const eventosFormateados = useMemo(() => (events || []).map(evento => {
         if (!evento || !evento.id) return null;
         
-        // Manejar categoria de forma segura basado en EventDTO
+        // Manejar categoria de forma segura
         let categoria = "";
         if (evento.category) {
-            // category es un objeto Category con propiedades
-            if (typeof evento.category === 'object' && evento.category.name) {
-                categoria = evento.category.name.toLowerCase();
+            // category es un objeto Category con propiedad 'title'
+            if (typeof evento.category === 'object' && evento.category.title) {
+                categoria = evento.category.title;
             } else if (typeof evento.category === 'string') {
-                categoria = evento.category.toLowerCase();
+                categoria = evento.category;
             }
         }
 
