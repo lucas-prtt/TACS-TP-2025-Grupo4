@@ -2,12 +2,17 @@ package org.middleware;
 
 import org.exceptions.*;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.utils.HttpErrorResponseBuilder;
 import org.utils.I18nManager;
 
@@ -118,6 +123,7 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<?> handleMissingParameter(MissingServletRequestParameterException ex, WebRequest request) {
+        System.err.println(ex.getMessage());
         return basicResponse(getLanguage(), "ERROR_MISSING_PARAMETER", HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(CategoryNotFoundException.class)
@@ -127,5 +133,30 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CategoryAlreadyExistsException.class)
     public ResponseEntity<?> handleCategoriaAlreadyExists(CategoryAlreadyExistsException ex, WebRequest request) {
         return basicResponse(getLanguage(), "ERROR_CATEGORY_ALREADY_EXISTS", HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<?> handleArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
+        System.err.println(ex.getMessage());
+        return basicResponse(getLanguage(), "ERROR_WRONG_ARGUMENT_TYPE", HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleMessageNotReadable(HttpMessageNotReadableException ex, WebRequest request) {
+        System.err.println(ex.getMessage());
+        return basicResponse(getLanguage(), "ERROR_MESSAGE_NOT_READABLE", HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<?> handleRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, WebRequest request) {
+        System.err.println(ex.getMessage());
+        return basicResponse(getLanguage(), "ERROR_REQUEST_METHOD_NOT_SUPPORTED", HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(MissingPathVariableException.class)
+    public ResponseEntity<?> handleMissingPathVariable(MissingPathVariableException ex, WebRequest request) {
+        System.err.println(ex.getMessage());
+        return basicResponse(getLanguage(), "ERROR_MISSING_PATH_VARIABLE", HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException ex, WebRequest request) {
+        System.err.println(ex.getMessage());
+        return basicResponse(getLanguage(), "ERROR_DATA_INTEGRITY_VIOLATION", HttpStatus.CONFLICT);
     }
 }

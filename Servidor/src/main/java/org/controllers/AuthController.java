@@ -54,7 +54,6 @@ public class AuthController {
    */
   @PostMapping("/register")
   public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request, @RequestHeader(name = "Accept-Language", required = false) String lang) {
-    System.out.println("USUARIO REGISTRADO");
     Account account = accountService.register(request.getUsername(), request.getPassword(), false);
     return ResponseEntity.ok(toAccountResponseDTO(account));
   }
