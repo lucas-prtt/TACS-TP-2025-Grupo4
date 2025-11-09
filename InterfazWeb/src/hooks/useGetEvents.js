@@ -271,6 +271,32 @@ export const useGetEvents = () => {
     }
   }, []);
 
+  // Obtener categorías disponibles
+  const getCategories = useCallback(async ({ page = 0, limit = 100, startsWith } = {}) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const params = { page, limit };
+      if (startsWith) params.startsWith = startsWith;
+
+      const response = await axios({
+        method: 'get',
+        url: `${API_URL}/events/categories`,
+        params: params,
+        headers: getAuthHeaders()
+      });
+
+      setLoading(false);
+      return response.data;
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || 'Error al obtener categorías';
+      setError(errorMsg);
+      setLoading(false);
+      throw err;
+    }
+  }, []);
+
   return {
     loading,
     error,
@@ -284,6 +310,7 @@ export const useGetEvents = () => {
     updateEvent,
     getEventParticipants,
     getUserRegistrations,
-    cancelRegistration
+    cancelRegistration,
+    getCategories
   };
 };

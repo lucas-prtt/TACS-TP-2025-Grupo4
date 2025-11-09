@@ -8,7 +8,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import { ButtonTime } from '../../components/ButtonTime';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { ButtonCustom } from '../../components/Button';
 import { useGetEvents } from '../../hooks/useGetEvents';
@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 export const CrearEventos = () => {
     const theme = useTheme();
     const navigate = useNavigate();
-    const { createEvent, loading, error: apiError } = useGetEvents();
+    const { createEvent, getCategories, loading, error: apiError } = useGetEvents();
 
     // Estado del formulario
     const [formData, setFormData] = useState({
@@ -38,6 +38,23 @@ export const CrearEventos = () => {
     const [horaInicio, setHoraInicio] = useState(null);
     const [localError, setLocalError] = useState('');
     const [success, setSuccess] = useState('');
+    const [categories, setCategories] = useState([]);
+
+    // Cargar categorías al montar el componente
+    useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                const categoriesData = await getCategories();
+                // Las categorías vienen con la estructura { title: "..." }
+                setCategories(categoriesData.map(cat => cat.title));
+            } catch (error) {
+                console.error('Error al cargar categorías:', error);
+                // Si falla, usar categorías por defecto
+                setCategories(["Tecnología", "Música", "Deporte", "Arte", "Gastronomía", "Educación", "Negocios"]);
+            }
+        };
+        loadCategories();
+    }, [getCategories]);
 
     // Manejar cambios en los campos
     const handleChange = (field, value) => {
@@ -90,11 +107,13 @@ export const CrearEventos = () => {
             setLocalError('La capacidad máxima debe ser mayor a 0');
             return false;
         }
-        if (!formData.minParticipants || formData.minParticipants <= 0) {
-            setLocalError('La capacidad mínima debe ser mayor a 0');
+        // minParticipants es opcional, pero si se proporciona debe ser >= 1
+        if (formData.minParticipants !== '' && (formData.minParticipants < 1)) {
+            setLocalError('La capacidad mínima debe ser 1 o mayor');
             return false;
         }
-        if (parseInt(formData.minParticipants) > parseInt(formData.maxParticipants)) {
+        // Solo validar que minParticipants no sea mayor a maxParticipants si se proporciona
+        if (formData.minParticipants !== '' && parseInt(formData.minParticipants) > parseInt(formData.maxParticipants)) {
             setLocalError('La capacidad mínima no puede ser mayor a la máxima');
             return false;
         }
@@ -127,9 +146,9 @@ export const CrearEventos = () => {
                 durationMinutes: parseInt(formData.durationMinutes),
                 location: formData.location.trim(),
                 maxParticipants: parseInt(formData.maxParticipants),
-                minParticipants: parseInt(formData.minParticipants),
+                minParticipants: formData.minParticipants !== '' ? parseInt(formData.minParticipants) : null,
                 price: parseFloat(formData.price),
-                category: formData.category ? { name: formData.category } : null,
+                category: formData.category ? { title: formData.category } : null,
                 tags: processedTags,
                 image: formData.imageUrl.trim() || null
             };
@@ -264,7 +283,7 @@ export const CrearEventos = () => {
                                     </Typography>
                                     <SelectorCustom
                                         placeholder="Selecciona una categoría"
-                                        opciones={["Tecnología", "Música", "Deporte", "Arte", "Gastronomía", "Educación", "Negocios"]}
+                                        opciones={categories}
                                         value={formData.category}
                                         onChange={(e) => handleChange('category', e.target.value)}
                                         fullWidth
@@ -409,7 +428,7 @@ export const CrearEventos = () => {
                                 {/* Capacidad mínima */}
                                 <Box mb={1}>
                                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                        Capacidad Mínima *
+                                        Capacidad Mínima (Opcional)
                                     </Typography>
                                     <TextFieldCustom
                                         placeholder="Número mínimo de participantes"

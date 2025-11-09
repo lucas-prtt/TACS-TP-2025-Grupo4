@@ -42,6 +42,7 @@ public class EventCreateDTO {
     if (location == null) nullFields.add("PROBLEM_NULL_LOCATION");
     if (maxParticipants == null) nullFields.add("PROBLEM_NULL_MAXPARTICIPANTS");
     if (price == null) nullFields.add("PROBLEM_NULL_PRICE");
+    // minParticipants es opcional, no se valida como obligatorio
     if (!nullFields.isEmpty()) {
       throw new EventWithNullFieldsException(
               nullFields

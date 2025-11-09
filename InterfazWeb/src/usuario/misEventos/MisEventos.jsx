@@ -56,10 +56,11 @@ export const MisEventos = () => {
     // Manejar categoria de forma segura
     let categoria = "";
     if (evento.category) {
-      if (typeof evento.category === 'object' && evento.category.name) {
-        categoria = evento.category.name.toLowerCase();
+      // category es un objeto Category con propiedad 'title'
+      if (typeof evento.category === 'object' && evento.category.title) {
+        categoria = evento.category.title;
       } else if (typeof evento.category === 'string') {
-        categoria = evento.category.toLowerCase();
+        categoria = evento.category;
       }
     }
 
@@ -94,6 +95,7 @@ export const MisEventos = () => {
       lugar: evento.location || "Sin ubicación",
       max_participantes: evento.maxParticipants || 0,
       min_participantes: evento.minParticipants || 0,
+      participantes_registrados: evento.registered || 0,
       precio: evento.price || 0,
       tags: tags,
       estado: estado,

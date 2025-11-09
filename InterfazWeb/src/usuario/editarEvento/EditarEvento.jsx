@@ -55,6 +55,16 @@ export const EditarEvento = () => {
         const eventData = await getEventById(id);
         
         // Mapear los datos del evento al estado del formulario
+        // Extraer el título de la categoría si es un objeto
+        const categoryValue = eventData.category 
+          ? (typeof eventData.category === 'object' ? eventData.category.title : eventData.category)
+          : '';
+        
+        // Extraer los nombres de los tags si son objetos
+        const tagsValue = eventData.tags 
+          ? eventData.tags.map(tag => typeof tag === 'object' ? (tag.nombre || tag.name) : tag).join(', ')
+          : '';
+        
         setFormData({
           title: eventData.title || '',
           description: eventData.description || '',
@@ -63,9 +73,9 @@ export const EditarEvento = () => {
           location: eventData.location || '',
           maxParticipants: eventData.maxParticipants?.toString() || '',
           price: eventData.price?.toString() || '',
-          category: eventData.category || '',
-          tags: eventData.tags?.join(', ') || '',
-          imageUrl: eventData.imageUrl || ''
+          category: categoryValue,
+          tags: tagsValue,
+          imageUrl: eventData.image || ''
         });
 
         // Configurar fecha y hora para los componentes de UI

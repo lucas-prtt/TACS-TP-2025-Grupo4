@@ -119,8 +119,9 @@ export const MisIncripciones = () => {
       // Manejar categoria de forma segura
       let categoria = "Sin categoría";
       if (registration.category) {
-        if (typeof registration.category === 'object' && registration.category.name) {
-          categoria = registration.category.name;
+        // category es un objeto Category con propiedad 'title'
+        if (typeof registration.category === 'object' && registration.category.title) {
+          categoria = registration.category.title;
         } else if (typeof registration.category === 'string') {
           categoria = registration.category;
         }

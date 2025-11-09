@@ -34,6 +34,20 @@ public class AuthController {
   }
 
   /**
+   * Inicializa un usuario administrador por defecto al iniciar la aplicación.
+   * Se ejecuta solo si no existe ya un usuario admin.
+   */
+  @PostConstruct
+  private void createDefaultAdmin() {
+    try {
+      accountService.register("admin", "Admin123!", true);
+      System.out.println("✅ Usuario administrador por defecto creado: admin / Admin123!");
+    } catch (Exception e) {
+      System.out.println("ℹ️ Usuario administrador ya existe o hubo un error al crear: " + e.getMessage());
+    }
+  }
+
+  /**
    * Registra un usuario normal en el sistema.
    * @param request DTO con los datos de registro (usuario y contraseña)
    * @return ResponseEntity con el usuario registrado o error
@@ -45,18 +59,17 @@ public class AuthController {
     return ResponseEntity.ok(toAccountResponseDTO(account));
   }
 
-//  // Registro de admin
-//  @PostMapping("/register-admin")
-//  public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequestDTO request) {
-//    try {
-//      Account account = accountService.register(request.getUsername(), request.getPassword(), true);
-//      return ResponseEntity.ok(toAccountResponseDTO(account));
-//    } catch (RuntimeException e) {
-//      return ResponseEntity
-//          .badRequest()
-//          .body(Map.of("error", e.getMessage()));
-//    }
-//  }
+  /**
+   * Registra un usuario administrador en el sistema.
+   * @param request DTO con los datos de registro (usuario y contraseña)
+   * @return ResponseEntity con el usuario administrador registrado o error
+   */
+  @PostMapping("/register-admin")
+  public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequestDTO request, @RequestHeader(name = "Accept-Language", required = false) String lang) {
+    System.out.println("ADMIN REGISTRADO");
+    Account account = accountService.register(request.getUsername(), request.getPassword(), true);
+    return ResponseEntity.ok(toAccountResponseDTO(account));
+  }
 
   /**
    * Realiza el login de un usuario.
