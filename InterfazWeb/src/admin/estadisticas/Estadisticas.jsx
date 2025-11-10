@@ -56,7 +56,6 @@ export const Estadisticas = () => {
               monthRegistrations += registrationsCount;
             }
           } catch (err) {
-            console.error(`Error al obtener inscripciones del evento ${event.id}:`, err);
           }
         }
       }
@@ -68,7 +67,6 @@ export const Estadisticas = () => {
         currentYearRegistrations: yearRegistrations
       });
     } catch (err) {
-      console.error('Error al calcular estadísticas de períodos:', err);
     }
   };
 
@@ -79,7 +77,6 @@ export const Estadisticas = () => {
         setStats(data);
         await calculatePeriodStats();
       } catch (err) {
-        console.error('Error al cargar estadísticas:', err);
       }
     };
 

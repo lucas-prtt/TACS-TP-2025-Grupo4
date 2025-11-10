@@ -22,11 +22,9 @@ export const MisEventos = () => {
       try {
         const result = await getOrganizedEvents();
         if (isMounted) {
-          console.log('Eventos organizados cargados:', result?.length || 0);
         }
       } catch (err) {
         if (isMounted) {
-          console.error('Error al cargar eventos organizados:', err);
         }
       }
     };
@@ -43,7 +41,6 @@ export const MisEventos = () => {
     try {
       await getOrganizedEvents();
     } catch (err) {
-      console.error('Error al recargar eventos organizados:', err);
     }
   };
 
