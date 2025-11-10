@@ -19,7 +19,21 @@ export const EditarEvento = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { getEventById, updateEvent, loading, error: apiError } = useGetEvents();
+  const { getEventById, updateEvent, getCategories, loading, error: apiError } = useGetEvents();
+
+  // Mapeo de estados técnicos a textos en español
+  const estadosMap = {
+    'EVENT_OPEN': 'Abierto',
+    'EVENT_CLOSED': 'Cerrado',
+    'EVENT_CANCELLED': 'Cancelado'
+  };
+
+  // Mapeo inverso: de español a técnico
+  const estadosInversoMap = {
+    'Abierto': 'EVENT_OPEN',
+    'Cerrado': 'EVENT_CLOSED',
+    'Cancelado': 'EVENT_CANCELLED'
+  };
 
   // Estado del formulario siguiendo la estructura de la API
   const [formData, setFormData] = useState({
@@ -32,7 +46,8 @@ export const EditarEvento = () => {
     price: '',
     category: '',
     tags: '',
-    imageUrl: ''
+    imageUrl: '',
+    state: ''
   });
 
   const [fecha, setFecha] = useState(null);
@@ -40,6 +55,28 @@ export const EditarEvento = () => {
   const [localError, setLocalError] = useState('');
   const [success, setSuccess] = useState('');
   const [loadingEvent, setLoadingEvent] = useState(true);
+  const [categorias, setCategorias] = useState([]);
+  const [estadoVisual, setEstadoVisual] = useState(''); // Estado en español para el selector
+
+  // Cargar categorías al montar el componente
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const result = await getCategories();
+        if (result) {
+          // Ordenar categorías alfabéticamente
+          const categoriasOrdenadas = result
+            .map(cat => cat.title || cat)
+            .sort((a, b) => a.localeCompare(b));
+          setCategorias(categoriasOrdenadas);
+        }
+      } catch (err) {
+        console.error('Error al cargar categorías:', err);
+      }
+    };
+    
+    loadCategories();
+  }, [getCategories]);
 
   // Cargar evento al montar el componente
   useEffect(() => {
@@ -65,6 +102,8 @@ export const EditarEvento = () => {
           ? eventData.tags.map(tag => typeof tag === 'object' ? (tag.nombre || tag.name) : tag).join(', ')
           : '';
         
+        const estadoTecnico = eventData.state || 'EVENT_OPEN';
+        
         setFormData({
           title: eventData.title || '',
           description: eventData.description || '',
@@ -75,8 +114,12 @@ export const EditarEvento = () => {
           price: eventData.price?.toString() || '',
           category: categoryValue,
           tags: tagsValue,
-          imageUrl: eventData.image || ''
+          imageUrl: eventData.image || '',
+          state: estadoTecnico
         });
+
+        // Configurar estado visual en español
+        setEstadoVisual(estadosMap[estadoTecnico] || 'Abierto');
 
         // Configurar fecha y hora para los componentes de UI
         if (eventData.startDateTime) {
@@ -113,13 +156,39 @@ export const EditarEvento = () => {
     if (success) setSuccess('');
   };
 
+  // Manejar cambio de estado (convertir de español a técnico)
+  const handleEstadoChange = (estadoEnEspañol) => {
+    setEstadoVisual(estadoEnEspañol);
+    const estadoTecnico = estadosInversoMap[estadoEnEspañol];
+    setFormData(prev => ({
+      ...prev,
+      state: estadoTecnico
+    }));
+    // Limpiar errores al modificar
+    if (localError) setLocalError('');
+    if (success) setSuccess('');
+  };
+
   // Combinar fecha y hora en LocalDateTime
   const combineDateTime = (date, time) => {
     if (!date || !time) return null;
     
+    // Asegurarse de que time sea un objeto Date válido
+    let timeObj = time;
+    if (!(time instanceof Date)) {
+      // Si time es un string, intentar convertirlo a Date
+      timeObj = new Date(time);
+    }
+    
+    // Validar que timeObj es una fecha válida
+    if (isNaN(timeObj.getTime())) {
+      console.error('Hora inválida:', time);
+      return null;
+    }
+    
     const combined = new Date(date);
-    combined.setHours(time.getHours());
-    combined.setMinutes(time.getMinutes());
+    combined.setHours(timeObj.getHours());
+    combined.setMinutes(timeObj.getMinutes());
     combined.setSeconds(0);
     combined.setMilliseconds(0);
     
@@ -145,15 +214,27 @@ export const EditarEvento = () => {
       setLocalError('La hora de inicio es obligatoria');
       return false;
     }
+    if (!formData.durationMinutes || parseInt(formData.durationMinutes) <= 0) {
+      setLocalError('La duración debe ser mayor a 0 minutos');
+      return false;
+    }
     if (!formData.location.trim()) {
       setLocalError('La ubicación es obligatoria');
       return false;
     }
-    if (!formData.maxParticipants || formData.maxParticipants <= 0) {
+    if (!formData.category) {
+      setLocalError('La categoría es obligatoria');
+      return false;
+    }
+    if (!formData.tags.trim()) {
+      setLocalError('Debes agregar al menos una etiqueta');
+      return false;
+    }
+    if (!formData.maxParticipants || parseInt(formData.maxParticipants) <= 0) {
       setLocalError('El número máximo de participantes debe ser mayor a 0');
       return false;
     }
-    if (!formData.price || parseFloat(formData.price) < 0) {
+    if (formData.price === '' || parseFloat(formData.price) < 0) {
       setLocalError('El precio debe ser mayor o igual a 0');
       return false;
     }
@@ -176,6 +257,7 @@ export const EditarEvento = () => {
       return;
     }
 
+    // Preparar datos según el formato que espera el backend (EventDTO)
     const eventData = {
       title: formData.title.trim(),
       description: formData.description.trim(),
@@ -184,9 +266,16 @@ export const EditarEvento = () => {
       location: formData.location.trim(),
       maxParticipants: parseInt(formData.maxParticipants),
       price: parseFloat(formData.price),
-      category: formData.category,
-      tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-      imageUrl: formData.imageUrl.trim() || null
+      // Enviar category como objeto si hay valor, null si no
+      category: formData.category ? { title: formData.category } : null,
+      // Enviar tags como array de objetos Tag
+      tags: formData.tags 
+        ? formData.tags.split(',').map(tag => ({ nombre: tag.trim() })).filter(tag => tag.nombre)
+        : [],
+      // Enviar imagen
+      image: formData.imageUrl.trim() || null,
+      // Enviar estado
+      state: formData.state
     };
 
     try {
@@ -195,7 +284,7 @@ export const EditarEvento = () => {
       
       // Navegar después de un breve delay para mostrar el mensaje
       setTimeout(() => {
-        navigate('/usuario/mis-eventos');
+        navigate('/mis-eventos');
       }, 2000);
     } catch (err) {
       console.error('Error al actualizar el evento:', err);
@@ -336,7 +425,7 @@ export const EditarEvento = () => {
                     </Typography>
                     <SelectorCustom
                       placeholder="Selecciona una categoría"
-                      opciones={["Tecnología", "Música", "Deporte", "Arte", "Gastronomía"]}
+                      opciones={categorias}
                       value={formData.category}
                       onChange={e => handleChange('category', e.target.value)}
                       fullWidth
@@ -354,6 +443,19 @@ export const EditarEvento = () => {
                       fullWidth
                     />
                   </Box>
+                </Box>
+                {/* Estado del evento */}
+                <Box mb={2}>
+                  <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
+                    Estado del Evento *
+                  </Typography>
+                  <SelectorCustom
+                    placeholder="Selecciona el estado"
+                    opciones={['Abierto', 'Cerrado', 'Cancelado']}
+                    value={estadoVisual}
+                    onChange={e => handleEstadoChange(e.target.value)}
+                    fullWidth
+                  />
                 </Box>
                 {/* URL de imagen */}
                 <Box mb={2}>

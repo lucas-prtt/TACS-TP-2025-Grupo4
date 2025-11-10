@@ -4,6 +4,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PlaceIcon from "@mui/icons-material/Place";
 import PeopleIcon from "@mui/icons-material/People";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate, useParams } from "react-router-dom";
 import { ButtonCustom } from "../../components/Button";
 import { NavbarApp } from "../../components/NavbarApp";
@@ -27,6 +28,13 @@ export const VerEvento = () => {
   const [cancelando, setCancelando] = useState(false);
   const [estaInscrito, setEstaInscrito] = useState(false);
   const [registrationId, setRegistrationId] = useState(null);
+
+  // Determinar si el usuario actual es el organizador del evento
+  const isOrganizador = user && evento && evento.usernameOrganizer && (
+    user.username === evento.usernameOrganizer || 
+    user.id === evento.usernameOrganizer ||
+    String(user.id) === String(evento.usernameOrganizer)
+  );
 
   // Función para verificar inscripción del usuario
   const verificarInscripcion = useCallback(async () => {
@@ -189,6 +197,11 @@ export const VerEvento = () => {
     } finally {
       setCancelando(false);
     }
+  };
+
+  // Manejar edición del evento
+  const handleEditarEvento = () => {
+    navigate(`/editar-evento/${id}`);
   };
 
   return (
@@ -479,63 +492,92 @@ export const VerEvento = () => {
               {/* Mapa */}
               <Mapa direccion={String(evento.location || 'Sin ubicación')} />
               
-              {/* Botones de inscripción dinámicos */}
+              {/* Botones dinámicos según el rol del usuario */}
               <Stack direction="row" spacing={2} sx={{ alignSelf: "center", mt: 2 }}>
-                {!estaInscrito ? (
-                  <ButtonCustom
-                    bgColor="#181828"
-                    color="#fff"
-                    hoverBgColor="#23234a"
-                    hoverColor="#fff"
-                    startIcon={<PersonAddIcon />}
-                    sx={{ 
-                      minWidth: 200, 
-                      fontWeight: 700, 
-                      fontSize: 16,
-                      opacity: registering ? 0.7 : 1
-                    }}
-                    onClick={handleInscribirse}
-                    disabled={registering || !user}
-                  >
-                    {registering ? (
-                      <>
-                        <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
-                        Inscribiendo...
-                      </>
-                    ) : (
-                      'Inscribirse'
-                    )}
-                  </ButtonCustom>
+                {isOrganizador ? (
+                  // Botones para el organizador del evento
+                  <>
+                    <ButtonCustom
+                      variant="outlined"
+                      startIcon={<EditIcon />}
+                      onClick={handleEditarEvento}
+                      sx={{
+                        minWidth: 200,
+                        fontWeight: 700,
+                        fontSize: 16,
+                        border: '2px solid #F59E0B',
+                        color: '#F59E0B',
+                        backgroundColor: '#fff',
+                        '&:hover': {
+                          backgroundColor: '#FEF3C7',
+                          color: '#D97706',
+                          borderColor: '#D97706'
+                        }
+                      }}
+                    >
+                      Editar Evento
+                    </ButtonCustom>
+                  </>
                 ) : (
-                  <ButtonCustom
-                    variant="outlined"
-                    startIcon={<PersonRemoveIcon />}
-                    onClick={handleCancelarInscripcion}
-                    disabled={cancelando}
-                    sx={{
-                      minWidth: 200,
-                      fontWeight: 700,
-                      fontSize: 16,
-                      border: '2px solid #DC2626',
-                      color: '#DC2626',
-                      backgroundColor: '#fff',
-                      opacity: cancelando ? 0.7 : 1,
-                      '&:hover': {
-                        backgroundColor: '#FEE2E2',
-                        color: '#B91C1C',
-                        borderColor: '#B91C1C'
-                      }
-                    }}
-                  >
-                    {cancelando ? (
-                      <>
-                        <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
-                        Cancelando...
-                      </>
+                  // Botones para usuarios regulares (inscripción)
+                  <>
+                    {!estaInscrito ? (
+                      <ButtonCustom
+                        bgColor="#181828"
+                        color="#fff"
+                        hoverBgColor="#23234a"
+                        hoverColor="#fff"
+                        startIcon={<PersonAddIcon />}
+                        sx={{ 
+                          minWidth: 200, 
+                          fontWeight: 700, 
+                          fontSize: 16,
+                          opacity: registering ? 0.7 : 1
+                        }}
+                        onClick={handleInscribirse}
+                        disabled={registering || !user}
+                      >
+                        {registering ? (
+                          <>
+                            <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
+                            Inscribiendo...
+                          </>
+                        ) : (
+                          'Inscribirse'
+                        )}
+                      </ButtonCustom>
                     ) : (
-                      'Cancelar Inscripción'
+                      <ButtonCustom
+                        variant="outlined"
+                        startIcon={<PersonRemoveIcon />}
+                        onClick={handleCancelarInscripcion}
+                        disabled={cancelando}
+                        sx={{
+                          minWidth: 200,
+                          fontWeight: 700,
+                          fontSize: 16,
+                          border: '2px solid #DC2626',
+                          color: '#DC2626',
+                          backgroundColor: '#fff',
+                          opacity: cancelando ? 0.7 : 1,
+                          '&:hover': {
+                            backgroundColor: '#FEE2E2',
+                            color: '#B91C1C',
+                            borderColor: '#B91C1C'
+                          }
+                        }}
+                      >
+                        {cancelando ? (
+                          <>
+                            <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
+                            Cancelando...
+                          </>
+                        ) : (
+                          'Cancelar Inscripción'
+                        )}
+                      </ButtonCustom>
                     )}
-                  </ButtonCustom>
+                  </>
                 )}
               </Stack>
             </>

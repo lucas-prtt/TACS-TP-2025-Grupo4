@@ -11,18 +11,18 @@ import noImagePlaceholder from "../../assets/images/no_image.png";
 export const Eventos = () => {
     const theme = useTheme();
     const navigate = useNavigate();
-    const { loading, error, events, getEvents } = useGetEvents();
+    const { loading, error, events, getEvents, getCategories } = useGetEvents();
 
     // Estados para el buscador
     const [searchValue, setSearchValue] = useState("");
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
     const [estadoSeleccionado, setEstadoSeleccionado] = useState("");
+    const [categorias, setCategorias] = useState([]);
 
-    // Opciones de ejemplo (puedes reemplazar por las reales)
-    const categorias = ["Tech", "Food", "Music", "Art", "Chess", "Run"];
+    // Estados predefinidos (estos pueden quedar hardcodeados si no hay endpoint)
     const estados = ["Programado", "Activo", "Finalizado"];
 
-    // Cargar eventos al montar el componente
+    // Cargar eventos y categorías al montar el componente
     useEffect(() => {
         let isMounted = true;
         
@@ -69,12 +69,31 @@ export const Eventos = () => {
             }
         };
         
+        const loadCategories = async () => {
+            try {
+                const result = await getCategories();
+                if (isMounted && result) {
+                    // Ordenar categorías alfabéticamente por título
+                    const categoriasOrdenadas = result
+                        .map(cat => cat.title || cat) // Extraer título si es objeto
+                        .sort((a, b) => a.localeCompare(b)); // Ordenar alfabéticamente
+                    setCategorias(categoriasOrdenadas);
+                    console.log('Categorías cargadas y ordenadas:', categoriasOrdenadas.length);
+                }
+            } catch (err) {
+                if (isMounted) {
+                    console.error('Error al cargar categorías:', err);
+                }
+            }
+        };
+        
         loadEvents();
+        loadCategories();
         
         return () => {
             isMounted = false;
         };
-    }, []); // Solo se ejecuta una vez al montar
+    }, [getEvents, getCategories]); // Solo se ejecuta una vez al montar
 
     // Función para recargar eventos manualmente
     const handleReload = async () => {
@@ -205,7 +224,9 @@ export const Eventos = () => {
     const eventosFiltrados = useMemo(() => {
         return eventosFormateados.filter(evento => {
             const coincideBusqueda = evento.titulo?.toLowerCase().includes(searchValue.toLowerCase()) || false;
-            const coincideCategoria = !categoriaSeleccionada || evento.categoria === categoriaSeleccionada.toLowerCase();
+            // Comparar categorías sin distinguir mayúsculas/minúsculas
+            const coincideCategoria = !categoriaSeleccionada || 
+                evento.categoria?.toLowerCase() === categoriaSeleccionada.toLowerCase();
             const coincideEstado = !estadoSeleccionado || evento.estado === estadoSeleccionado.toLowerCase();
             return coincideBusqueda && coincideCategoria && coincideEstado;
         });
