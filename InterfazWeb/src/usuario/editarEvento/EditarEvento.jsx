@@ -4,6 +4,7 @@ import { useTheme } from "@mui/material/styles";
 import { TextFieldCustom } from "../../components/TextField";
 import { SelectorCustom } from "../../components/Selector";
 import { NavbarApp } from "../../components/NavbarApp";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { ButtonDate } from "../../components/ButtonDate";
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
@@ -57,6 +58,12 @@ export const EditarEvento = () => {
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [categorias, setCategorias] = useState([]);
   const [estadoVisual, setEstadoVisual] = useState(''); // Estado en español para el selector
+  
+  // Estados para los diálogos
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [errorDialogMessage, setErrorDialogMessage] = useState('');
 
   // Cargar categorías al montar el componente
   useEffect(() => {
@@ -71,7 +78,6 @@ export const EditarEvento = () => {
           setCategorias(categoriasOrdenadas);
         }
       } catch (err) {
-        console.error('Error al cargar categorías:', err);
       }
     };
     
@@ -136,7 +142,6 @@ export const EditarEvento = () => {
 
         setLoadingEvent(false);
       } catch (err) {
-        console.error('Error al cargar el evento:', err);
         setLocalError('Error al cargar los datos del evento');
         setLoadingEvent(false);
       }
@@ -182,7 +187,6 @@ export const EditarEvento = () => {
     
     // Validar que timeObj es una fecha válida
     if (isNaN(timeObj.getTime())) {
-      console.error('Hora inválida:', time);
       return null;
     }
     
@@ -242,14 +246,28 @@ export const EditarEvento = () => {
     return true;
   };
 
-  // Manejar actualización del evento
-  const handleGuardar = async () => {
+  // Manejar clic en guardar (mostrar diálogo de confirmación)
+  const handleGuardar = () => {
     setLocalError('');
     setSuccess('');
 
     if (!validateForm()) {
       return;
     }
+
+    const startDateTime = combineDateTime(fecha, horaInicio);
+    if (!startDateTime) {
+      setLocalError('Error al combinar fecha y hora');
+      return;
+    }
+
+    // Mostrar diálogo de confirmación
+    setOpenConfirmDialog(true);
+  };
+
+  // Proceder con la actualización después de confirmar
+  const proceedWithUpdate = async () => {
+    setOpenConfirmDialog(false);
 
     const startDateTime = combineDateTime(fecha, horaInicio);
     if (!startDateTime) {
@@ -280,16 +298,24 @@ export const EditarEvento = () => {
 
     try {
       await updateEvent(id, eventData);
-      setSuccess('Evento actualizado exitosamente');
       
-      // Navegar después de un breve delay para mostrar el mensaje
-      setTimeout(() => {
-        navigate('/mis-eventos');
-      }, 2000);
+      // Mostrar diálogo de éxito
+      setOpenSuccessDialog(true);
     } catch (err) {
-      console.error('Error al actualizar el evento:', err);
-      // El error ya se maneja en el hook
+      const errorMsg = err.response?.data?.error || 
+                       err.response?.data?.message ||
+                       err.response?.data || 
+                       apiError ||
+                       'Error al actualizar el evento. Por favor, intenta nuevamente.';
+      setErrorDialogMessage(errorMsg);
+      setOpenErrorDialog(true);
     }
+  };
+
+  // Manejar confirmación de éxito (navegar)
+  const handleSuccessConfirm = () => {
+    setOpenSuccessDialog(false);
+    navigate('/mis-eventos');
   };
 
   return (
@@ -623,6 +649,44 @@ export const EditarEvento = () => {
             </>
           )}
         </Box>
+
+        {/* Diálogo de confirmación */}
+        <ConfirmDialog
+          open={openConfirmDialog}
+          onClose={() => setOpenConfirmDialog(false)}
+          onConfirm={proceedWithUpdate}
+          title="Confirmar Cambios"
+          message={`¿Estás seguro de que deseas guardar los cambios en el evento <strong>"${formData.title}"</strong>?`}
+          confirmText="Guardar"
+          cancelText="Cancelar"
+          loading={loading}
+          loadingText="Guardando..."
+          type="info"
+        />
+
+        {/* Diálogo de éxito */}
+        <ConfirmDialog
+          open={openSuccessDialog}
+          onClose={handleSuccessConfirm}
+          onConfirm={handleSuccessConfirm}
+          title="¡Evento Actualizado!"
+          message="Los cambios han sido guardados exitosamente."
+          confirmText="Ir a Mis Eventos"
+          cancelText=""
+          type="success"
+        />
+
+        {/* Diálogo de error */}
+        <ConfirmDialog
+          open={openErrorDialog}
+          onClose={() => setOpenErrorDialog(false)}
+          onConfirm={() => setOpenErrorDialog(false)}
+          title="Error"
+          message={errorDialogMessage}
+          confirmText="Entendido"
+          cancelText=""
+          type="error"
+        />
       </Box>
     </Box>
   );

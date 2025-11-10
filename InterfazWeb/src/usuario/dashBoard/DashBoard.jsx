@@ -57,7 +57,6 @@ export const DashBoard = () => {
                                 setMisEventos(organized);
                             }
                         } catch (err) {
-                            console.log('No se pudieron cargar eventos organizados:', err);
                         }
 
                         // Cargar inscripciones del usuario
@@ -71,11 +70,9 @@ export const DashBoard = () => {
                                 setMisInscripciones(activas);
                             }
                         } catch (err) {
-                            console.log('No se pudieron cargar inscripciones:', err);
                         }
                     }
                 } catch (err) {
-                    console.error('Error al cargar datos del dashboard:', err);
                 }
             };
             

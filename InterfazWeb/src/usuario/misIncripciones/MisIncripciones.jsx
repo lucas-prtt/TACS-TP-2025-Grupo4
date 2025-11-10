@@ -5,7 +5,9 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { ButtonCustom } from "../../components/Button";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { NavbarApp } from "../../components/NavbarApp";
 import { useNavigate } from "react-router-dom";
 import { useGetEvents } from "../../hooks/useGetEvents";
@@ -21,14 +23,15 @@ export const MisIncripciones = () => {
   const [registrations, setRegistrations] = useState([]);
   const [eventosCompletos, setEventosCompletos] = useState({});
   const [cancelandoId, setCancelandoId] = useState(null);
+  
+  // Estados para los diálogos
+  const [openCancelacionDialog, setOpenCancelacionDialog] = useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [inscripcionACancelar, setInscripcionACancelar] = useState(null);
 
   // Debug de estados de autenticación
-  console.log('🔍 MisIncripciones - Estados:', {
-    isAuthenticated,
-    authLoading,
-    user: user?.username,
-    hasToken: !!localStorage.getItem('authToken')
-  });
+  
 
   // Cargar inscripciones al montar el componente
   useEffect(() => {
@@ -37,22 +40,21 @@ export const MisIncripciones = () => {
     const loadRegistrations = async () => {
       // Esperar a que termine la carga de autenticación
       if (authLoading) {
-        console.log('⏳ Esperando verificación de autenticación...');
+        
         return;
       }
       
       // Verificar que el usuario esté autenticado
       if (!isAuthenticated || !user) {
-        console.log('❌ Usuario no autenticado, no se pueden cargar inscripciones');
+        
         return;
       }
 
       try {
-        console.log('🔄 Cargando inscripciones para usuario:', user.username);
         
         const result = await getUserRegistrations();
         if (isMounted) {
-          console.log('✅ Inscripciones cargadas:', result?.length || 0);
+          
           setRegistrations(result || []);
           
           // Cargar datos completos de cada evento
@@ -66,7 +68,7 @@ export const MisIncripciones = () => {
                     eventosMap[registration.eventId] = evento;
                   }
                 } catch (err) {
-                  console.error(`Error al cargar evento ${registration.eventId}:`, err);
+                
                 }
               }
             }
@@ -77,7 +79,7 @@ export const MisIncripciones = () => {
         }
       } catch (err) {
         if (isMounted) {
-          console.error('❌ Error al cargar inscripciones:', err);
+         
         }
       }
     };
@@ -92,17 +94,17 @@ export const MisIncripciones = () => {
   // Función para recargar inscripciones manualmente
   const handleReload = async () => {
     if (!isAuthenticated || !user) {
-      console.log('❌ Usuario no autenticado para recargar');
+     
       return;
     }
 
     try {
-      console.log('🔄 Recargando inscripciones...');
+    
       const result = await getUserRegistrations();
       setRegistrations(result || []);
-      console.log('✅ Inscripciones recargadas');
+      
     } catch (err) {
-      console.error('Error al recargar inscripciones:', err);
+     
     }
   };
 
@@ -162,27 +164,36 @@ export const MisIncripciones = () => {
     navigate(`/evento/${id}`);
   };
 
-  const handleBaja = async (registrationId, eventoTitulo) => {
-    if (!window.confirm(`¿Estás seguro de que quieres darte de baja del evento "${eventoTitulo}"?`)) {
-      return;
-    }
+  const handleBaja = (registrationId, eventoTitulo) => {
+    // Guardar datos de la inscripción a cancelar y abrir diálogo
+    setInscripcionACancelar({ registrationId, eventoTitulo });
+    setOpenCancelacionDialog(true);
+  };
+
+  // Procesar cancelación después de confirmar
+  const proceedWithCancellation = async () => {
+    if (!inscripcionACancelar) return;
     
+    const { registrationId } = inscripcionACancelar;
     setCancelandoId(registrationId);
+    setOpenCancelacionDialog(false);
     
     try {
       await cancelRegistration(registrationId);
-      alert('Te has dado de baja del evento exitosamente');
       
       // Recargar inscripciones después de cancelar
       await handleReload();
     } catch (error) {
-      console.error('Error al cancelar inscripción:', error);
-      const errorMessage = error.response?.data?.error || 
-                          error.response?.data || 
-                          'Error al cancelar la inscripción';
-      alert(`Error: ${errorMessage}`);
+    
+      const errorMsg = error.response?.data?.error || 
+                       error.response?.data?.message ||
+                       error.response?.data || 
+                       'Error al cancelar la inscripción. Por favor, intenta nuevamente.';
+      setErrorMessage(errorMsg);
+      setOpenErrorDialog(true);
     } finally {
       setCancelandoId(null);
+      setInscripcionACancelar(null);
     }
   };
 
@@ -201,12 +212,21 @@ export const MisIncripciones = () => {
           textColor: '#c62828',
           borderColor: '#ef5350'
         };
+      case 'WAITLIST':
+        return {
+          texto: 'En Lista de Espera',
+          color: 'warning',
+          icon: <AccessTimeIcon fontSize="small" />,
+          bgColor: '#fff8e1',
+          textColor: '#f57c00',
+          borderColor: '#ffb74d'
+        };
       case 'ACTIVE':
       case 'CONFIRMED':
       case 'REGISTERED':
       default:
         return {
-          texto: 'Activa',
+          texto: 'Confirmada',
           color: 'success',
           icon: <CheckCircleIcon fontSize="small" />,
           bgColor: '#e8f5e8',
@@ -304,9 +324,7 @@ export const MisIncripciones = () => {
         {/* Contenido cuando no está cargando */}
         {!loading && !error && (
           <>
-            {/* Debug logs */}
-            {console.log('🖥️ RENDERIZANDO - Estado:', { loading, error, registrationsLength: registrations.length, formateadasLength: inscripcionesFormateadas.length })}
-            
+           
             {/* Mostrar cantidad de inscripciones */}
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               Tienes {inscripcionesFormateadas.length} inscripción{inscripcionesFormateadas.length !== 1 ? 'es' : ''}
@@ -506,6 +524,35 @@ export const MisIncripciones = () => {
         )}
         </>
         )}
+
+        {/* Diálogo de confirmación para cancelación */}
+        <ConfirmDialog
+          open={openCancelacionDialog}
+          onClose={() => {
+            setOpenCancelacionDialog(false);
+            setInscripcionACancelar(null);
+          }}
+          onConfirm={proceedWithCancellation}
+          title="Cancelar Inscripción"
+          message={`¿Estás seguro de que deseas darte de baja del evento <strong>"${inscripcionACancelar?.eventoTitulo}"</strong>?<br/><br/>Esta acción no se puede deshacer.`}
+          confirmText="Sí, darme de baja"
+          cancelText="No, mantener"
+          loading={cancelandoId !== null}
+          loadingText="Cancelando..."
+          type="error"
+        />
+
+        {/* Diálogo de error */}
+        <ConfirmDialog
+          open={openErrorDialog}
+          onClose={() => setOpenErrorDialog(false)}
+          onConfirm={() => setOpenErrorDialog(false)}
+          title="Error"
+          message={errorMessage}
+          confirmText="Entendido"
+          cancelText=""
+          type="error"
+        />
       </Box>
     </Box>
   );

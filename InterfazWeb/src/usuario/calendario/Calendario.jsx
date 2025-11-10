@@ -23,7 +23,6 @@ export const Calendario = () => {
         const eventosFromDB = await getEvents();
         setEventos(eventosFromDB);
       } catch (err) {
-        console.error('Error al cargar eventos:', err);
       }
     };
 

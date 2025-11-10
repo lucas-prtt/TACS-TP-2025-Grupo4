@@ -14,6 +14,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import { format } from 'date-fns';
 import { es, tr } from 'date-fns/locale';
 import { ButtonCustom } from '../../components/Button';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { useNavigate } from "react-router-dom";
 import { useTheme } from '@mui/material/styles';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -33,29 +34,22 @@ export const CardEvento = ({ evento, onVerEvento }) => {
   const [estaInscrito, setEstaInscrito] = useState(false);
   const [registrationId, setRegistrationId] = useState(null);
   const [verificandoInscripcion, setVerificandoInscripcion] = useState(false);
-
-  // Debug: Log completo del evento al inicializar
-  console.log(`🔍 EVENTO COMPLETO RECIBIDO - ${evento.titulo}:`, evento);
-  console.log(`🔍 TAGS ESPECÍFICAMENTE:`, {
-    tags: evento.tags,
-    tagsType: typeof evento.tags,
-    tagsIsArray: Array.isArray(evento.tags),
-    tagsLength: evento.tags?.length,
-    tagsJSON: JSON.stringify(evento.tags, null, 2)
-  });
+  
+  // Estados para los diálogos
+  const [openWaitlistDialog, setOpenWaitlistDialog] = useState(false);
+  const [openInscripcionDialog, setOpenInscripcionDialog] = useState(false);
+  const [openCancelacionDialog, setOpenCancelacionDialog] = useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Función para verificar inscripción basada en la lógica de MisIncripciones
   const verificarInscripcion = useCallback(async () => {
     if (!user || !evento.id) {
-      console.log(`🔍 No verificando inscripción - Usuario: ${!!user}, EventoID: ${evento.id}`);
       return;
     }
     
-    console.log(`🔍 INICIANDO verificación para evento ${evento.id} (${evento.titulo})`);
-    
     try {
       const registrations = await getUserRegistrations();
-      console.log(`📋 TODAS las inscripciones del usuario (${registrations?.length || 0}):`, registrations);
       
       // IGUAL que MisIncripciones: Los datos están directamente en el registration
       const inscripcionActiva = registrations.find(reg => {
@@ -64,33 +58,18 @@ export const CardEvento = ({ evento, onVerEvento }) => {
         const esEsteEvento = tieneEventoId && (reg.eventId == evento.id);
         const noEstaCancelada = reg.state !== 'CANCELED';
         
-        console.log(`  🔍 Verificando inscripción ${reg.registrationId}:`, {
-          tieneEventoId,
-          esEsteEvento,
-          noEstaCancelada,
-          regEventId: reg.eventId,
-          eventoId: evento.id,
-          state: reg.state,
-          MATCH: esEsteEvento && noEstaCancelada
-        });
-        
         return esEsteEvento && noEstaCancelada;
       });
       
       if (inscripcionActiva) {
-        console.log(`✅ ENCONTRADA inscripción activa:`, inscripcionActiva);
         setEstaInscrito(true);
-        setRegistrationId(inscripcionActiva.registrationId); // Usar registrationId como en MisIncripciones
+        setRegistrationId(inscripcionActiva.registrationId);
       } else {
-        console.log(`❌ NO hay inscripción activa para evento ${evento.id}`);
         setEstaInscrito(false);
         setRegistrationId(null);
       }
       
-      console.log(`🎯 RESULTADO FINAL: estaInscrito=${inscripcionActiva ? true : false}`);
-      
     } catch (error) {
-      console.error('❌ Error al verificar inscripción:', error);
       setEstaInscrito(false);
       setRegistrationId(null);
     }
@@ -104,7 +83,6 @@ export const CardEvento = ({ evento, onVerEvento }) => {
   // Verificar si el usuario está inscrito al evento
   useEffect(() => {
     if (user?.id && evento.id) {
-      console.log(`⚡ useEffect disparado para verificar inscripción: userId=${user.id}, eventoId=${evento.id}`);
       verificarInscripcion();
     }
   }, [user?.id, evento.id, verificarInscripcion]);
@@ -118,18 +96,6 @@ export const CardEvento = ({ evento, onVerEvento }) => {
   const isAdmin = user && user.roles && user.roles.includes('ADMIN');
   const isUser = !isOrganizador && !isAdmin;
 
-  // Debug log para verificar la lógica
-  console.log(`🔍 CardEvento - ${evento.titulo}:`, {
-    'user.username': user?.username,
-    'user.id': user?.id,
-    'evento.organizador_id': evento.organizador_id,
-    'isOrganizador': isOrganizador,
-    'isAdmin': isAdmin,
-    'isUser': isUser,
-    'estaInscrito': estaInscrito,
-    'registrationId': registrationId
-  });
-
   // Funciones para manejar acciones
   const handleInscribirse = async () => {
     if (!user) {
@@ -137,19 +103,34 @@ export const CardEvento = ({ evento, onVerEvento }) => {
       return;
     }
     
-    setInscribiendose(true);
+    // Verificar si el evento está lleno
+    if (evento.participantes_registrados >= evento.max_participantes) {
+      setOpenWaitlistDialog(true);
+      return;
+    }
+
+    // Si hay espacio, mostrar diálogo de confirmación
+    setOpenInscripcionDialog(true);
+  };
+
+  // Procesar inscripción
+  const proceedWithRegistration = async () => {
     try {
-      const result = await registerToEvent(evento.id);
-      alert('¡Te has inscrito exitosamente al evento!');
-      console.log('Inscripción exitosa:', result);
+      setInscribiendose(true);
+      setOpenWaitlistDialog(false);
+      setOpenInscripcionDialog(false);
+      
+      await registerToEvent(evento.id);
+      
       // Volver a verificar el estado de inscripción desde el servidor
       await verificarInscripcion();
     } catch (error) {
-      console.error('Error al inscribirse:', error);
-      const errorMessage = error.response?.data?.error || 
-                          error.response?.data || 
-                          'Error al inscribirse al evento';
-      alert(`Error: ${errorMessage}`);
+      const errorMsg = error.response?.data?.error || 
+                       error.response?.data?.message ||
+                       error.response?.data || 
+                       'Error al inscribirse al evento. Por favor, intenta nuevamente.';
+      setErrorMessage(errorMsg);
+      setOpenErrorDialog(true);
     } finally {
       setInscribiendose(false);
     }
@@ -161,21 +142,26 @@ export const CardEvento = ({ evento, onVerEvento }) => {
       return;
     }
 
-    const confirmar = window.confirm('¿Estás seguro de que quieres cancelar tu inscripción a este evento?');
-    if (!confirmar) return;
-    
-    setCancelando(true);
+    // Mostrar diálogo de confirmación
+    setOpenCancelacionDialog(true);
+  };
+
+  // Procesar cancelación
+  const proceedWithCancellation = async () => {
     try {
+      setCancelando(true);
+      setOpenCancelacionDialog(false);
+      
       await cancelRegistration(registrationId);
-      alert('Has cancelado tu inscripción exitosamente');
       // Volver a verificar el estado de inscripción desde el servidor
       await verificarInscripcion();
     } catch (error) {
-      console.error('Error al cancelar inscripción:', error);
-      const errorMessage = error.response?.data?.error || 
-                          error.response?.data || 
-                          'Error al cancelar la inscripción';
-      alert(`Error: ${errorMessage}`);
+      const errorMsg = error.response?.data?.error || 
+                       error.response?.data?.message ||
+                       error.response?.data || 
+                       'Error al cancelar la inscripción. Por favor, intenta nuevamente.';
+      setErrorMessage(errorMsg);
+      setOpenErrorDialog(true);
     } finally {
       setCancelando(false);
     }
@@ -195,8 +181,6 @@ export const CardEvento = ({ evento, onVerEvento }) => {
   
   // Manejar error de carga de imagen - simplificado
   const handleImageError = (e) => {
-    console.log(`❌ Error cargando imagen para ${evento.titulo}:`, evento.imagen);
-    console.log('Error details:', e.type, e.target?.src);
     setImageError(true);
   };
 
@@ -204,27 +188,17 @@ export const CardEvento = ({ evento, onVerEvento }) => {
   const getImageSrc = () => {
     // Si hay error de carga, usar imagen por defecto
     if (imageError) {
-      console.log(`❌ ${evento.titulo}: Usando fallback por error de carga`);
       return noImagePlaceholder;
     }
     
     // Si no hay URL de imagen, usar imagen por defecto
     if (!evento.imagen || evento.imagen.trim() === "") {
-      console.log(`ℹ️ ${evento.titulo}: Sin imagen, usando fallback`);
       return noImagePlaceholder;
     }
     
     // Usar la imagen original
-    console.log(`🖼️ ${evento.titulo}: Usando imagen ${evento.imagen}`);
     return evento.imagen;
   };
-
-  // Log simplificado para debug
-  if (evento.imagen) {
-    console.log(`🖼️ CardEvento renderizando: ${evento.titulo} -> ${evento.imagen}`);
-  } else {
-    console.log(`⚪ CardEvento sin imagen: ${evento.titulo}`);
-  }
 
 
   
@@ -244,34 +218,6 @@ export const CardEvento = ({ evento, onVerEvento }) => {
     // El backend usa 'nombre' en Tag, el frontend en otros lugares puede usar 'name'
     return tag.nombre || tag.name || null;
   }).filter(tag => tag);
-  
-  // Debug para tags - mostrar SIEMPRE el procesamiento
-  console.log(`🏷️ Tags para ${evento.titulo}:`, {
-    original: evento.tags,
-    originalType: Array.isArray(evento.tags) ? 'array' : typeof evento.tags,
-    originalLength: evento.tags?.length || 0,
-    processed: tags,
-    processedLength: tags.length,
-    willShow: tags.length > 0,
-    showScrollHint: tags.length > 4
-  });
-
-  // Debug adicional: examinar cada tag individual
-  if (evento.tags && evento.tags.length > 0) {
-    console.log(`🔍 Examinando cada tag individual para ${evento.titulo}:`);
-    evento.tags.forEach((tag, index) => {
-      console.log(`  Tag ${index}:`, {
-        raw: tag,
-        type: typeof tag,
-        isString: typeof tag === 'string',
-        hasNombre: tag && typeof tag === 'object' && 'nombre' in tag,
-        hasName: tag && typeof tag === 'object' && 'name' in tag,
-        nombre: tag?.nombre,
-        name: tag?.name,
-        final: typeof tag === 'string' ? tag : (tag?.nombre || tag?.name || null)
-      });
-    });
-  }
 
   // Estilos para los botones según tu paleta
   const sxVer = {
@@ -405,12 +351,8 @@ export const CardEvento = ({ evento, onVerEvento }) => {
           alt={evento.titulo}
           onError={handleImageError}
           onLoad={(e) => {
-            console.log(`✅ Imagen cargada: ${evento.titulo}`);
-            console.log(`   URL final: ${e.target.src}`);
-            console.log(`   Dimensiones: ${e.target.naturalWidth}x${e.target.naturalHeight}`);
           }}
           onLoadStart={() => {
-            console.log(`🔄 Iniciando carga: ${evento.titulo} -> ${getImageSrc()}`);
           }}
           sx={{ 
             borderRadius: 2, 
@@ -582,9 +524,6 @@ export const CardEvento = ({ evento, onVerEvento }) => {
               eventoId: evento.id,
               eventoTitulo: evento.titulo
             };
-            console.log(`🎯 RENDERIZANDO botones para evento ${evento.id}:`, estadoRender);
-            console.log(`🔴 ¿Mostrar botón CANCELAR? ${estaInscrito ? 'SÍ' : 'NO'}`);
-            console.log(`🟢 ¿Mostrar botón INSCRIBIRSE? ${!estaInscrito ? 'SÍ' : 'NO'}`);
             
             return (
               <>
@@ -630,6 +569,60 @@ export const CardEvento = ({ evento, onVerEvento }) => {
           })()}
         </Stack>
       </CardContent>
+
+      {/* Diálogo de confirmación para lista de espera */}
+      <ConfirmDialog
+        open={openWaitlistDialog}
+        onClose={() => setOpenWaitlistDialog(false)}
+        onConfirm={proceedWithRegistration}
+        title="Evento Completo"
+        message={`El evento ha alcanzado su capacidad máxima de ${evento?.max_participantes} participantes. Serás añadido a la <strong>lista de espera</strong> y podrás inscribirte si se libera un cupo.<br/><br/>¿Deseas continuar?`}
+        confirmText="Confirmar"
+        cancelText="Cancelar"
+        loading={inscribiendose}
+        loadingText="Confirmando..."
+        type="warning"
+      />
+
+      {/* Diálogo de confirmación para inscripción normal */}
+      <ConfirmDialog
+        open={openInscripcionDialog}
+        onClose={() => setOpenInscripcionDialog(false)}
+        onConfirm={proceedWithRegistration}
+        title="Confirmar Inscripción"
+        message={`¿Estás seguro de que deseas inscribirte al evento <strong>"${evento?.titulo}"</strong>?`}
+        confirmText="Inscribirse"
+        cancelText="Cancelar"
+        loading={inscribiendose}
+        loadingText="Inscribiendo..."
+        type="success"
+      />
+
+      {/* Diálogo de confirmación para cancelación */}
+      <ConfirmDialog
+        open={openCancelacionDialog}
+        onClose={() => setOpenCancelacionDialog(false)}
+        onConfirm={proceedWithCancellation}
+        title="Cancelar Inscripción"
+        message={`¿Estás seguro de que deseas cancelar tu inscripción al evento <strong>"${evento?.titulo}"</strong>?<br/><br/>Esta acción no se puede deshacer.`}
+        confirmText="Sí, cancelar"
+        cancelText="No, mantener"
+        loading={cancelando}
+        loadingText="Cancelando..."
+        type="error"
+      />
+
+      {/* Diálogo de error */}
+      <ConfirmDialog
+        open={openErrorDialog}
+        onClose={() => setOpenErrorDialog(false)}
+        onConfirm={() => setOpenErrorDialog(false)}
+        title="Error"
+        message={errorMessage}
+        confirmText="Entendido"
+        cancelText=""
+        type="error"
+      />
     </Card>
   );
 };

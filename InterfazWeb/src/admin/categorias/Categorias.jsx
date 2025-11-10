@@ -28,7 +28,6 @@ export const Categorias = () => {
             setCategories(data);
         } catch (err) {
             setError('Error al cargar las categorías');
-            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -50,7 +49,6 @@ export const Categorias = () => {
             await loadCategories();
         } catch (err) {
             setError(err.response?.data?.error || 'Error al agregar la categoría');
-            console.error(err);
         } finally {
             setLoading(false);
         }
@@ -69,7 +67,6 @@ export const Categorias = () => {
             await loadCategories();
         } catch (err) {
             setError(err.response?.data?.error || 'Error al eliminar la categoría');
-            console.error(err);
         } finally {
             setLoading(false);
         }
