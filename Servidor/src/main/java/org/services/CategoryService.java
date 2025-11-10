@@ -26,6 +26,8 @@ public class CategoryService {
     }
 
     public Category findCategory(Category category){
+        if(category == null)
+            return null;
         return categoryRepository.findById(category.getTitle()).orElseThrow(()-> new CategoryNotFoundException("No se encontro la categoria " + category.getTitle()));
     }
 
