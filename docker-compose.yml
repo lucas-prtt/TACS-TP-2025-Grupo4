@@ -117,6 +117,8 @@ services:
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017,mongo2:27017,mongo3:27017/eventos?replicaSet=rs0
       EVENTOS_SERVER_SECRET_KEY: ${EVENTOS_SERVER_SECRET_KEY}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       # Variables de OpenTelemetry
       OTEL_SERVICE_NAME: servidor
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
@@ -152,7 +154,6 @@ services:
 
     volumes:
       - jaeger-data:/jaeger-data
-
 
 
   # TELEGRAM BOT

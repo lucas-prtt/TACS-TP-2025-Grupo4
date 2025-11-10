@@ -7,14 +7,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.DTOs.registrations.RegistrationDTO;
-import org.exceptions.RegistrationNotFoundException;
 import org.model.enums.RegistrationState;
 import org.model.events.Registration;
 import org.services.AccountService;
 import org.services.RegistrationService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.utils.PageNormalizer;
 

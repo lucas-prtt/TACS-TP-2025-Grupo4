@@ -1,19 +1,15 @@
 package org.services;
 
 import static org.utils.PasswordValidator.validatePassword;
-import org.DTOs.registrations.RegistrationDTO;
+
 import org.exceptions.AccountAlreadyExistsException;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.InvalidLoginException;
 import org.model.accounts.Account;
-import org.model.accounts.Role;
-import org.model.enums.RegistrationState;
+import org.model.enums.Role;
 import org.repositories.AccountRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.utils.PageSplitter;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,7 +43,7 @@ public class AccountService {
         account.setPassword(hashedPassword);
 
         if (isAdmin) {
-            account.getRoles().add(new Role("ROLE_ADMIN"));
+            account.getRoles().add(Role.ROLE_ADMIN);
         }
 
         accountRepository.save(account);

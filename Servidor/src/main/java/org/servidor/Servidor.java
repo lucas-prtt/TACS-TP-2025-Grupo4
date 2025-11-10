@@ -13,7 +13,7 @@ import java.util.Collections;
 @EnableScheduling
 @EnableMongoRepositories(basePackages = "org.repositories")
 @EnableRetry
-@ComponentScan(basePackages = {"org.controllers", "org.services", "org.repositories","org.DTOs", "org.model","org.utils", "org.middleware"})
+@ComponentScan(basePackages = {"org.controllers", "org.services", "org.repositories","org.DTOs", "org.model","org.utils", "org.middleware","org.config"})
 @SpringBootApplication
 public class Servidor {
     public static void main(String[] args) {

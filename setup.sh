@@ -5,16 +5,20 @@ echo "Deje uno o mas campos vacios para usar el .env existente"
 read -p "Ingresa el TOKEN del bot (EVENTOS_TELEGRAM_BOT_TOKEN): " BOT_TOKEN
 read -p "Ingresa el USERNAME del bot (EVENTOS_TELEGRAM_BOT_USERNAME): " BOT_USERNAME
 read -p "Ingresa la SECRET KEY del server (EVENTOS_SERVER_SECRET_KEY): " SECRET_KEY
+read -p "Ingresa el USERNAME del admin-default (ADMIN_USERNAME): " ADMIN_USERNAME
+read -p "Ingresa la PASSWORD del admin-default (ADMIN_PASSWORD): " ADMIN_PASSWORD
 
 # 2. Crear archivo .env en la raíz del proyecto
 ENV_FILE=".env"
-if [ -n "$BOT_TOKEN" ] && [ -n "$BOT_USERNAME" ] && [ -n "$SECRET_KEY" ]; then
+if [ -n "$BOT_TOKEN" ] && [ -n "$BOT_USERNAME" ] && [ -n "$SECRET_KEY" ] && [ -n "$ADMIN_USERNAME" ] && [ -n "$ADMIN_PASSWORD" ]; then
   echo "Creando archivo $ENV_FILE en la raíz del proyecto..."
 
 cat > "$ENV_FILE" <<EOF
 EVENTOS_TELEGRAM_BOT_TOKEN=$BOT_TOKEN
 EVENTOS_TELEGRAM_BOT_USERNAME=$BOT_USERNAME
 EVENTOS_SERVER_SECRET_KEY=$SECRET_KEY
+ADMIN_USERNAME=$ADMIN_USERNAME
+ADMIN_PASSWORD=$ADMIN_PASSWORD
 EOF
 
 echo "Archivo $ENV_FILE creado correctamente."

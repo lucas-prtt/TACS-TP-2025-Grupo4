@@ -1,5 +1,5 @@
 
-package org.utils;
+package org.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.utils.JwtUtil;
 
 /**
  * Filtro de autenticación JWT para validar el token en cada request y establecer el usuario autenticado en el contexto de seguridad.

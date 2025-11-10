@@ -5,8 +5,6 @@ import org.exceptions.WrongOneTimeCodeException;
 import org.model.accounts.OneTimeCode;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service

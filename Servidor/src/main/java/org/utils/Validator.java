@@ -2,7 +2,6 @@ package org.utils;
 
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 public class Validator {
     public static boolean isValidUrlNonLocalhost(String urlStr) {
