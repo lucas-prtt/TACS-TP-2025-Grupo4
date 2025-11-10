@@ -15,10 +15,11 @@ import noImagePlaceholder from "../../assets/images/no_image.png";
 export const MisIncripciones = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { loading, error, getUserRegistrations, cancelRegistration } = useGetEvents();
+  const { loading, error, getUserRegistrations, cancelRegistration, getEventById } = useGetEvents();
   const { user, isAuthenticated, loading: authLoading } = useGetAuth();
   
   const [registrations, setRegistrations] = useState([]);
+  const [eventosCompletos, setEventosCompletos] = useState({});
   const [cancelandoId, setCancelandoId] = useState(null);
 
   // Debug de estados de autenticación
@@ -49,25 +50,34 @@ export const MisIncripciones = () => {
       try {
         console.log('🔄 Cargando inscripciones para usuario:', user.username);
         
-        // Verificar token antes de hacer la petición
-        const token = localStorage.getItem('authToken');
-        console.log('🔑 Token disponible:', !!token);
-        console.log('🔑 Token (primeros 20 chars):', token?.substring(0, 20) + '...');
-        
         const result = await getUserRegistrations();
         if (isMounted) {
           console.log('✅ Inscripciones cargadas:', result?.length || 0);
-          console.log('📋 DATOS CRUDOS DE INSCRIPCIONES:', result);
           setRegistrations(result || []);
+          
+          // Cargar datos completos de cada evento
+          if (result && result.length > 0) {
+            const eventosMap = {};
+            for (const registration of result) {
+              if (registration.eventId && !eventosMap[registration.eventId]) {
+                try {
+                  const evento = await getEventById(registration.eventId);
+                  if (evento) {
+                    eventosMap[registration.eventId] = evento;
+                  }
+                } catch (err) {
+                  console.error(`Error al cargar evento ${registration.eventId}:`, err);
+                }
+              }
+            }
+            if (isMounted) {
+              setEventosCompletos(eventosMap);
+            }
+          }
         }
       } catch (err) {
         if (isMounted) {
           console.error('❌ Error al cargar inscripciones:', err);
-          console.error('❌ Detalles del error:', {
-            status: err.response?.status,
-            data: err.response?.data,
-            message: err.message
-          });
         }
       }
     };
@@ -96,37 +106,16 @@ export const MisIncripciones = () => {
     }
   };
 
-  // Mapear inscripciones de API al formato esperado
+  // Mapear inscripciones combinando datos del RegistrationDTO con datos completos del evento
   const inscripcionesFormateadas = useMemo(() => {
-    console.log('🔄 MAPEANDO INSCRIPCIONES:', registrations);
-    
-    const mapped = (registrations || []).map((registration, index) => {
-      console.log(`📌 PROCESANDO INSCRIPCIÓN ${index}:`, registration);
-      
-      if (!registration) {
-        console.log(`❌ Inscripción ${index} es null/undefined`);
+    const mapped = (registrations || []).map((registration) => {
+      if (!registration || !registration.eventId) {
         return null;
       }
       
-      // Los datos del evento están directamente en el registration, no en registration.event
-      if (!registration.title || !registration.eventId) {
-        console.log(`❌ Inscripción ${index} no tiene datos del evento:`, registration);
-        return null;
-      }
+      // Obtener datos completos del evento si están disponibles
+      const eventoCompleto = eventosCompletos[registration.eventId];
       
-      console.log(`✅ Datos del evento encontrados para inscripción ${index}`);
-      
-      // Manejar categoria de forma segura
-      let categoria = "Sin categoría";
-      if (registration.category) {
-        // category es un objeto Category con propiedad 'title'
-        if (typeof registration.category === 'object' && registration.category.title) {
-          categoria = registration.category.title;
-        } else if (typeof registration.category === 'string') {
-          categoria = registration.category;
-        }
-      }
-
       // Manejar estado de inscripción
       let estadoInscripcion = "Activa";
       if (registration.state) {
@@ -137,46 +126,37 @@ export const MisIncripciones = () => {
         }
       }
 
-      const mappedItem = {
-        id: registration.eventId, // Usar eventId en lugar de evento.id
+      // Manejar categoría
+      let categoria = "Sin categoría";
+      if (eventoCompleto?.category) {
+        if (typeof eventoCompleto.category === 'object' && eventoCompleto.category.title) {
+          categoria = eventoCompleto.category.title;
+        } else if (typeof eventoCompleto.category === 'string') {
+          categoria = eventoCompleto.category;
+        }
+      }
+
+      return {
+        id: registration.eventId,
         titulo: registration.title || "Sin título",
         descripcion: registration.description || "Sin descripción",
-        fechaInicio: registration.startDateTime || new Date().toISOString(),
-        lugar: registration.location || "Sin ubicación",
+        fechaInicio: eventoCompleto?.startDateTime || null,
+        lugar: eventoCompleto?.location || null,
         categoria: categoria,
-        imagen: registration.image || noImagePlaceholder,
+        imagen: eventoCompleto?.image || noImagePlaceholder,
         registrationId: registration.registrationId,
         estadoInscripcion: estadoInscripcion,
-        fechaInscripcion: registration.dateTime // Usar dateTime en lugar de registrationDate
+        fechaInscripcion: registration.dateTime
       };
-      
-      console.log(`🎯 ITEM MAPEADO ${index}:`, mappedItem);
-      return mappedItem;
-    }).filter(item => {
-      const isValid = item !== null;
-      console.log('🔍 FILTRO - Item válido:', isValid, item);
-      return isValid;
-    }).sort((a, b) => {
-      // Ordenar por fecha de inscripción (más reciente primero)
-      const fechaA = new Date(a.fechaInscripcion || 0);
-      const fechaB = new Date(b.fechaInscripcion || 0);
-      
-      console.log('📅 ORDENANDO:', {
-        eventoA: a.titulo,
-        fechaA: a.fechaInscripcion,
-        eventoB: b.titulo,
-        fechaB: b.fechaInscripcion,
-        resultado: fechaB.getTime() - fechaA.getTime()
+    }).filter(item => item !== null)
+      .sort((a, b) => {
+        const fechaA = new Date(a.fechaInscripcion || 0);
+        const fechaB = new Date(b.fechaInscripcion || 0);
+        return fechaB.getTime() - fechaA.getTime();
       });
-      
-      return fechaB.getTime() - fechaA.getTime(); // Más reciente primero
-    });
-    
-    console.log('📊 RESULTADO FINAL ORDENADO:', mapped);
-    console.log('📊 CANTIDAD FINAL:', mapped.length);
     
     return mapped;
-  }, [registrations]);
+  }, [registrations, eventosCompletos]);
 
   const handleVer = (id) => {
     navigate(`/evento/${id}`);
@@ -430,18 +410,22 @@ export const MisIncripciones = () => {
                       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                         {inscripcion.descripcion}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                        <b>Fecha del evento:</b> {new Date(inscripcion.fechaInicio).toLocaleString("es-AR", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit"
-                        })}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        <b>Ubicación:</b> {inscripcion.lugar}
-                      </Typography>
+                      {inscripcion.fechaInicio && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                          <b>Fecha del evento:</b> {new Date(inscripcion.fechaInicio).toLocaleString("es-AR", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })}
+                        </Typography>
+                      )}
+                      {inscripcion.lugar && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                          <b>Ubicación:</b> {inscripcion.lugar}
+                        </Typography>
+                      )}
                       {inscripcion.fechaInscripcion && (
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: '0.8rem' }}>
                           <b>Inscripto el:</b> {new Date(inscripcion.fechaInscripcion).toLocaleDateString("es-AR")}

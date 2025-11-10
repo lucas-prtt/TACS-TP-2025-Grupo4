@@ -6,9 +6,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PlaceIcon from '@mui/icons-material/Place';
@@ -194,13 +192,6 @@ export const CardEvento = ({ evento, onVerEvento }) => {
   const handleEditarEvento = () => {
     navigate(`/editar-evento/${evento.id}`);
   };
-
-  const handleEliminarEvento = () => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este evento?')) {
-      // TODO: Implementar lógica de eliminación
-      console.log('Eliminar evento:', evento.id);
-    }
-  };
   
   // Manejar error de carga de imagen - simplificado
   const handleImageError = (e) => {
@@ -311,18 +302,6 @@ export const CardEvento = ({ evento, onVerEvento }) => {
     }
   };
 
-  const sxEliminar = {
-    border: '2px solid #DC2626',
-    color: '#DC2626',
-    backgroundColor: '#fff',
-    borderRadius: '10px',
-    '&:hover': {
-      backgroundColor: '#FEE2E2',
-      color: '#B91C1C',
-      borderColor: '#B91C1C'
-    }
-  };
-
   const sxCancelarInscripcion = {
     border: '2px solid #DC2626',
     color: '#DC2626',
@@ -347,6 +326,8 @@ export const CardEvento = ({ evento, onVerEvento }) => {
         return 'Abierto';
       case 'EVENT_CLOSED':
         return 'Cerrado';
+      case 'EVENT_CANCELLED':
+        return 'Cancelado';
       case 'EVENT_PAUSED':
         return 'Pausado';
       default:
@@ -356,12 +337,51 @@ export const CardEvento = ({ evento, onVerEvento }) => {
             return 'Abierto';
           case 'CLOSED':
             return 'Cerrado';
+          case 'CANCELLED':
+            return 'Cancelado';
           case 'PAUSED':
             return 'Pausado';
           default:
             return estado; // Devolver el estado original si no coincide
         }
     }
+  };
+
+  // Función para obtener los colores del estado
+  const getEstadoColors = (estado) => {
+    if (!estado) return { bgcolor: '#6B7280', color: '#fff' };
+    
+    const estadoUpper = estado.toUpperCase();
+    
+    // EVENT_OPEN o OPEN -> Verde
+    if (estadoUpper.includes('OPEN')) {
+      return {
+        bgcolor: '#10B981', // Verde
+        color: '#fff'
+      };
+    }
+    
+    // EVENT_CLOSED o CLOSED -> Rojo
+    if (estadoUpper.includes('CLOSED')) {
+      return {
+        bgcolor: '#EF4444', // Rojo
+        color: '#fff'
+      };
+    }
+    
+    // EVENT_CANCELLED o CANCELLED -> Naranja oscuro
+    if (estadoUpper.includes('CANCELLED')) {
+      return {
+        bgcolor: '#D97706', // Naranja oscuro
+        color: '#fff'
+      };
+    }
+    
+    // Por defecto (gris)
+    return {
+      bgcolor: '#6B7280',
+      color: '#fff'
+    };
   };
 
   return (
@@ -411,7 +431,14 @@ export const CardEvento = ({ evento, onVerEvento }) => {
         </Box>
         <Box sx={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 1 }}>
           {evento.estado && (
-            <Chip label={getEstadoTraducido(evento.estado)} size="small" color="primary" sx={{ fontWeight: 500 }} />
+            <Chip 
+              label={getEstadoTraducido(evento.estado)} 
+              size="small" 
+              sx={{ 
+                fontWeight: 600,
+                ...getEstadoColors(evento.estado)
+              }} 
+            />
           )}
         </Box>
       </Box>
@@ -543,13 +570,6 @@ export const CardEvento = ({ evento, onVerEvento }) => {
               >
                 Editar
               </ButtonCustom>
-              <IconButton
-                size="small"
-                onClick={handleEliminarEvento}
-                sx={sxEliminar}
-              >
-                <DeleteIcon />
-              </IconButton>
             </>
           )}
           {isUser && (() => {

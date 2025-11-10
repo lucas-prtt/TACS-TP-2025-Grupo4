@@ -3,6 +3,7 @@ import {
   Box, Typography, List, ListItem, ListItemIcon, ListItemText, Divider, useTheme, Drawer, IconButton
 } from '@mui/material';
 import CategoryIcon from '@mui/icons-material/Category';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +13,12 @@ const drawerWidth = 250;
 
 // Ítems del menú para administrador
 const ADMIN_NAV_ITEMS = [
+  {
+    key: "estadisticas",
+    label: "Estadísticas",
+    icon: <BarChartIcon />,
+    path: "/admin/estadisticas"
+  },
   {
     key: "categorias",
     label: "Categorías",
