@@ -2,31 +2,23 @@ package org.controllers;
 
 import static org.utils.SecurityUtils.getCurrentAccountId;
 
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.UUID;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.DTOs.events.EventCreateDTO;
 import org.DTOs.events.EventDTO;
 import org.DTOs.registrations.RegistrationDTO;
 import org.apache.coyote.BadRequestException;
-import org.exceptions.*;
 import org.model.enums.RegistrationState;
 import org.model.events.Category;
 import org.model.events.Registration;
-import org.exceptions.AccountNotFoundException;
-import org.exceptions.EventNotFoundException;
 import org.model.events.Event;
 import org.services.CategoryService;
 import org.services.EventService;
 import org.services.OrganizerService;
 import org.services.RegistrationService;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.utils.ConfigManager;
 import org.utils.PageNormalizer;
 
 import java.math.BigDecimal;

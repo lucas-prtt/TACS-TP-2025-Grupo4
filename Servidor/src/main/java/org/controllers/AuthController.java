@@ -7,14 +7,13 @@ import static org.utils.SecurityUtils.getCurrentAccountId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import jakarta.annotation.PostConstruct;
 import org.DTOs.accounts.LoginRequestDTO;
 import org.DTOs.accounts.RegisterRequestDTO;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.WrongOneTimeCodeException;
 import org.model.accounts.Account;
 import org.model.accounts.OneTimeCode;
-import org.model.accounts.Role;
+import org.model.enums.Role;
 import org.services.AccountService;
 import org.services.OneTimeCodeService;
 import org.springframework.http.ResponseEntity;
@@ -33,19 +32,6 @@ public class AuthController {
       this.oneTimeCodeService = oneTimeCodeService;
   }
 
-  /**
-   * Inicializa un usuario administrador por defecto al iniciar la aplicación.
-   * Se ejecuta solo si no existe ya un usuario admin.
-   */
-  @PostConstruct
-  private void createDefaultAdmin() {
-    try {
-      accountService.register("admin", "Admin123!", true);
-      System.out.println("✅ Usuario administrador por defecto creado: admin / Admin123!");
-    } catch (Exception e) {
-      System.out.println("ℹ️ Usuario administrador ya existe o hubo un error al crear: " + e.getMessage());
-    }
-  }
 
   /**
    * Registra un usuario normal en el sistema.

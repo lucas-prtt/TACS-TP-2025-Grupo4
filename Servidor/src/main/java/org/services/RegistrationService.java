@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.DTOs.registrations.RegistrationDTO;
 import org.exceptions.*;
-import org.model.enums.EventState;
 import org.model.events.Event;
 import org.model.events.Registration;
 import org.model.enums.RegistrationState;
