@@ -23,11 +23,11 @@ public class NewEventMenu extends MenuState {
         inputs.add(new StringInputStep("title"));
         inputs.add(new StringInputStep("description"));
         inputs.add(new DateTimeInputStep("startDateTime"));
-        inputs.add(new IntegerInputStep("durationMinutes", List.of(15, 30, 60, 120, 180)));
+        inputs.add(new IntegerInputStep("durationMinutes", List.of(15, 30, 60, 120, 180), 0, null));
         inputs.add(new StringInputStep("location"));
-        inputs.add(new IntegerInputStep("maxParticipants", List.of(10, 20, 50, 100, 500, 1000)));
-        inputs.add(new IntegerInputStep("minParticipants", List.of(0, 10, 20, 50, 100)));
-        inputs.add(new BigDecimalInputStep("price", "freePrice"));
+        inputs.add(new IntegerInputStep("maxParticipants", List.of(10, 20, 50, 100, 500, 1000), 0, null));
+        inputs.add(new IntegerInputStep("minParticipants", List.of(0, 10, 20, 50, 100), -1, null));
+        inputs.add(new BigDecimalInputStep("price", "freePrice", 0, null));
         inputs.add(new CategoryDTOInputStep("category"));
         inputs.add(new TagsInputStep("tags"));
         inputs.add(new ConfirmCreationStep());
@@ -66,7 +66,7 @@ public class NewEventMenu extends MenuState {
             return null;
         }
         boolean handled = inputs.get(index).handleInput(message, eventDTO, user);
-        if(inputs.get(index) instanceof IntegerInputStep step && Objects.equals(step.getFieldName(), "minParticipants") && eventDTO.getMinParticipants() > eventDTO.getMaxParticipants()){
+        if(inputs.get(index) instanceof IntegerInputStep step && Objects.equals(step.getFieldName(), "minParticipants") && eventDTO.getMinParticipants() != null && eventDTO.getMinParticipants() > eventDTO.getMaxParticipants()){
             return user.getLocalizedMessage("minParticipantsTooHigh");
         }
         if (handled) {

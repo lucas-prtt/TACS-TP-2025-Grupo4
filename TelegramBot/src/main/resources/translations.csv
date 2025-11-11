@@ -203,6 +203,7 @@ mustLoginBeforeMenu,Debe iniciar sesion antes de entrar a este menu,You must log
 manageEventMenuQuestion,"Evento seleccionado:
 {0}","Selected event:
 {0}","Ausgewähltes Ereignis:
+
 {0}","Evento selecionado:
 {0}","Événement sélectionné :
 
@@ -282,7 +283,7 @@ nullTags,Sin tags,No tags,Keine Tags,Sem etiquetas,Aucune étiquette,Nessun tag
 nullDuration,Sin duracion,No duration,Keine Dauer,Sem duração,Aucune durée,Nessuna durata
 nullCategory,Sin categoria,Uncategorized,Nicht kategorisiert,Sem categoria,Non classé,Non categorizzato
 nullTitle,Sin titulo,Untitled,Ohne Titel,Sem título,Sans titre,Senza titolo
-successfulPause,Se ha pausado el evento,The event has been paused,Die Veranstaltung wurde unterbrochen.,O evento foi pausado.,L'événement a été suspendu.,L'evento è stato sospeso
+successfulCancel,Se ha cancelado el evento,The event has been cancelled,Die Veranstaltung wurde abgesagt,O evento foi cancelado.,L'événement a été annulé.,L'evento è stato annullato
 successfulOpen,Se ha abierto el evento,The event has opened,Die Veranstaltung hat begonnen,O evento foi aberto.,L'événement a débuté,L'evento è aperto
 successfulClose,Se ha cerrado el evento,The event has closed,Die Veranstaltung ist beendet.,O evento foi encerrado.,L'événement est terminé.,L'evento è chiuso
 /start,🏠 Menu principal,🏠 Main Menu,🏠 Hauptmenü,🏠 Menu Principal,🏠 Menu principal,🏠 Menu principale
@@ -338,7 +339,7 @@ Use el formato ISO: yyyy-MM-ddTHH:mm:ss","Invalid date and time format.
 
 Use the ISO format: yyyy-MM-ddTHH:mm:ss","Ungültiges Datums- und Zeitformat.
 
-Verwenden Sie das ISO-Format: JJJJ-MM-TTTHH:mm:ss","Formato de data e hora inválido.
+Verwenden Sie das ISO-Format: JJJJ-MM-TTTHH:MM:SS","Formato de data e hora inválido.
 
 Use o formato ISO: aaaa-MM-ddTHH:mm:ss","Format de date et d'heure invalide.
 
@@ -553,7 +554,7 @@ requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the c
 /filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer les filtres,Applica filtri
 filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
 category,categoria,category,Kategorie,categoria,catégorie,categoria
-tags,tags,tags,Tags,tags,étiquettes,etichette
+tags,tags,tags,Tags,tags,étiquettes,tag
 maxDate,fecha máxima,deadline,Frist,prazo final,date limite,scadenza
 title,titulo del evento,event title,Ereignistitel,título do evento,titre de l'événement,titolo dell'evento
 titleContains,subcadena del titulo,substring of the title,Teilstring des Titels,subcadeia do título,sous-chaîne du titre,sottostringa del titolo
@@ -590,7 +591,7 @@ doNotPressThoseButtons,No presione esos botones,Do not press those buttons.,Drü
 errorBackToMainMenu,Hubo un error desconocido. Volviendo al menú principal.,There was an unknown error. Returning to the main menu.,Es ist ein unbekannter Fehler aufgetreten. Rückkehr zum Hauptmenü.,Ocorreu um erro desconhecido. Retornando ao menu principal.,Une erreur inconnue s'est produite. Retour au menu principal.,Si è verificato un errore sconosciuto. Ritorno al menu principale.
 endTagsInput,Finalizada la introduccion de tags,Tags introduction complete,Einführung der Tags abgeschlossen,Introdução às tags completa,Introduction complète des étiquettes,Introduzione dei tag completata
 eventSuccesfullyCreated,🌟 Evento creado,🌟 Event created,🌟 Veranstaltung erstellt,🌟 Evento criado,🌟 Événement créé,🌟 Evento creato
-cannotGoBackwards,No se puede ir mas atras,We can't go any further back,Wir können nicht weiter zurückgehen.,Não podemos retroceder mais.,Nous ne pouvons pas remonter plus loin.,Non possiamo andare più indietro
+cannotGoBackwards,No se puede ir mas atras,We can't go any further back.,Wir können nicht weiter zurückgehen.,Não podemos retroceder mais.,On ne peut pas remonter plus loin.,Non possiamo andare più indietro.
 freePrice,Sin costo,Free,Frei,Livre,Gratuit,Gratuito
 /stop,✅ Terminar,✅ Finish,✅ Fertig,✅ Finalizar,✅ Terminer,✅ Finitura
 month1,Enero,January,Januar,Janeiro,Janvier,Gennaio
@@ -659,7 +660,7 @@ Escolha uma opção
 
 - {4}: Visualizar estatísticas e gerenciar o aplicativo
 
-- {5}: Alterar o idioma do menu","Menu principal
+- {5}: Alterar idioma do menu","Menu principal
 
 Choisissez une option
 
@@ -725,8 +726,8 @@ Estadisticas ({0}) :
 Statistics ({0}):
 {1} Events.
 {2} Registrations.
-{3} Waitlist Promotions.
-{4} Waitlist Conversion Rate.
+{3} Waitlist promotions.
+{4} Waitlist conversion rate.
 🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥","🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
 Statistiken ({0}):
 {1} Veranstaltungen.
@@ -742,9 +743,9 @@ Estatísticas ({0}):
 
 {2} Inscrições.
 
-{3} Promoções da Lista de Espera.
+{3} Promoções da lista de espera.
 
-{4} Taxa de Conversão da Lista de Espera.
+{4} Taxa de conversão da lista de espera.
 
 🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥","🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
 Statistiques ({0}) :
@@ -753,7 +754,7 @@ Statistiques ({0}) :
 
 {2} Inscriptions.
 
-{3} Promotions sur liste d'attente.
+{3} Promotions de la liste d'attente.
 
 {4} Taux de conversion de la liste d'attente.
 
