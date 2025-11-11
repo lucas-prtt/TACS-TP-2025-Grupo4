@@ -1,27 +1,21 @@
 package org.menus.browseMenu;
 
-import com.sun.tools.javac.Main;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
 import org.eventServerClient.dtos.event.EventDTO;
-import org.eventServerClient.dtos.event.EventStateDTO;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.menus.userMenu.UserMenu;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.*;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor

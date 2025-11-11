@@ -2,25 +2,14 @@ package org.menus.organizerMenu;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.eventServerClient.ApiClient;
-import org.eventServerClient.dtos.event.CategoryDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.TagDTO;
-import org.exceptions.DateAlreadySetException;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
-import org.utils.DateInputHelper;
 import org.utils.InlineMenuBuilder;
 import org.utils.inputSteps.*;
-import org.yaml.snakeyaml.util.Tuple;
 
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 @Getter
 @Setter

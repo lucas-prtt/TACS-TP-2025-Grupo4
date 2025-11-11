@@ -1,11 +1,9 @@
 package org.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.menus.userMenu.UserMenu;
 import org.springframework.web.client.HttpClientErrorException;
 import org.users.TelegramUser;
 
-import java.net.http.HttpClient;
 import java.util.Map;
 
 public class ErrorHandler {

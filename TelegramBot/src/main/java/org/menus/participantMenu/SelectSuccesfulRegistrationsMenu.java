@@ -1,13 +1,8 @@
 package org.menus.participantMenu;
 
-import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.RegistrationDTO;
-import org.menus.MenuState;
-import org.users.TelegramUser;
-import org.utils.AbstractBrowseMenu;
 
 import java.util.List;
-import java.util.UUID;
 
 public class SelectSuccesfulRegistrationsMenu extends AbstractRegistrationBrowseMenu {
     @Override

@@ -197,9 +197,9 @@ Scegli un'opzione
 - {4}: Cambia lingua del menu"
 mustLoginFirst,Debe iniciar sesion primero,You must log in first,Sie müssen sich zuerst anmelden.,Você precisa fazer login primeiro.,Vous devez d'abord vous connecter,Devi prima effettuare l'accesso
 mustLoginBeforeMenu,Debe iniciar sesion antes de entrar a este menu,You must log in before entering this menu,"Sie müssen sich anmelden, bevor Sie dieses Menü aufrufen können.",Você precisa fazer login antes de acessar este menu.,Vous devez vous connecter avant d'accéder à ce menu.,Devi effettuare l'accesso prima di entrare in questo menu
-/pause,⏸️ Pausar evento,⏸️ Pause event,⏸️ Ereignis pausieren,⏸️ Pausar evento,⏸️ Mettre en pause l'événement,⏸️ Metti in pausa l'evento
+/cancel,⏹️ Cancelar evento,⏹️ Cancel event,⏹️ Veranstaltung absagen,⏹️ Cancelar evento,⏹️ Annuler l'événement,⏹️ Annulla evento
 /open,▶️ Reabrir evento,▶️ Reopen event,▶️ Wiedereröffnungsveranstaltung,▶️ Reabrir evento,▶️ Événement de réouverture,▶️ Riapri evento
-/close,⏹️ Cerrar evento,⏹️ Close event,⏹️ Veranstaltung schließen,⏹️ Encerrar evento,⏹️ Clôturer l'événement,⏹️ Chiudi evento
+/close,⏸️ Cerrar evento,⏸️ Close event,⏸️ Veranstaltung schließen,⏸️ Encerrar evento,⏸️ Clôturer l'événement,⏸️ Chiudi evento
 manageEventMenuQuestion,"Evento seleccionado:
 {0}","Selected event:
 {0}","Ausgewähltes Ereignis:
@@ -271,9 +271,9 @@ Stato: {7}
 Durata: {8}
 Registrato: {9}/{10}
 In lista d'attesa: {11}"
-EVENT_CLOSED,⛔ Cerrado,⛔ Closed,⛔ Geschlossen,⛔ Fechado,⛔ Fermé,⛔ Chiuso
+EVENT_CLOSED,⏸️ Cerrado,⏸️ Closed,⏸️ Geschlossen,⏸️ Fechado,⏸️ Fermé,⏸️ Chiuso
 EVENT_OPEN,✅ Abierto,✅ Open,✅ Öffnen,✅ Abrir,✅ Ouvrir,✅ Aperto
-EVENT_PAUSED,⏸️ En pausa,⏸️ On pause,⏸️ Angehalten,⏸️ Em pausa,⏸️ En pause,⏸️ In pausa
+EVENT_CANCELLED,⛔ Cancelado,⛔ Cancelled,⛔ Abgesagt,⛔ Cancelado,⛔ Annulé,⛔ Annullato
 nullState,Sin estado,Stateless,Staatenlos,Apátrida,Apatride,Apolide
 nullPrice,Sin precio,No price,Kein Preis,Sem preço,Pas de prix,Nessun prezzo
 nullLocation,Sin ubicacion,No location,Kein Standort,Sem localização,Aucune localisation,Nessuna posizione
@@ -338,7 +338,7 @@ Use el formato ISO: yyyy-MM-ddTHH:mm:ss","Invalid date and time format.
 
 Use the ISO format: yyyy-MM-ddTHH:mm:ss","Ungültiges Datums- und Zeitformat.
 
-Verwenden Sie das ISO-Format: JJJJ-MM-TTTHH:MM:SS","Formato de data e hora inválido.
+Verwenden Sie das ISO-Format: JJJJ-MM-TTTHH:mm:ss","Formato de data e hora inválido.
 
 Use o formato ISO: aaaa-MM-ddTHH:mm:ss","Format de date et d'heure invalide.
 
@@ -659,7 +659,7 @@ Escolha uma opção
 
 - {4}: Visualizar estatísticas e gerenciar o aplicativo
 
-- {5}: Alterar idioma do menu","Menu principal
+- {5}: Alterar o idioma do menu","Menu principal
 
 Choisissez une option
 
@@ -725,8 +725,8 @@ Estadisticas ({0}) :
 Statistics ({0}):
 {1} Events.
 {2} Registrations.
-{3} Waitlist promotions.
-{4} Waitlist conversion rate.
+{3} Waitlist Promotions.
+{4} Waitlist Conversion Rate.
 🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥","🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
 Statistiken ({0}):
 {1} Veranstaltungen.
@@ -742,9 +742,9 @@ Estatísticas ({0}):
 
 {2} Inscrições.
 
-{3} Promoções da lista de espera.
+{3} Promoções da Lista de Espera.
 
-{4} Taxa de conversão da lista de espera.
+{4} Taxa de Conversão da Lista de Espera.
 
 🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥","🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥🟥
 Statistiques ({0}) :
@@ -753,7 +753,7 @@ Statistiques ({0}) :
 
 {2} Inscriptions.
 
-{3} Promotions de la liste d'attente.
+{3} Promotions sur liste d'attente.
 
 {4} Taux de conversion de la liste d'attente.
 

@@ -6,10 +6,8 @@ import lombok.Setter;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.QueryFilter;
-import org.users.TelegramUser;
-import org.utils.InlineMenuBuilder;
 
-import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor

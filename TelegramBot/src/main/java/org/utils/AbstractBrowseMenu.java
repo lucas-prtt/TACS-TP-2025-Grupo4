@@ -4,14 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.ConfigManager;
 import org.menus.MenuState;
-import org.menus.userMenu.UserMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter

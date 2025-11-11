@@ -1,12 +1,8 @@
 package org.menus.organizerMenu;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.menus.MenuState;
 import org.utils.InlineMenuBuilder;
-
-import java.util.List;
-import java.util.Map;
 
 public class OrganizerMenu extends MenuState {
     @Override

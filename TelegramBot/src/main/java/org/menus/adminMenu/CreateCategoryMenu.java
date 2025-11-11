@@ -4,7 +4,6 @@ import org.eventServerClient.dtos.event.CategoryDTO;
 import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.utils.InlineMenuBuilder;
 
 import java.util.Objects;

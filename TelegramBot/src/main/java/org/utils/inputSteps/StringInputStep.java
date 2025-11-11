@@ -1,6 +1,5 @@
 package org.utils.inputSteps;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
