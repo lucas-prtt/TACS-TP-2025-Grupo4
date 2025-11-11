@@ -114,6 +114,7 @@ services:
       - mongo2
       - mongo3
       - mongo-init-replica
+      - otel-collector
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017,mongo2:27017,mongo3:27017/eventos?replicaSet=rs0
       EVENTOS_SERVER_SECRET_KEY: ${EVENTOS_SERVER_SECRET_KEY}
