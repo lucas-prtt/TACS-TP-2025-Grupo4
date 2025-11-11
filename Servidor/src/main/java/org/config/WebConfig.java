@@ -16,9 +16,12 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         String ip = getPublicIP();
-        String frontendOrigin = "http://" + ip + ":" + 3000;
+        System.out.println("IP detectada: " + ip);
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173", "http://localhost:3000", frontendOrigin)
+                .allowedOriginPatterns(
+                        "http://localhost:*",
+                        "http://"+ip+":*"
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
