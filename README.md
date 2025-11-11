@@ -195,6 +195,42 @@ Resultado: La aplicación detecta ese aborto (que es un error temporal), espera 
 ---
 ## Admin Controller
 
+### Crear una nueva categoría
+
+```
+POST /admin/categories
+```
+
+***Request Body***
+
+```json
+{
+  "title": "WORKSHOP"
+}
+```
+
+***Response***
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440002",
+  "title": "WORKSHOP"
+}
+```
+
+### Eliminar una categoría
+
+```
+DELETE /admin/categories/{titulo}
+```
+
+***Response***
+
+```
+204 No Content
+```
+
+---
 
 ### Obtener estadísticas
 
@@ -590,3 +626,31 @@ PATCH /registrations/{registrationId}
 204 No Content
 ```
 
+### Obtener todas las categorías (con paginación y filtro)
+
+```
+GET /events/categories?page=0&limit=10&startsWith=C
+```
+
+***Query Params (opcionales)***
+
+- **page**: número de página (por defecto 0)
+- **limit**: cantidad de categorías por página (por defecto configurado en config.properties)
+- **startsWith**: filtrar categorías que comienzan con este texto (case-insensitive, opcional)
+
+***Response***
+
+```json
+[
+  {
+    "title": "CONFERENCE"
+  },
+  {
+    "title": "CONCERT"
+  },
+  {
+    "title": "COURSE"
+  }
+]
+```
+---
