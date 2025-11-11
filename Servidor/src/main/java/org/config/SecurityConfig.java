@@ -18,6 +18,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,8 +76,9 @@ public class SecurityConfig {
    */
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
+    String ip = getPublicIP();
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000"));
+    configuration.setAllowedOrigins(Arrays.asList("http://"+ip+":5173", "http://"+ip+":3000"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
     configuration.setAllowedHeaders(List.of("*"));
     configuration.setAllowCredentials(true);
@@ -103,6 +107,16 @@ public class SecurityConfig {
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
     return authConfig.getAuthenticationManager();
+  }
+
+  public static String getPublicIP() {
+    try {
+      URL url = new URL("http://checkip.amazonaws.com");
+      BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+      return br.readLine();
+    } catch (Exception e) {
+      return "localhost";
+    }
   }
 }
 
