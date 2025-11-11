@@ -8,7 +8,6 @@ import org.eventServerClient.dtos.event.EventDTO;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 import org.utils.categorySelectionMenus.EventBuildStepCategoryMenu;
-import org.utils.categorySelectionMenus.SelectCategoryMenu;
 
 import java.lang.reflect.Field;
 @NoArgsConstructor

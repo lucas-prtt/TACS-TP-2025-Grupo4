@@ -2,11 +2,7 @@ package org.menus.browseMenu;
 
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.QueryFilter;
-import org.users.TelegramUser;
 import org.utils.InlineMenuBuilder;
-
-import java.util.List;
 
 public class BrowseMenu extends MenuState {
     @Override

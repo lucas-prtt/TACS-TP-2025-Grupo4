@@ -1,13 +1,8 @@
 package org.menus.participantMenu;
 
-import org.menus.userMenu.UserMenu;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.menus.MenuState;
 import org.utils.InlineMenuBuilder;
-
-import java.util.List;
-import java.util.Map;
 
 public class ParticipantMenu extends MenuState {
     @Override

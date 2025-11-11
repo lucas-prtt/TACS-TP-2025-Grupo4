@@ -197,12 +197,13 @@ Scegli un'opzione
 - {4}: Cambia lingua del menu"
 mustLoginFirst,Debe iniciar sesion primero,You must log in first,Sie müssen sich zuerst anmelden.,Você precisa fazer login primeiro.,Vous devez d'abord vous connecter,Devi prima effettuare l'accesso
 mustLoginBeforeMenu,Debe iniciar sesion antes de entrar a este menu,You must log in before entering this menu,"Sie müssen sich anmelden, bevor Sie dieses Menü aufrufen können.",Você precisa fazer login antes de acessar este menu.,Vous devez vous connecter avant d'accéder à ce menu.,Devi effettuare l'accesso prima di entrare in questo menu
-/pause,⏸️ Pausar evento,⏸️ Pause event,⏸️ Ereignis pausieren,⏸️ Pausar evento,⏸️ Mettre en pause l'événement,⏸️ Metti in pausa l'evento
+/cancel,⏹️ Cancelar evento,⏹️ Cancel event,⏹️ Veranstaltung absagen,⏹️ Cancelar evento,⏹️ Annuler l'événement,⏹️ Annulla evento
 /open,▶️ Reabrir evento,▶️ Reopen event,▶️ Wiedereröffnungsveranstaltung,▶️ Reabrir evento,▶️ Événement de réouverture,▶️ Riapri evento
-/close,⏹️ Cerrar evento,⏹️ Close event,⏹️ Veranstaltung schließen,⏹️ Encerrar evento,⏹️ Clôturer l'événement,⏹️ Chiudi evento
+/close,⏸️ Cerrar evento,⏸️ Close event,⏸️ Veranstaltung schließen,⏸️ Encerrar evento,⏸️ Clôturer l'événement,⏸️ Chiudi evento
 manageEventMenuQuestion,"Evento seleccionado:
 {0}","Selected event:
 {0}","Ausgewähltes Ereignis:
+
 {0}","Evento selecionado:
 {0}","Événement sélectionné :
 
@@ -271,9 +272,9 @@ Stato: {7}
 Durata: {8}
 Registrato: {9}/{10}
 In lista d'attesa: {11}"
-EVENT_CLOSED,⛔ Cerrado,⛔ Closed,⛔ Geschlossen,⛔ Fechado,⛔ Fermé,⛔ Chiuso
+EVENT_CLOSED,⏸️ Cerrado,⏸️ Closed,⏸️ Geschlossen,⏸️ Fechado,⏸️ Fermé,⏸️ Chiuso
 EVENT_OPEN,✅ Abierto,✅ Open,✅ Öffnen,✅ Abrir,✅ Ouvrir,✅ Aperto
-EVENT_PAUSED,⏸️ En pausa,⏸️ On pause,⏸️ Angehalten,⏸️ Em pausa,⏸️ En pause,⏸️ In pausa
+EVENT_CANCELLED,⛔ Cancelado,⛔ Cancelled,⛔ Abgesagt,⛔ Cancelado,⛔ Annulé,⛔ Annullato
 nullState,Sin estado,Stateless,Staatenlos,Apátrida,Apatride,Apolide
 nullPrice,Sin precio,No price,Kein Preis,Sem preço,Pas de prix,Nessun prezzo
 nullLocation,Sin ubicacion,No location,Kein Standort,Sem localização,Aucune localisation,Nessuna posizione
@@ -282,7 +283,7 @@ nullTags,Sin tags,No tags,Keine Tags,Sem etiquetas,Aucune étiquette,Nessun tag
 nullDuration,Sin duracion,No duration,Keine Dauer,Sem duração,Aucune durée,Nessuna durata
 nullCategory,Sin categoria,Uncategorized,Nicht kategorisiert,Sem categoria,Non classé,Non categorizzato
 nullTitle,Sin titulo,Untitled,Ohne Titel,Sem título,Sans titre,Senza titolo
-successfulPause,Se ha pausado el evento,The event has been paused,Die Veranstaltung wurde unterbrochen.,O evento foi pausado.,L'événement a été suspendu.,L'evento è stato sospeso
+successfulCancel,Se ha cancelado el evento,The event has been cancelled,Die Veranstaltung wurde abgesagt,O evento foi cancelado.,L'événement a été annulé.,L'evento è stato annullato
 successfulOpen,Se ha abierto el evento,The event has opened,Die Veranstaltung hat begonnen,O evento foi aberto.,L'événement a débuté,L'evento è aperto
 successfulClose,Se ha cerrado el evento,The event has closed,Die Veranstaltung ist beendet.,O evento foi encerrado.,L'événement est terminé.,L'evento è chiuso
 /start,🏠 Menu principal,🏠 Main Menu,🏠 Hauptmenü,🏠 Menu Principal,🏠 Menu principal,🏠 Menu principale
@@ -553,7 +554,7 @@ requestInputFilter,"Ingrese el criterio para el filtro """"{0}""""","Enter the c
 /filter,Aplicar filtros,Apply filters,Filter anwenden,Aplicar filtros,Appliquer les filtres,Applica filtri
 filtersClered,Filtros eliminados,Filters removed,Filter entfernt,Filtros removidos,Filtres supprimés,Filtri rimossi
 category,categoria,category,Kategorie,categoria,catégorie,categoria
-tags,tags,tags,Tags,tags,étiquettes,etichette
+tags,tags,tags,Tags,tags,étiquettes,tag
 maxDate,fecha máxima,deadline,Frist,prazo final,date limite,scadenza
 title,titulo del evento,event title,Ereignistitel,título do evento,titre de l'événement,titolo dell'evento
 titleContains,subcadena del titulo,substring of the title,Teilstring des Titels,subcadeia do título,sous-chaîne du titre,sottostringa del titolo
@@ -590,7 +591,7 @@ doNotPressThoseButtons,No presione esos botones,Do not press those buttons.,Drü
 errorBackToMainMenu,Hubo un error desconocido. Volviendo al menú principal.,There was an unknown error. Returning to the main menu.,Es ist ein unbekannter Fehler aufgetreten. Rückkehr zum Hauptmenü.,Ocorreu um erro desconhecido. Retornando ao menu principal.,Une erreur inconnue s'est produite. Retour au menu principal.,Si è verificato un errore sconosciuto. Ritorno al menu principale.
 endTagsInput,Finalizada la introduccion de tags,Tags introduction complete,Einführung der Tags abgeschlossen,Introdução às tags completa,Introduction complète des étiquettes,Introduzione dei tag completata
 eventSuccesfullyCreated,🌟 Evento creado,🌟 Event created,🌟 Veranstaltung erstellt,🌟 Evento criado,🌟 Événement créé,🌟 Evento creato
-cannotGoBackwards,No se puede ir mas atras,We can't go any further back,Wir können nicht weiter zurückgehen.,Não podemos retroceder mais.,Nous ne pouvons pas remonter plus loin.,Non possiamo andare più indietro
+cannotGoBackwards,No se puede ir mas atras,We can't go any further back.,Wir können nicht weiter zurückgehen.,Não podemos retroceder mais.,On ne peut pas remonter plus loin.,Non possiamo andare più indietro.
 freePrice,Sin costo,Free,Frei,Livre,Gratuit,Gratuito
 /stop,✅ Terminar,✅ Finish,✅ Fertig,✅ Finalizar,✅ Terminer,✅ Finitura
 month1,Enero,January,Januar,Janeiro,Janvier,Gennaio

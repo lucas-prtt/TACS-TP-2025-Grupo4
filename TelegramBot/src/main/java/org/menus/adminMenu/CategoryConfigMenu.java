@@ -1,11 +1,9 @@
 package org.menus.adminMenu;
 
-import org.menus.MainMenu;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.utils.InlineMenuBuilder;
 import org.utils.categorySelectionMenus.DeleteCategoryMenu;
-import org.utils.categorySelectionMenus.SelectCategoryMenu;
 
 public class CategoryConfigMenu extends MenuState {
     public CategoryConfigMenu() {

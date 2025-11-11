@@ -5,7 +5,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.users.CacheTelegramUserRepository;
 import org.users.TelegramUser;
 import org.users.TelegramUserRepository;
 import org.utils.InlineMenuBuilder;

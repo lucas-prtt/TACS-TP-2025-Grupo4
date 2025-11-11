@@ -2,7 +2,6 @@ package org.utils.categorySelectionMenus;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.eventServerClient.dtos.event.CategoryDTO;
 import org.menus.MenuState;

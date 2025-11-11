@@ -2,7 +2,6 @@ package org.menus.participantMenu;
 
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.menus.MenuState;
-import org.users.TelegramUser;
 import org.utils.AbstractBrowseMenu;
 
 

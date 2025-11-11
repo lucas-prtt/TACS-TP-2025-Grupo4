@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ConfigManager;
 import org.exceptions.DateAlreadySetException;
-import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;
 

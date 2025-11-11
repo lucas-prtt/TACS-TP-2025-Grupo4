@@ -3,15 +3,12 @@ package org.menus.organizerMenu;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.eventServerClient.dtos.event.EventStateDTO;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.utils.InlineMenuBuilder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 @Getter
@@ -27,14 +24,17 @@ public class ManageEventMenu extends MenuState {
     @Override
     public String respondTo(String message) {
         switch (message){
-            /*
-            case "/pause":
-                event.setState(EventStateDTO.EVENT_PAUSED);
-                user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_PAUSED);
-                return user.getLocalizedMessage("successfulPause");
-                */
+
+            case "/cancel":
+                if(event.getState() != EventStateDTO.EVENT_CANCELLED && !event.isPastDate()){
+                    event.setState(EventStateDTO.EVENT_CANCELLED);
+                    user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_CANCELLED);
+                    return user.getLocalizedMessage("successfulCancel");
+                }
+                return user.getLocalizedMessage("wrongOption");
+
             case "/open":
-                if(event.getState() != EventStateDTO.EVENT_OPEN && !event.isPastDate())
+                if(event.getState() == EventStateDTO.EVENT_CLOSED && !event.isPastDate())
                 {
                     event.setState(EventStateDTO.EVENT_OPEN);
                     user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_OPEN);
@@ -43,7 +43,7 @@ public class ManageEventMenu extends MenuState {
                 return user.getLocalizedMessage("wrongOption");
             case "/close":
                 if(
-                    event.getState() != EventStateDTO.EVENT_CLOSED && !event.isPastDate())
+                    event.getState() == EventStateDTO.EVENT_OPEN && !event.isPastDate())
                 {
                     event.setState(EventStateDTO.EVENT_CLOSED);
                     user.getApiClient().patchEventState(event.getId(), EventStateDTO.EVENT_CLOSED);
@@ -66,8 +66,10 @@ public class ManageEventMenu extends MenuState {
     public SendMessage questionMessage() {
         List<String> opciones = new ArrayList<>();
         /*if(event.getState() != EventStateDTO.EVENT_PAUSED){opciones.add("/pause");}*/
-        if(event.getState() != EventStateDTO.EVENT_OPEN && !event.isPastDate()){opciones.add("/open");}
-        if(event.getState() != EventStateDTO.EVENT_CLOSED && !event.isPastDate()){opciones.add("/close");}
+        if(event.getState() == EventStateDTO.EVENT_CLOSED && !event.isPastDate()){opciones.add("/open");}
+        if(event.getState() == EventStateDTO.EVENT_OPEN && !event.isPastDate()){opciones.add("/close");}
+        if((event.getState() == EventStateDTO.EVENT_OPEN || event.getState() == EventStateDTO.EVENT_CLOSED)  && !event.isPastDate()){opciones.add("/cancel");}
+
         opciones.add("/back");
         opciones.add("/start");
         return InlineMenuBuilder.localizedVerticalMenu(user, getQuestion(), opciones.toArray(new String[0]));

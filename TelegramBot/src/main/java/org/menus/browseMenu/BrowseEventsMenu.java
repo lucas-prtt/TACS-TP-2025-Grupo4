@@ -1,9 +1,7 @@
 package org.menus.browseMenu;
 
-import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.menus.MenuState;
-import org.users.TelegramUser;
 import org.utils.AbstractBrowseMenu;
 
 import java.util.List;

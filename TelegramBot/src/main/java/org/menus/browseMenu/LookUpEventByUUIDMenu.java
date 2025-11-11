@@ -1,18 +1,12 @@
 package org.menus.browseMenu;
 
-import org.apache.http.client.HttpResponseException;
-import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.menus.MenuState;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientResponseException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 

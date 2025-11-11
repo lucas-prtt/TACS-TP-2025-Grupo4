@@ -3,23 +3,16 @@ package org.menus.participantMenu;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.RegistrationDTO;
 import org.eventServerClient.dtos.RegistrationStateDTO;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.menus.MenuState;
 import org.menus.browseMenu.CheckEventMenu;
-import org.menus.userMenu.UserMenu;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;
 
-import java.util.List;
-import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor

@@ -3,16 +3,12 @@ package org.eventServerClient.dtos.event;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.users.TelegramUser;
-import org.utils.I18nManager;
 
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 @Setter
@@ -72,7 +68,7 @@ public class EventDTO {
                         return "nullState";
                 }
 
-                if (state == EventStateDTO.EVENT_CLOSED) {
+                if (state == EventStateDTO.EVENT_CANCELLED) {
                         return state.toString();
                 }
 
@@ -80,7 +76,7 @@ public class EventDTO {
                         return "EVENT_FINISHED";
                 }
 
-                return state.toString(); // EVENT_OPEN o EVENT_PAUSED (event pause deprecado)
+                return state.toString(); // EVENT_OPEN o EVENT_CLOSED
         }
 
 
