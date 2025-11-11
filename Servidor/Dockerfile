@@ -8,8 +8,9 @@ RUN mvn clean package
 
 #RUN
 
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk-noble
 WORKDIR /app
+ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.21.0/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
 COPY --from=builder /app/Servidor/target/*.jar Servidor.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "Servidor.jar"]
+ENTRYPOINT ["java", "-javaagent:/app/opentelemetry-javaagent.jar", "-jar", "Servidor.jar"]

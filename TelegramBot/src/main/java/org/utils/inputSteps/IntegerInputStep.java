@@ -10,15 +10,25 @@ import org.utils.InlineMenuBuilder;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.Consumer;
+
 @NoArgsConstructor
 @Getter
 @Setter
 public class IntegerInputStep implements EventInputStep{
     private String fieldName;
     private List<Integer> defaultOptions;
-    public IntegerInputStep(String fieldName, List<Integer> defaultOptions) {
+    private Integer min;
+    private Integer max;
+    /**
+     * @param  min  handleInput = false si el valor es menor o igual a min. Acepta null
+     * @param  max  handleInput = false si el valor es mayor o igual a max. Acepta null
+     */
+    public IntegerInputStep(String fieldName, List<Integer> defaultOptions, Integer min, Integer max) {
         this.fieldName = fieldName;
         this.defaultOptions = defaultOptions;
+        this.min = min;
+        this.max = max;
     }
 
     @Override
@@ -30,6 +40,9 @@ public class IntegerInputStep implements EventInputStep{
     public boolean handleInput(String message, EventDTO eventDTO, TelegramUser user) {
         try {
             int value = Integer.parseInt(message);
+            if((min != null && value<=min) || (max != null && value>=max)){
+                return false;
+            }
             Field field = eventDTO.getClass().getDeclaredField(fieldName);
             field.setAccessible(true);
             field.set(eventDTO, value);

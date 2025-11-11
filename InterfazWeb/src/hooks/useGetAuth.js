@@ -48,14 +48,11 @@ export const useGetAuth = () => {
       const storedToken = localStorage.getItem(TOKEN_KEY);
       const storedUser = localStorage.getItem(USER_KEY);
       
-      console.log('🔍 Verificando autenticación al cargar:');
-      console.log('  - Token presente:', !!storedToken);
-      console.log('  - Usuario presente:', !!storedUser);
       
       if (storedToken && storedUser) {
         try {
           const userData = JSON.parse(storedUser);
-          console.log('  - Datos de usuario:', userData);
+          
           
           setUser(userData);
           setIsAuthenticated(true);
@@ -63,13 +60,11 @@ export const useGetAuth = () => {
           // Configurar axios con el token
           axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
           
-          console.log('✅ Autenticación restaurada');
         } catch (err) {
-          console.error('❌ Error al parsear datos de usuario:', err);
+          
           clearAuth();
         }
       } else {
-        console.log('ℹ️ No hay datos de autenticación almacenados');
       }
       
       setLoading(false);
@@ -125,6 +120,33 @@ export const useGetAuth = () => {
       return response.data;
     } catch (err) {
       const errorMsg = err.response?.data?.error || 'Error al registrar usuario';
+      setError(errorMsg);
+      setLoading(false);
+      throw err;
+    }
+  };
+
+  const registerAdmin = async (username, password) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await axios({
+        method: 'post',
+        url: `${API_URL}/auth/register-admin`,
+        data: {
+          username: username,
+          password: password
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      setLoading(false);
+      return response.data;
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || 'Error al registrar administrador';
       setError(errorMsg);
       setLoading(false);
       throw err;
@@ -237,6 +259,7 @@ export const useGetAuth = () => {
     user,
     isAuthenticated,
     register,
+    registerAdmin,
     login,
     logout,
     getToken,

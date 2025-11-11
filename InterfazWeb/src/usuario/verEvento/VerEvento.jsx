@@ -4,8 +4,10 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PlaceIcon from "@mui/icons-material/Place";
 import PeopleIcon from "@mui/icons-material/People";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate, useParams } from "react-router-dom";
 import { ButtonCustom } from "../../components/Button";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { NavbarApp } from "../../components/NavbarApp";
 import { Mapa } from "./Mapa";
 import { useGetEvents } from "../../hooks/useGetEvents";
@@ -27,52 +29,52 @@ export const VerEvento = () => {
   const [cancelando, setCancelando] = useState(false);
   const [estaInscrito, setEstaInscrito] = useState(false);
   const [registrationId, setRegistrationId] = useState(null);
+  
+  // Estados para los diálogos
+  const [openWaitlistDialog, setOpenWaitlistDialog] = useState(false);
+  const [openInscripcionDialog, setOpenInscripcionDialog] = useState(false);
+  const [openCancelacionDialog, setOpenCancelacionDialog] = useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [errorDialogMessage, setErrorDialogMessage] = useState('');
+
+  // Determinar si el usuario actual es el organizador del evento
+  const isOrganizador = user && evento && evento.usernameOrganizer && (
+    user.username === evento.usernameOrganizer || 
+    user.id === evento.usernameOrganizer ||
+    String(user.id) === String(evento.usernameOrganizer)
+  );
 
   // Función para verificar inscripción del usuario
   const verificarInscripcion = useCallback(async () => {
     if (!user || !id) {
-      console.log(`🔍 No verificando inscripción - Usuario: ${!!user}, EventoID: ${id}`);
       return;
     }
     
-    console.log(`🔍 INICIANDO verificación de inscripción para evento ${id}`);
     
     try {
       const registrations = await getUserRegistrations();
-      console.log(`📋 Inscripciones del usuario (${registrations?.length || 0}):`, registrations);
+      
       
       const inscripcionActiva = registrations.find(reg => {
         const tieneEventoId = reg.eventId;
         const esEsteEvento = tieneEventoId && (reg.eventId == id);
         const noEstaCancelada = reg.state !== 'CANCELED';
-        
-        console.log(`  🔍 Verificando inscripción ${reg.registrationId}:`, {
-          tieneEventoId,
-          esEsteEvento,
-          noEstaCancelada,
-          regEventId: reg.eventId,
-          eventoId: id,
-          state: reg.state,
-          MATCH: esEsteEvento && noEstaCancelada
-        });
+
         
         return esEsteEvento && noEstaCancelada;
       });
       
       if (inscripcionActiva) {
-        console.log(`✅ ENCONTRADA inscripción activa:`, inscripcionActiva);
         setEstaInscrito(true);
         setRegistrationId(inscripcionActiva.registrationId);
       } else {
-        console.log(`❌ NO hay inscripción activa para evento ${id}`);
         setEstaInscrito(false);
         setRegistrationId(null);
       }
       
-      console.log(`🎯 RESULTADO FINAL: estaInscrito=${inscripcionActiva ? true : false}`);
       
     } catch (error) {
-      console.error('❌ Error al verificar inscripción:', error);
+      
       setEstaInscrito(false);
       setRegistrationId(null);
     }
@@ -80,34 +82,22 @@ export const VerEvento = () => {
 
   // Función para cargar evento - memoizada para evitar recreaciones
   const loadEvent = useCallback(async () => {
-    console.log('🔄 loadEvent ejecutándose con ID:', id);
+    
     
     if (!id) {
-      console.log('❌ No hay ID de evento');
       setLocalError('ID de evento no encontrado');
       setLoadingEvent(false);
       return;
     }
 
     try {
-      console.log('⏳ Iniciando carga del evento...');
+      
       setLoadingEvent(true);
       setLocalError('');
       const eventData = await getEventById(id);
-      console.log('✅ Evento cargado exitosamente:', eventData);
-      console.log('🔍 Tipos de campos:', {
-        title: typeof eventData.title,
-        description: typeof eventData.description,
-        category: typeof eventData.category,
-        state: typeof eventData.state,
-        tags: typeof eventData.tags,
-        location: typeof eventData.location
-      });
       setEvento(eventData);
       setLoadingEvent(false);
-      console.log('✅ Estado actualizado, carga completada');
     } catch (err) {
-      console.error('❌ Error al cargar el evento:', err);
       setLocalError('Error al cargar los datos del evento');
       setLoadingEvent(false);
     }
@@ -115,14 +105,12 @@ export const VerEvento = () => {
 
   // Cargar evento al montar el componente
   useEffect(() => {
-    console.log('🔄 useEffect ejecutándose para cargar evento...');
     loadEvent();
   }, [loadEvent]);
 
   // Verificar si el usuario está inscrito al evento
   useEffect(() => {
     if (user?.id && id) {
-      console.log(`⚡ useEffect disparado para verificar inscripción: userId=${user.id}, eventoId=${id}`);
       verificarInscripcion();
     }
   }, [user?.id, id, verificarInscripcion]);
@@ -139,23 +127,37 @@ export const VerEvento = () => {
       return;
     }
 
+    // Verificar si el evento está lleno
+    if (evento.registered >= evento.maxParticipants) {
+      setOpenWaitlistDialog(true);
+      return;
+    }
+
+    // Si hay espacio, mostrar diálogo de confirmación
+    setOpenInscripcionDialog(true);
+  };
+
+  // Procesar inscripción (usado tanto para inscripción normal como confirmada desde diálogo)
+  const proceedWithRegistration = async () => {
     try {
       setRegistering(true);
       setLocalError('');
       setSuccess('');
+      setOpenWaitlistDialog(false);
+      setOpenInscripcionDialog(false);
       
       const result = await registerToEvent(evento.id);
-      setSuccess('¡Te has inscrito exitosamente al evento!');
-      console.log('Inscripción exitosa:', result);
+      
       // Volver a verificar el estado de inscripción desde el servidor
       await verificarInscripcion();
     } catch (err) {
-      console.error('Error al inscribirse:', err);
-      const errorMessage = err.response?.data?.error || 
-                          err.response?.data || 
-                          apiError || 
-                          'Error al inscribirse al evento';
-      setLocalError(`Error: ${errorMessage}`);
+      const errorMsg = err.response?.data?.error || 
+                       err.response?.data?.message ||
+                       err.response?.data || 
+                       apiError || 
+                       'Error al inscribirse al evento. Por favor, intenta nuevamente.';
+      setErrorDialogMessage(errorMsg);
+      setOpenErrorDialog(true);
     } finally {
       setRegistering(false);
     }
@@ -168,26 +170,66 @@ export const VerEvento = () => {
       return;
     }
 
-    const confirmar = window.confirm('¿Estás seguro de que quieres cancelar tu inscripción a este evento?');
-    if (!confirmar) return;
-    
+    // Mostrar diálogo de confirmación
+    setOpenCancelacionDialog(true);
+  };
+
+  // Procesar cancelación
+  const proceedWithCancellation = async () => {
     try {
       setCancelando(true);
       setLocalError('');
       setSuccess('');
+      setOpenCancelacionDialog(false);
       
       await cancelRegistration(registrationId);
-      setSuccess('Has cancelado tu inscripción exitosamente');
       // Volver a verificar el estado de inscripción desde el servidor
       await verificarInscripcion();
     } catch (err) {
-      console.error('Error al cancelar inscripción:', err);
-      const errorMessage = err.response?.data?.error || 
-                          err.response?.data || 
-                          'Error al cancelar la inscripción';
-      setLocalError(`Error: ${errorMessage}`);
+      const errorMsg = err.response?.data?.error || 
+                       err.response?.data?.message ||
+                       err.response?.data || 
+                       'Error al cancelar la inscripción. Por favor, intenta nuevamente.';
+      setErrorDialogMessage(errorMsg);
+      setOpenErrorDialog(true);
     } finally {
       setCancelando(false);
+    }
+  };
+
+  // Manejar edición del evento
+  const handleEditarEvento = () => {
+    navigate(`/editar-evento/${id}`);
+  };
+
+  // Función para traducir el estado del evento al español
+  const getEstadoTraducido = (estado) => {
+    if (!estado) return '';
+    
+    const estadoUpper = estado.toUpperCase();
+    switch (estadoUpper) {
+      case 'EVENT_OPEN':
+        return 'Abierto';
+      case 'EVENT_CLOSED':
+        return 'Cerrado';
+      case 'EVENT_CANCELLED':
+        return 'Cancelado';
+      case 'EVENT_PAUSED':
+        return 'Pausado';
+      default:
+        // Si viene solo el estado sin el prefijo EVENT_, también lo manejamos
+        switch (estadoUpper) {
+          case 'OPEN':
+            return 'Abierto';
+          case 'CLOSED':
+            return 'Cerrado';
+          case 'CANCELLED':
+            return 'Cancelado';
+          case 'PAUSED':
+            return 'Pausado';
+          default:
+            return estado; // Devolver el estado original si no coincide
+        }
     }
   };
 
@@ -278,16 +320,18 @@ export const VerEvento = () => {
                 <Chip 
                   label={
                     typeof evento.category === 'object' 
-                      ? evento.category?.name || 'Sin categoría'
+                      ? evento.category?.title || 'Sin categoría'
                       : evento.category || 'Sin categoría'
                   } 
                   color="primary" 
                 />
                 <Chip 
                   label={
-                    typeof evento.state === 'object'
-                      ? evento.state?.name || 'Activo'
-                      : evento.state || 'Activo'
+                    getEstadoTraducido(
+                      typeof evento.state === 'object'
+                        ? evento.state?.name || 'EVENT_OPEN'
+                        : evento.state || 'EVENT_OPEN'
+                    )
                   } 
                   color="success" 
                 />
@@ -479,69 +523,152 @@ export const VerEvento = () => {
               {/* Mapa */}
               <Mapa direccion={String(evento.location || 'Sin ubicación')} />
               
-              {/* Botones de inscripción dinámicos */}
+              {/* Botones dinámicos según el rol del usuario */}
               <Stack direction="row" spacing={2} sx={{ alignSelf: "center", mt: 2 }}>
-                {!estaInscrito ? (
-                  <ButtonCustom
-                    bgColor="#181828"
-                    color="#fff"
-                    hoverBgColor="#23234a"
-                    hoverColor="#fff"
-                    startIcon={<PersonAddIcon />}
-                    sx={{ 
-                      minWidth: 200, 
-                      fontWeight: 700, 
-                      fontSize: 16,
-                      opacity: registering ? 0.7 : 1
-                    }}
-                    onClick={handleInscribirse}
-                    disabled={registering || !user}
-                  >
-                    {registering ? (
-                      <>
-                        <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
-                        Inscribiendo...
-                      </>
-                    ) : (
-                      'Inscribirse'
-                    )}
-                  </ButtonCustom>
+                {isOrganizador ? (
+                  // Botones para el organizador del evento
+                  <>
+                    <ButtonCustom
+                      variant="outlined"
+                      startIcon={<EditIcon />}
+                      onClick={handleEditarEvento}
+                      sx={{
+                        minWidth: 200,
+                        fontWeight: 700,
+                        fontSize: 16,
+                        border: '2px solid #F59E0B',
+                        color: '#F59E0B',
+                        backgroundColor: '#fff',
+                        '&:hover': {
+                          backgroundColor: '#FEF3C7',
+                          color: '#D97706',
+                          borderColor: '#D97706'
+                        }
+                      }}
+                    >
+                      Editar Evento
+                    </ButtonCustom>
+                  </>
                 ) : (
-                  <ButtonCustom
-                    variant="outlined"
-                    startIcon={<PersonRemoveIcon />}
-                    onClick={handleCancelarInscripcion}
-                    disabled={cancelando}
-                    sx={{
-                      minWidth: 200,
-                      fontWeight: 700,
-                      fontSize: 16,
-                      border: '2px solid #DC2626',
-                      color: '#DC2626',
-                      backgroundColor: '#fff',
-                      opacity: cancelando ? 0.7 : 1,
-                      '&:hover': {
-                        backgroundColor: '#FEE2E2',
-                        color: '#B91C1C',
-                        borderColor: '#B91C1C'
-                      }
-                    }}
-                  >
-                    {cancelando ? (
-                      <>
-                        <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
-                        Cancelando...
-                      </>
+                  // Botones para usuarios regulares (inscripción)
+                  <>
+                    {!estaInscrito ? (
+                      <ButtonCustom
+                        bgColor="#181828"
+                        color="#fff"
+                        hoverBgColor="#23234a"
+                        hoverColor="#fff"
+                        startIcon={<PersonAddIcon />}
+                        sx={{ 
+                          minWidth: 200, 
+                          fontWeight: 700, 
+                          fontSize: 16,
+                          opacity: registering ? 0.7 : 1
+                        }}
+                        onClick={handleInscribirse}
+                        disabled={registering || !user}
+                      >
+                        {registering ? (
+                          <>
+                            <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
+                            Inscribiendo...
+                          </>
+                        ) : (
+                          'Inscribirse'
+                        )}
+                      </ButtonCustom>
                     ) : (
-                      'Cancelar Inscripción'
+                      <ButtonCustom
+                        variant="outlined"
+                        startIcon={<PersonRemoveIcon />}
+                        onClick={handleCancelarInscripcion}
+                        disabled={cancelando}
+                        sx={{
+                          minWidth: 200,
+                          fontWeight: 700,
+                          fontSize: 16,
+                          border: '2px solid #DC2626',
+                          color: '#DC2626',
+                          backgroundColor: '#fff',
+                          opacity: cancelando ? 0.7 : 1,
+                          '&:hover': {
+                            backgroundColor: '#FEE2E2',
+                            color: '#B91C1C',
+                            borderColor: '#B91C1C'
+                          }
+                        }}
+                      >
+                        {cancelando ? (
+                          <>
+                            <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
+                            Cancelando...
+                          </>
+                        ) : (
+                          'Cancelar Inscripción'
+                        )}
+                      </ButtonCustom>
                     )}
-                  </ButtonCustom>
+                  </>
                 )}
               </Stack>
             </>
           ) : null}
         </Box>
       </Box>
+
+      {/* Diálogo de confirmación para lista de espera */}
+      <ConfirmDialog
+        open={openWaitlistDialog}
+        onClose={() => setOpenWaitlistDialog(false)}
+        onConfirm={proceedWithRegistration}
+        title="Evento Completo"
+        message={`El evento ha alcanzado su capacidad máxima de ${evento?.maxParticipants} participantes. Serás añadido a la <strong>lista de espera</strong> y podrás inscribirte si se libera un cupo.<br/><br/>¿Deseas continuar?`}
+        confirmText="Confirmar"
+        cancelText="Cancelar"
+        loading={registering}
+        loadingText="Confirmando..."
+        type="warning"
+      />
+
+      {/* Diálogo de confirmación para inscripción normal */}
+      <ConfirmDialog
+        open={openInscripcionDialog}
+        onClose={() => setOpenInscripcionDialog(false)}
+        onConfirm={proceedWithRegistration}
+        title="Confirmar Inscripción"
+        message={`¿Estás seguro de que deseas inscribirte al evento <strong>"${evento?.title}"</strong>?`}
+        confirmText="Inscribirse"
+        cancelText="Cancelar"
+        loading={registering}
+        loadingText="Inscribiendo..."
+        type="success"
+      />
+
+      {/* Diálogo de confirmación para cancelación */}
+      <ConfirmDialog
+        open={openCancelacionDialog}
+        onClose={() => setOpenCancelacionDialog(false)}
+        onConfirm={proceedWithCancellation}
+        title="Cancelar Inscripción"
+        message={`¿Estás seguro de que deseas cancelar tu inscripción al evento <strong>"${evento?.title}"</strong>?<br/><br/>Esta acción no se puede deshacer.`}
+        confirmText="Sí, cancelar"
+        cancelText="No, mantener"
+        loading={cancelando}
+        loadingText="Cancelando..."
+        type="error"
+      />
+
+      {/* Diálogo de error */}
+      <ConfirmDialog
+        open={openErrorDialog}
+        onClose={() => setOpenErrorDialog(false)}
+        onConfirm={() => setOpenErrorDialog(false)}
+        title="Error"
+        message={errorDialogMessage}
+        confirmText="Entendido"
+        cancelText=""
+        type="error"
+      />
     </Box>
   );
 };

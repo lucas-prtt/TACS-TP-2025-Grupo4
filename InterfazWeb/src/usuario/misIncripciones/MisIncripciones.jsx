@@ -5,7 +5,9 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import LogoutIcon from "@mui/icons-material/Logout";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { ButtonCustom } from "../../components/Button";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { NavbarApp } from "../../components/NavbarApp";
 import { useNavigate } from "react-router-dom";
 import { useGetEvents } from "../../hooks/useGetEvents";
@@ -15,19 +17,21 @@ import noImagePlaceholder from "../../assets/images/no_image.png";
 export const MisIncripciones = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { loading, error, getUserRegistrations, cancelRegistration } = useGetEvents();
+  const { loading, error, getUserRegistrations, cancelRegistration, getEventById } = useGetEvents();
   const { user, isAuthenticated, loading: authLoading } = useGetAuth();
   
   const [registrations, setRegistrations] = useState([]);
+  const [eventosCompletos, setEventosCompletos] = useState({});
   const [cancelandoId, setCancelandoId] = useState(null);
+  
+  // Estados para los diálogos
+  const [openCancelacionDialog, setOpenCancelacionDialog] = useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [inscripcionACancelar, setInscripcionACancelar] = useState(null);
 
   // Debug de estados de autenticación
-  console.log('🔍 MisIncripciones - Estados:', {
-    isAuthenticated,
-    authLoading,
-    user: user?.username,
-    hasToken: !!localStorage.getItem('authToken')
-  });
+  
 
   // Cargar inscripciones al montar el componente
   useEffect(() => {
@@ -36,38 +40,46 @@ export const MisIncripciones = () => {
     const loadRegistrations = async () => {
       // Esperar a que termine la carga de autenticación
       if (authLoading) {
-        console.log('⏳ Esperando verificación de autenticación...');
+        
         return;
       }
       
       // Verificar que el usuario esté autenticado
       if (!isAuthenticated || !user) {
-        console.log('❌ Usuario no autenticado, no se pueden cargar inscripciones');
+        
         return;
       }
 
       try {
-        console.log('🔄 Cargando inscripciones para usuario:', user.username);
-        
-        // Verificar token antes de hacer la petición
-        const token = localStorage.getItem('authToken');
-        console.log('🔑 Token disponible:', !!token);
-        console.log('🔑 Token (primeros 20 chars):', token?.substring(0, 20) + '...');
         
         const result = await getUserRegistrations();
         if (isMounted) {
-          console.log('✅ Inscripciones cargadas:', result?.length || 0);
-          console.log('📋 DATOS CRUDOS DE INSCRIPCIONES:', result);
+          
           setRegistrations(result || []);
+          
+          // Cargar datos completos de cada evento
+          if (result && result.length > 0) {
+            const eventosMap = {};
+            for (const registration of result) {
+              if (registration.eventId && !eventosMap[registration.eventId]) {
+                try {
+                  const evento = await getEventById(registration.eventId);
+                  if (evento) {
+                    eventosMap[registration.eventId] = evento;
+                  }
+                } catch (err) {
+                
+                }
+              }
+            }
+            if (isMounted) {
+              setEventosCompletos(eventosMap);
+            }
+          }
         }
       } catch (err) {
         if (isMounted) {
-          console.error('❌ Error al cargar inscripciones:', err);
-          console.error('❌ Detalles del error:', {
-            status: err.response?.status,
-            data: err.response?.data,
-            message: err.message
-          });
+         
         }
       }
     };
@@ -82,50 +94,30 @@ export const MisIncripciones = () => {
   // Función para recargar inscripciones manualmente
   const handleReload = async () => {
     if (!isAuthenticated || !user) {
-      console.log('❌ Usuario no autenticado para recargar');
+     
       return;
     }
 
     try {
-      console.log('🔄 Recargando inscripciones...');
+    
       const result = await getUserRegistrations();
       setRegistrations(result || []);
-      console.log('✅ Inscripciones recargadas');
+      
     } catch (err) {
-      console.error('Error al recargar inscripciones:', err);
+     
     }
   };
 
-  // Mapear inscripciones de API al formato esperado
+  // Mapear inscripciones combinando datos del RegistrationDTO con datos completos del evento
   const inscripcionesFormateadas = useMemo(() => {
-    console.log('🔄 MAPEANDO INSCRIPCIONES:', registrations);
-    
-    const mapped = (registrations || []).map((registration, index) => {
-      console.log(`📌 PROCESANDO INSCRIPCIÓN ${index}:`, registration);
-      
-      if (!registration) {
-        console.log(`❌ Inscripción ${index} es null/undefined`);
+    const mapped = (registrations || []).map((registration) => {
+      if (!registration || !registration.eventId) {
         return null;
       }
       
-      // Los datos del evento están directamente en el registration, no en registration.event
-      if (!registration.title || !registration.eventId) {
-        console.log(`❌ Inscripción ${index} no tiene datos del evento:`, registration);
-        return null;
-      }
+      // Obtener datos completos del evento si están disponibles
+      const eventoCompleto = eventosCompletos[registration.eventId];
       
-      console.log(`✅ Datos del evento encontrados para inscripción ${index}`);
-      
-      // Manejar categoria de forma segura
-      let categoria = "Sin categoría";
-      if (registration.category) {
-        if (typeof registration.category === 'object' && registration.category.name) {
-          categoria = registration.category.name;
-        } else if (typeof registration.category === 'string') {
-          categoria = registration.category;
-        }
-      }
-
       // Manejar estado de inscripción
       let estadoInscripcion = "Activa";
       if (registration.state) {
@@ -136,72 +128,72 @@ export const MisIncripciones = () => {
         }
       }
 
-      const mappedItem = {
-        id: registration.eventId, // Usar eventId en lugar de evento.id
+      // Manejar categoría
+      let categoria = "Sin categoría";
+      if (eventoCompleto?.category) {
+        if (typeof eventoCompleto.category === 'object' && eventoCompleto.category.title) {
+          categoria = eventoCompleto.category.title;
+        } else if (typeof eventoCompleto.category === 'string') {
+          categoria = eventoCompleto.category;
+        }
+      }
+
+      return {
+        id: registration.eventId,
         titulo: registration.title || "Sin título",
         descripcion: registration.description || "Sin descripción",
-        fechaInicio: registration.startDateTime || new Date().toISOString(),
-        lugar: registration.location || "Sin ubicación",
+        fechaInicio: eventoCompleto?.startDateTime || null,
+        lugar: eventoCompleto?.location || null,
         categoria: categoria,
-        imagen: registration.image || noImagePlaceholder,
+        imagen: eventoCompleto?.image || noImagePlaceholder,
         registrationId: registration.registrationId,
         estadoInscripcion: estadoInscripcion,
-        fechaInscripcion: registration.dateTime // Usar dateTime en lugar de registrationDate
+        fechaInscripcion: registration.dateTime
       };
-      
-      console.log(`🎯 ITEM MAPEADO ${index}:`, mappedItem);
-      return mappedItem;
-    }).filter(item => {
-      const isValid = item !== null;
-      console.log('🔍 FILTRO - Item válido:', isValid, item);
-      return isValid;
-    }).sort((a, b) => {
-      // Ordenar por fecha de inscripción (más reciente primero)
-      const fechaA = new Date(a.fechaInscripcion || 0);
-      const fechaB = new Date(b.fechaInscripcion || 0);
-      
-      console.log('📅 ORDENANDO:', {
-        eventoA: a.titulo,
-        fechaA: a.fechaInscripcion,
-        eventoB: b.titulo,
-        fechaB: b.fechaInscripcion,
-        resultado: fechaB.getTime() - fechaA.getTime()
+    }).filter(item => item !== null)
+      .sort((a, b) => {
+        const fechaA = new Date(a.fechaInscripcion || 0);
+        const fechaB = new Date(b.fechaInscripcion || 0);
+        return fechaB.getTime() - fechaA.getTime();
       });
-      
-      return fechaB.getTime() - fechaA.getTime(); // Más reciente primero
-    });
-    
-    console.log('📊 RESULTADO FINAL ORDENADO:', mapped);
-    console.log('📊 CANTIDAD FINAL:', mapped.length);
     
     return mapped;
-  }, [registrations]);
+  }, [registrations, eventosCompletos]);
 
   const handleVer = (id) => {
     navigate(`/evento/${id}`);
   };
 
-  const handleBaja = async (registrationId, eventoTitulo) => {
-    if (!window.confirm(`¿Estás seguro de que quieres darte de baja del evento "${eventoTitulo}"?`)) {
-      return;
-    }
+  const handleBaja = (registrationId, eventoTitulo) => {
+    // Guardar datos de la inscripción a cancelar y abrir diálogo
+    setInscripcionACancelar({ registrationId, eventoTitulo });
+    setOpenCancelacionDialog(true);
+  };
+
+  // Procesar cancelación después de confirmar
+  const proceedWithCancellation = async () => {
+    if (!inscripcionACancelar) return;
     
+    const { registrationId } = inscripcionACancelar;
     setCancelandoId(registrationId);
+    setOpenCancelacionDialog(false);
     
     try {
       await cancelRegistration(registrationId);
-      alert('Te has dado de baja del evento exitosamente');
       
       // Recargar inscripciones después de cancelar
       await handleReload();
     } catch (error) {
-      console.error('Error al cancelar inscripción:', error);
-      const errorMessage = error.response?.data?.error || 
-                          error.response?.data || 
-                          'Error al cancelar la inscripción';
-      alert(`Error: ${errorMessage}`);
+    
+      const errorMsg = error.response?.data?.error || 
+                       error.response?.data?.message ||
+                       error.response?.data || 
+                       'Error al cancelar la inscripción. Por favor, intenta nuevamente.';
+      setErrorMessage(errorMsg);
+      setOpenErrorDialog(true);
     } finally {
       setCancelandoId(null);
+      setInscripcionACancelar(null);
     }
   };
 
@@ -220,12 +212,21 @@ export const MisIncripciones = () => {
           textColor: '#c62828',
           borderColor: '#ef5350'
         };
+      case 'WAITLIST':
+        return {
+          texto: 'En Lista de Espera',
+          color: 'warning',
+          icon: <AccessTimeIcon fontSize="small" />,
+          bgColor: '#fff8e1',
+          textColor: '#f57c00',
+          borderColor: '#ffb74d'
+        };
       case 'ACTIVE':
       case 'CONFIRMED':
       case 'REGISTERED':
       default:
         return {
-          texto: 'Activa',
+          texto: 'Confirmada',
           color: 'success',
           icon: <CheckCircleIcon fontSize="small" />,
           bgColor: '#e8f5e8',
@@ -323,9 +324,7 @@ export const MisIncripciones = () => {
         {/* Contenido cuando no está cargando */}
         {!loading && !error && (
           <>
-            {/* Debug logs */}
-            {console.log('🖥️ RENDERIZANDO - Estado:', { loading, error, registrationsLength: registrations.length, formateadasLength: inscripcionesFormateadas.length })}
-            
+           
             {/* Mostrar cantidad de inscripciones */}
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               Tienes {inscripcionesFormateadas.length} inscripción{inscripcionesFormateadas.length !== 1 ? 'es' : ''}
@@ -429,18 +428,22 @@ export const MisIncripciones = () => {
                       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                         {inscripcion.descripcion}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                        <b>Fecha del evento:</b> {new Date(inscripcion.fechaInicio).toLocaleString("es-AR", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit"
-                        })}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                        <b>Ubicación:</b> {inscripcion.lugar}
-                      </Typography>
+                      {inscripcion.fechaInicio && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                          <b>Fecha del evento:</b> {new Date(inscripcion.fechaInicio).toLocaleString("es-AR", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })}
+                        </Typography>
+                      )}
+                      {inscripcion.lugar && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                          <b>Ubicación:</b> {inscripcion.lugar}
+                        </Typography>
+                      )}
                       {inscripcion.fechaInscripcion && (
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: '0.8rem' }}>
                           <b>Inscripto el:</b> {new Date(inscripcion.fechaInscripcion).toLocaleDateString("es-AR")}
@@ -521,6 +524,35 @@ export const MisIncripciones = () => {
         )}
         </>
         )}
+
+        {/* Diálogo de confirmación para cancelación */}
+        <ConfirmDialog
+          open={openCancelacionDialog}
+          onClose={() => {
+            setOpenCancelacionDialog(false);
+            setInscripcionACancelar(null);
+          }}
+          onConfirm={proceedWithCancellation}
+          title="Cancelar Inscripción"
+          message={`¿Estás seguro de que deseas darte de baja del evento <strong>"${inscripcionACancelar?.eventoTitulo}"</strong>?<br/><br/>Esta acción no se puede deshacer.`}
+          confirmText="Sí, darme de baja"
+          cancelText="No, mantener"
+          loading={cancelandoId !== null}
+          loadingText="Cancelando..."
+          type="error"
+        />
+
+        {/* Diálogo de error */}
+        <ConfirmDialog
+          open={openErrorDialog}
+          onClose={() => setOpenErrorDialog(false)}
+          onConfirm={() => setOpenErrorDialog(false)}
+          title="Error"
+          message={errorMessage}
+          confirmText="Entendido"
+          cancelText=""
+          type="error"
+        />
       </Box>
     </Box>
   );

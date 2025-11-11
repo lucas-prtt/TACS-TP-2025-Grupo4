@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.DTOs.registrations.RegistrationDTO;
 import org.exceptions.*;
-import org.model.enums.EventState;
 import org.model.events.Event;
 import org.model.events.Registration;
 import org.model.enums.RegistrationState;
@@ -252,8 +251,7 @@ public class RegistrationService {
     @Retryable(retryFor = { TransientDataAccessException.class })
     @Transactional // Garantía de Consistencia
     public Registration registerParticipantToEvent(UUID eventId, UUID accountId)
-        throws EventNotFoundException, OrganizerRegisterException, AlreadyRegisteredException,
-        AlreadyInWaitlistException, EventRegistrationsClosedException, AccountNotFoundException {
+        throws EventNotFoundException, OrganizerRegisterException, AlreadyRegisteredException, EventRegistrationsClosedException, AccountNotFoundException {
 
         // --- 1. LECTURAS Y VALIDACIONES PREVIAS ---
         Event event = eventRepository.findById(eventId)
@@ -263,7 +261,6 @@ public class RegistrationService {
 
         // Validaciones de lógica de negocio (no tocan la BD)
 
-        // VALIDACIÓN DE TIEMPO (Debe ir al inicio)
         if (!event.isRegistrationsOpen()) {
             throw new EventRegistrationsClosedException("El evento se encuentra en estado:" + event.getEventState().toString());
         }
@@ -272,8 +269,8 @@ public class RegistrationService {
             throw new OrganizerRegisterException("No se puede escribir a su propio evento");
         }
 
-        // Chequeos optimistas (tus 'if').
-        // Son vulnerables a race conditions, pero la red de seguridad (paso 2) nos protege.
+        // Chequeos optimistas
+        // Son vulnerables a race conditions, pero la red de seguridad nos protege.
         if (event.getParticipants().stream().anyMatch(reg -> reg.getUser().getId().equals(accountId))) {
             throw new AlreadyParticipantException("Ya esta inscripto");
         }

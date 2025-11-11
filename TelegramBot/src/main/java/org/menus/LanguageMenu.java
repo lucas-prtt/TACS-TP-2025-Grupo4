@@ -1,7 +1,6 @@
 package org.menus;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.utils.I18nManager;
 import org.utils.InlineMenuBuilder;
 

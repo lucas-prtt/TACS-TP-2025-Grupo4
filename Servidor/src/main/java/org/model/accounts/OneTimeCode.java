@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.utils.OneTimeCodeGenerator;
-import org.utils.RandomWordGenerator;
 
 import java.time.Duration;
 import java.time.Instant;

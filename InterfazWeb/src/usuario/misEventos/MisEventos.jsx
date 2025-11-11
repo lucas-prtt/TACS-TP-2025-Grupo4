@@ -2,9 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Box, Typography, Card, CardContent, CardMedia, Stack, Chip, CircularProgress, Alert, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import LogoutIcon from "@mui/icons-material/Logout";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { ButtonCustom } from "../../components/Button";
 import { NavbarApp } from "../../components/NavbarApp";
 import { useNavigate } from "react-router-dom";
@@ -24,11 +22,9 @@ export const MisEventos = () => {
       try {
         const result = await getOrganizedEvents();
         if (isMounted) {
-          console.log('Eventos organizados cargados:', result?.length || 0);
         }
       } catch (err) {
         if (isMounted) {
-          console.error('Error al cargar eventos organizados:', err);
         }
       }
     };
@@ -45,7 +41,6 @@ export const MisEventos = () => {
     try {
       await getOrganizedEvents();
     } catch (err) {
-      console.error('Error al recargar eventos organizados:', err);
     }
   };
 
@@ -56,10 +51,11 @@ export const MisEventos = () => {
     // Manejar categoria de forma segura
     let categoria = "";
     if (evento.category) {
-      if (typeof evento.category === 'object' && evento.category.name) {
-        categoria = evento.category.name.toLowerCase();
+      // category es un objeto Category con propiedad 'title'
+      if (typeof evento.category === 'object' && evento.category.title) {
+        categoria = evento.category.title;
       } else if (typeof evento.category === 'string') {
-        categoria = evento.category.toLowerCase();
+        categoria = evento.category;
       }
     }
 
@@ -94,6 +90,7 @@ export const MisEventos = () => {
       lugar: evento.location || "Sin ubicación",
       max_participantes: evento.maxParticipants || 0,
       min_participantes: evento.minParticipants || 0,
+      participantes_registrados: evento.registered || 0,
       precio: evento.price || 0,
       tags: tags,
       estado: estado,
@@ -110,10 +107,6 @@ export const MisEventos = () => {
     navigate(`/editar-evento/${id}`);
   };
 
-  const handleEliminar = (id) => {
-    // Lógica para eliminar evento
-  };
-
   // Función para traducir el estado del evento al español
   const getEstadoTraducido = (estado) => {
     if (!estado) return '';
@@ -124,6 +117,8 @@ export const MisEventos = () => {
         return 'Abierto';
       case 'EVENT_CLOSED':
         return 'Cerrado';
+      case 'EVENT_CANCELLED':
+        return 'Cancelado';
       case 'EVENT_PAUSED':
         return 'Pausado';
       default:
@@ -133,12 +128,51 @@ export const MisEventos = () => {
             return 'Abierto';
           case 'CLOSED':
             return 'Cerrado';
+          case 'CANCELLED':
+            return 'Cancelado';
           case 'PAUSED':
             return 'Pausado';
           default:
             return estado; // Devolver el estado original si no coincide
         }
     }
+  };
+
+  // Función para obtener los colores del estado
+  const getEstadoColors = (estado) => {
+    if (!estado) return { bgcolor: '#6B7280', color: '#fff' };
+    
+    const estadoUpper = estado.toUpperCase();
+    
+    // EVENT_OPEN o OPEN -> Verde
+    if (estadoUpper.includes('OPEN')) {
+      return {
+        bgcolor: '#10B981', // Verde
+        color: '#fff'
+      };
+    }
+    
+    // EVENT_CLOSED o CLOSED -> Rojo
+    if (estadoUpper.includes('CLOSED')) {
+      return {
+        bgcolor: '#EF4444', // Rojo
+        color: '#fff'
+      };
+    }
+    
+    // EVENT_CANCELLED o CANCELLED -> Naranja oscuro
+    if (estadoUpper.includes('CANCELLED')) {
+      return {
+        bgcolor: '#D97706', // Naranja oscuro
+        color: '#fff'
+      };
+    }
+    
+    // Por defecto (gris)
+    return {
+      bgcolor: '#6B7280',
+      color: '#fff'
+    };
   };
 
   // Estilos de botones igual que en CardEvento
@@ -173,19 +207,6 @@ export const MisEventos = () => {
       backgroundColor: '#FEF3C7',
       color: '#D97706',
       borderColor: '#D97706'
-    }
-  };
-
-  const sxEliminar = {
-    border: '2px solid #DC2626',
-    color: '#DC2626',
-    backgroundColor: '#fff',
-    borderRadius: '10px',
-    minHeight: { xs: 34, md: 44 },
-    '&:hover': {
-      backgroundColor: '#FEE2E2',
-      color: '#B91C1C',
-      borderColor: '#B91C1C'
     }
   };
 
@@ -296,8 +317,10 @@ export const MisEventos = () => {
                       <Chip
                         label={getEstadoTraducido(evento.estado)}
                         size="small"
-                        color="primary"
-                        sx={{ fontWeight: 500 }}
+                        sx={{ 
+                          fontWeight: 600,
+                          ...getEstadoColors(evento.estado)
+                        }}
                       />
                     </Stack>
                     <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>
@@ -334,14 +357,6 @@ export const MisEventos = () => {
                         onClick={() => handleEditar(evento.id)}
                       >
                         Editar
-                      </ButtonCustom>
-                      <ButtonCustom
-                        variant="outlined"
-                        startIcon={<DeleteIcon />}
-                        sx={sxEliminar}
-                        onClick={() => handleEliminar(evento.id)}
-                      >
-                        Eliminar
                       </ButtonCustom>
                     </Stack>
                   </CardContent>

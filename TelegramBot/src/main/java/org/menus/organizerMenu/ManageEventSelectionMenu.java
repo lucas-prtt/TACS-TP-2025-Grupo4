@@ -1,13 +1,10 @@
 package org.menus.organizerMenu;
 
-import org.eventServerClient.ApiClient;
 import org.eventServerClient.dtos.event.EventDTO;
 import org.menus.MenuState;
-import org.users.TelegramUser;
 import org.utils.AbstractBrowseMenu;
 
 import java.util.List;
-import java.util.UUID;
 
 public class ManageEventSelectionMenu extends AbstractBrowseMenu<EventDTO>{
 

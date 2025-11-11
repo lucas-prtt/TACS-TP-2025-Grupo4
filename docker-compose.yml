@@ -3,14 +3,14 @@ services:
   mongo1:
     image: mongo:7
     container_name: eventos-mongo1
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--port", "27017", "--quiet", "--logpath", "/dev/null"]
     ports:
       - "27017:27017"
     volumes:
       - mongo_data1:/data/db
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)"]
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)"]
       interval: 5s
       timeout: 2s
       retries: 5
@@ -19,7 +19,7 @@ services:
   mongo2:
     image: mongo:7
     container_name: eventos-mongo2
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--quiet", "--logpath", "/dev/null"]
     ports:
       - "27018:27017"
     volumes:
@@ -27,7 +27,7 @@ services:
     depends_on: [mongo1]
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)"]
+      test: ["CMD", "mongosh","--quiet", "--eval", "quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)"]
       interval: 5s
       timeout: 2s
       retries: 5
@@ -36,7 +36,7 @@ services:
   mongo3:
     image: mongo:7
     container_name: eventos-mongo3
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--quiet", "--logpath", "/dev/null"]
     ports:
       - "27019:27017"
     volumes:
@@ -44,7 +44,7 @@ services:
     depends_on: [mongo1]
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)"]
+      test: ["CMD", "mongosh","--quiet", "--eval", "quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)"]
       interval: 5s
       timeout: 2s
       retries: 5
@@ -73,7 +73,11 @@ services:
               ]
             })
           } catch (e) {
-            print("Replica set ya inicializado o error:", e)
+            if (e.codeName === "AlreadyInitialized") {
+            print("Replica set ya estaba inicializado, continuando...")
+          } else {
+            throw e
+            }
           }
         '
 
@@ -110,9 +114,48 @@ services:
       - mongo2
       - mongo3
       - mongo-init-replica
+      - otel-collector
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongo1:27017,mongo2:27017,mongo3:27017/eventos?replicaSet=rs0
       EVENTOS_SERVER_SECRET_KEY: ${EVENTOS_SERVER_SECRET_KEY}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      # Variables de OpenTelemetry
+      OTEL_SERVICE_NAME: servidor
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+
+  # OpenTelemetry Collector
+  otel-collector:
+    image: otel/opentelemetry-collector:0.139.0
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    depends_on:
+      - jaeger
+
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.74.0
+    ports:
+      - "16686:16686"  # UI de Jaeger
+      - "4317"         # Puerto para OTLP gRPC (collector)
+    environment:
+      LOG_LEVEL: error
+      SPAN_STORAGE_TYPE: badger
+      BADGER_DIRECTORY: /jaeger-data
+      BADGER_SPAN_STORE_TTL: 72h
+      BADGER_MAINTENANCE_INTERVAL: 1h
+
+    volumes:
+      - jaeger-data:/jaeger-data
+
 
   # TELEGRAM BOT
   telegrambot:
@@ -125,7 +168,27 @@ services:
       EVENTOS_TELEGRAM_BOT_TOKEN: ${EVENTOS_TELEGRAM_BOT_TOKEN}
       EVENTOS_TELEGRAM_BOT_USERNAME: ${EVENTOS_TELEGRAM_BOT_USERNAME}
 
+  redis-telegram:
+    image: redis:8.2.3
+    container_name: redis-telegram-eventos
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: [
+      "redis-server",
+      "--appendonly", "yes",
+      "--appendfsync", "everysec",
+      "--auto-aof-rewrite-percentage", "100",
+      "--auto-aof-rewrite-min-size", "64mb",
+      "--maxmemory", "200mb",
+      "--maxmemory-policy", "allkeys-lru",
+      "--dir", "/data",
+      "--loglevel", "notice"
+    ]
+
 volumes:
   mongo_data1:
   mongo_data2:
   mongo_data3:
+  redis_data:
+  jaeger-data:

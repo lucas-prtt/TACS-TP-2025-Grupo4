@@ -9,8 +9,8 @@ import org.services.EventService;
 import org.services.StatsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.utils.ConfigManager;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 @RestController
@@ -27,6 +27,9 @@ public class AdminController {
     }
     @PostConstruct
     private void inicializarCategorias(){
+        if(!ConfigManager.getInstance().getOptionalBool("initialization.categories").orElse(false))
+            return;
+        System.out.println("Setting up default categories");
         Stream.of(
                 "Concierto", "Venta", "Curso", "Deporte", "Ceremonia",
                 "Arte", "Ciencia", "Competencia", "Teatro", "Taller",

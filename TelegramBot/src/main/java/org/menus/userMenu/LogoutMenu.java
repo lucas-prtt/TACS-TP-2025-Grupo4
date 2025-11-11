@@ -1,8 +1,5 @@
 package org.menus.userMenu;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.menus.MenuState;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.utils.InlineMenuBuilder;

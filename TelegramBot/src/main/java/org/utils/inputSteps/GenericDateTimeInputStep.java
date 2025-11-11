@@ -3,7 +3,6 @@ package org.utils.inputSteps;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.eventServerClient.dtos.event.EventDTO;
 import org.exceptions.DateAlreadySetException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.users.TelegramUser;

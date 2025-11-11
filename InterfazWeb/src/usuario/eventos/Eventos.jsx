@@ -11,77 +11,66 @@ import noImagePlaceholder from "../../assets/images/no_image.png";
 export const Eventos = () => {
     const theme = useTheme();
     const navigate = useNavigate();
-    const { loading, error, events, getEvents } = useGetEvents();
+    const { loading, error, events, getEvents, getCategories } = useGetEvents();
 
     // Estados para el buscador
     const [searchValue, setSearchValue] = useState("");
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
     const [estadoSeleccionado, setEstadoSeleccionado] = useState("");
+    const [categorias, setCategorias] = useState([]);
 
-    // Opciones de ejemplo (puedes reemplazar por las reales)
-    const categorias = ["Tech", "Food", "Music", "Art", "Chess", "Run"];
-    const estados = ["Programado", "Activo", "Finalizado"];
+    // Mapeo de estados en español a valores técnicos del backend
+    const estadosMap = {
+        'Abierto': 'EVENT_OPEN',
+        'Cerrado': 'EVENT_CLOSED',
+        'Cancelado': 'EVENT_CANCELLED'
+    };
 
-    // Cargar eventos al montar el componente
+    // Estados predefinidos para el filtro
+    const estados = ["Abierto", "Cerrado", "Cancelado"];
+
+    // Cargar eventos y categorías al montar el componente
     useEffect(() => {
         let isMounted = true;
         
         const loadEvents = async () => {
             try {
                 const result = await getEvents();
+            } catch (err) {
                 if (isMounted) {
-                    console.log('Eventos cargados:', result?.length || 0);
-                    
-                    // Log específico para prueba 1 y prueba 2
-                    console.log('🔍 BUSCANDO PRUEBA 1 Y PRUEBA 2:');
-                    result?.forEach((evento, index) => {
-                        const titulo = evento.title?.toLowerCase() || '';
-                        if (titulo.includes('prueba')) {
-                            console.log(`📌 EVENTO ENCONTRADO [${index}]:`, {
-                                titulo: evento.title,
-                                imagen: evento.image,
-                                tipoImagen: typeof evento.image,
-                                longitudURL: evento.image?.length || 0,
-                                eventoCompleto: evento
-                            });
-                        }
-                    });
-                    
-                    // Análisis general de imágenes
-                    const eventosConImagen = result?.filter(evento => evento.image) || [];
-                    const eventosSinImagen = result?.filter(evento => !evento.image) || [];
-                    
-                    console.log('📊 Análisis de imágenes:');
-                    console.log('  - Eventos con imagen:', eventosConImagen.length);
-                    console.log('  - Eventos sin imagen:', eventosSinImagen.length);
-                    
-                    if (eventosConImagen.length > 0) {
-                        console.log('🔗 TODAS las URLs de imágenes:');
-                        eventosConImagen.forEach((evento, index) => {
-                            console.log(`  ${index + 1}. "${evento.title}": "${evento.image}"`);
-                        });
-                    }
+                }
+            }
+        };
+        
+        const loadCategories = async () => {
+            try {
+                const result = await getCategories();
+                if (isMounted && result) {
+                    // Ordenar categorías alfabéticamente por título
+                    const categoriasOrdenadas = result
+                        .map(cat => cat.title || cat) // Extraer título si es objeto
+                        .sort((a, b) => a.localeCompare(b)); // Ordenar alfabéticamente
+                    setCategorias(categoriasOrdenadas);
                 }
             } catch (err) {
                 if (isMounted) {
-                    console.error('Error al cargar eventos:', err);
                 }
             }
         };
         
         loadEvents();
+        loadCategories();
         
         return () => {
             isMounted = false;
         };
-    }, []); // Solo se ejecuta una vez al montar
+    }, [getEvents, getCategories]); // Solo se ejecuta una vez al montar
 
     // Función para recargar eventos manualmente
     const handleReload = async () => {
         try {
             await getEvents();
         } catch (err) {
-            console.error('Error al recargar eventos:', err);
         }
     };
 
@@ -89,14 +78,14 @@ export const Eventos = () => {
     const eventosFormateados = useMemo(() => (events || []).map(evento => {
         if (!evento || !evento.id) return null;
         
-        // Manejar categoria de forma segura basado en EventDTO
+        // Manejar categoria de forma segura
         let categoria = "";
         if (evento.category) {
-            // category es un objeto Category con propiedades
-            if (typeof evento.category === 'object' && evento.category.name) {
-                categoria = evento.category.name.toLowerCase();
+            // category es un objeto Category con propiedad 'title'
+            if (typeof evento.category === 'object' && evento.category.title) {
+                categoria = evento.category.title;
             } else if (typeof evento.category === 'string') {
-                categoria = evento.category.toLowerCase();
+                categoria = evento.category;
             }
         }
 
@@ -111,74 +100,13 @@ export const Eventos = () => {
             return '';
         }).filter(tag => tag) : [];
 
-        // Debug específico para tags
-        if (evento.tags && evento.tags.length > 0) {
-            console.log(`🏷️ PROCESANDO TAGS en Eventos.jsx para "${evento.title}":`, {
-                tagsOriginales: evento.tags,
-                tagsProcesadas: tags,
-                cantidadOriginal: evento.tags.length,
-                cantidadProcesada: tags.length
-            });
-        }
-
         // Manejar estado (EventState enum)
-        let estado = "activo";
+        let estado = "";
         if (evento.state) {
             if (typeof evento.state === 'string') {
-                estado = evento.state.toLowerCase();
+                estado = evento.state;
             } else if (typeof evento.state === 'object' && evento.state.name) {
-                estado = evento.state.name.toLowerCase();
-            }
-        }
-
-        // Log específico para eventos "prueba"
-        const esPrueba = evento.title?.toLowerCase().includes('prueba');
-        if (esPrueba) {
-            console.log('🎯 PROCESANDO EVENTO PRUEBA:', {
-                titulo: evento.title,
-                imagenOriginal: evento.image,
-                tipoImagenOriginal: typeof evento.image
-            });
-        }
-
-        // Debug: análisis detallado de imagen
-        if (evento.image) {
-            if (esPrueba) {
-                console.log('🔥 PRUEBA CON IMAGEN - ANÁLISIS DETALLADO:');
-                console.log('  - URL original:', evento.image);
-                console.log('  - Tipo:', typeof evento.image);
-                console.log('  - Longitud:', evento.image.length);
-                console.log('  - Empieza con http:', evento.image.startsWith('http'));
-                console.log('  - Contiene espacios:', evento.image.includes(' '));
-                console.log('  - URL completa entre comillas:', `"${evento.image}"`);
-            }
-            
-            console.log('📸 Evento con imagen:', evento.title, '-> URL:', evento.image);
-            console.log('  - Tipo de imagen:', typeof evento.image);
-            console.log('  - Longitud URL:', evento.image.length);
-            console.log('  - Empieza con http:', evento.image.startsWith('http'));
-            console.log('  - Contiene espacios:', evento.image.includes(' '));
-            
-            // Test básico de URL
-            try {
-                const url = new URL(evento.image);
-                console.log('  - Protocolo:', url.protocol);
-                console.log('  - Host:', url.hostname);
-                console.log('  - Pathname:', url.pathname);
-                if (esPrueba) {
-                    console.log('✅ PRUEBA - URL VÁLIDA:', url.href);
-                }
-            } catch (e) {
-                console.log('  - ❌ URL inválida:', e.message);
-                if (esPrueba) {
-                    console.log('❌ PRUEBA - URL INVÁLIDA:', e.message);
-                }
-            }
-        } else {
-            if (esPrueba) {
-                console.log('⚠️ PRUEBA SIN IMAGEN:', evento.title);
-            } else {
-                console.log('🚫 Evento sin imagen:', evento.title);
+                estado = evento.state.name;
             }
         }
 
@@ -192,6 +120,7 @@ export const Eventos = () => {
             lugar: evento.location || "Sin ubicación",
             max_participantes: evento.maxParticipants || 0,
             min_participantes: evento.minParticipants || 0,
+            participantes_registrados: evento.registered || 0,
             precio: evento.price || 0,
             tags: tags,
             estado: estado,
@@ -204,8 +133,14 @@ export const Eventos = () => {
     const eventosFiltrados = useMemo(() => {
         return eventosFormateados.filter(evento => {
             const coincideBusqueda = evento.titulo?.toLowerCase().includes(searchValue.toLowerCase()) || false;
-            const coincideCategoria = !categoriaSeleccionada || evento.categoria === categoriaSeleccionada.toLowerCase();
-            const coincideEstado = !estadoSeleccionado || evento.estado === estadoSeleccionado.toLowerCase();
+            // Comparar categorías sin distinguir mayúsculas/minúsculas
+            const coincideCategoria = !categoriaSeleccionada || 
+                evento.categoria?.toLowerCase() === categoriaSeleccionada.toLowerCase();
+            
+            // Comparar estados: mapear el estado seleccionado (español) al valor técnico del backend
+            const coincideEstado = !estadoSeleccionado || 
+                evento.estado?.toUpperCase() === estadosMap[estadoSeleccionado];
+            
             return coincideBusqueda && coincideCategoria && coincideEstado;
         });
     }, [eventosFormateados, searchValue, categoriaSeleccionada, estadoSeleccionado]);

@@ -1,8 +1,6 @@
 package org.eventServerClient;
 
-import lombok.Setter;
 import org.ConfigManager;
-import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.eventServerClient.dtos.*;
@@ -20,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
 import org.users.TelegramUser;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public class ApiClient {
 

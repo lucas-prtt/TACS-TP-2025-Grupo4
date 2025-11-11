@@ -119,6 +119,7 @@ export const Buscador = ({
             }
           }}
         />
+        {/* Botón de filtros avanzados deshabilitado temporalmente
         <ButtonCustom
           bgColor={theme.palette.secondary.main}
           color={theme.palette.secondary.contrastText}
@@ -142,6 +143,7 @@ export const Buscador = ({
         >
           Filtros avanzados
         </ButtonCustom>
+        */}
       </Box>
     </Box>
   );

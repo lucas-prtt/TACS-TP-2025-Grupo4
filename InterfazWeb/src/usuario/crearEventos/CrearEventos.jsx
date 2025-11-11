@@ -3,12 +3,13 @@ import { useTheme } from '@mui/material/styles';
 import { TextFieldCustom } from "../../components/TextField";
 import { SelectorCustom } from "../../components/Selector";
 import { NavbarApp } from '../../components/NavbarApp';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 import { ButtonDate } from '../../components/ButtonDate';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import { ButtonTime } from '../../components/ButtonTime';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { ButtonCustom } from '../../components/Button';
 import { useGetEvents } from '../../hooks/useGetEvents';
@@ -17,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 export const CrearEventos = () => {
     const theme = useTheme();
     const navigate = useNavigate();
-    const { createEvent, loading, error: apiError } = useGetEvents();
+    const { createEvent, getCategories, loading, error: apiError } = useGetEvents();
 
     // Estado del formulario
     const [formData, setFormData] = useState({
@@ -38,6 +39,28 @@ export const CrearEventos = () => {
     const [horaInicio, setHoraInicio] = useState(null);
     const [localError, setLocalError] = useState('');
     const [success, setSuccess] = useState('');
+    const [categories, setCategories] = useState([]);
+    
+    // Estados para los diálogos
+    const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+    const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
+    const [openErrorDialog, setOpenErrorDialog] = useState(false);
+    const [errorDialogMessage, setErrorDialogMessage] = useState('');
+
+    // Cargar categorías al montar el componente
+    useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                const categoriesData = await getCategories();
+                // Las categorías vienen con la estructura { title: "..." }
+                setCategories(categoriesData.map(cat => cat.title));
+            } catch (error) {
+                // Si falla, usar categorías por defecto
+                setCategories(["Tecnología", "Música", "Deporte", "Arte", "Gastronomía", "Educación", "Negocios"]);
+            }
+        };
+        loadCategories();
+    }, [getCategories]);
 
     // Manejar cambios en los campos
     const handleChange = (field, value) => {
@@ -90,11 +113,13 @@ export const CrearEventos = () => {
             setLocalError('La capacidad máxima debe ser mayor a 0');
             return false;
         }
-        if (!formData.minParticipants || formData.minParticipants <= 0) {
-            setLocalError('La capacidad mínima debe ser mayor a 0');
+        // minParticipants es opcional, pero si se proporciona debe ser >= 1
+        if (formData.minParticipants !== '' && (formData.minParticipants < 1)) {
+            setLocalError('La capacidad mínima debe ser 1 o mayor');
             return false;
         }
-        if (parseInt(formData.minParticipants) > parseInt(formData.maxParticipants)) {
+        // Solo validar que minParticipants no sea mayor a maxParticipants si se proporciona
+        if (formData.minParticipants !== '' && parseInt(formData.minParticipants) > parseInt(formData.maxParticipants)) {
             setLocalError('La capacidad mínima no puede ser mayor a la máxima');
             return false;
         }
@@ -105,14 +130,22 @@ export const CrearEventos = () => {
         return true;
     };
 
-    // Manejar creación del evento
-    const handleCreateEvent = async () => {
+    // Manejar clic en crear (mostrar diálogo de confirmación)
+    const handleCreateEvent = () => {
         setLocalError('');
         setSuccess('');
 
         if (!validateForm()) {
             return;
         }
+
+        // Mostrar diálogo de confirmación
+        setOpenConfirmDialog(true);
+    };
+
+    // Proceder con la creación después de confirmar
+    const proceedWithCreation = async () => {
+        setOpenConfirmDialog(false);
 
         try {
             const startDateTime = combineDateTime(fecha, horaInicio);
@@ -127,28 +160,32 @@ export const CrearEventos = () => {
                 durationMinutes: parseInt(formData.durationMinutes),
                 location: formData.location.trim(),
                 maxParticipants: parseInt(formData.maxParticipants),
-                minParticipants: parseInt(formData.minParticipants),
+                minParticipants: formData.minParticipants !== '' ? parseInt(formData.minParticipants) : null,
                 price: parseFloat(formData.price),
-                category: formData.category ? { name: formData.category } : null,
+                category: formData.category ? { title: formData.category } : null,
                 tags: processedTags,
                 image: formData.imageUrl.trim() || null
             };
 
-            console.log('🏷️ Tags originales:', formData.tags);
-            console.log('🏷️ Tags procesadas (enviadas al backend):', processedTags);
-            console.log('🚀 Enviando datos del evento al backend:', eventData);
             await createEvent(eventData);
-            setSuccess('¡Evento creado exitosamente!');
             
-            setTimeout(() => {
-                navigate('/mis-eventos');
-            }, 1500);
+            // Mostrar diálogo de éxito
+            setOpenSuccessDialog(true);
         } catch (err) {
-            const errorMessage = err.response?.data?.error 
-                || apiError 
-                || 'Error al crear el evento';
-            setLocalError(errorMessage);
+            const errorMsg = err.response?.data?.error || 
+                             err.response?.data?.message ||
+                             err.response?.data || 
+                             apiError ||
+                             'Error al crear el evento. Por favor, intenta nuevamente.';
+            setErrorDialogMessage(errorMsg);
+            setOpenErrorDialog(true);
         }
+    };
+
+    // Manejar confirmación de éxito (navegar)
+    const handleSuccessConfirm = () => {
+        setOpenSuccessDialog(false);
+        navigate('/mis-eventos');
     };
 
     return (
@@ -264,7 +301,7 @@ export const CrearEventos = () => {
                                     </Typography>
                                     <SelectorCustom
                                         placeholder="Selecciona una categoría"
-                                        opciones={["Tecnología", "Música", "Deporte", "Arte", "Gastronomía", "Educación", "Negocios"]}
+                                        opciones={categories}
                                         value={formData.category}
                                         onChange={(e) => handleChange('category', e.target.value)}
                                         fullWidth
@@ -409,7 +446,7 @@ export const CrearEventos = () => {
                                 {/* Capacidad mínima */}
                                 <Box mb={1}>
                                     <Typography variant="caption" color={theme.palette.text.primary} sx={{ fontSize: '0.85rem', fontWeight: 500, mb: 0.5, display: 'block' }}>
-                                        Capacidad Mínima *
+                                        Capacidad Mínima (Opcional)
                                     </Typography>
                                     <TextFieldCustom
                                         placeholder="Número mínimo de participantes"
@@ -478,6 +515,44 @@ export const CrearEventos = () => {
                     </Box>
                 </Box>
             </Box>
+
+            {/* Confirmation Dialog */}
+            <ConfirmDialog
+                open={openConfirmDialog}
+                onClose={() => setOpenConfirmDialog(false)}
+                onConfirm={proceedWithCreation}
+                title="Confirmar Creación"
+                message={`¿Estás seguro de que quieres crear el evento <strong>"${formData.title}"</strong>?`}
+                confirmText="Crear Evento"
+                cancelText="Cancelar"
+                loading={loading}
+                loadingText="Creando evento..."
+                type="info"
+            />
+
+            {/* Success Dialog */}
+            <ConfirmDialog
+                open={openSuccessDialog}
+                onClose={handleSuccessConfirm}
+                onConfirm={handleSuccessConfirm}
+                title="¡Evento Creado!"
+                message="El evento se ha creado exitosamente."
+                confirmText="Ir a Mis Eventos"
+                cancelText=""
+                type="success"
+            />
+
+            {/* Error Dialog */}
+            <ConfirmDialog
+                open={openErrorDialog}
+                onClose={() => setOpenErrorDialog(false)}
+                onConfirm={() => setOpenErrorDialog(false)}
+                title="Error"
+                message={errorDialogMessage}
+                confirmText="Entendido"
+                cancelText=""
+                type="error"
+            />
         </Box>
     );
 };

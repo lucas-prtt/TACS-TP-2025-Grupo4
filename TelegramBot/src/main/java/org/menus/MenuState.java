@@ -1,7 +1,6 @@
 package org.menus;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

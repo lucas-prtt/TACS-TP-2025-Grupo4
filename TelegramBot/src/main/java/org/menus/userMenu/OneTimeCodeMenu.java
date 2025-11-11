@@ -1,14 +1,10 @@
 package org.menus.userMenu;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
-import org.eventServerClient.ApiClient;
-import org.eventServerClient.dtos.AccountDTO;
 import org.menus.MainMenu;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.users.TelegramUser;
 import org.menus.MenuState;
 import org.utils.ErrorHandler;
 import org.utils.InlineMenuBuilder;

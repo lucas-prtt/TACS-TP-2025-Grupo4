@@ -7,14 +7,13 @@ import static org.utils.SecurityUtils.getCurrentAccountId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import jakarta.annotation.PostConstruct;
 import org.DTOs.accounts.LoginRequestDTO;
 import org.DTOs.accounts.RegisterRequestDTO;
 import org.exceptions.AccountNotFoundException;
 import org.exceptions.WrongOneTimeCodeException;
 import org.model.accounts.Account;
 import org.model.accounts.OneTimeCode;
-import org.model.accounts.Role;
+import org.model.enums.Role;
 import org.services.AccountService;
 import org.services.OneTimeCodeService;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +32,7 @@ public class AuthController {
       this.oneTimeCodeService = oneTimeCodeService;
   }
 
+
   /**
    * Registra un usuario normal en el sistema.
    * @param request DTO con los datos de registro (usuario y contraseña)
@@ -40,23 +40,21 @@ public class AuthController {
    */
   @PostMapping("/register")
   public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request, @RequestHeader(name = "Accept-Language", required = false) String lang) {
-    System.out.println("USUARIO REGISTRADO");
     Account account = accountService.register(request.getUsername(), request.getPassword(), false);
     return ResponseEntity.ok(toAccountResponseDTO(account));
   }
 
-//  // Registro de admin
-//  @PostMapping("/register-admin")
-//  public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequestDTO request) {
-//    try {
-//      Account account = accountService.register(request.getUsername(), request.getPassword(), true);
-//      return ResponseEntity.ok(toAccountResponseDTO(account));
-//    } catch (RuntimeException e) {
-//      return ResponseEntity
-//          .badRequest()
-//          .body(Map.of("error", e.getMessage()));
-//    }
-//  }
+  /**
+   * Registra un usuario administrador en el sistema.
+   * @param request DTO con los datos de registro (usuario y contraseña)
+   * @return ResponseEntity con el usuario administrador registrado o error
+   */
+  @PostMapping("/register-admin")
+  public ResponseEntity<?> registerAdmin(@RequestBody RegisterRequestDTO request, @RequestHeader(name = "Accept-Language", required = false) String lang) {
+    System.out.println("ADMIN REGISTRADO");
+    Account account = accountService.register(request.getUsername(), request.getPassword(), true);
+    return ResponseEntity.ok(toAccountResponseDTO(account));
+  }
 
   /**
    * Realiza el login de un usuario.

@@ -3,7 +3,6 @@ package org.repositories;
 import java.util.*;
 import java.util.List;
 
-import org.DTOs.events.EventDTO;
 import org.model.events.Event;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

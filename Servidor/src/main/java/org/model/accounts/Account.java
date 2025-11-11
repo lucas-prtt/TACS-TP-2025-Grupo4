@@ -1,4 +1,5 @@
 package org.model.accounts;
+import org.model.enums.Role;
 import org.model.events.Registration;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +29,7 @@ public class Account {
      */
     public Account() {
         this.id = UUID.randomUUID();
-        this.roles.add(new Role("ROLE_USER"));
+        this.roles.add(Role.ROLE_USER);
     }
     public void addRegistration(Registration registration){
         registrations.add(registration);
