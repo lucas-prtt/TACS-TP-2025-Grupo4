@@ -38,13 +38,13 @@ public class AdminInitializer implements CommandLineRunner {
   admin.setRoles(Set.of(Role.ROLE_ADMIN));
 
         accountRepository.save(admin);
-        System.out.println("✅ Usuario administrador '" + adminUsername + "' creado.");
+        System.out.println("Usuario administrador '" + adminUsername + "' creado.");
 
       } catch (DuplicateKeyException e) {
-        System.out.println("⚠️ Otro nodo ya creó el usuario administrador.");
+        System.out.println("Otro nodo ya creó el usuario administrador.");
       }
     } else {
-      System.out.println("👀 Ya existe el usuario administrador, no se crea uno nuevo.");
+      System.out.println("Ya existe el usuario administrador, no se crea uno nuevo.");
     }
   }
 }

@@ -28,8 +28,6 @@
 ### Con Docker Automático
 1. Abrir Docker Desktop si no esta abierto
 
-
-
 2. Ejecutar el script setup.sh
     ```bash
     ./setup.sh [modulos]
@@ -37,12 +35,14 @@
     Si se deja vacío se ejecutan todos los modulos. Los modulos posibles son:
      - servidor
      - telegrambot
-
+     - interfazweb
 
 3. Introducir las variables de entorno por consola:
    - EVENTOS_TELEGRAM_BOT_TOKEN
    - EVENTOS_TELEGRAM_BOT_USERNAME
    - EVENTOS_SERVER_SECRET_KEY
+   - ADMIN_USERNAME
+   - ADMIN_PASSWORD
 
 ### Con Docker Manual:
 1. Abrir Docker Desktop si no está abierto.
@@ -52,6 +52,8 @@
     - EVENTOS_TELEGRAM_BOT_TOKEN
     - EVENTOS_TELEGRAM_BOT_USERNAME
     - EVENTOS_SERVER_SECRET_KEY
+    - ADMIN_USERNAME
+    - ADMIN_PASSWORD
 
 
 
@@ -60,28 +62,25 @@
 ```bash
 docker-compose up --build
 ```
+4. Comandos adicionales:
 
-### Sin Docker:
-1. Crear las variables de entorno en el sistema:
-   - EVENTOS_TELEGRAM_BOT_TOKEN
-   - EVENTOS_TELEGRAM_BOT_USERNAME
-   - EVENTOS_SERVER_SECRET_KEY
+Para iniciar el sistema una vez ya fue compilado se debe usar:
 
-
-2. Compilar el proyecto
 ```bash
-mvn clean package
+docker-compose up
 ```
-3. Ejecutar servidor
-```bash
-java -jar Servidor/target/Servidor-1.0.jar
-```
-4. Ejecutar bot de telegram
-```bash
-java -jar TelegramBot/target/TelegramBot-1.0.jar
-```
---- 
 
+Para apagar el sistema se usa:
+
+```bash
+docker-compose down
+```
+
+Para apagar el sistema y borrar todos los datos del mismo se usa
+
+```bash
+docker-compose down -v
+```
 
 #
 Tras eso, el servidor estará escuchando peticiones en el puerto 8080.
@@ -90,11 +89,39 @@ Se puede comprobar haciendo alguna de las peticiones de ejemplo que se muestran 
 
 ---
 ## Configuraciones adicionales
-Dentro de cada módulo se encuentra el archivo
+### 1. Archivos config.properties 
+Dentro de los modulos servidor y telegrambot se encuentra el archivo
 
 >src/main/resources/config.properties
 
 Este archivo se puede modificar para alterar el comportamiento de los modulos, permitiendo definir el tamaño máximo y minimo de las páginas en la API y el tiempo de expiración del token de seguridad, entre otras cuestiones.
+
+### 2. Archivos translations.csv
+Dentro de los modulos servidor y telegram ofrecemos soporte para i18n. Para esto utilizamos un archivo translations.csv donde se pueden modificar los mensajes de respuesta para cada idioma.
+
+Estos archivos se encuentran en:
+
+> \<Modulo\>/src/main/resources/translations.csv
+
+En el [servidor / backend](https://github.com/lucas-prtt/TACS-TP-2025-Grupo4/blob/dev/Servidor/src/main/resources/translations.csv), estas traducciones son solo detalles de errores HTTP personalizados, siendo el idioma especificado en el header Accept-Language. Los archivos Json de respuesta no cambian según el idioma. En el [bot de telegram](https://github.com/lucas-prtt/TACS-TP-2025-Grupo4/blob/dev/TelegramBot/src/main/resources/translations.csv), dicta los idiomas que estarán disponibles desde el menu de idiomas y que afectarán la interfaz de todo el sistema para cada usuario particular, segun el idioma que tenga configurado. 
+
+En cualquiera de los dos casos, es posible expandir los lenguajes admitidos (Actualmente hay 6 por defecto, traducidos por Google Translate) agregando más columnas al csv, sin que sea necesario modificar el código. El sistema detectará automaticamente el nuevo lenguaje y lo pondrá a disposición del usuario.
+
+---
+
+## Componentes / Contenedores del sistema
+
+Para el funcionamiento completo del sistema se inician los siguientes componentes:
+1. Servidor: El backend que se usa para gestionar todas las peticiones mediante una API rest. Se inicia con el JavaClient de Opentelemetry para proveer información sobre su funcionamiento.
+2. Interfaz web: Permite al usuario gestionar sus eventos, inscribirse a eventos, ver inscripciones, descubrir eventos nuevos y cancelar sus inscripciones. Al mismo tiempo ofrece funcionalidades para los administradores, siendo estas la visualizacion de estadisticas y la creacion y eliminacion de categorias.
+3. Bot de telegram: Permite lo mismo que la interfaz web, a través de un bot de telegram conectado mediante long-polling.
+4. MongoDB (3 instancias): Utilizado por el backend para persistir la información necesaria para el funcionamiento del sistema. Al utilizar 3 instancias aumenta la fiabilidad del sistema, ya que en caso de que una se perdiera, el sistema podría recuperarse automáticamente.
+5. Redis: Utilizado para la gestion de sesiones del bot de telegram. Permite distribuir la carga de mantener en memoria las sesiones a otro nodo, cuenta con persistencia ante fallos en el nodo y permitiría a futuro levantar multiples instancias para la ejecución del bot sin problemas de estado.
+6. OpenTelemetry Collector: Utilizado para recopilar toda la información de telemetría aportada por el servidor backend. Actualmente solo integrado con Jaeger, pero puede integrarse con otros componentes.
+7. Jaeger: Para ver los spans mandados por el servidor a través del OpenTelemetry collector. Utiliza una base de datos embebida provista por Badger con rotación de logs cada 72h. 
+8. Mongo-init: Componente temporal utilizado para inicializar las instancias de mongo mediante un script de bash antes de iniciar el sistema. Tras su ejecución satisfactoria se cierra automáticamente.
+
+Aclaración: Logramos conectar el OpenTelemetry collector con Prometheus y Grafana para exportar métricas y establecer alarmas, pero no lo supimos configurarlos a tiempo para la entrega. El progreso realizado fue dejado en otra branch (prometheus-y-grafana, commit [#a201b2c](https://github.com/lucas-prtt/TACS-TP-2025-Grupo4/tree/a201b2cb9da5c7309172a5351d198c3c4acfb2f5)).
 
 ---
 ## Posibles problemas
