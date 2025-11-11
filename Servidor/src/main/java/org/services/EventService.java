@@ -270,7 +270,7 @@ public class EventService {
     private void handleCancelEvent(Event event) {
         UUID eventId = event.getId();
 
-        // 1. Operación masiva en la colección 'registrations' (Alto Rendimiento)
+        // 1. Operación masiva en la colección 'registrations'
         // Busca CONFIRMED y WAITLIST para asegurar que se cancelen.
         Query queryAllActiveRegs = new Query(Criteria.where("event.$id").is(eventId)
             .orOperator(
@@ -295,7 +295,7 @@ public class EventService {
     private void handleCloseEvent(Event event) {
         UUID eventId = event.getId();
 
-        // 1. Marcar solo la WAITLIST como CANCELLED (Alto Rendimiento)
+        // 1. Marcar solo la WAITLIST como CANCELLED
         Query queryWaitlistRegs = new Query(
             Criteria.where("event.$id").is(eventId)
                 .and("currentState").is(RegistrationState.WAITLIST)

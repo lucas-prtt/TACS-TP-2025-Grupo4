@@ -140,6 +140,56 @@ curl --ssl-no-revoke https://api.telegram.org/bot<TOKEN>/setwebhook
 (Se debe completar \<TOKEN\> con el token del bot.)
 
 ---
+
+## Estrategia de Concurrencia
+
+### 1. Operaciones Atómicas (MongoTemplate)
+
+Problema: La "condición de carrera" (Race Condition), como dos usuarios intentando tomar el último cupo (availableSeats) al mismo tiempo.
+
+Solución: Usar una operación atómica de MongoTemplate (updateFirst con $inc: -1 y una condición availableSeats > 0).  Se evita el patrón peligroso de "Leer y luego Escribir". 
+
+Mecanismo Detallado:
+
+1. Arbitraje: Dos Instancias (A y B) envían el comando simultáneamente a MongoDB. La base de datos, al ser el árbitro, los serializa y le concede el Bloqueo Exclusivo (X) ✍️ a la Instancia A.
+
+2. Ejecución de A (Ganador): La Instancia A verifica internamente que el filtro (availableSeats > 0) sea verdadero. Lo es. Ejecuta $inc: -1. El cupo en la BD se convierte en 0.
+
+3. Ejecución de B (Perdedor): La Instancia B obtiene el Bloqueo. Verifica el filtro (availableSeats > 0) y encuentra que ahora es falso. La operación de actualización no se ejecuta.
+
+4. Solo la Instancia A obtiene un modifiedCount: 1 y procede. La Instancia B obtiene modifiedCount: 0 y es enviada a la Waitlist.
+
+Resultado: La base de datos actúa como un "portero" y solo permite que una operación (la primera que llega) tenga éxito. Es imposible sobrevender cupos.
+
+### 2. Transacciones (@Transactional)
+
+Problema: Asegurar que operaciones complejas sean " Todo o nada". Por ejemplo, al registrar, se debe crear una Registration y actualizar el array participants del Event.
+Si una de esas dos falla, los datos quedan inconsistentes.
+
+Solución: Usar @Transactional. Esto envuelve todas las operaciones de la base de datos en un "paquete" (transacción ACID).
+
+Mecanismo: Si cualquier escritura falla (ej., un fallo de red o una excepción de la base de datos), Spring fuerza un ROLLBACK. Todos los cambios que la transacción hizo antes de fallar son deshechos, restaurando la base de datos a su estado inicial.
+
+Resultado: Si cualquier parte del método falla (ej. una DuplicateKeyException), todo se deshace (Rollback). Se garantiza la consistencia total de los datos.
+
+
+### 3. El Plan B: Reintentos (@Retryable)
+
+Problema: Cuando dos transacciones (@Transactional) chocan al intentar modificar el mismo documento al mismo tiempo, la base de datos se protege abortando una de ellas (un deadlock o conflicto).
+
+Solución: Usar @Retryable(retryFor = { TransientDataAccessException.class }).
+
+Mecanismo:
+
+1. Cuando MongoDB aborta una transacción, lanza la excepción TransientDataAccessException.
+
+2. @Retryable captura esta excepción.
+
+3. El framework espera un tiempo predefinido y vuelve a ejecutar todo el método automáticamente.
+
+Resultado: La aplicación detecta ese aborto (que es un error temporal), espera un momento y reintenta automáticamente la operación. El usuario final no ve un error, solo un pequeño retraso.
+
+---
 # API Endpoints
 
 ---
