@@ -336,11 +336,6 @@ export const MisIncripciones = () => {
                   <Typography variant="body1" color="text.secondary">
                     No estás inscripto en ningún evento.
                   </Typography>
-                  {/* Debug info cuando está vacío */}
-                  <Typography variant="caption" color="text.disabled" sx={{ mt: 2 }}>
-                    Debug: registrations.length = {registrations.length}, 
-                    formateadas.length = {inscripcionesFormateadas.length}
-                  </Typography>
                 </>
               ) : (
                 inscripcionesFormateadas.map((inscripcion) => {
