@@ -1,5 +1,5 @@
 
-# TP TACS
+# Fiesta TACS — Plataforma de Gestión de Eventos con API REST, Web UI y Bot de Telegram
 
 ## Links
 
